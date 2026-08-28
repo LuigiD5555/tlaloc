@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+TLALOC_CURRENT="$DATA_HOME/tlaloc/current"
+case "${1:-help}" in
+  version)
+    printf 'Tlaloc %s\n' "$(cat "$TLALOC_CURRENT/VERSION")"
+    if [[ -f "$DATA_HOME/origami/current/VERSION" ]]; then printf 'Origami %s\n' "$(cat "$DATA_HOME/origami/current/VERSION")"; fi
+    ;;
+  where) printf '%s\n' "$TLALOC_CURRENT" ;;
+  behavior-lab) shift; exec "$TLALOC_CURRENT/bin/tlaloc-behavior-lab" "$@" ;;
+  tlaloque) shift; exec "$TLALOC_CURRENT/bin/tlaloc-behavior-lab" tlaloque "$@" ;;
+  skills-path) printf '%s\n' "$TLALOC_CURRENT/.claude/skills" ;;
+  doctor) shift; exec "$TLALOC_CURRENT/tools/doctor.sh" "$@" ;;
+  legacy-scan) shift; exec "$TLALOC_CURRENT/tools/legacy-cleanup.sh" --scan "$@" ;;
+  uninstall) shift; exec "$TLALOC_CURRENT/tools/uninstall.sh" --tlaloc-only "$@" ;;
+  *)
+    cat <<'USAGE'
+Tlaloc — Transformative Latent Adaptive Logic Orchestration Core
+Usage:
+  tlaloc version
+  tlaloc where
+  tlaloc behavior-lab <compile|train|tlaloque> ...
+  tlaloc tlaloque
+  tlaloc skills-path
+  tlaloc doctor
+  tlaloc legacy-scan
+  tlaloc uninstall [options]
+USAGE
+    ;;
+esac

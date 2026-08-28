@@ -1,0 +1,9 @@
+# Local build outputs
+behavior-lab/tlaloc-behavior-lab
+*.test
+*.out
+
+# Editor/OS
+.DS_Store
+.vscode/
+.idea/
