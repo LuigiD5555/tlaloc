@@ -33,7 +33,7 @@ Tlaloque are deliberately small specialist agents under Tlaloc. They are not a s
 
 ## Current implementation boundary (R0)
 
-The lifecycle is general, but the bundled evaluator, reference engine, Tlaloque guards and curriculum are still specialized for the first consumer profile: `origami.quantum-inspired.r0`. Model-family-specific compilation (Claude/GPT/Qwen/LFM profiles and generated skills) is not implemented in this release.
+The lifecycle now selects an explicit registered profile. `origami.quantum-inspired.r0` retains its coherent-state evaluator; `origami.relational-core.r0` consumes versioned upstream fixtures with its own strict comparator, curriculum, and bounded Tlaloque. Unknown or incompatible profiles are `UNSUPPORTED`, with no fallback. Model-family-specific compilation remains unimplemented.
 
 See `NOMENCLATURE.md` for naming rules.
 
@@ -45,4 +45,4 @@ The installer preserves these files inside the managed Tlaloc version but does n
 
 ## Origami perceptual-contract awareness
 
-Tlaloc can track Origami contracts independently of implementing them. Origami `6.0.0-alpha.3` preserves `origami.perceptual-channels.r0` (introduced in alpha.2) and clarifies that OHF is a nested Origami research track; Tlaloc records that contract and hierarchy as upstream-known while the executable behavior profile remains `origami.quantum-inspired.r0`. This prevents semantic drift without pretending that moire, stereoscopic/depth or temporal-latent-image operations already have reference evaluators.
+Tlaloc tracks Origami contracts independently of implementing them. Origami `6.0.0-alpha.4` publishes executable relational fixtures consumed here without copying its Reference Machine. The perceptual contract remains upstream-known but unsupported at runtime, preventing semantic drift without pretending that moire, depth, or temporal-latent-image operations have evaluators.

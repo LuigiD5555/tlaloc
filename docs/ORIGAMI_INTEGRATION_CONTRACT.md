@@ -29,6 +29,6 @@ Tlaloc may learn how to make a model obey Origami semantics. It must not redefin
 
 ## Upstream contract tracking
 
-Tlaloc `6.0.0-alpha.8` recognizes Origami `6.0.0-alpha.3` and the contract ID `origami.perceptual-channels.r0`. Origami alpha.3 changes repository/project hierarchy, not the alpha.2 semantic law. Contract recognition does not imply runtime support. The following operations are currently upstream-known but not implemented in Tlaloc's reference evaluator or Tlaloque curriculum: `MOIRE`, `PHASE_SHIFT`, `STEREO_BIND`, `PARALLAX_RESOLVE`, `KINETIC_REVEAL`, `TEMPORAL_INTEGRATE`, and `TEMPORAL_DECAY`.
+Tlaloc `6.0.0-alpha.9` recognizes Origami `6.0.0-alpha.4`. It consumes `origami.relational-core.r0` EXP-001 fixtures through an exact embedded artifact (SHA-256 `363904ae72ed7b9db7d4b371c91ec259e86f3e98bb74e18d2a2b882219c0a5c1`) while Origami retains the executable semantic engine. Contract recognition does not imply perceptual runtime support. `MOIRE`, `PHASE_SHIFT`, `STEREO_BIND`, `PARALLAX_RESOLVE`, `KINETIC_REVEAL`, `TEMPORAL_INTEGRATE`, and `TEMPORAL_DECAY` remain unsupported.
 
 Until corresponding executable fixtures exist, Tlaloc must report those capabilities as unsupported rather than approximating them silently.

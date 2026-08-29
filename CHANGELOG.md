@@ -1,5 +1,14 @@
 # Tlaloc changelog
 
+## 6.0.0-alpha.9 — Origami relational-core integration
+
+- adds a strict registry for coherent and relational Origami profiles;
+- consumes byte-identical Origami 6.0.0-alpha.4 EXP-001 fixtures without duplicating the upstream engine;
+- adds profile-specific comparison, curricula, and bounded Tlaloque;
+- preserves exact cancellation cause and enforces complete coherent-state JSON;
+- rejects unknown profile IDs, incompatible versions, partial JSON, and cross-profile fallback;
+- keeps perceptual channels explicitly unsupported.
+
 ## 6.0.0-alpha.8 — Release/version coherence
 
 - fixed `install.sh` still installing `6.0.0-alpha.6` while the repository declared a newer release;

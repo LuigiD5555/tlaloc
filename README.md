@@ -1,4 +1,4 @@
-# Tlaloc 6.0.0-alpha.8
+# Tlaloc 6.0.0-alpha.9
 
 **TLALOC — Transformative Latent Adaptive Logic Orchestration Core**
 
@@ -13,11 +13,13 @@ Origami is an independent representation/state-machine language that Tlaloc may 
 - bounded Tlaloque repair proposals with centralized promotion authority;
 - deterministic reference-semantics comparison for the current Origami profile;
 - OpenAI-compatible transport for local/compatible endpoints;
-- `origami.quantum-inspired.r0` as the first bundled executable consumer profile;
-- awareness of Origami `6.0.0-alpha.3` and its `origami.perceptual-channels.r0` upstream semantic contract (runtime generation/evaluation not yet implemented);
+- an explicit registry for the compatible `origami.quantum-inspired.r0` and executable `origami.relational-core.r0` consumer profiles;
+- strict coherent-state evaluation with causal cancellation and complete structured fields;
+- byte-identical Origami `6.0.0-alpha.4` EXP-001 fixtures covering fixed point, cycle, contradiction, and budget exhaustion;
+- awareness of `origami.perceptual-channels.r0` (runtime generation/evaluation not yet implemented);
 - `CLAUDE.md` + `.claude/skills/` as checked-in project guidance for Claude Code and compatible agent workflows.
 
-The current Origami evaluator, reference engine, Tlaloque and curriculum are still specialized for the coherent-state profile. Tlaloc recognizes the Origami perceptual-channel contract (introduced in Origami alpha.2 and preserved by alpha.3) (`MOIRE`, `STEREO_BIND`, `KINETIC_REVEAL`, temporal integration, etc.) but does **not** yet execute or evaluate those operations. Native Claude/Anthropic API support, generated Claude Skills/SkillIR, and GPT/Qwen/LFM-specific compiler backends are also **not yet implemented**.
+Tlaloc evaluates the coherent-state profile and consumes the upstream relational-core fixtures through separate registered paths. It does not duplicate Origami's relational Reference Machine. Perceptual operations such as `MOIRE`, `STEREO_BIND`, and `KINETIC_REVEAL` remain explicitly unsupported. Native Claude/Anthropic API support, generated SkillIR, and model-family compiler backends are also not yet implemented.
 
 ## Project skills vs generated skills
 
