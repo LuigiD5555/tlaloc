@@ -1,0 +1,41 @@
+name: gatekeeper
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, review_requested]
+  pull_request_review:
+    types: [submitted, dismissed]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  provenance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Classify provenance
+        id: classify
+        env:
+          OWNER: LuigiD5555
+          EVENT: ${{ github.event_name }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          CANONICAL_REPO: ${{ github.repository }}
+        run: |
+          if [[ "$EVENT" == "push" || ( "$PR_AUTHOR" == "$OWNER" && "$HEAD_REPO" == "$CANONICAL_REPO" ) ]]; then echo "class=OWNER" >> "$GITHUB_OUTPUT"; else echo "class=EXTERNAL" >> "$GITHUB_OUTPUT"; fi
+      - name: Owner fast path
+        if: steps.classify.outputs.class == 'OWNER'
+        run: echo 'OWNER provenance. Component CI remains required; explicit owner promotion override is permitted by Tonal policy.'
+      - name: Require owner approval for external PR
+        if: steps.classify.outputs.class == 'EXTERNAL'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          OWNER: LuigiD5555
+        run: |
+          approvals=$(gh api "repos/$REPO/pulls/$PR/reviews" --paginate --jq "[.[] | select(.user.login == \"$OWNER\" and .state == \"APPROVED\")] | length")
+          [[ "$approvals" -ge 1 ]] || { echo "EXTERNAL provenance requires APPROVED review from $OWNER."; exit 1; }

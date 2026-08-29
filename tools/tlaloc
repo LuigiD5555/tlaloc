@@ -2,6 +2,84 @@
 set -euo pipefail
 DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 TLALOC_CURRENT="$DATA_HOME/tlaloc/current"
+
+skills_usage() {
+  cat <<'USAGE'
+Usage:
+  tlaloc skills list
+  tlaloc skills path
+  tlaloc skills install <name> [--project PATH] [--force]
+
+`install` copies a checked-in Tlaloc-owned project skill into the target Git
+repository's .claude/skills/ directory. Existing differing content is never
+overwritten unless --force is explicit. Project-agnostic `repo-flow` is owned
+and distributed by Tonal.
+USAGE
+}
+
+skills_cmd() {
+  local action="${1:-help}"
+  if (($#)); then shift; fi
+  case "$action" in
+    path)
+      printf '%s\n' "$TLALOC_CURRENT/.claude/skills"
+      ;;
+    list)
+      local root="$TLALOC_CURRENT/.claude/skills"
+      [[ -d "$root" ]] || { echo "Tlaloc skills directory not found: $root" >&2; return 1; }
+      find "$root" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort
+      ;;
+    install)
+      local name="${1:-}" project="" force=0 repo_root="" src="" dst=""
+      [[ -n "$name" ]] || { skills_usage >&2; return 2; }
+      shift
+      while (($#)); do
+        case "$1" in
+          --project)
+            shift
+            (($#)) || { echo "--project requires a path" >&2; return 2; }
+            project="$1"
+            ;;
+          --force) force=1 ;;
+          -h|--help) skills_usage; return 0 ;;
+          *) echo "Unknown skills install option: $1" >&2; skills_usage >&2; return 2 ;;
+        esac
+        shift
+      done
+      [[ "$name" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "Invalid skill name: $name" >&2; return 2; }
+      if [[ "$name" == "repo-flow" ]]; then
+        echo "repo-flow moved to Tonal and is no longer distributed by Tlaloc." >&2
+        echo "Use LuigiD5555/tonal: scripts/install-skill.sh repo-flow --project <repo>." >&2
+        return 1
+      fi
+      [[ -n "$project" ]] || project="$PWD"
+      command -v git >/dev/null 2>&1 || { echo "git is required to locate the target repository" >&2; return 1; }
+      repo_root="$(git -C "$project" rev-parse --show-toplevel 2>/dev/null || true)"
+      [[ -n "$repo_root" ]] || { echo "Not inside a Git repository: $project" >&2; return 1; }
+      src="$TLALOC_CURRENT/.claude/skills/$name"
+      [[ -f "$src/SKILL.md" ]] || { echo "Unknown Tlaloc skill: $name" >&2; return 1; }
+      dst="$repo_root/.claude/skills/$name"
+      if [[ -e "$dst" ]]; then
+        if diff -qr "$src" "$dst" >/dev/null 2>&1; then
+          printf 'Skill %s is already current in %s\n' "$name" "$dst"
+          return 0
+        fi
+        [[ "$force" -eq 1 ]] || {
+          echo "Refusing to overwrite existing differing skill: $dst" >&2
+          echo "Re-run with --force only after reviewing the local copy." >&2
+          return 1
+        }
+        rm -rf -- "$dst"
+      fi
+      mkdir -p "$(dirname "$dst")"
+      cp -a "$src" "$dst"
+      printf 'Installed skill %s -> %s\n' "$name" "$dst"
+      ;;
+    help|-h|--help) skills_usage ;;
+    *) echo "Unknown skills action: $action" >&2; skills_usage >&2; return 2 ;;
+  esac
+}
+
 case "${1:-help}" in
   version)
     printf 'Tlaloc %s\n' "$(cat "$TLALOC_CURRENT/VERSION")"
@@ -10,6 +88,7 @@ case "${1:-help}" in
   where) printf '%s\n' "$TLALOC_CURRENT" ;;
   behavior-lab) shift; exec "$TLALOC_CURRENT/bin/tlaloc-behavior-lab" "$@" ;;
   tlaloque) shift; exec "$TLALOC_CURRENT/bin/tlaloc-behavior-lab" tlaloque "$@" ;;
+  skills) shift; skills_cmd "$@" ;;
   skills-path) printf '%s\n' "$TLALOC_CURRENT/.claude/skills" ;;
   doctor) shift; exec "$TLALOC_CURRENT/tools/doctor.sh" "$@" ;;
   legacy-scan) shift; exec "$TLALOC_CURRENT/tools/legacy-cleanup.sh" --scan "$@" ;;
@@ -22,6 +101,7 @@ Usage:
   tlaloc where
   tlaloc behavior-lab <compile|train|tlaloque> ...
   tlaloc tlaloque
+  tlaloc skills <list|path|install> ...
   tlaloc skills-path
   tlaloc doctor
   tlaloc legacy-scan

@@ -1,4 +1,4 @@
-# Tlaloc 6.0.0-alpha.9
+# Tlaloc 6.0.0-alpha.11
 
 **TLALOC — Transformative Latent Adaptive Logic Orchestration Core**
 
@@ -17,15 +17,34 @@ Origami is an independent representation/state-machine language that Tlaloc may 
 - strict coherent-state evaluation with causal cancellation and complete structured fields;
 - byte-identical Origami `6.0.0-alpha.4` EXP-001 fixtures covering fixed point, cycle, contradiction, and budget exhaustion;
 - awareness of `origami.perceptual-channels.r0` (runtime generation/evaluation not yet implemented);
-- `CLAUDE.md` + `.claude/skills/` as checked-in project guidance for Claude Code and compatible agent workflows.
+- `CLAUDE.md` + five `.claude/skills/` entries as checked-in guidance specific to Tlaloc/Origami development.
 
 Tlaloc evaluates the coherent-state profile and consumes the upstream relational-core fixtures through separate registered paths. It does not duplicate Origami's relational Reference Machine. Perceptual operations such as `MOIRE`, `STEREO_BIND`, and `KINETIC_REVEAL` remain explicitly unsupported. Native Claude/Anthropic API support, generated SkillIR, and model-family compiler backends are also not yet implemented.
 
 ## Project skills vs generated skills
 
-The `.claude/skills/` directory is a repository-workflow aid. It teaches an agent how to respect Tlaloc's architecture, behavior-compilation rules, Tlaloque boundaries, Origami ownership, and release hygiene.
+The `.claude/skills/` directory contains five checked-in workflow skills owned by Tlaloc/Origami development:
 
-These files are not a second source of truth and are not output from the Behavior Compiler. The intended future architecture remains `BehaviorSpec -> PromptIR / future SkillIR -> target-specific artifacts`.
+- `tlaloc-project`
+- `tlaloc-behavior`
+- `tlaloc-tlaloque`
+- `origami-semantics`
+- `tlaloc-release`
+
+Use `tlaloc skills list`, `tlaloc skills path`, and `tlaloc skills install <name>` for these Tlaloc-owned skills. Installation refuses to overwrite a differing local skill unless `--force` is explicit.
+
+Project-agnostic `repo-flow` and `gatekeeper` skills are owned by **Tonal** (`LuigiD5555/tonal`), not Tlaloc. This keeps one authority for Git/repository workflow and project-wide provenance policy.
+
+These checked-in project skills are not a second semantic source of truth and are not output from the Behavior Compiler. The intended future architecture remains `BehaviorSpec -> PromptIR / future SkillIR -> target-specific artifacts`.
+
+## Project Gatekeeper
+
+Tlaloc follows Tonal's project-wide Gatekeeper R0. `gatekeeper.json` is a local CI mirror and `GATEKEEPER.md` explains the component behavior.
+
+- owner PR (`LuigiD5555` from this canonical repository): normal Tlaloc verification still runs; explicit owner promotion override is allowed;
+- external PR: normal verification still runs and an `APPROVED` review from `LuigiD5555` is mandatory; external override/auto-promotion is denied.
+
+The policy controls promotion authority, not assumptions about code quality.
 
 ## Source-of-truth rule
 
@@ -37,11 +56,13 @@ These files are not a second source of truth and are not output from the Behavio
 - **Tlaloque** = bounded specialist agents coordinated by Tlaloc.
 - **Origami** = independent representation/state-machine language.
 - **reference semantics** = deterministic expected-state calculation; not an agent.
+- **Tonal** = independent composition/distribution layer for tested Tlaloc + Origami revisions and shared stack-level workflow/promotion policy.
 
 See `docs/NOMENCLATURE.md`.
 
 ## Read first
 
+- `GATEKEEPER.md`
 - `docs/NOMENCLATURE.md`
 - `docs/ARCHITECTURE.md`
 - `docs/CAPABILITY_STATUS.md`

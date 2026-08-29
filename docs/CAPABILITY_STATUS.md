@@ -1,4 +1,4 @@
-# Capability status — Tlaloc 6.0.0-alpha.9
+# Capability status — Tlaloc 6.0.0-alpha.11
 
 Repository lifecycle: Tlaloc installs and uninstalls independently; Origami is optional. Legacy Origami/OHF/VCL cleanup is retained for migration only.
 
@@ -18,8 +18,10 @@ This file distinguishes implemented behavior from intended architecture.
 | Origami reference evaluator/guards | R0 implemented | Reference semantics + evaluator remain profile-specific; not yet a generic plugin interface. |
 | OpenAI-compatible transport | R0 implemented | Intended for LM Studio and compatible endpoints. |
 | Project `CLAUDE.md` guidance | **R0 implemented** | Checked-in instructions for working on this codebase. |
-| Project-local Claude Code skills | **R0 implemented** | Five checked-in `.claude/skills/*/SKILL.md` workflow skills; not compiler-generated. |
-| Skills validation | **R0 implemented** | Release tests validate required skill structure/frontmatter and mirrored installed copies. |
+| Project-local Claude Code skills | **R0 implemented** | Five checked-in `.claude/skills/*/SKILL.md` workflow skills specific to Tlaloc/Origami development; not compiler-generated. |
+| Tlaloc-owned project skill installation | **R0 implemented** | `tlaloc skills list/path/install` operates on Tlaloc-owned project skills and protects differing local copies by default. |
+| Tonal-owned `repo-flow` distribution | **external / not Tlaloc-owned** | Canonical `repo-flow` plus `.claude/skills` and `.agents/skills` mirrors live in Tonal; Tlaloc reports a migration message instead of distributing a stale copy. |
+| Skills validation | **R0 implemented** | Release tests validate required Tlaloc-owned skill structure/frontmatter and installed copies. |
 | Native Anthropic/Claude adapter | **not implemented** | Planned target-family adapter. |
 | SkillIR / generated Claude Skills | **not implemented** | Planned output of future model-profile layer. Do not confuse with checked-in project skills. |
 | Native OpenAI model profile | **not implemented** | Transport compatibility is not the same as target-specific prompt compilation. |

@@ -1,6 +1,6 @@
 # Tlaloc changelog
 
-## 6.0.0-alpha.9 — Origami relational-core integration
+## 6.0.0-alpha.11 — Origami relational-core integration
 
 - adds a strict registry for coherent and relational Origami profiles;
 - consumes byte-identical Origami 6.0.0-alpha.4 EXP-001 fixtures without duplicating the upstream engine;
@@ -8,6 +8,25 @@
 - preserves exact cancellation cause and enforces complete coherent-state JSON;
 - rejects unknown profile IDs, incompatible versions, partial JSON, and cross-profile fallback;
 - keeps perceptual channels explicitly unsupported.
+
+## 6.0.0-alpha.10 — Repo-flow ownership migration
+
+- removes the project-agnostic `repo-flow` skill from Tlaloc now that Tonal is its canonical distribution owner;
+- keeps the five Tlaloc/Origami-specific project skills under `.claude/skills/`;
+- keeps `tlaloc skills list/path/install` for Tlaloc-owned skills only;
+- `tlaloc skills install repo-flow` now fails with an explicit migration message pointing to Tonal instead of installing a stale copy;
+- replaces the old repo-flow-specific Tlaloc regression with project-skill installation coverage and asserts managed Tlaloc installs no longer contain `repo-flow`;
+- adds `.github/workflows/verify.yml` so pull requests and `main` pushes enforce release/version, terminology, skills, isolated install, Go test/vet/race, and generated-artifact hash gates;
+- no BehaviorSpec, PromptIR, Tlaloque, reference semantics, Origami contracts, generated prompt, or model-facing runtime behavior changed.
+
+## 6.0.0-alpha.9 — Reusable repository workflow skill
+
+- added the project-agnostic `repo-flow` skill for Git/GitHub repository work: preflight, branch discipline, impact-scoped verification, atomic commits, PR review, conflict resolution, CI gating, merge and post-merge verification;
+- codified release/version consistency, changelog/change-control hygiene and multi-repository snapshot/pin rules without making submodules a user-project requirement;
+- added `tlaloc skills list`, `tlaloc skills path`, and `tlaloc skills install <name>`;
+- `tlaloc skills install repo-flow` installs into the current Git repository root and refuses to overwrite differing local content unless `--force` is explicit;
+- added regression coverage for skill discovery, idempotent installation, local-edit protection and explicit forced replacement;
+- no BehaviorSpec, PromptIR, Tlaloque, reference semantics, Origami contracts, or model-facing runtime behavior changed.
 
 ## 6.0.0-alpha.8 — Release/version coherence
 
