@@ -1,7 +1,7 @@
 ---
 name: tlaloc-release
 description: This skill should be used when preparing a Tlaloc or Tlaloc+Origami release, updating README/docs/version manifests, changing install or uninstall behavior, auditing legacy cleanup, or validating backward-compatible removal of older project generations.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Tlaloc release and lifecycle discipline
@@ -16,6 +16,8 @@ Treat release hygiene as part of correctness.
 
 ## Install lifecycle
 
+- Treat root `VERSION` as the single release-version source; installers must read it rather than duplicate a hard-coded version.
+- Add a regression test that fails when the installed managed-version marker differs from root `VERSION`.
 - Keep user-local installation manifest-driven and versioned.
 - Preserve component-specific ownership markers.
 - Keep Tlaloc and Origami independently uninstallable.

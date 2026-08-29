@@ -43,6 +43,6 @@ See `NOMENCLATURE.md` for naming rules.
 
 The installer preserves these files inside the managed Tlaloc version but does not install or modify global `~/.claude` configuration.
 
-## Origami perceptual-contract awareness (alpha.7)
+## Origami perceptual-contract awareness
 
-Tlaloc can track Origami contracts independently of implementing them. Origami `6.0.0-alpha.2` introduces `origami.perceptual-channels.r0`; Tlaloc alpha.7 records that contract as upstream-known while the executable behavior profile remains `origami.quantum-inspired.r0`. This prevents semantic drift without pretending that moire, stereoscopic/depth or temporal-latent-image operations already have reference evaluators.
+Tlaloc can track Origami contracts independently of implementing them. Origami `6.0.0-alpha.3` preserves `origami.perceptual-channels.r0` (introduced in alpha.2) and clarifies that OHF is a nested Origami research track; Tlaloc records that contract and hierarchy as upstream-known while the executable behavior profile remains `origami.quantum-inspired.r0`. This prevents semantic drift without pretending that moire, stereoscopic/depth or temporal-latent-image operations already have reference evaluators.
