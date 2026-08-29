@@ -53,4 +53,18 @@ go run ./cmd/behaviorlab tlaloque
 go run ./cmd/behaviorlab train -model <model-name>
 ```
 
-A dedicated receiver-tournament CLI is not yet promoted. The R0 receiver distiller/tournament currently exists as a Go package and testable contract before command-surface expansion.
+Hybrid Receiver R0 adds:
+
+```bash
+go run ./cmd/behaviorlab receiver-distill \
+  -trace testdata/receiver/swarm-trace-r0.json \
+  -prompt testdata/receiver/universal-bootstrap-r0.md \
+  -out generated/origami-hybrid-receiver-r0.candidate.json
+
+go run ./cmd/behaviorlab receiver-rank \
+  -in testdata/receiver/scored-candidates-r0.json \
+  -window 4000 \
+  -out generated/origami-hybrid-receiver-r0.ranking.json
+```
+
+`receiver-distill` turns a successful semantic swarm trace into a deterministic candidate with trace provenance. `receiver-rank` applies the multi-objective fitness function and hard safety gates. These commands produce Tlaloc **candidates/evidence**; they do not write directly into Origami's promoted receiver registry.
