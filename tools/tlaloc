@@ -10,9 +10,10 @@ Usage:
   tlaloc skills path
   tlaloc skills install <name> [--project PATH] [--force]
 
-`install` copies a checked-in Tlaloc project skill into the target Git repository's
-.claude/skills/ directory. Existing differing content is never overwritten unless
---force is explicit.
+`install` copies a checked-in Tlaloc-owned project skill into the target Git
+repository's .claude/skills/ directory. Existing differing content is never
+overwritten unless --force is explicit. Project-agnostic `repo-flow` is owned
+and distributed by Tonal.
 USAGE
 }
 
@@ -46,6 +47,11 @@ skills_cmd() {
         shift
       done
       [[ "$name" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "Invalid skill name: $name" >&2; return 2; }
+      if [[ "$name" == "repo-flow" ]]; then
+        echo "repo-flow moved to Tonal and is no longer distributed by Tlaloc." >&2
+        echo "Use LuigiD5555/tonal: scripts/install-skill.sh repo-flow --project <repo>." >&2
+        return 1
+      fi
       [[ -n "$project" ]] || project="$PWD"
       command -v git >/dev/null 2>&1 || { echo "git is required to locate the target repository" >&2; return 1; }
       repo_root="$(git -C "$project" rev-parse --show-toplevel 2>/dev/null || true)"

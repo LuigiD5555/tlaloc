@@ -1,4 +1,4 @@
-# Tlaloc 6.0.0-alpha.9
+# Tlaloc 6.0.0-alpha.10
 
 **TLALOC — Transformative Latent Adaptive Logic Orchestration Core**
 
@@ -15,23 +15,25 @@ Origami is an independent representation/state-machine language that Tlaloc may 
 - OpenAI-compatible transport for local/compatible endpoints;
 - `origami.quantum-inspired.r0` as the first bundled executable consumer profile;
 - awareness of Origami `6.0.0-alpha.3` and its `origami.perceptual-channels.r0` upstream semantic contract (runtime generation/evaluation not yet implemented);
-- `CLAUDE.md` + `.claude/skills/` as checked-in project guidance for Claude Code and compatible agent workflows;
-- reusable `repo-flow` skill for safe Git/GitHub change workflows, installable into any Git project with `tlaloc skills install repo-flow`.
+- `CLAUDE.md` + five `.claude/skills/` entries as checked-in guidance specific to Tlaloc/Origami development.
 
 The current Origami evaluator, reference engine, Tlaloque and curriculum are still specialized for the coherent-state profile. Tlaloc recognizes the Origami perceptual-channel contract (introduced in Origami alpha.2 and preserved by alpha.3) (`MOIRE`, `STEREO_BIND`, `KINETIC_REVEAL`, temporal integration, etc.) but does **not** yet execute or evaluate those operations. Native Claude/Anthropic API support, generated Claude Skills/SkillIR, and GPT/Qwen/LFM-specific compiler backends are also **not yet implemented**.
 
 ## Project skills vs generated skills
 
-The `.claude/skills/` directory contains checked-in workflow guidance. Five skills are specific to Tlaloc/Origami development; `repo-flow` is intentionally project-agnostic and can be copied into another Git repository:
+The `.claude/skills/` directory contains five checked-in workflow skills owned by Tlaloc/Origami development:
 
-```bash
-cd /path/to/any-repo
-tlaloc skills install repo-flow
-```
+- `tlaloc-project`
+- `tlaloc-behavior`
+- `tlaloc-tlaloque`
+- `origami-semantics`
+- `tlaloc-release`
 
-Use `tlaloc skills list` to inspect available checked-in skills. Installation refuses to overwrite a differing local skill unless `--force` is explicit.
+Use `tlaloc skills list`, `tlaloc skills path`, and `tlaloc skills install <name>` for these Tlaloc-owned skills. Installation refuses to overwrite a differing local skill unless `--force` is explicit.
 
-These files are not a second source of truth and are not output from the Behavior Compiler. The intended future architecture remains `BehaviorSpec -> PromptIR / future SkillIR -> target-specific artifacts`.
+The project-agnostic `repo-flow` skill is **not owned or distributed by Tlaloc anymore**. Its canonical source and both `.claude/skills/` and `.agents/skills/` mirrors live in **Tonal** (`LuigiD5555/tonal`). Tlaloc keeps an explicit migration error for `tlaloc skills install repo-flow` so old usage fails clearly instead of silently installing a stale copy.
+
+These checked-in project skills are not a second semantic source of truth and are not output from the Behavior Compiler. The intended future architecture remains `BehaviorSpec -> PromptIR / future SkillIR -> target-specific artifacts`.
 
 ## Source-of-truth rule
 
@@ -43,6 +45,7 @@ These files are not a second source of truth and are not output from the Behavio
 - **Tlaloque** = bounded specialist agents coordinated by Tlaloc.
 - **Origami** = independent representation/state-machine language.
 - **reference semantics** = deterministic expected-state calculation; not an agent.
+- **Tonal** = independent composition/distribution layer for tested Tlaloc + Origami revisions and shared stack-level assets such as `repo-flow`.
 
 See `docs/NOMENCLATURE.md`.
 

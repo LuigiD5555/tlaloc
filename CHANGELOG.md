@@ -1,5 +1,15 @@
 # Tlaloc changelog
 
+## 6.0.0-alpha.10 — Repo-flow ownership migration
+
+- removes the project-agnostic `repo-flow` skill from Tlaloc now that Tonal is its canonical distribution owner;
+- keeps the five Tlaloc/Origami-specific project skills under `.claude/skills/`;
+- keeps `tlaloc skills list/path/install` for Tlaloc-owned skills only;
+- `tlaloc skills install repo-flow` now fails with an explicit migration message pointing to Tonal instead of installing a stale copy;
+- replaces the old repo-flow-specific Tlaloc regression with project-skill installation coverage and asserts managed Tlaloc installs no longer contain `repo-flow`;
+- adds `.github/workflows/verify.yml` so pull requests and `main` pushes enforce release/version, terminology, skills, isolated install, Go test/vet/race, and generated-artifact hash gates;
+- no BehaviorSpec, PromptIR, Tlaloque, reference semantics, Origami contracts, generated prompt, or model-facing runtime behavior changed.
+
 ## 6.0.0-alpha.9 — Reusable repository workflow skill
 
 - added the project-agnostic `repo-flow` skill for Git/GitHub repository work: preflight, branch discipline, impact-scoped verification, atomic commits, PR review, conflict resolution, CI gating, merge and post-merge verification;
