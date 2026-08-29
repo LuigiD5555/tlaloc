@@ -14,6 +14,7 @@ type Trainer struct {
 	Model          Model
 	Agents         []Tlaloque
 	MaxGenerations int
+	Compare        CompareFunc
 }
 
 func (t Trainer) Train(ctx context.Context, ir compiler.PromptIR, cases []Case) ([]Generation, compiler.PromptIR, error) {
@@ -33,20 +34,25 @@ func (t Trainer) Train(ctx context.Context, ir compiler.PromptIR, cases []Case) 
 		passed := 0
 		totalScore := 0.0
 		for _, c := range cases {
-			var expected reference.State
-			if err := json.Unmarshal([]byte(c.ExpectedRaw), &expected); err != nil {
-				return history, ir, fmt.Errorf("case %s expected: %w", c.ID, err)
-			}
 			raw, err := t.Model.Complete(ctx, prompt, c.User)
 			if err != nil {
 				return history, ir, fmt.Errorf("case %s target: %w", c.ID, err)
 			}
-			r := evaluate.Compare(expected, raw)
-			totalScore += r.Score
-			if r.Pass {
+			var result evaluate.Result
+			if t.Compare != nil {
+				result = t.Compare(c.ExpectedRaw, raw)
+			} else {
+				var expected reference.State
+				if err := json.Unmarshal([]byte(c.ExpectedRaw), &expected); err != nil {
+					return history, ir, fmt.Errorf("case %s expected: %w", c.ID, err)
+				}
+				result = evaluate.Compare(expected, raw)
+			}
+			totalScore += result.Score
+			if result.Pass {
 				passed++
 			} else {
-				findings = append(findings, r.Findings...)
+				findings = append(findings, result.Findings...)
 			}
 		}
 		score := 0.0

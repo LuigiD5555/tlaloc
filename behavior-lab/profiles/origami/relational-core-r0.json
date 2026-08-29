@@ -1,0 +1,22 @@
+{
+  "version": "0.1.0",
+  "id": "origami.relational-core.r0",
+  "description": "Execute the upstream Origami relational-core R0 contract using simultaneous deterministic rounds and finite outcomes.",
+  "state_kinds": ["relational"],
+  "operations": ["VALIDATE", "CANONICALIZE", "STEP", "DETECT_OUTCOME", "EMIT_TRACE"],
+  "invariants": [
+    {"code":"CONTRACT_MISMATCH","description":"The output contract must be origami.relational-core.r0.","severity":10},
+    {"code":"RELATION_PRESERVATION","description":"Relations and semantic values must produce the upstream terminal state.","severity":10},
+    {"code":"RULE_APPLICATION","description":"All effects use prior-round state and commit simultaneously.","severity":10},
+    {"code":"TRACE_REQUIRED","description":"Ordered applied IDs and causal evidence must match the upstream fixture.","severity":10},
+    {"code":"OUTCOME_CLASSIFICATION","description":"Only declared finite terminal outcomes are valid.","severity":10},
+    {"code":"BUDGET_TERMINATION","description":"Execution must stop at the declared finite budget.","severity":10},
+    {"code":"STRUCTURED_OUTPUT_REQUIRED","description":"Return exactly one strict machine-readable result.","severity":10}
+  ],
+  "output": {"format":"json","schema":"Return exactly one JSON object with contract, outcome, state, trace, steps, evidence, and errors. trace contains ordered {step,applied} entries. Do not emit extra fields or prose."},
+  "identity": "Execute origami.relational-core.r0 exactly from the declared entities, relations, rules, simultaneous-round policy, and finite budget.",
+  "rules": [
+    {"code":"SIMULTANEOUS_ROUNDS","description":"Every effect in a round is calculated from the prior-round state and committed simultaneously.","priority":99},
+    {"code":"TERMINAL_OUTCOMES","description":"Classify as FIXED_POINT, CYCLE, CONTRADICTION, or BUDGET_EXHAUSTED only.","priority":98}
+  ]
+}

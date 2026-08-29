@@ -13,6 +13,9 @@ type Guard struct {
 }
 
 func (g Guard) Name() string { return g.name }
+func NewGuard(name string, code spec.InvariantCode, patch compiler.Section) Tlaloque {
+	return Guard{name: name, code: code, patch: patch}
+}
 func (g Guard) Propose(fs []evaluate.Finding) []compiler.Section {
 	for _, f := range fs {
 		if f.Code == g.code {

@@ -1,0 +1,11 @@
+{
+  "schema": "origami.relational-fixtures.r0",
+  "contract": "origami.relational-core.r0",
+  "source_experiment": "EXP-001-relational-state",
+  "cases": [
+    {"id":"fixed-point","input":{"A":"UNKNOWN","B":"ABSENT","C":"ABSENT","D":"ABSENT","E":"ABSENT","F":"ABSENT"},"expected":{"contract":"origami.relational-core.r0","outcome":"FIXED_POINT","state":{"A":"UNKNOWN","B":"ABSENT","C":"ABSENT","D":"ABSENT","E":"ABSENT","F":"ABSENT"},"trace":[{"step":1,"applied":[]}],"steps":1,"evidence":["state unchanged after simultaneous round"],"errors":[]}},
+    {"id":"cycle","input":{"A":"PRESENT","B":"ABSENT","C":"ABSENT","D":"ABSENT","E":"ABSENT","F":"ABSENT"},"expected":{"contract":"origami.relational-core.r0","outcome":"CYCLE","state":{"A":"PRESENT","B":"ABSENT","C":"ABSENT","D":"ABSENT","E":"ABSENT","F":"ABSENT"},"trace":[{"step":1,"applied":["a-present-to-absent"]},{"step":2,"applied":["a-absent-to-present"]}],"steps":2,"evidence":["canonical state repeated"],"errors":[]}},
+    {"id":"contradiction","input":{"A":"UNKNOWN","B":"PRESENT","C":"ABSENT","D":"ABSENT","E":"ABSENT","F":"ABSENT"},"expected":{"contract":"origami.relational-core.r0","outcome":"CONTRADICTION","state":{"A":"UNKNOWN","B":"PRESENT","C":"CANCELLED","D":"ABSENT","E":"ABSENT","F":"ABSENT"},"trace":[{"step":1,"applied":["b-excludes-c","b-requires-c"]}],"steps":1,"evidence":["C received incompatible simultaneous effects"],"errors":[]}},
+    {"id":"budget-exhausted","input":{"A":"UNKNOWN","B":"ABSENT","C":"ABSENT","D":"PRESENT","E":"ABSENT","F":"ABSENT"},"expected":{"contract":"origami.relational-core.r0","outcome":"BUDGET_EXHAUSTED","state":{"A":"UNKNOWN","B":"ABSENT","C":"ABSENT","D":"PRESENT","E":"PRESENT","F":"PRESENT"},"trace":[{"step":1,"applied":["d-requires-e"]},{"step":2,"applied":["d-requires-e","e-requires-f"]}],"steps":2,"evidence":["finite transition budget exhausted"],"errors":[]}}
+  ]
+}

@@ -19,6 +19,8 @@ type Model interface {
 	Complete(ctx context.Context, systemPrompt, user string) (string, error)
 }
 
+type CompareFunc func(expectedRaw, actualRaw string) evaluate.Result
+
 // Tlaloque is a bounded specialist under Tlaloc. It may diagnose a structured
 // finding and propose a compiled-artifact patch, but it has no promotion authority.
 type Tlaloque interface {

@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"tlaloc.local/behaviorlab/internal/compiler"
+	"tlaloc.local/behaviorlab/internal/profiles"
 	"tlaloc.local/behaviorlab/internal/spec"
 	"tlaloc.local/behaviorlab/internal/target"
 	"tlaloc.local/behaviorlab/internal/tlaloque"
@@ -52,6 +53,8 @@ func compileCmd(args []string) {
 	_ = fs.Parse(args)
 	s, err := loadSpec(*in)
 	must(err)
+	_, err = profiles.Builtin().Lookup(s.ID, s.Version)
+	must(err)
 	ir, err := compiler.BuildIR(s, *targetName)
 	must(err)
 	p := compiler.Render(ir)
@@ -73,15 +76,12 @@ func trainCmd(args []string) {
 	}
 	s, err := loadSpec(*in)
 	must(err)
+	profile, err := profiles.Builtin().Lookup(s.ID, s.Version)
+	must(err)
 	ir, err := compiler.BuildIR(s, *model)
 	must(err)
-	cases := []tlaloque.Case{
-		{ID: "transform-no-collapse", User: `Initial state is SUPERPOSED with A=(0.7071067811865475,0), B=(0.7071067811865475,0). Apply TRANSFORM A->D and B->E, both multiplier (1,0). Return the resulting state JSON.`, ExpectedRaw: `{"kind":"superposed","branches":[{"label":"D","real":0.7071067811865475,"imag":0},{"label":"E","real":0.7071067811865475,"imag":0}]}`},
-		{ID: "cancellation", User: `INTERFERE two contributions to C: +0.5 and -0.5. Return state JSON. This is not an observation.`, ExpectedRaw: `{"kind":"superposed","branches":[]}`},
-		{ID: "coupled", User: `Create COUPLED members A,B with joint branches 00=(0.7071067811865475,0) and 11=(0.7071067811865475,0). Return state JSON.`, ExpectedRaw: `{"kind":"coupled","members":["A","B"],"branches":[{"label":"00","real":0.7071067811865475,"imag":0},{"label":"11","real":0.7071067811865475,"imag":0}]}`},
-	}
-	tr := tlaloque.Trainer{Model: target.OpenAICompat{BaseURL: *base, Model: *model, Temperature: 0}, MaxGenerations: *generations}
-	h, finalIR, err := tr.Train(context.Background(), ir, cases)
+	tr := tlaloque.Trainer{Model: target.OpenAICompat{BaseURL: *base, Model: *model, Temperature: 0}, Agents: profile.Agents, Compare: profile.Compare, MaxGenerations: *generations}
+	h, finalIR, err := tr.Train(context.Background(), ir, profile.Cases)
 	must(err)
 	for _, g := range h {
 		fmt.Printf("gen=%d score=%.3f pass=%d fail=%d patches=%d\n", g.Index, g.Score, g.Passed, g.Failed, len(g.Patches))
@@ -91,8 +91,12 @@ func trainCmd(args []string) {
 }
 
 func tlaloqueCmd() {
-	for _, agent := range tlaloque.DefaultTlaloque() {
-		fmt.Println(agent.Name())
+	registry := profiles.Builtin()
+	for _, profileID := range registry.IDs() {
+		profile, _ := registry.Lookup(profileID, "0.1.0")
+		for _, agent := range profile.Agents {
+			fmt.Printf("%s\t%s\n", profileID, agent.Name())
+		}
 	}
 }
 

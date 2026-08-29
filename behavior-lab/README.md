@@ -2,7 +2,7 @@
 
 Behavior Lab is Tlaloc's R0 experiment for compiling a formal behavior contract into a prompt artifact, testing that artifact against a target model and using bounded **Tlaloque** to propose repairs from structured failures.
 
-The compiler lifecycle is intended to become profile- and model-family-independent. In this R0 package, however, the bundled evaluator, reference semantics, default Tlaloque and curriculum are still specialized for the first profile: `origami.quantum-inspired.r0`.
+The compiler lifecycle uses an explicit profile registry. The coherent-state and relational-core profiles have separate comparators, curricula and bounded Tlaloque. The relational path consumes upstream Origami fixtures; it does not duplicate the Origami Reference Machine.
 
 ## Terms
 
@@ -14,6 +14,7 @@ The compiler lifecycle is intended to become profile- and model-family-independe
 
 ```bash
 go run ./cmd/behaviorlab compile
+go run ./cmd/behaviorlab compile -spec profiles/origami/relational-core-r0.json -out generated/origami-relational-core-r0.generic.prompt.md
 go run ./cmd/behaviorlab tlaloque
 go run ./cmd/behaviorlab train -model <model-name>
 ```
