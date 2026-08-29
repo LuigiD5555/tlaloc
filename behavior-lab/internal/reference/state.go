@@ -25,10 +25,12 @@ type State struct {
 	Members  []string       `json:"members,omitempty"`
 	Observed string         `json:"observed,omitempty"`
 	Unknown  bool           `json:"unknown,omitempty"`
+	Semantic string         `json:"semantic"`
+	Notes    []string       `json:"notes"`
 }
 
 func New(kind spec.StateKind, branches ...Branch) State {
-	return State{Kind: kind, Branches: canonical(branches)}
+	return State{Kind: kind, Branches: canonical(branches), Semantic: "PRESENT", Notes: []string{}}
 }
 
 func canonical(in []Branch) []Branch {

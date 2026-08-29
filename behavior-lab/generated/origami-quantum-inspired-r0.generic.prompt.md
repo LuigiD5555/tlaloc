@@ -6,7 +6,7 @@ Target: generic
 TLALOC CONTRACT origami.quantum-inspired.r0: Execute the active Origami coherent-state behavior contract exactly; do not replace formal state semantics with intuitive probability narration.
 
 [output]
-Return exactly one JSON object with fields kind, branches, members, observed, unknown, notes. branches is an array of {label,real,imag}. Do not emit prose outside the JSON object.
+Return exactly one JSON object with fields kind, branches, members, observed, unknown, semantic, notes. semantic is PRESENT or CANCELLED for this profile. branches is an array of {label,real,imag}. Do not emit prose outside the JSON object.
 
 [rule:RESOLUTION_AUTHORITY]
 RULE RESOLUTION_AUTHORITY: TRANSFORM, INTERFERE and CONSTRAIN do not implicitly observe. Only an explicit OBSERVE or declared FOLD resolution policy may resolve alternatives.
@@ -36,7 +36,7 @@ INVARIANT COUPLED_IS_JOINT_STATE: A coupled state is evaluated as one joint stat
 INVARIANT ZERO_AMPLITUDE_IS_CANCELLATION: Zero net amplitude is a computed cancellation result, not unknown.
 
 [operations]
-OPERATIONS: SUPERPOSE, TRANSFORM, INTERFERE, CONSTRAIN, COUPLE, OBSERVE, FOLD, UNFOLD, EVOLVE
+OPERATIONS: SUPERPOSE, TRANSFORM, INTERFERE, CONSTRAIN, COUPLE, OBSERVE
 
 [inv:ABSENT_IS_NOT_UNKNOWN]
 INVARIANT ABSENT_IS_NOT_UNKNOWN: Absence and unknown are distinct semantic values.

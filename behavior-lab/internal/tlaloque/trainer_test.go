@@ -13,9 +13,9 @@ type fakeModel struct{}
 
 func (fakeModel) Complete(_ context.Context, systemPrompt, user string) (string, error) {
 	if strings.Contains(systemPrompt, "repair:no-collapse") || strings.Contains(systemPrompt, "Never convert SUPERPOSED") {
-		return `{"kind":"superposed","branches":[{"label":"D","real":0.7071067811865475,"imag":0},{"label":"E","real":0.7071067811865475,"imag":0}]}`, nil
+		return `{"kind":"superposed","branches":[{"label":"D","real":0.7071067811865475,"imag":0},{"label":"E","real":0.7071067811865475,"imag":0}],"members":[],"observed":"","unknown":false,"semantic":"PRESENT","notes":[]}`, nil
 	}
-	return `{"kind":"observed","branches":[{"label":"D","real":1,"imag":0}],"observed":"D"}`, nil
+	return `{"kind":"observed","branches":[{"label":"D","real":1,"imag":0}],"members":[],"observed":"D","unknown":false,"semantic":"PRESENT","notes":[]}`, nil
 }
 
 func TestTrainerCanRepairPrematureCollapse(t *testing.T) {
@@ -31,7 +31,7 @@ func TestTrainerCanRepairPrematureCollapse(t *testing.T) {
 		}
 	}
 	ir.Sections = reduced
-	cases := []Case{{ID: "preserve", User: "TRANSFORM A+B to D+E", ExpectedRaw: `{"kind":"superposed","branches":[{"label":"D","real":0.7071067811865475,"imag":0},{"label":"E","real":0.7071067811865475,"imag":0}]}`}}
+	cases := []Case{{ID: "preserve", User: "TRANSFORM A+B to D+E", ExpectedRaw: `{"kind":"superposed","branches":[{"label":"D","real":0.7071067811865475,"imag":0},{"label":"E","real":0.7071067811865475,"imag":0}],"members":[],"observed":"","unknown":false,"semantic":"PRESENT","notes":[]}`}}
 	h, _, err := (Trainer{Model: fakeModel{}, MaxGenerations: 3}).Train(context.Background(), ir, cases)
 	if err != nil {
 		t.Fatal(err)

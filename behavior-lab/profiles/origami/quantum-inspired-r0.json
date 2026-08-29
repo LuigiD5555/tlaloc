@@ -14,10 +14,7 @@
     "INTERFERE",
     "CONSTRAIN",
     "COUPLE",
-    "OBSERVE",
-    "FOLD",
-    "UNFOLD",
-    "EVOLVE"
+    "OBSERVE"
   ],
   "invariants": [
     {
@@ -58,7 +55,7 @@
   ],
   "output": {
     "format": "json",
-    "schema": "Return exactly one JSON object with fields kind, branches, members, observed, unknown, notes. branches is an array of {label,real,imag}. Do not emit prose outside the JSON object."
+    "schema": "Return exactly one JSON object with fields kind, branches, members, observed, unknown, semantic, notes. semantic is PRESENT or CANCELLED for this profile. branches is an array of {label,real,imag}. Do not emit prose outside the JSON object."
   },
   "identity": "Execute the active Origami coherent-state behavior contract exactly; do not replace formal state semantics with intuitive probability narration.",
   "rules": [

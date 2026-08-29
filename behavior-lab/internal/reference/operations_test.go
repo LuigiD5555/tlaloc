@@ -15,6 +15,28 @@ func TestInterferenceCancellation(t *testing.T) {
 	if s.Unknown {
 		t.Fatal("cancellation must not become UNKNOWN")
 	}
+	if s.Semantic != "CANCELLED" {
+		t.Fatalf("expected cancellation cause, got %q", s.Semantic)
+	}
+}
+
+func TestConstrainPreservesAllowedBranch(t *testing.T) {
+	state := Superpose(Branch{Label: "A", Real: 1}, Branch{Label: "B", Real: 1})
+	result := Constrain(state, map[string]bool{"B": true})
+	if result.Kind != spec.Determinate || len(result.Branches) != 1 || result.Branches[0].Label != "B" {
+		t.Fatalf("unexpected result: %#v", result)
+	}
+}
+
+func TestObserveIsOnlyResolutionBoundary(t *testing.T) {
+	state := Superpose(Branch{Label: "A", Real: 1})
+	result, err := Observe(state, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Kind != spec.Observed || result.Observed != "A" {
+		t.Fatalf("unexpected result: %#v", result)
+	}
 }
 
 func TestTransformPreservesAlternatives(t *testing.T) {

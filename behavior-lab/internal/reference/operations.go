@@ -40,7 +40,12 @@ func Transform(s State, m LinearMap) (State, error) {
 }
 
 func Interfere(branches ...Branch) State {
-	return Superpose(branches...)
+	state := Superpose(branches...)
+	if len(state.Branches) == 0 {
+		state.Semantic = "CANCELLED"
+		state.Notes = []string{"exact complex-amplitude cancellation"}
+	}
+	return state
 }
 
 func Constrain(s State, allowed map[string]bool) State {
@@ -59,7 +64,7 @@ func Constrain(s State, allowed map[string]bool) State {
 }
 
 func Couple(members []string, joint ...Branch) State {
-	return State{Kind: spec.Coupled, Members: append([]string(nil), members...), Branches: canonical(joint)}.Normalized()
+	return State{Kind: spec.Coupled, Members: append([]string(nil), members...), Branches: canonical(joint), Semantic: "PRESENT", Notes: []string{}}.Normalized()
 }
 
 func Observe(s State, r *rand.Rand) (State, error) {
@@ -79,5 +84,5 @@ func Observe(s State, r *rand.Rand) (State, error) {
 			break
 		}
 	}
-	return State{Kind: spec.Observed, Branches: []Branch{{Label: pick, Real: 1}}, Observed: pick}, nil
+	return State{Kind: spec.Observed, Branches: []Branch{{Label: pick, Real: 1}}, Observed: pick, Semantic: "PRESENT", Notes: []string{}}, nil
 }
