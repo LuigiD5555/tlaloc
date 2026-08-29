@@ -1,0 +1,48 @@
+[
+  {
+    "candidate": {
+      "schema": "tlaloc.origami-receiver-distillation.r0",
+      "id": "candidate-balanced",
+      "prompt": "bootstrap",
+      "boot_strategy": [],
+      "rosetta_constraints": [],
+      "program": [],
+      "source_trace_sha256": "fixture"
+    },
+    "fitness": {
+      "bootstrap_success": 1.0,
+      "rosetta_success": 1.0,
+      "navigation": 0.98,
+      "correctness": 0.99,
+      "evidence": 0.98,
+      "unknown_accuracy": 1.0,
+      "false_exact": 0,
+      "peak_active_token_eq": 840,
+      "tool_cost": 4,
+      "contaminated": false
+    }
+  },
+  {
+    "candidate": {
+      "schema": "tlaloc.origami-receiver-distillation.r0",
+      "id": "candidate-false-exact",
+      "prompt": "unsafe",
+      "boot_strategy": [],
+      "rosetta_constraints": [],
+      "program": [],
+      "source_trace_sha256": "fixture"
+    },
+    "fitness": {
+      "bootstrap_success": 1.0,
+      "rosetta_success": 1.0,
+      "navigation": 1.0,
+      "correctness": 1.0,
+      "evidence": 1.0,
+      "unknown_accuracy": 1.0,
+      "false_exact": 1,
+      "peak_active_token_eq": 100,
+      "tool_cost": 1,
+      "contaminated": false
+    }
+  }
+]
