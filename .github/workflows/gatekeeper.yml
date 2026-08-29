@@ -2,7 +2,9 @@ name: gatekeeper
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, review_requested, submitted]
+    types: [opened, synchronize, reopened, ready_for_review, review_requested]
+  pull_request_review:
+    types: [submitted, dismissed]
   push:
     branches: [main]
 
