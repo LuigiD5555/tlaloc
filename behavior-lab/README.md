@@ -15,13 +15,16 @@ Origami receiver contract
   -> rich swarm/Tlaloque receiver behavior
   -> successful semantic trace
   -> internal/distill
-  -> small receiver candidate
-       prompt + BOOT/Rosetta strategy + MicroAgent rules
+  -> deterministic receiver proposal
+       UniversalPrompt
+       + BOOT strategy
+       + Rosetta constraints
+       + MicroAgent rules
   -> fitness tournament
-  -> Origami validation/promotion
+  -> Origami import / validation / storage
 ```
 
-The point of distillation is not to preserve private chain-of-thought. It preserves externally relevant state transitions, actions and effects so a complex swarm can be replaced at receive time by simpler deterministic local behavior where evidence shows that is safe.
+The point of distillation is not to preserve private chain-of-thought. It preserves externally relevant state transitions, **actions**, effects and provenance so a complex swarm can be replaced at receive time by simpler deterministic local behavior where evidence shows that is safe.
 
 ## Terms
 
@@ -29,8 +32,23 @@ The point of distillation is not to preserve private chain-of-thought. It preser
 - `internal/tlaloque` contains bounded specialist agents that diagnose findings and propose prompt patches.
 - `internal/distill` contains the experimental swarm-trace -> deterministic receiver-candidate path and receiver tournament.
 - `profiles/origami/hybrid-receiver-r0.json` defines the experimental receiver search objective and hard safety gates.
-- Origami remains authoritative for its receiver semantics and stores any promoted receiver artifact.
+- `tlaloc.origami-hybrid-artifact-set.r0` is the importable proposal contract consumed by Origami.
+- Origami remains authoritative for its receiver semantics, carrier-local physical bindings and promoted receiver storage.
 - Tlaloc retains candidate-search/evaluation authority; Tlaloque cannot promote their own proposals.
+
+## Two targets from one discovered behavior
+
+Tlaloc deliberately separates:
+
+```text
+UniversalPrompt
+  -> external receiver bootstrap
+
+BOOT strategy + Rosetta constraints + MicroProgram
+  -> carrier/runtime behavior proposal for Origami
+```
+
+The universal prompt should stay small and carrier-agnostic. Concrete glyph meanings belong inside each Origami carrier's own ROSETTA, not in Tlaloc's prompt.
 
 ## Current receiver hard gates
 
@@ -59,7 +77,9 @@ Hybrid Receiver R0 adds:
 go run ./cmd/behaviorlab receiver-distill \
   -trace testdata/receiver/swarm-trace-r0.json \
   -prompt testdata/receiver/universal-bootstrap-r0.md \
-  -out generated/origami-hybrid-receiver-r0.candidate.json
+  -window 4000 \
+  -out generated/origami-hybrid-receiver-r0.candidate.json \
+  -hybrid-out generated/origami-hybrid-receiver-r0.artifact-set.json
 
 go run ./cmd/behaviorlab receiver-rank \
   -in testdata/receiver/scored-candidates-r0.json \
@@ -67,4 +87,8 @@ go run ./cmd/behaviorlab receiver-rank \
   -out generated/origami-hybrid-receiver-r0.ranking.json
 ```
 
-`receiver-distill` turns a successful semantic swarm trace into a deterministic candidate with trace provenance. `receiver-rank` applies the multi-objective fitness function and hard safety gates. These commands produce Tlaloc **candidates/evidence**; they do not write directly into Origami's promoted receiver registry.
+`receiver-distill` now writes both the internal distilled candidate and the explicit Hybrid artifact set that Origami can import. `receiver-rank` applies the multi-objective fitness function and hard safety gates.
+
+These commands produce Tlaloc **candidates/evidence**; they do not write directly into Origami's promoted receiver registry.
+
+See `HYBRID_RECEIVER_PIPELINE_R0.md` for the complete swarm -> distillation -> Origami import loop.
