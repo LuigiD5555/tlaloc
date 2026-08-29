@@ -1,5 +1,13 @@
 # Tlaloc changelog
 
+## 6.0.0-alpha.7 — Origami perceptual-contract tracking
+
+- tracks Origami `6.0.0-alpha.2` and `origami.perceptual-channels.r0` as an upstream semantic contract;
+- updates the Origami project skill with interference/moiré, depth/stereo/parallax, Temporal Latent Image and temporal/emergent terminology;
+- distinguishes contract awareness from executable runtime support;
+- explicitly marks `MOIRE`, `PHASE_SHIFT`, `STEREO_BIND`, `PARALLAX_RESOLVE`, `KINETIC_REVEAL`, `TEMPORAL_INTEGRATE`, and `TEMPORAL_DECAY` as not yet implemented by Tlaloc evaluators/Tlaloque;
+- preserves the current coherent-state behavior profile and generated prompt unchanged.
+
 ## 6.0.0-alpha.6 — Independent repository lifecycle
 
 - Tlaloc repository becomes independently installable from source.
