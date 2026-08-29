@@ -1,4 +1,4 @@
-# Tlaloc 6.0.0-alpha.6
+# Tlaloc 6.0.0-alpha.7
 
 **TLALOC — Transformative Latent Adaptive Logic Orchestration Core**
 
@@ -13,10 +13,11 @@ Origami is an independent representation/state-machine language that Tlaloc may 
 - bounded Tlaloque repair proposals with centralized promotion authority;
 - deterministic reference-semantics comparison for the current Origami profile;
 - OpenAI-compatible transport for local/compatible endpoints;
-- `origami.quantum-inspired.r0` as the first bundled consumer profile;
+- `origami.quantum-inspired.r0` as the first bundled executable consumer profile;
+- awareness of Origami `6.0.0-alpha.2` / `origami.perceptual-channels.r0` as an upstream semantic contract (runtime generation/evaluation not yet implemented);
 - `CLAUDE.md` + `.claude/skills/` as checked-in project guidance for Claude Code and compatible agent workflows.
 
-The current Origami evaluator, reference engine, Tlaloque and curriculum are still profile-specific. Native Claude/Anthropic API support, generated Claude Skills/SkillIR, and GPT/Qwen/LFM-specific compiler backends are **not yet implemented**.
+The current Origami evaluator, reference engine, Tlaloque and curriculum are still specialized for the coherent-state profile. Tlaloc recognizes the newer Origami perceptual-channel contract (`MOIRE`, `STEREO_BIND`, `KINETIC_REVEAL`, temporal integration, etc.) but does **not** yet execute or evaluate those operations. Native Claude/Anthropic API support, generated Claude Skills/SkillIR, and GPT/Qwen/LFM-specific compiler backends are also **not yet implemented**.
 
 ## Project skills vs generated skills
 
