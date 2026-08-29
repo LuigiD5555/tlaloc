@@ -84,7 +84,7 @@ Existing Origami-profile Tlaloque remain useful for state-semantic failures. Rec
 
 ## Reference semantics
 
-The current profile calculates deterministic expected states through `internal/reference`. For Hybrid Receiver campaigns, Origami's own receiver/reference fixtures remain the semantic oracle. Tlaloc evaluates candidates against that oracle rather than reimplementing or redefining it.
+The current profile calculates deterministic expected states through `internal/reference`. For Hybrid Receiver campaigns, Origami's own receiver/reference fixtures remain the semantic reference authority. Tlaloc evaluates candidates against that reference evidence rather than reimplementing or redefining it.
 
 ## Fitness
 
