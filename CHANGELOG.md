@@ -1,5 +1,13 @@
 # Tlaloc changelog
 
+## 6.0.0-alpha.8 — Release/version coherence
+
+- fixed `install.sh` still installing `6.0.0-alpha.6` while the repository declared a newer release;
+- made root `VERSION` the installer version source instead of duplicating a hard-coded value;
+- added an installation regression gate that requires the managed version path/marker and `tlaloc version` to match root `VERSION`;
+- synchronized active integration guidance with Origami `6.0.0-alpha.3`, which preserves the alpha.2 perceptual contract while clarifying `Origami > OHF`;
+- updated active release documentation without changing BehaviorSpec, PromptIR, Tlaloque, reference semantics, or executable Origami integration behavior.
+
 ## 6.0.0-alpha.7 — Origami perceptual-contract tracking
 
 - tracks Origami `6.0.0-alpha.2` and `origami.perceptual-channels.r0` as an upstream semantic contract;
@@ -16,7 +24,6 @@
 - direct `uninstall.sh` defaults to Tlaloc-only removal; bundle/origami modes remain explicit for retrocompatibility.
 - legacy Origami/OHF/VCL cleanup remains available without transferring ownership of Origami to Tlaloc.
 - BPFW/PipeCraft and `.me/origami` remain hard-protected.
-
 
 ## 6.0.0-alpha.5 — Agent guidance + lifecycle retrocompatibility audit
 

@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TLALOC_VERSION="6.0.0-alpha.6"
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TLALOC_VERSION="$(tr -d '\r\n' < "$HERE/VERSION")"
+[[ -n "$TLALOC_VERSION" ]] || { echo "VERSION is empty" >&2; exit 1; }
 CLEAN_LEGACY=0
 YES=0
 PRUNE_OLD=0
 
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HOME_DIR="${HOME:?HOME is required}"
 DATA_HOME="${XDG_DATA_HOME:-$HOME_DIR/.local/share}"
 STATE_HOME="${XDG_STATE_HOME:-$HOME_DIR/.local/state}"
@@ -51,7 +52,6 @@ printf 'managed-by=tlaloc-installer-v1\n' > "$TLALOC_ROOT/.tlaloc-managed-v1"
 rm -rf -- "$TLALOC_DST.tmp"
 mkdir -p "$TLALOC_DST.tmp"
 
-# Copy source/repository payload without VCS metadata.
 (
   cd "$HERE"
   tar --exclude='./.git' --exclude='./.github' -cf - .
@@ -76,7 +76,6 @@ ln -sfn "$TLALOC_DST/bin/tlaloc" "$BIN_HOME/tlaloc"
 ln -sfn "$TLALOC_DST/bin/tlaloc-behavior-lab" "$BIN_HOME/tlaloc-behavior-lab"
 ln -sfn "$TLALOC_DST/tools/uninstall.sh" "$BIN_HOME/tlaloc-uninstall"
 
-# Migrate obsolete alpha.2 state manifest. Do not remove unrelated state.
 rm -f -- "$STATE_HOME/tlaloc/install-manifest-v1.tsv"
 rmdir "$STATE_HOME/tlaloc" 2>/dev/null || true
 
