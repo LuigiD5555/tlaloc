@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-skills=(tlaloc-project tlaloc-behavior tlaloc-tlaloque origami-semantics tlaloc-release)
+skills=(tlaloc-project tlaloc-behavior tlaloc-tlaloque origami-semantics tlaloc-release repo-flow)
 [[ -f "$ROOT/CLAUDE.md" ]]
 for name in "${skills[@]}"; do
   f="$ROOT/.claude/skills/$name/SKILL.md"
@@ -12,5 +12,6 @@ for name in "${skills[@]}"; do
   grep -q '^version: [0-9]' "$f"
 done
 grep -q 'Project-local Claude Code skills.*R0 implemented' "$ROOT/docs/CAPABILITY_STATUS.md"
+grep -q 'Reusable repository-flow skill installation.*R0 implemented' "$ROOT/docs/CAPABILITY_STATUS.md"
 grep -q 'SkillIR / generated Claude Skills.*not implemented' "$ROOT/docs/CAPABILITY_STATUS.md"
 echo PASS

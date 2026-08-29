@@ -16,6 +16,14 @@ CURRENT_TARGET="$(readlink -f "$HOME/.local/share/tlaloc/current")"
 [[ "$CURRENT_TARGET" == "$HOME/.local/share/tlaloc/versions/$EXPECTED_VERSION" ]]
 grep -qx $'Tlaloc\t'"$EXPECTED_VERSION" "$CURRENT_TARGET/.tlaloc-managed-version"
 PATH="$HOME/.local/bin:$PATH" tlaloc version | grep -qx "Tlaloc $EXPECTED_VERSION"
+PATH="$HOME/.local/bin:$PATH" tlaloc skills list | grep -qx 'repo-flow'
+mkdir -p "$TMP/project"
+git -C "$TMP/project" init -q
+(
+  cd "$TMP/project"
+  PATH="$HOME/.local/bin:$PATH" tlaloc skills install repo-flow >/dev/null
+)
+cmp "$CURRENT_TARGET/.claude/skills/repo-flow/SKILL.md" "$TMP/project/.claude/skills/repo-flow/SKILL.md"
 [[ ! -e "$HOME/.local/share/origami/current" ]]
 PATH="$HOME/.local/bin:$PATH" tlaloc doctor
 PATH="$HOME/.local/bin:$PATH" tlaloc-uninstall --yes

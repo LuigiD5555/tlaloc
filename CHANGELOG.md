@@ -1,5 +1,14 @@
 # Tlaloc changelog
 
+## 6.0.0-alpha.9 — Reusable repository workflow skill
+
+- added the project-agnostic `repo-flow` skill for Git/GitHub repository work: preflight, branch discipline, impact-scoped verification, atomic commits, PR review, conflict resolution, CI gating, merge and post-merge verification;
+- codified release/version consistency, changelog/change-control hygiene and multi-repository snapshot/pin rules without making submodules a user-project requirement;
+- added `tlaloc skills list`, `tlaloc skills path`, and `tlaloc skills install <name>`;
+- `tlaloc skills install repo-flow` installs into the current Git repository root and refuses to overwrite differing local content unless `--force` is explicit;
+- added regression coverage for skill discovery, idempotent installation, local-edit protection and explicit forced replacement;
+- no BehaviorSpec, PromptIR, Tlaloque, reference semantics, Origami contracts, or model-facing runtime behavior changed.
+
 ## 6.0.0-alpha.8 — Release/version coherence
 
 - fixed `install.sh` still installing `6.0.0-alpha.6` while the repository declared a newer release;
