@@ -13,6 +13,10 @@ This file distinguishes implemented behavior from intended architecture.
 | Tlaloque introspection | R0 implemented | `tlaloc tlaloque` lists current built-in specialists. |
 | Origami coherent-state profile | R0 implemented | First consumer profile and current test curriculum. |
 | Origami perceptual-channels contract | **contract-known / runtime not implemented** | Tracks current Origami `6.0.0-alpha.3`; `origami.perceptual-channels.r0` was introduced in alpha.2 and is unchanged in alpha.3; no renderer, detector, reference evaluator or Tlaloque curriculum for MOIRE/STEREO_BIND/KINETIC_REVEAL yet. |
+| Origami Hybrid Receiver contract | **experimental contract-known** | Feature branch recognizes `origami.hybrid-receiver.r0`; end-to-end visual Hybrid model evidence is not yet implemented/promoted. |
+| Receiver swarm-trace distillation | **experimental R0 implemented** | `internal/distill` converts externally relevant successful semantic transitions into deterministic MicroRule candidates, deduplicates equivalent transitions, rejects conflicts and retains SHA-256 trace provenance. This is behavioral artifact distillation, not model-weight training. |
+| Receiver candidate tournament | **experimental R0 implemented** | Scores bootstrap/Rosetta/navigation/correctness/evidence/UNKNOWN and hard-rejects contamination, false exactness and active-window violations. |
+| Receiver distillation CLI | **experimental R0 implemented** | `behaviorlab receiver-distill` and `receiver-rank` create/rank Tlaloc candidates; they do not promote/write Origami's canonical receiver registry. |
 | Origami reference evaluator/guards | R0 implemented | Reference semantics + evaluator remain profile-specific; not yet a generic plugin interface. |
 | OpenAI-compatible transport | R0 implemented | Intended for LM Studio and compatible endpoints. |
 | Project `CLAUDE.md` guidance | **R0 implemented** | Checked-in instructions for working on this codebase. |
@@ -25,7 +29,9 @@ This file distinguishes implemented behavior from intended architecture.
 | Native OpenAI model profile | **not implemented** | Transport compatibility is not the same as target-specific prompt compilation. |
 | Qwen/LFM target profiles | **not implemented** | Planned. |
 | Target-specific compiler optimization | **not implemented** | `target` is currently metadata/transport selection, not a specialized compiler backend. |
-| Behavioral distillation / weight training | **not implemented** | Future stage after prompt-level behavior is measurable and stable. |
+| General behavioral distillation / weight training | **not implemented** | Receiver R0 distills explicit external transition traces only. General behavior compression and model-weight training remain future work. |
+| Automated cross-repository receiver promotion | **not implemented** | Origami currently stores a reference candidate; Tlaloc does not automatically write/promote into Origami. Promotion remains explicit and gate-driven. |
+| End-to-end Hybrid VLM campaign | **not implemented** | Still requires an actual self-boot visual carrier, declared runtime tools, held-out tasks and cross-model symbol-permutation evidence. |
 | Managed installer/uninstaller | R0 implemented | Versioned user-local install with independent Tlaloc/Origami lifecycle. |
 | Legacy Origami/VCL/OHF cleanup | R0 implemented | Conservative scan/removal with hard exclusions. |
 | alpha.2 managed-layout migration | **implemented** | Accepts old Origami Tlaloc-named markers and removes obsolete alpha.2 installer-state manifest. |
