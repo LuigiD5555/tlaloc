@@ -1,0 +1,36 @@
+name: verify
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Prepare shell tests
+        run: chmod +x tests/*.sh tools/*.sh tools/tlaloc install.sh uninstall.sh legacy-cleanup.sh
+      - name: Verify release and project-skill coherence
+        run: |
+          bash tests/test-version-coherence.sh
+          bash tests/test-current-terminology.sh
+          bash tests/test-skills.sh
+          bash tests/test-project-skill-install.sh
+      - name: Verify isolated managed install lifecycle
+        run: bash tests/test-independent-install.sh
+      - name: Verify Behavior Lab
+        working-directory: behavior-lab
+        run: |
+          go test ./...
+          go vet ./...
+          go test -race ./...
+      - name: Verify generated artifacts
+        run: sha256sum -c GENERATED_ARTIFACTS.sha256
