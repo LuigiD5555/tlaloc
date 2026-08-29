@@ -1,0 +1,38 @@
+[
+  {
+    "agent": "boot-scout",
+    "state": "start",
+    "token": "BOOT_FOUND",
+    "action": "FOLLOW",
+    "next_state": "rosetta"
+  },
+  {
+    "agent": "rosetta-reader",
+    "state": "rosetta",
+    "token": "ROSETTA_READY",
+    "action": "INIT",
+    "next_state": "program"
+  },
+  {
+    "agent": "navigator",
+    "state": "program",
+    "token": "INDEX_READY",
+    "action": "LOOKUP",
+    "next_state": "memory"
+  },
+  {
+    "agent": "resolver",
+    "state": "memory",
+    "token": "VALUE_FOUND",
+    "action": "VERIFY",
+    "next_state": "verified",
+    "emit": "AMBER-10593"
+  },
+  {
+    "agent": "verifier",
+    "state": "verified",
+    "token": "PROOF_OK",
+    "action": "STOP",
+    "next_state": "done"
+  }
+]
