@@ -1,0 +1,42 @@
+{
+  "schema": "tlaloc.behavior-profile.r0",
+  "id": "origami-hybrid-receiver-r0",
+  "status": "EXPERIMENTAL_NOT_PROMOTED",
+  "upstream_contract": "origami.hybrid-receiver.r0",
+  "distillation_contract": "tlaloc.origami-receiver-distillation.r0",
+  "working_window_token_eq": 4000,
+  "objective": "Use Tlaloc swarm/Tlaloque exploration to discover reliable receiver behavior, then distill externally relevant behavior into a small universal prompt candidate plus deterministic micro-agent candidate rules for Origami validation.",
+  "search_targets": [
+    "universal bootstrap wording",
+    "BOOT discovery strategy",
+    "carrier-local ROSETTA discovery strategy",
+    "high-level navigation strategy",
+    "minimal retained semantic state",
+    "verification/UNKNOWN decision policy",
+    "micro-agent transition candidates"
+  ],
+  "must_not_optimize_away": [
+    "carrier-local symbol semantics",
+    "explicit guards/conditions/exceptions",
+    "UNKNOWN boundaries",
+    "verification requirements",
+    "semantic distinction between perception, resolution, execution and verification"
+  ],
+  "fitness": {
+    "bootstrap_success": 0.15,
+    "rosetta_success": 0.15,
+    "navigation": 0.15,
+    "correctness": 0.25,
+    "evidence": 0.15,
+    "unknown_accuracy": 0.15,
+    "tool_cost_tiebreak_penalty": 0.001
+  },
+  "hard_rejection": [
+    "CONTAMINATED",
+    "FALSE_EXACT_NONZERO",
+    "PEAK_ACTIVE_TOKEN_EQ_GT_4000",
+    "UNDECLARED_SYMBOL_SEMANTICS",
+    "NON_DETERMINISTIC_DISTILLED_TRANSITION"
+  ],
+  "promotion_destination": "Origami receiver artifact registry; Tlaloc does not become the storage authority for promoted Origami receiver artifacts."
+}
