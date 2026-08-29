@@ -18,12 +18,13 @@ jobs:
           go-version: 'stable'
       - name: Prepare shell tests
         run: chmod +x tests/*.sh tools/*.sh tools/tlaloc install.sh uninstall.sh legacy-cleanup.sh
-      - name: Verify release and project-skill coherence
+      - name: Verify release, skills and gatekeeper coherence
         run: |
           bash tests/test-version-coherence.sh
           bash tests/test-current-terminology.sh
           bash tests/test-skills.sh
           bash tests/test-project-skill-install.sh
+          bash tests/test-gatekeeper.sh
       - name: Verify isolated managed install lifecycle
         run: bash tests/test-independent-install.sh
       - name: Verify Behavior Lab
