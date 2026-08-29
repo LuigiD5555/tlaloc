@@ -31,9 +31,18 @@ The `.claude/skills/` directory contains five checked-in workflow skills owned b
 
 Use `tlaloc skills list`, `tlaloc skills path`, and `tlaloc skills install <name>` for these Tlaloc-owned skills. Installation refuses to overwrite a differing local skill unless `--force` is explicit.
 
-The project-agnostic `repo-flow` skill is **not owned or distributed by Tlaloc anymore**. Its canonical source and both `.claude/skills/` and `.agents/skills/` mirrors live in **Tonal** (`LuigiD5555/tonal`). Tlaloc keeps an explicit migration error for `tlaloc skills install repo-flow` so old usage fails clearly instead of silently installing a stale copy.
+Project-agnostic `repo-flow` and `gatekeeper` skills are owned by **Tonal** (`LuigiD5555/tonal`), not Tlaloc. This keeps one authority for Git/repository workflow and project-wide provenance policy.
 
 These checked-in project skills are not a second semantic source of truth and are not output from the Behavior Compiler. The intended future architecture remains `BehaviorSpec -> PromptIR / future SkillIR -> target-specific artifacts`.
+
+## Project Gatekeeper
+
+Tlaloc follows Tonal's project-wide Gatekeeper R0. `gatekeeper.json` is a local CI mirror and `GATEKEEPER.md` explains the component behavior.
+
+- owner PR (`LuigiD5555` from this canonical repository): normal Tlaloc verification still runs; explicit owner promotion override is allowed;
+- external PR: normal verification still runs and an `APPROVED` review from `LuigiD5555` is mandatory; external override/auto-promotion is denied.
+
+The policy controls promotion authority, not assumptions about code quality.
 
 ## Source-of-truth rule
 
@@ -45,12 +54,13 @@ These checked-in project skills are not a second semantic source of truth and ar
 - **Tlaloque** = bounded specialist agents coordinated by Tlaloc.
 - **Origami** = independent representation/state-machine language.
 - **reference semantics** = deterministic expected-state calculation; not an agent.
-- **Tonal** = independent composition/distribution layer for tested Tlaloc + Origami revisions and shared stack-level assets such as `repo-flow`.
+- **Tonal** = independent composition/distribution layer for tested Tlaloc + Origami revisions and shared stack-level workflow/promotion policy.
 
 See `docs/NOMENCLATURE.md`.
 
 ## Read first
 
+- `GATEKEEPER.md`
 - `docs/NOMENCLATURE.md`
 - `docs/ARCHITECTURE.md`
 - `docs/CAPABILITY_STATUS.md`
