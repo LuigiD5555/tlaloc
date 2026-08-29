@@ -31,6 +31,8 @@ func main() {
 		receiverDistillCmd(os.Args[2:])
 	case "receiver-rank":
 		receiverRankCmd(os.Args[2:])
+	case "receiver-run":
+		receiverRunCmd(os.Args[2:])
 	default:
 		usage()
 		os.Exit(2)
@@ -38,7 +40,7 @@ func main() {
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, "behaviorlab <compile|train|tlaloque|receiver-distill|receiver-rank> [flags]")
+	fmt.Fprintln(os.Stderr, "behaviorlab <compile|train|tlaloque|receiver-distill|receiver-rank|receiver-run> [flags]")
 }
 
 func loadSpec(path string) (spec.BehaviorSpec, error) {
@@ -159,6 +161,50 @@ func receiverRankCmd(args []string) {
 	must(os.WriteFile(*outPath, out, 0644))
 	fmt.Printf("WINNER=%s\n", winner.Candidate.ID)
 	fmt.Printf("SCORE=%.6f\n", winner.Score)
+	fmt.Println(*outPath)
+}
+
+func receiverRunCmd(args []string) {
+	fs := flag.NewFlagSet("receiver-run", flag.ExitOnError)
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234/v1", "OpenAI-compatible endpoint")
+	model := fs.String("model", "", "vision/tool-capable model identifier")
+	promptPath := fs.String("prompt", "", "Origami public/MASTER_PROMPT.md")
+	carrierPath := fs.String("carrier", "", "Origami public/carrier.png")
+	packetPath := fs.String("packet", "", "Origami public/model_packet.json")
+	origamiTool := fs.String("origami-tool", "origami-hybrid-tool", "Origami Hybrid tool executable")
+	question := fs.String("question", "", "held-out receiver question")
+	maxTurns := fs.Int("max-turns", 16, "maximum model/tool turns")
+	outPath := fs.String("out", "", "optional JSON result path; stdout when empty")
+	_ = fs.Parse(args)
+	if *model == "" || *promptPath == "" || *carrierPath == "" || *packetPath == "" || *question == "" {
+		fmt.Fprintln(os.Stderr, "receiver-run requires -model -prompt -carrier -packet -question")
+		os.Exit(2)
+	}
+	prompt, err := os.ReadFile(*promptPath)
+	must(err)
+	carrier, err := os.ReadFile(*carrierPath)
+	must(err)
+
+	client := target.OpenAICompat{BaseURL: *endpoint, Model: *model, Temperature: 0}
+	executor := target.OrigamiCLIExecutor{Binary: *origamiTool, Carrier: *carrierPath, Packet: *packetPath}
+	result, err := client.CompleteHybrid(context.Background(), target.HybridInput{
+		SystemPrompt: string(prompt),
+		Question: *question,
+		ImagePNG: carrier,
+		Tools: target.OrigamiHybridTools(),
+		Executor: executor,
+		MaxTurns: *maxTurns,
+	})
+	must(err)
+	b, err := json.MarshalIndent(result, "", "  ")
+	must(err)
+	b = append(b, '\n')
+	if *outPath == "" {
+		fmt.Print(string(b))
+		return
+	}
+	must(os.MkdirAll(filepath.Dir(*outPath), 0755))
+	must(os.WriteFile(*outPath, b, 0644))
 	fmt.Println(*outPath)
 }
 
