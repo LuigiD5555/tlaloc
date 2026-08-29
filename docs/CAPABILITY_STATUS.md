@@ -1,4 +1,4 @@
-# Capability status — Tlaloc 6.0.0-alpha.6
+# Capability status — Tlaloc 6.0.0-alpha.7
 
 Repository lifecycle: Tlaloc installs and uninstalls independently; Origami is optional. Legacy Origami/OHF/VCL cleanup is retained for migration only.
 
@@ -12,6 +12,7 @@ This file distinguishes implemented behavior from intended architecture.
 | Tlaloque bounded-agent layer | R0 implemented | Rule-based specialist agents under `internal/tlaloque`; centralized promotion authority. |
 | Tlaloque introspection | R0 implemented | `tlaloc tlaloque` lists current built-in specialists. |
 | Origami coherent-state profile | R0 implemented | First consumer profile and current test curriculum. |
+| Origami perceptual-channels contract | **contract-known / runtime not implemented** | Tracks Origami `6.0.0-alpha.2` / `origami.perceptual-channels.r0`; no renderer, detector, reference evaluator or Tlaloque curriculum for MOIRE/STEREO_BIND/KINETIC_REVEAL yet. |
 | Origami reference evaluator/guards | R0 implemented | Reference semantics + evaluator remain profile-specific; not yet a generic plugin interface. |
 | OpenAI-compatible transport | R0 implemented | Intended for LM Studio and compatible endpoints. |
 | Project `CLAUDE.md` guidance | **R0 implemented** | Checked-in instructions for working on this codebase. |
