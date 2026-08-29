@@ -101,7 +101,9 @@ func receiverDistillCmd(args []string) {
 	fs := flag.NewFlagSet("receiver-distill", flag.ExitOnError)
 	tracePath := fs.String("trace", "testdata/receiver/swarm-trace-r0.json", "successful semantic swarm trace JSON")
 	promptPath := fs.String("prompt", "testdata/receiver/universal-bootstrap-r0.md", "receiver prompt candidate")
-	outPath := fs.String("out", "generated/origami-hybrid-receiver-r0.candidate.json", "candidate output JSON")
+	outPath := fs.String("out", "generated/origami-hybrid-receiver-r0.candidate.json", "legacy distilled candidate JSON")
+	hybridOutPath := fs.String("hybrid-out", "generated/origami-hybrid-receiver-r0.artifact-set.json", "complete hybrid artifact-set JSON for Origami import")
+	window := fs.Int("window", 4000, "maximum active model-facing token-equivalent")
 	_ = fs.Parse(args)
 
 	traceBytes, err := os.ReadFile(*tracePath)
@@ -118,9 +120,20 @@ func receiverDistillCmd(args []string) {
 	b = append(b, '\n')
 	must(os.MkdirAll(filepath.Dir(*outPath), 0755))
 	must(os.WriteFile(*outPath, b, 0644))
+
+	hybrid, err := distill.BuildHybridArtifactSet(candidate, *window)
+	must(err)
+	hb, err := json.MarshalIndent(hybrid, "", "  ")
+	must(err)
+	hb = append(hb, '\n')
+	must(os.MkdirAll(filepath.Dir(*hybridOutPath), 0755))
+	must(os.WriteFile(*hybridOutPath, hb, 0644))
+
 	fmt.Printf("CANDIDATE_ID=%s\n", candidate.ID)
 	fmt.Printf("SOURCE_TRACE_SHA256=%s\n", candidate.SourceTraceSHA256)
-	fmt.Println(*outPath)
+	fmt.Printf("WORKING_WINDOW_TOKEN_EQ=%d\n", hybrid.WorkingWindow)
+	fmt.Printf("CANDIDATE=%s\n", *outPath)
+	fmt.Printf("HYBRID_ARTIFACT_SET=%s\n", *hybridOutPath)
 }
 
 func receiverRankCmd(args []string) {
