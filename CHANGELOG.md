@@ -7,6 +7,7 @@
 - keeps `tlaloc skills list/path/install` for Tlaloc-owned skills only;
 - `tlaloc skills install repo-flow` now fails with an explicit migration message pointing to Tonal instead of installing a stale copy;
 - replaces the old repo-flow-specific Tlaloc regression with project-skill installation coverage and asserts managed Tlaloc installs no longer contain `repo-flow`;
+- adds `.github/workflows/verify.yml` so pull requests and `main` pushes enforce release/version, terminology, skills, isolated install, Go test/vet/race, and generated-artifact hash gates;
 - no BehaviorSpec, PromptIR, Tlaloque, reference semantics, Origami contracts, generated prompt, or model-facing runtime behavior changed.
 
 ## 6.0.0-alpha.9 — Reusable repository workflow skill
