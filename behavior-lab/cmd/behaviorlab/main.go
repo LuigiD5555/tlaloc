@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"tlaloc.local/behaviorlab/internal/compiler"
+	"tlaloc.local/behaviorlab/internal/distill"
 	"tlaloc.local/behaviorlab/internal/spec"
 	"tlaloc.local/behaviorlab/internal/target"
 	"tlaloc.local/behaviorlab/internal/tlaloque"
@@ -26,13 +27,19 @@ func main() {
 		trainCmd(os.Args[2:])
 	case "tlaloque":
 		tlaloqueCmd()
+	case "receiver-distill":
+		receiverDistillCmd(os.Args[2:])
+	case "receiver-rank":
+		receiverRankCmd(os.Args[2:])
 	default:
 		usage()
 		os.Exit(2)
 	}
 }
 
-func usage() { fmt.Fprintln(os.Stderr, "behaviorlab <compile|train|tlaloque> [flags]") }
+func usage() {
+	fmt.Fprintln(os.Stderr, "behaviorlab <compile|train|tlaloque|receiver-distill|receiver-rank> [flags]")
+}
 
 func loadSpec(path string) (spec.BehaviorSpec, error) {
 	b, err := os.ReadFile(path)
@@ -88,6 +95,58 @@ func trainCmd(args []string) {
 	}
 	must(os.MkdirAll("generated", 0755))
 	must(os.WriteFile("generated/origami-quantum-inspired-r0.trained.prompt.md", []byte(compiler.Render(finalIR)), 0644))
+}
+
+func receiverDistillCmd(args []string) {
+	fs := flag.NewFlagSet("receiver-distill", flag.ExitOnError)
+	tracePath := fs.String("trace", "testdata/receiver/swarm-trace-r0.json", "successful semantic swarm trace JSON")
+	promptPath := fs.String("prompt", "testdata/receiver/universal-bootstrap-r0.md", "receiver prompt candidate")
+	outPath := fs.String("out", "generated/origami-hybrid-receiver-r0.candidate.json", "candidate output JSON")
+	_ = fs.Parse(args)
+
+	traceBytes, err := os.ReadFile(*tracePath)
+	must(err)
+	var trace []distill.SwarmStep
+	must(json.Unmarshal(traceBytes, &trace))
+	prompt, err := os.ReadFile(*promptPath)
+	must(err)
+
+	candidate, err := distill.Distill(string(prompt), trace)
+	must(err)
+	b, err := json.MarshalIndent(candidate, "", "  ")
+	must(err)
+	b = append(b, '\n')
+	must(os.MkdirAll(filepath.Dir(*outPath), 0755))
+	must(os.WriteFile(*outPath, b, 0644))
+	fmt.Printf("CANDIDATE_ID=%s\n", candidate.ID)
+	fmt.Printf("SOURCE_TRACE_SHA256=%s\n", candidate.SourceTraceSHA256)
+	fmt.Println(*outPath)
+}
+
+func receiverRankCmd(args []string) {
+	fs := flag.NewFlagSet("receiver-rank", flag.ExitOnError)
+	inPath := fs.String("in", "testdata/receiver/scored-candidates-r0.json", "scored receiver candidates JSON")
+	outPath := fs.String("out", "generated/origami-hybrid-receiver-r0.ranking.json", "ranked output JSON")
+	window := fs.Int("window", 4000, "maximum active model-facing token-equivalent")
+	_ = fs.Parse(args)
+
+	b, err := os.ReadFile(*inPath)
+	must(err)
+	var candidates []distill.ScoredCandidate
+	must(json.Unmarshal(b, &candidates))
+	ranked, err := distill.Rank(candidates, *window)
+	must(err)
+	winner, err := distill.Winner(candidates, *window)
+	must(err)
+
+	out, err := json.MarshalIndent(ranked, "", "  ")
+	must(err)
+	out = append(out, '\n')
+	must(os.MkdirAll(filepath.Dir(*outPath), 0755))
+	must(os.WriteFile(*outPath, out, 0644))
+	fmt.Printf("WINNER=%s\n", winner.Candidate.ID)
+	fmt.Printf("SCORE=%.6f\n", winner.Score)
+	fmt.Println(*outPath)
 }
 
 func tlaloqueCmd() {
