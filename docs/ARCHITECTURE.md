@@ -42,3 +42,7 @@ See `NOMENCLATURE.md` for naming rules.
 `CLAUDE.md` and `.claude/skills/` are checked-in instructions for coding agents working on this repository. They summarize architecture and workflows but do not define model behavior. The behavioral source of truth remains `BehaviorSpec + invariants`, and future compiler-generated SkillIR remains a separate, not-yet-implemented layer.
 
 The installer preserves these files inside the managed Tlaloc version but does not install or modify global `~/.claude` configuration.
+
+## Origami perceptual-contract awareness (alpha.7)
+
+Tlaloc can track Origami contracts independently of implementing them. Origami `6.0.0-alpha.2` introduces `origami.perceptual-channels.r0`; Tlaloc alpha.7 records that contract as upstream-known while the executable behavior profile remains `origami.quantum-inspired.r0`. This prevents semantic drift without pretending that moire, stereoscopic/depth or temporal-latent-image operations already have reference evaluators.
