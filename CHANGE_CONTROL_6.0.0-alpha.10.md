@@ -1,7 +1,7 @@
 # Change control — Tlaloc 6.0.0-alpha.10
 
 Date: 2026-08-28  
-Status: `CANDIDATE_REPO_FLOW_OWNERSHIP_MIGRATION`
+Status: `PROMOTED_REPO_FLOW_OWNERSHIP_MIGRATION`
 
 ## Component changed
 
@@ -30,7 +30,7 @@ Historical `6.0.0-alpha.9` records remain unchanged because they accurately desc
 
 ## Impact closure / gates
 
-The Tlaloc GitHub Actions workflow must pass:
+The Tlaloc GitHub Actions workflow verifies:
 
 - `tests/test-version-coherence.sh`;
 - `tests/test-current-terminology.sh`;
@@ -42,6 +42,10 @@ The Tlaloc GitHub Actions workflow must pass:
 
 Downstream Tonal CI must then fetch the promoted Tlaloc alpha.10 exact commit and pass the composition gates before Tonal updates its released lock.
 
+## Evidence
+
+Pull-request workflow run `33227726078` completed successfully on the release candidate. All shell/coherence gates, isolated install lifecycle, Behavior Lab Go test/vet/race, and generated-artifact hash verification passed. The generated prompt remains unchanged at SHA-256 `5f46e56e72f793d214053d87b30906cfe924a5fcb652450311e258519d981504`.
+
 ## Regression risk
 
 Low. No Go/model-facing runtime source changes. The intentional compatibility break is limited to the old `tlaloc skills install repo-flow` path, which now produces an explicit migration error instead of silently keeping a duplicate authority.
@@ -52,4 +56,4 @@ Tonal must publish a new composition revision after this Tlaloc release is promo
 
 ## Promotion decision
 
-Promote only after the Tlaloc pull-request workflow passes. Tonal composition promotion is a separate downstream gate.
+Promoted as `PROMOTED_REPO_FLOW_OWNERSHIP_MIGRATION` after the Tlaloc pull-request workflow passed. Tonal composition promotion remains a separate downstream gate.
