@@ -27,12 +27,26 @@ func TestSemanticT2IndexAnswerPassesWithoutExactPlane(t *testing.T) {
 		Question: "What is the index?",
 		ExpectedEntries: []string{"Foundations", "Methods", "Applications"},
 		DeclaredExactCapability: false,
-		ModelOutput: "Top-level T2 index: 1 Foundations; 2 Methods; 3 Applications. This is the visible semantic superindex.",
+		ExpectedSemanticDecoder: "S2",
+		DeclaredSemanticDecoder: "S2",
+		ModelOutput: "Using the declared S2 decoder on T2. Top-level T2 index: 1 Foundations; 2 Methods; 3 Applications.",
 	}
 	got := Evaluate(trial)
 	if !got.Pass { t.Fatalf("semantic T2 answer should pass: %+v", got) }
 	if got.IndexRecoveryRate != 1 { t.Fatalf("expected complete index recovery: %+v", got) }
+	if !got.DeclaredDecoderDiscovered { t.Fatalf("S2 discovery was not credited: %+v", got) }
 	if got.MechanicalDependencyViolation || len(got.UnverifiedMechanicalClaims) != 0 { t.Fatalf("clean semantic response flagged: %+v", got) }
+}
+
+func TestDeclaredDecoderLanguageIsNotDependencyViolation(t *testing.T) {
+	trial := Trial{
+		ID:"declared-decoder", QueryClass:QueryIndex, ExpectedEntries:[]string{"A","B"},
+		ExpectedSemanticDecoder:"S2", DeclaredSemanticDecoder:"S2",
+		ModelOutput:"The ROSETTA declares decoder S2. I use S2 to read T2: A, B.",
+	}
+	got := Evaluate(trial)
+	if !got.Pass { t.Fatalf("declared semantic decoder should be allowed: %+v", got) }
+	if got.UndeclaredExternalCodecDependency { t.Fatalf("declared S2 was misclassified as external: %+v", got) }
 }
 
 func TestExactQuestionMayUseDeclaredMechanicalCapability(t *testing.T) {
