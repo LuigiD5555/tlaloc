@@ -1,0 +1,57 @@
+{
+  "contract_id": "tlaloc.prompt-first-distillation.r0",
+  "status": "EXPERIMENTAL_REFERENCE_CONTRACT",
+  "purpose": "Use a swarm of bounded micro-actions as a behavioral reference laboratory, then distill and validate the least demanding deployable artifact, preferring prompt-only compatibility.",
+  "canonical_flow": [
+    "INTENT",
+    "BEHAVIOR_SPEC_AND_INVARIANTS",
+    "BOUNDED_TLALOQUE_SWARM",
+    "REFERENCE_EXECUTION_TRACES",
+    "REFERENCE_BEHAVIOR_EVIDENCE",
+    "PROMPT_DISTILLATION",
+    "CLEAN_TARGET_EVALUATION",
+    "BEHAVIORAL_FIDELITY_COMPARISON",
+    "PORTABLE_ARTIFACT"
+  ],
+  "deployment_ladder": [
+    {"level":"L0","artifact":"PROMPT_ONLY","allowed_dependencies":["LLM_TEXT_INTERFACE"]},
+    {"level":"L1","artifact":"PROMPT_PLUS_DECLARATIVE_CONTEXT_OR_IR","allowed_dependencies":["LLM_TEXT_INTERFACE","DECLARATIVE_CONTEXT_OR_IR"]},
+    {"level":"L2","artifact":"PROMPT_PLUS_TOOLS","allowed_dependencies":["LLM_TEXT_INTERFACE","DECLARED_TOOLS"]},
+    {"level":"L3","artifact":"PROMPT_PLUS_RUNTIME","allowed_dependencies":["LLM_TEXT_INTERFACE","DECLARED_RUNTIME"]},
+    {"level":"L4","artifact":"SPECIALIZED_MODEL_OR_TARGET_SPECIFIC_SYSTEM","allowed_dependencies":["EXPLICIT_TARGET_SPECIFIC_DEPENDENCIES"]}
+  ],
+  "selection_rule": "MINIMIZE_DEPLOYMENT_REQUIREMENTS_SUBJECT_TO_REQUIRED_BEHAVIORAL_FIDELITY",
+  "portable_default": "L0_PROMPT_ONLY",
+  "swarm_role": "REFERENCE_LABORATORY_NOT_DEFAULT_PRODUCTION_RUNTIME",
+  "distillation_target": "BEHAVIOR_NOT_TRACE_TEXT",
+  "clean_target": {
+    "must_not_receive": [
+      "PRIVATE_SWARM_TRACE",
+      "DEVELOPMENT_SANDBOX",
+      "EVALUATOR_GROUND_TRUTH",
+      "UNDECLARED_TOOL_STATE",
+      "TLALOC_INTERNAL_STATE"
+    ],
+    "may_receive": "ONLY_DEPENDENCIES_ALLOWED_BY_SELECTED_DEPLOYMENT_LEVEL"
+  },
+  "general_targets": [
+    "ORIGAMI",
+    "CALCULATOR",
+    "DOCUMENT_ANALYSIS",
+    "CLASSIFIER",
+    "WORKFLOW",
+    "OTHER_SOFTWARE_OR_BEHAVIOR"
+  ],
+  "hard_invariants": [
+    "PROMPT_FIRST_FOR_PORTABILITY",
+    "SWARM_IS_REFERENCE_LAB_NOT_DEFAULT_DEPLOYMENT",
+    "DEVELOPMENT_TOOLS_NE_DEPLOYMENT_REQUIREMENTS",
+    "BEHAVIORAL_FIDELITY_NE_TRACE_TEXT_SIMILARITY",
+    "CLEAN_TARGET_EVALUATION_REQUIRED",
+    "L0_REQUIRES_NO_SANDBOX",
+    "L0_REQUIRES_NO_TOOLS",
+    "L0_REQUIRES_NO_TLALOC_RUNTIME",
+    "FALLBACK_LEVEL_MUST_BE_EXPLICIT",
+    "ORIGAMI_IS_A_TARGET_NOT_TLALOC_IDENTITY"
+  ]
+}
