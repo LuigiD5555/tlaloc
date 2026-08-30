@@ -2,6 +2,7 @@ package automata
 
 const TraceSchema = "tlaloc.tlaloque-action-trace.r0"
 const AutomatonSchema = "origami.automaton.r0"
+const TemporalProgramSchema = "origami.temporal-program.r0"
 
 type Predicate struct {
 	CellID string `json:"cell_id"`
@@ -54,8 +55,21 @@ type AutomatonIR struct {
 	SourceTraceSHA256 string `json:"source_trace_sha256"`
 }
 
+// TemporalProgramIR intentionally matches Origami Temporal Program R0 fields.
+// The nested automaton may carry the extra source_trace_sha256 provenance field;
+// Origami readers ignore unknown JSON fields while preserving the canonical
+// automaton semantics.
+type TemporalProgramIR struct {
+	Schema          string      `json:"schema"`
+	ID              string      `json:"id"`
+	Automaton       AutomatonIR `json:"automaton"`
+	MaxSteps        int         `json:"max_steps"`
+	CheckpointEvery int         `json:"checkpoint_every,omitempty"`
+}
+
 type Metrics struct {
 	TraceSteps                 int     `json:"trace_steps"`
+	TraceMaxStep               int     `json:"trace_max_step"`
 	UniqueCells                int     `json:"unique_cells"`
 	UniqueRules                int     `json:"unique_rules"`
 	RepeatedTransitionsRemoved int     `json:"repeated_transitions_removed"`
@@ -63,7 +77,8 @@ type Metrics struct {
 }
 
 type Result struct {
-	Schema    string      `json:"schema"`
-	Automaton AutomatonIR `json:"automaton"`
-	Metrics   Metrics     `json:"metrics"`
+	Schema          string            `json:"schema"`
+	Automaton       AutomatonIR       `json:"automaton"`
+	TemporalProgram TemporalProgramIR `json:"temporal_program"`
+	Metrics         Metrics           `json:"metrics"`
 }
