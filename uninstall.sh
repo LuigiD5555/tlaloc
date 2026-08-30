@@ -10,7 +10,6 @@ SYSTEM=0
 TLALOC_ONLY=1
 ORIGAMI_ONLY=0
 INVOKED_AS="$(basename "$0")"
-# Project-specific entry points remove only their own component by default.
 case "$INVOKED_AS" in
   tlaloc-uninstall) TLALOC_ONLY=1 ;;
   origami-uninstall) ORIGAMI_ONLY=1 ;;
@@ -89,6 +88,10 @@ remove_bin_link_if_owned() {
   case "$target" in "$component_root/versions/"*) rm -f -- "$p"; echo "REMOVED link: $p" ;; esac
 }
 
+tlaloc_bins() {
+  printf '%s\n' tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-uninstall
+}
+
 remove_component_current() {
   local name="$1" root="$2" current target=""
   current="$root/current"
@@ -101,12 +104,11 @@ remove_component_current() {
   if [[ "$name" == tlaloc ]]; then
     [[ -f "$target/.tlaloc-managed-version" ]] || { echo "REFUSE  missing Tlaloc managed marker: $target" >&2; return 1; }
   else
-    # alpha.5+ uses an Origami marker; accept alpha.2's Tlaloc-named marker for safe migration/uninstall.
     [[ -f "$target/.origami-managed-version" || -f "$target/.tlaloc-managed-version" ]] || { echo "REFUSE  missing Origami managed marker: $target" >&2; return 1; }
   fi
 
   if [[ "$name" == tlaloc ]]; then
-    for b in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-uninstall; do remove_bin_link_if_owned "$BIN_HOME/$b" "$root"; done
+    while IFS= read -r b; do remove_bin_link_if_owned "$BIN_HOME/$b" "$root"; done < <(tlaloc_bins)
   else
     remove_bin_link_if_owned "$BIN_HOME/origami" "$root"
     remove_bin_link_if_owned "$BIN_HOME/origami-uninstall" "$root"
@@ -124,7 +126,7 @@ remove_all_managed_component() {
     [[ -f "$root/.origami-managed-v1" || -f "$root/.tlaloc-managed-v1" ]] || { echo "INFO  no managed $name root"; return 0; }
   fi
   if [[ "$name" == tlaloc ]]; then
-    for b in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-uninstall; do remove_bin_link_if_owned "$BIN_HOME/$b" "$root"; done
+    while IFS= read -r b; do remove_bin_link_if_owned "$BIN_HOME/$b" "$root"; done < <(tlaloc_bins)
   else
     remove_bin_link_if_owned "$BIN_HOME/origami" "$root"
     remove_bin_link_if_owned "$BIN_HOME/origami-uninstall" "$root"
@@ -169,7 +171,6 @@ case "$MODE" in
   legacy) run_legacy ;;
   current) run_managed ;;
   all)
-    # Legacy first because the cleaner is normally installed inside Tlaloc.
     run_legacy
     ALL_MANAGED=1
     run_managed
