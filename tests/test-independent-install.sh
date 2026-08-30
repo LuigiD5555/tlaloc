@@ -16,6 +16,10 @@ CURRENT_TARGET="$(readlink -f "$HOME/.local/share/tlaloc/current")"
 [[ "$CURRENT_TARGET" == "$HOME/.local/share/tlaloc/versions/$EXPECTED_VERSION" ]]
 grep -qx $'Tlaloc\t'"$EXPECTED_VERSION" "$CURRENT_TARGET/.tlaloc-managed-version"
 PATH="$HOME/.local/bin:$PATH" tlaloc version | grep -qx "Tlaloc $EXPECTED_VERSION"
+for cli in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-uninstall; do
+  [[ -L "$HOME/.local/bin/$cli" ]] || { echo "missing managed CLI: $cli" >&2; exit 1; }
+  [[ -x "$(readlink -f "$HOME/.local/bin/$cli")" ]] || { echo "managed CLI is not executable: $cli" >&2; exit 1; }
+done
 PATH="$HOME/.local/bin:$PATH" tlaloc skills list | grep -qx 'tlaloc-project'
 if PATH="$HOME/.local/bin:$PATH" tlaloc skills list | grep -qx 'repo-flow'; then
   echo "repo-flow must not be distributed by Tlaloc" >&2
@@ -38,3 +42,6 @@ grep -q 'repo-flow moved to Tonal' "$TMP/repo-flow.out"
 PATH="$HOME/.local/bin:$PATH" tlaloc doctor
 PATH="$HOME/.local/bin:$PATH" tlaloc-uninstall --yes
 [[ ! -e "$HOME/.local/share/tlaloc/current" ]]
+for cli in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-uninstall; do
+  [[ ! -e "$HOME/.local/bin/$cli" ]] || { echo "uninstall left managed CLI: $cli" >&2; exit 1; }
+done

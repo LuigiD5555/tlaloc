@@ -1,0 +1,100 @@
+{
+  "contract_id": "tlaloc.origami-visual-search.r0",
+  "status": "EXPERIMENTAL_SEARCH_MACHINERY",
+  "base_origami_profile": "origami.canonical-aesthetic.r0",
+  "upstream_perceptual_contract": "origami.perceptual-channels.r0",
+  "tlaloc_role": "DEVELOPMENT_KIT_AND_EXPERIMENTAL_SEARCH_SYSTEM_FOR_ORIGAMI_AND_OTHER_TOOLS",
+  "tonal_role": "OPTIONAL_MULTI_TOOL_DEVELOPMENT_COMPOSITION_LAYER_FOR_TLALOC_AND_ALTERNATIVE_OR_COMPLEMENTARY_TOOLCHAINS",
+  "purpose": "Search and rank evidence-backed candidate improvements to the single canonical Origami visual profile and Master Prompt without creating per-document private aesthetics. New versions optimize recoverable semantic capacity, carrier size, recognition time and bootstrap/decode work while preserving semantic/evidence invariants.",
+  "candidate_mutations": [
+    "PROMPT",
+    "CHANNEL_ROLE",
+    "PRIMITIVE",
+    "LAYOUT",
+    "REDUNDANCY",
+    "COLOR_USAGE",
+    "NUMERIC_STRUCTURE",
+    "INTERFERENCE_STRUCTURE",
+    "DEPTH_STRUCTURE",
+    "TEMPORAL_STRUCTURE",
+    "EMERGENT_STRUCTURE"
+  ],
+  "perceptual_operation_examples": {
+    "interference": ["MOIRE", "PHASE_SHIFT"],
+    "depth": ["STEREO_BIND", "PARALLAX_RESOLVE"],
+    "temporal": ["KINETIC_REVEAL", "TEMPORAL_INTEGRATE", "TEMPORAL_DECAY"],
+    "emergent": ["MULTI_LAYER_REVEAL", "RELATIONAL_PERCEPT"]
+  },
+  "numeric_structure_examples": [
+    "PRIME_DERIVED_SPACING",
+    "MODULAR_PATTERN",
+    "FACTORIZATION_STRUCTURE",
+    "PERIODIC_DENSITY"
+  ],
+  "optimization_objectives": {
+    "maximize": [
+      "semantic_roundtrip_rate",
+      "recoverable_semantic_units_per_carrier_byte",
+      "boot_probe_pass_rate",
+      "routing_accuracy",
+      "verified_evidence_rate",
+      "transport_pass_rate",
+      "perceptual_reveal_rate"
+    ],
+    "minimize": [
+      "carrier_bytes",
+      "mean_recognition_millis",
+      "mean_bootstrap_steps",
+      "mean_decode_steps",
+      "mean_context_tokens"
+    ],
+    "hard_zero": ["false_exact", "budget_violations", "unknown_violations"]
+  },
+  "default_metrics": [
+    "semantic_roundtrip_rate",
+    "boot_probe_pass_rate",
+    "routing_accuracy",
+    "verified_evidence_rate",
+    "transport_pass_rate",
+    "perceptual_reveal_rate",
+    "context_efficiency",
+    "mean_context_tokens",
+    "carrier_bytes",
+    "recoverable_semantic_units",
+    "mean_recognition_millis",
+    "mean_bootstrap_steps",
+    "mean_decode_steps",
+    "false_exact",
+    "budget_violations",
+    "unknown_violations",
+    "real_models",
+    "trials"
+  ],
+  "default_policy": {
+    "max_carrier_bytes": 512000,
+    "max_mean_context_tokens": 4000,
+    "min_semantic_roundtrip_rate": 1.0,
+    "min_verified_evidence_rate": 0.95,
+    "min_routing_accuracy": 0.95,
+    "min_perceptual_reveal_rate": 0.95,
+    "min_real_models_for_perception": 3,
+    "min_trials": 9,
+    "min_improvement": 0.01
+  },
+  "profile_evolution_rule": "A perceptual/numeric/color/layout candidate may change the canonical Origami aesthetic only after measured improvement and Origami semantic/visual validation. Origami itself owns promotion of its canonical profile. Tonal may later compose that promoted Origami revision with Tlaloc, Blueprint Framework or other development tools, but Tonal does not decide Origami semantics or profile promotion.",
+  "hard_invariants": [
+    "ONE_CANONICAL_AESTHETIC_PER_ORIGAMI_PROFILE_VERSION",
+    "CANDIDATE_MUTATION_REMAINS_EXPERIMENTAL",
+    "ROSETTA_DECLARES_PROMOTED_CHANNEL_SEMANTICS_AND_REVEAL",
+    "UNAVAILABLE_PERCEPTUAL_CHANNEL_RETURNS_UNKNOWN",
+    "SEMANTIC_ROUNDTRIP_NON_REGRESSION",
+    "FALSE_EXACT=0",
+    "BUDGET_VIOLATIONS=0",
+    "UNKNOWN_DISCIPLINE_NON_REGRESSION",
+    "TLALOC_RECOMMENDATION_ONLY",
+    "ORIGAMI_OWNS_PROFILE_PROMOTION",
+    "TONAL_COMPOSES_DEVELOPMENT_TOOLCHAINS_NOT_ORIGAMI_SEMANTICS"
+  ],
+  "reference_runtime": "internal/visualsearch",
+  "reference_cli": "cmd/tlaloc-visual-search"
+}
