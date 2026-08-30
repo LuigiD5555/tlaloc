@@ -35,24 +35,28 @@ type Candidate struct {
 }
 
 type Metrics struct {
-	SemanticRoundtripRate  float64 `json:"semantic_roundtrip_rate"`
-	BootProbePassRate      float64 `json:"boot_probe_pass_rate"`
-	RoutingAccuracy        float64 `json:"routing_accuracy"`
-	VerifiedEvidenceRate   float64 `json:"verified_evidence_rate"`
-	TransportPassRate      float64 `json:"transport_pass_rate"`
-	PerceptualRevealRate   float64 `json:"perceptual_reveal_rate,omitempty"`
-	ContextEfficiency      float64 `json:"context_efficiency"`
-	MeanContextTokens      float64 `json:"mean_context_tokens"`
-	CarrierBytes           int     `json:"carrier_bytes"`
-	RecoverableSemanticUnits int   `json:"recoverable_semantic_units,omitempty"`
-	MeanRecognitionMillis  float64 `json:"mean_recognition_millis,omitempty"`
-	MeanBootstrapSteps     float64 `json:"mean_bootstrap_steps,omitempty"`
-	MeanDecodeSteps        float64 `json:"mean_decode_steps,omitempty"`
-	FalseExact             int     `json:"false_exact"`
-	BudgetViolations       int     `json:"budget_violations"`
-	UnknownViolations      int     `json:"unknown_violations"`
-	RealModels             int     `json:"real_models"`
-	Trials                 int     `json:"trials"`
+	SemanticRoundtripRate       float64 `json:"semantic_roundtrip_rate"`
+	BootProbePassRate           float64 `json:"boot_probe_pass_rate"`
+	NativeIndexRecoveryRate     float64 `json:"native_index_recovery_rate"`
+	NativeSemanticAnswerRate    float64 `json:"native_semantic_answer_rate"`
+	RoutingAccuracy             float64 `json:"routing_accuracy"`
+	VerifiedEvidenceRate        float64 `json:"verified_evidence_rate"`
+	TransportPassRate           float64 `json:"transport_pass_rate"`
+	PerceptualRevealRate        float64 `json:"perceptual_reveal_rate,omitempty"`
+	ContextEfficiency           float64 `json:"context_efficiency"`
+	MeanContextTokens           float64 `json:"mean_context_tokens"`
+	CarrierBytes                int     `json:"carrier_bytes"`
+	RecoverableSemanticUnits    int     `json:"recoverable_semantic_units,omitempty"`
+	MeanRecognitionMillis       float64 `json:"mean_recognition_millis,omitempty"`
+	MeanBootstrapSteps          float64 `json:"mean_bootstrap_steps,omitempty"`
+	MeanDecodeSteps             float64 `json:"mean_decode_steps,omitempty"`
+	MechanicalDependencyViolations int `json:"mechanical_dependency_violations"`
+	UnverifiedMechanicalClaims  int     `json:"unverified_mechanical_claims"`
+	FalseExact                  int     `json:"false_exact"`
+	BudgetViolations            int     `json:"budget_violations"`
+	UnknownViolations           int     `json:"unknown_violations"`
+	RealModels                  int     `json:"real_models"`
+	Trials                      int     `json:"trials"`
 }
 
 type Evidence struct {
@@ -63,28 +67,32 @@ type Evidence struct {
 }
 
 type Policy struct {
-	MaxCarrierBytes             int     `json:"max_carrier_bytes"`
-	MaxMeanContextTokens        float64 `json:"max_mean_context_tokens"`
-	MinSemanticRoundtripRate    float64 `json:"min_semantic_roundtrip_rate"`
-	MinVerifiedEvidenceRate     float64 `json:"min_verified_evidence_rate"`
-	MinRoutingAccuracy          float64 `json:"min_routing_accuracy"`
-	MinPerceptualRevealRate     float64 `json:"min_perceptual_reveal_rate"`
-	MinRealModelsForPerception  int     `json:"min_real_models_for_perception"`
-	MinTrials                   int     `json:"min_trials"`
-	MinImprovement              float64 `json:"min_improvement"`
+	MaxCarrierBytes               int     `json:"max_carrier_bytes"`
+	MaxMeanContextTokens          float64 `json:"max_mean_context_tokens"`
+	MinSemanticRoundtripRate      float64 `json:"min_semantic_roundtrip_rate"`
+	MinNativeIndexRecoveryRate    float64 `json:"min_native_index_recovery_rate"`
+	MinNativeSemanticAnswerRate   float64 `json:"min_native_semantic_answer_rate"`
+	MinVerifiedEvidenceRate       float64 `json:"min_verified_evidence_rate"`
+	MinRoutingAccuracy            float64 `json:"min_routing_accuracy"`
+	MinPerceptualRevealRate       float64 `json:"min_perceptual_reveal_rate"`
+	MinRealModelsForPerception    int     `json:"min_real_models_for_perception"`
+	MinTrials                     int     `json:"min_trials"`
+	MinImprovement                float64 `json:"min_improvement"`
 }
 
 func DefaultPolicy() Policy {
 	return Policy{
-		MaxCarrierBytes: 512000,
-		MaxMeanContextTokens: 4000,
-		MinSemanticRoundtripRate: 1,
-		MinVerifiedEvidenceRate: .95,
-		MinRoutingAccuracy: .95,
-		MinPerceptualRevealRate: .95,
-		MinRealModelsForPerception: 3,
-		MinTrials: 9,
-		MinImprovement: .01,
+		MaxCarrierBytes:             512000,
+		MaxMeanContextTokens:        4000,
+		MinSemanticRoundtripRate:    1,
+		MinNativeIndexRecoveryRate:  .95,
+		MinNativeSemanticAnswerRate: .90,
+		MinVerifiedEvidenceRate:     .95,
+		MinRoutingAccuracy:          .95,
+		MinPerceptualRevealRate:     .95,
+		MinRealModelsForPerception:  3,
+		MinTrials:                   9,
+		MinImprovement:              .01,
 	}
 }
 
