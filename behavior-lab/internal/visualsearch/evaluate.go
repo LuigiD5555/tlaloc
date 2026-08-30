@@ -36,8 +36,8 @@ func Evaluate(candidate Candidate, baseline Metrics, evidence Evidence, policy P
 	}
 
 	metrics := evidence.Metrics
-	baselineScore := score(baseline, policy)
-	candidateScore := score(metrics, policy)
+	baselineScore := score(baseline, baseline, policy)
+	candidateScore := score(metrics, baseline, policy)
 	improvement := candidateScore - baselineScore
 
 	criticalNonRegression := metrics.SemanticRoundtripRate >= baseline.SemanticRoundtripRate &&
@@ -47,6 +47,8 @@ func Evaluate(candidate Candidate, baseline Metrics, evidence Evidence, policy P
 		metrics.BudgetViolations <= baseline.BudgetViolations &&
 		metrics.UnknownViolations <= baseline.UnknownViolations
 
+	perceptualCandidate := usesAdvancedPerceptualMutation(candidate)
+	perceptualPass := !perceptualCandidate || metrics.PerceptualRevealRate >= policy.MinPerceptualRevealRate
 	gates := []Gate{
 		gate("SEMANTIC_ROUNDTRIP", metrics.SemanticRoundtripRate >= policy.MinSemanticRoundtripRate, "semantic roundtrip must remain complete"),
 		gate("FALSE_EXACT_ZERO", metrics.FalseExact == 0, "FALSE_EXACT must remain zero"),
@@ -56,6 +58,7 @@ func Evaluate(candidate Candidate, baseline Metrics, evidence Evidence, policy P
 		gate("CONTEXT_BOUND", metrics.MeanContextTokens >= 0 && metrics.MeanContextTokens <= policy.MaxMeanContextTokens, "mean active context exceeds bound"),
 		gate("VERIFIED_EVIDENCE", metrics.VerifiedEvidenceRate >= policy.MinVerifiedEvidenceRate, "verified evidence rate below threshold"),
 		gate("ROUTING", metrics.RoutingAccuracy >= policy.MinRoutingAccuracy, "routing accuracy below threshold"),
+		gate("PERCEPTUAL_REVEAL", perceptualPass, "advanced perceptual channel reveal rate below threshold"),
 		gate("REAL_MODELS", metrics.RealModels >= policy.MinRealModelsForPerception, "insufficient real-model replication"),
 		gate("TRIALS", metrics.Trials >= policy.MinTrials, "insufficient trials"),
 		gate("CRITICAL_NON_REGRESSION", criticalNonRegression, "candidate regresses a critical semantic/evidence metric"),
@@ -142,19 +145,26 @@ func Rank(baseProfileID string, baseline Metrics, candidates []Candidate, eviden
 	return result, nil
 }
 
-func score(metrics Metrics, policy Policy) float64 {
-	sizeEfficiency := 0.0
-	if metrics.CarrierBytes > 0 && metrics.CarrierBytes <= policy.MaxCarrierBytes {
-		sizeEfficiency = 1 - float64(metrics.CarrierBytes)/float64(policy.MaxCarrierBytes)
-	}
+// score combines semantic correctness with the optimization objectives that
+// motivate a new Origami profile: more recoverable semantics per byte, faster
+// recognition and fewer bootstrap/decode steps. Relative terms are neutral at
+// 0.5 when candidate and baseline are equal.
+func score(metrics Metrics, baseline Metrics, policy Policy) float64 {
 	contextEfficiency := clamp01(metrics.ContextEfficiency)
-	return 0.25*clamp01(metrics.SemanticRoundtripRate) +
-		0.15*clamp01(metrics.BootProbePassRate) +
-		0.15*clamp01(metrics.RoutingAccuracy) +
-		0.15*clamp01(metrics.VerifiedEvidenceRate) +
-		0.10*clamp01(metrics.TransportPassRate) +
-		0.10*contextEfficiency +
-		0.10*sizeEfficiency
+	density := relativeSemanticDensity(metrics, baseline)
+	recognition := relativeLowerIsBetter(metrics.MeanRecognitionMillis, baseline.MeanRecognitionMillis)
+	bootstrap := relativeLowerIsBetter(metrics.MeanBootstrapSteps, baseline.MeanBootstrapSteps)
+	decode := relativeLowerIsBetter(metrics.MeanDecodeSteps, baseline.MeanDecodeSteps)
+	return 0.18*clamp01(metrics.SemanticRoundtripRate) +
+		0.10*clamp01(metrics.BootProbePassRate) +
+		0.10*clamp01(metrics.RoutingAccuracy) +
+		0.10*clamp01(metrics.VerifiedEvidenceRate) +
+		0.06*clamp01(metrics.TransportPassRate) +
+		0.06*contextEfficiency +
+		0.12*density +
+		0.10*recognition +
+		0.09*bootstrap +
+		0.09*decode
 }
 
 func normalizePolicy(policy Policy) Policy {
@@ -164,6 +174,7 @@ func normalizePolicy(policy Policy) Policy {
 	if policy.MinSemanticRoundtripRate <= 0 { policy.MinSemanticRoundtripRate = defaults.MinSemanticRoundtripRate }
 	if policy.MinVerifiedEvidenceRate <= 0 { policy.MinVerifiedEvidenceRate = defaults.MinVerifiedEvidenceRate }
 	if policy.MinRoutingAccuracy <= 0 { policy.MinRoutingAccuracy = defaults.MinRoutingAccuracy }
+	if policy.MinPerceptualRevealRate <= 0 { policy.MinPerceptualRevealRate = defaults.MinPerceptualRevealRate }
 	if policy.MinRealModelsForPerception <= 0 { policy.MinRealModelsForPerception = defaults.MinRealModelsForPerception }
 	if policy.MinTrials <= 0 { policy.MinTrials = defaults.MinTrials }
 	if policy.MinImprovement <= 0 { policy.MinImprovement = defaults.MinImprovement }
@@ -173,11 +184,41 @@ func normalizePolicy(policy Policy) Policy {
 func validMutationKind(kind MutationKind) bool {
 	switch kind {
 	case MutationPrompt, MutationChannelRole, MutationPrimitive, MutationLayout, MutationRedundancy,
-		MutationColorUsage, MutationNumericStructure, MutationTemporalStructure:
+		MutationColorUsage, MutationNumericStructure, MutationInterferenceStructure, MutationDepthStructure,
+		MutationTemporalStructure, MutationEmergentStructure:
 		return true
 	default:
 		return false
 	}
+}
+
+func usesAdvancedPerceptualMutation(candidate Candidate) bool {
+	for _, mutation := range candidate.Mutations {
+		switch mutation.Kind {
+		case MutationInterferenceStructure, MutationDepthStructure, MutationTemporalStructure, MutationEmergentStructure:
+			return true
+		}
+	}
+	return false
+}
+
+func relativeSemanticDensity(candidate, baseline Metrics) float64 {
+	if candidate.RecoverableSemanticUnits <= 0 || baseline.RecoverableSemanticUnits <= 0 || candidate.CarrierBytes <= 0 || baseline.CarrierBytes <= 0 {
+		return 0.5
+	}
+	candidateDensity := float64(candidate.RecoverableSemanticUnits) / float64(candidate.CarrierBytes)
+	baselineDensity := float64(baseline.RecoverableSemanticUnits) / float64(baseline.CarrierBytes)
+	return relativeHigherIsBetter(candidateDensity, baselineDensity)
+}
+
+func relativeHigherIsBetter(candidate, baseline float64) float64 {
+	if candidate <= 0 || baseline <= 0 { return 0.5 }
+	return candidate / (candidate + baseline)
+}
+
+func relativeLowerIsBetter(candidate, baseline float64) float64 {
+	if candidate <= 0 || baseline <= 0 { return 0.5 }
+	return baseline / (candidate + baseline)
 }
 
 func gate(name string, pass bool, reason string) Gate {
