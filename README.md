@@ -1,4 +1,4 @@
-# Tlaloc 6.0.0-alpha.14
+# Tlaloc 6.0.0-alpha.15
 
 **TLALOC — Transformative Latent Adaptive Logic Orchestration Core**
 
@@ -115,9 +115,43 @@ current Origami canonical profile
         -> deterministic + real-model evidence
         -> tournament
         -> recommendation to Origami
+
+NATIVE SEMANTIC REGRESSION R0
+failed prompt-only/native trial
+        -> deterministic failure classification
+        -> permanent regression
+        -> T2/index + semantic-answer + no-mechanical-dependency gates
+        -> visual/prompt candidates must beat the failure
 ```
 
 These components do not make Tlaloc an Origami runtime dependency.
+
+## Failure-driven Native semantic evaluation — alpha.15
+
+A real external trial asked a model for the index of an Origami book carrier. The model could read the bootstrap but then treated the carrier as a binary archive: it requested file/decoder access and produced unverified byte, compression and hash claims instead of reading the semantic index.
+
+Tlaloc alpha.15 turns that failure into an executable development constraint. `behavior-lab/internal/nativeeval` and `tlaloc-native-eval` score target output without using another LLM as judge.
+
+For semantic queries such as identity, index, overview and topic location, Tlaloc now tracks:
+
+```text
+native_index_recovery_rate
+native_semantic_answer_rate
+mechanical_dependency_violations
+unverified_mechanical_claims
+```
+
+A candidate Origami profile/prompt cannot be recommended when semantic navigation requires undeclared binary extraction, filesystem/sandbox access or decompression. A visually denser or smaller carrier is not an improvement if a plain multimodal model cannot use its semantic plane.
+
+Reference gates are described in `behavior-lab/spec/NATIVE_SEMANTIC_REGRESSION_R0.json`.
+
+Manual evaluation example:
+
+```bash
+./bin/tlaloc-native-eval -in trial.json -out result.json
+```
+
+The matching Origami change owns the actual T2/semantic carrier correction; Tlaloc only measures candidates and turns failures into regressions.
 
 ## Development complexity vs deployment complexity
 
@@ -164,6 +198,8 @@ This prevents a prompt from appearing successful merely because the development 
 - prompt candidate experimentation;
 - prompt-first deployment selection;
 - clean-target behavioral comparison;
+- failure-to-regression conversion;
+- deterministic Native semantic response evaluation;
 - regression gates;
 - OpenAI-compatible model adapters;
 - target-specific experiment tracks, including Origami.
@@ -202,6 +238,8 @@ DEPTH_STRUCTURE
 TEMPORAL_STRUCTURE
 EMERGENT_STRUCTURE
 ```
+
+Alpha.15 adds first-class Native semantic fitness: index recovery and semantic usability without undeclared mechanical decoding must not regress.
 
 Prime/modular patterns, moire/phase, stereo/parallax, temporal and emergent structures remain candidates until real evidence demonstrates improvement.
 
@@ -261,6 +299,7 @@ See `docs/NOMENCLATURE.md`.
 - `docs/CAPABILITY_STATUS.md`
 - `docs/ORIGAMI_INTEGRATION_CONTRACT.md`
 - `docs/ORIGAMI_VISUAL_EVOLUTION_R0.md`
+- `behavior-lab/spec/NATIVE_SEMANTIC_REGRESSION_R0.json`
 - `GATEKEEPER.md`
 
 ## Install from source
@@ -284,6 +323,9 @@ L0 PROMPT REQUIRES NO TOOLS / SANDBOX / TLALOC RUNTIME
 DEVELOPMENT DEPENDENCIES != DEPLOYMENT DEPENDENCIES
 BEHAVIORAL FIDELITY != TRACE TEXT SIMILARITY
 CLEAN TARGET EVALUATION REQUIRED
+FAILED REAL TRIAL -> REGRESSION
+SEMANTIC NAVIGATION != UNDECLARED BINARY DECODE
+UNVERIFIED MECHANICAL CLAIMS BLOCK RECOMMENDATION
 ORIGAMI IS A TARGET, NOT TLALOC'S IDENTITY
 TLALOC CANDIDATE != CANONICAL ORIGAMI PROFILE
 MOCK != EMPIRICAL EVIDENCE
@@ -292,4 +334,4 @@ FALSE_EXACT = 0 WHERE EXACTNESS IS CLAIMED
 
 ## Version
 
-`6.0.0-alpha.14`
+`6.0.0-alpha.15`
