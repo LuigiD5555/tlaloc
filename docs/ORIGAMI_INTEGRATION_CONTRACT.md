@@ -106,4 +106,8 @@ Origami may be used independently of Tlaloc, and Tlaloc may operate without Orig
 
 ## Contract tracking
 
-The currently promoted Tlaloc mainline recognizes Origami `6.0.0-alpha.3` and earlier contract IDs. The Hybrid Receiver and Receiver Distillation contracts in this feature branch are **experimental and not yet a promoted compatibility claim**. Tonal must not pin them as SUPPORTED until both component branches pass their gates and are merged to immutable commits.
+Tlaloc alpha.11 recognizes the experimental Origami Fixed Carrier R2 contract from Origami alpha.5 in addition to earlier contract IDs. This is an implemented local integration path, not a Tonal SUPPORTED composition claim until both component revisions are merged and Tonal pins immutable commits.
+
+## Fixed Carrier R2 integration
+
+For `origami.fixed-carrier.r2`, Tlaloc may provide `tlaloc.origami-tools.r2` as a declared external data/tool plane. Tlaloc must validate the carrier through the independent Origami decoder, match carrier/store/source roots, and verify page CIDs before returning exact data. OCR failure is not a BOOT failure. A missing image returns `ORIGAMI_IMAGE_UNAVAILABLE`; a missing tool plane for external exact data returns `ORIGAMI_TOOL_REQUIRED`.
