@@ -1,5 +1,18 @@
 # Tlaloc changelog
 
+## 6.0.0-alpha.16 — Origami Protocol Interoperability R0
+
+- adds deterministic READ/WRITE/ROUNDTRIP/MULTIHOP evaluation for Origami Protocol R0;
+- adds `tlaloc-protocol-eval` and `behavior-lab/internal/protocoleval` without using another LLM as judge;
+- measures declared S2/E2 codec discovery, semantic preservation, invented facts, hop-to-hop/final semantic drift and cross-model read/write success;
+- compares entities, relations, hierarchy, evidence and uncertainty through canonical structural atoms;
+- refines the alpha.15 Native regression so a self-declared semantic decoder such as `S2` is valid while undeclared external decoder/file/binary dependency remains a failure;
+- adds a separate semantic-to-exact escalation violation for unnecessary bit extraction/decompression/exact mechanics on semantic questions;
+- adds `ORIGAMI_PROTOCOL_INTEROP_R0`, `CODEC_ROUNDTRIP_R0` and `CROSS_MODEL_COMMUNICATION_R0` development contracts;
+- adds synthetic perfect-multihop fixtures strictly for evaluator validation and a separate real-trial template for held-out evidence;
+- explicitly keeps real cross-model interoperability evidence pending; synthetic harness success is not promotion evidence;
+- preserves Tlaloc's authority boundary: Tlaloc evaluates/recommends, Origami owns protocol/profile promotion, Tonal may later pin a reproducible composition.
+
 ## 6.0.0-alpha.15 — Native Semantic Regression R0
 
 - turns a failed real prompt-only/multimodal Origami index trial into a deterministic regression instead of discarding it as anecdotal evidence;
