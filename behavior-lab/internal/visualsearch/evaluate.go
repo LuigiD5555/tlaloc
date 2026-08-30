@@ -31,7 +31,7 @@ func Evaluate(candidate Candidate, baseline Metrics, evidence Evidence, policy P
 			return Evaluation{}, fmt.Errorf("mutation %d requires target and value", i)
 		}
 		if !mutation.Experimental {
-			return Evaluation{}, fmt.Errorf("candidate mutation %d must remain experimental until Origami/Tonal promotion", i)
+			return Evaluation{}, fmt.Errorf("candidate mutation %d must remain experimental until Origami promotion", i)
 		}
 	}
 
@@ -112,7 +112,7 @@ func Rank(baseProfileID string, baseline Metrics, candidates []Candidate, eviden
 		Schema:         SchemaR0 + ".tournament",
 		BaseProfileID:  baseProfileID,
 		Baseline:       baseline,
-		Authority:      "TLALOC_RECOMMENDATION_ONLY_ORIGAMI_VALIDATES_TONAL_PROMOTES",
+		Authority:      "TLALOC_RECOMMENDATION_ONLY_ORIGAMI_OWNS_PROFILE_PROMOTION_TONAL_COMPOSES_TOOLCHAINS",
 		Recommendation: "NO_CANDIDATE_READY",
 	}
 	for _, candidate := range candidates {
