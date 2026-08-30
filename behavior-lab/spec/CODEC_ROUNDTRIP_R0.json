@@ -1,0 +1,29 @@
+{
+  "contract_id": "tlaloc.codec-roundtrip.r0",
+  "status": "EXPERIMENTAL_REFERENCE_IMPLEMENTED",
+  "purpose": "Measure whether a declared Origami semantic encoder and decoder preserve the same bounded semantic state across construction and recovery.",
+  "reference_equation": "S2(E2(SEMANTIC_INDEX)) ~= SEMANTIC_INDEX",
+  "required_artifacts": ["source_semantic_state","decoder_codec_id","encoder_codec_id","decoded_state","reencoded_state"],
+  "comparison": {
+    "method": "canonical structural set comparison",
+    "fields": ["entities","relations","hierarchy","evidence","uncertainty"],
+    "case_and_whitespace": "canonicalized",
+    "invented_atoms": "counted_as_error",
+    "missing_atoms": "counted_as_drift"
+  },
+  "reference_gates": {
+    "semantic_drift_max": 0.05,
+    "invented_fact_rate_max": 0.0,
+    "decoder_must_match_declared": true,
+    "encoder_must_match_declared": true,
+    "undeclared_external_codec_dependency": false,
+    "semantic_to_exact_escalation": false
+  },
+  "hard_invariants": [
+    "ENCODER_AND_DECODER_ARE_PAIRED_BUT_DISTINCT",
+    "STRUCTURAL_ROUNDTRIP_NE_BYTE_IDENTITY",
+    "EXACT_FIELDS_REQUIRE_EXACT_VERIFICATION_WHEN_IN_SCOPE",
+    "SEMANTIC_ROUNDTRIP_REQUIRES_NO_LLM_JUDGE",
+    "FALSE_EXACT=0"
+  ]
+}
