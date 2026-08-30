@@ -1,38 +1,168 @@
-# Tlaloc 6.0.0-alpha.12
+# Tlaloc 6.0.0-alpha.13
 
 **TLALOC — Transformative Latent Adaptive Logic Orchestration Core**
 
-Tlaloc is the work system: behavior compilation, Tlaloque coordination/training, orchestration, verification, promotion control and model-facing execution.
+Tlaloc is the work system: behavior compilation, Tlaloque coordination/training, orchestration, verification, experimentation, promotion recommendations and model-facing execution.
 
-Origami is an independent representation/state-machine language that Tlaloc may use. It is neither the name of Tlaloc nor a mandatory dependency.
+Origami is an independent representation/state-machine/visual language. Tlaloc may use it and experimentally search for better ways to make its canonical representation readable, compact and robust, but Tlaloc does not own Origami semantics or directly mutate its canonical profile.
 
 ## Current implementation
 
-R2 canonical-memory work provides a layout-preserving Canonical Document IR, evidence-backed Tlaloque candidate protocol, deterministic CanonicalState reducer, uncertainty-driven verification queues, Merkle/CID exact plane and External Recursive Attention over a bounded active context.
+Tlaloc currently combines three major Origami-facing paths:
 
-Alpha.12 adds the cross-model perception-promotion campaign machinery that had previously existed only as a planned/local second round. It does **not** claim that any external VLM has passed those gates.
+```text
+CANONICAL MEMORY R2
+PDF/image source -> Canonical Document IR -> exact/evidence plane
+             -> Tlaloque candidates -> CanonicalState -> ERA H0-H5
 
-- `behavior-lab/` — bounded behavior-compilation and Origami integration laboratory in Go;
-- `BehaviorSpec` -> `PromptIR` -> compiled prompt;
-- bounded Tlaloque repair proposals with centralized promotion authority;
-- deterministic reference-semantics comparison for declared Origami profiles;
-- OpenAI-compatible text and multimodal transport for local/compatible endpoints;
-- awareness of Origami through `6.0.0-alpha.8`, including Semantic Spine R1, Fixed Carrier R2, Evidence Reduction R0 and Perception Promotion R1;
-- experimental `origami-hybrid-receiver-r0` profile and `internal/distill` path for turning successful swarm traces into simple deterministic receiver-rule candidates;
-- receiver-candidate fitness gates for bootstrap, Rosetta use, navigation, correctness, evidence, UNKNOWN, active-context budget, contamination and false exactness;
-- `tlaloc-origami` Fixed Carrier R2 PDF memory plane: deterministic PDF ingest, page/CID addressing, Merkle verification, generated Master Prompt, fixed-carrier compilation, `QUERY/EXPAND/VERIFY`, and OpenAI-compatible multimodal tool/text-bridge execution;
-- perception-campaign transport variants: original PNG, 75% resize, 50% resize and JPEG preview;
-- strict real-model observation runner that gives the target model prompt + question + one image and does not leak evaluator ground truth;
-- bridge to Origami's independent `origami-perception-eval` per-trial evaluator;
-- campaign aggregation requiring real-model trials, transport coverage, real tool loops and held-out routing evidence before producing a Hybrid candidate;
-- Native T3 campaign state kept independent from Hybrid support;
-- `CLAUDE.md` + five `.claude/skills/` entries as checked-in guidance specific to Tlaloc/Origami development.
+PERCEPTION PROMOTION R1
+carrier -> transport variants -> real-model observations
+        -> independent Origami evaluator -> tool-loop/routing gates
 
-The Hybrid Receiver and Perception Promotion work are **experimental and not yet promoted compatibility claims**. Tlaloc may run campaigns and produce promotion recommendations, but Origami remains the authority for its semantic/perceptual contracts and Tonal remains the authority for aggregate stack promotion.
+VISUAL EVOLUTION R0
+current Origami canonical profile
+        -> candidate prompt/shape/layout/color/numeric/temporal mutations
+        -> deterministic + real-model evidence
+        -> tournament
+        -> recommendation to Origami only
+```
 
-A perfect mock campaign validates machinery only. It can never satisfy empirical promotion. A real successful single trial is still only one trial.
+Alpha.13 adds **Origami Visual Evolution R0**. Its object of search is a candidate next canonical Origami profile, not a new aesthetic for every document.
 
-The current perceptual-channel operation family (`MOIRE`, `STEREO_BIND`, `KINETIC_REVEAL`, temporal integration, etc.) remains only partially executable. Native Claude/Anthropic API support, generated Claude Skills/SkillIR, and GPT/Qwen/LFM-specific compiler backends are also **not yet implemented**.
+### Existing R2 / alpha.12 machinery
+
+- layout-preserving Canonical Document IR with OCR fallback and exact source preservation;
+- stable page/block/region addresses, CIDs and Merkle exact plane;
+- proposal-only Tlaloque candidate generation, deterministic CanonicalState and conflict/uncertainty control;
+- External Recursive Attention H0-H5 under bounded active context;
+- `tlaloc.origami-tools.r2` BOOT/QUERY/EXPAND/VERIFY bridge;
+- OpenAI-compatible multimodal function/tool loop and text fallback;
+- cross-model Perception Promotion Campaign machinery;
+- original, 75%, 50% and JPEG-preview transport variants;
+- REAL_MODEL-only aggregate gates, default 3 models x 3 original trials;
+- real tool-loop and held-out routing gates;
+- Hybrid and Native T3 candidate states kept separate.
+
+### New Visual Evolution R0 machinery
+
+Tlaloc can represent experimental profile mutations as:
+
+```text
+PROMPT
+CHANNEL_ROLE
+PRIMITIVE
+LAYOUT
+REDUNDANCY
+COLOR_USAGE
+NUMERIC_STRUCTURE
+TEMPORAL_STRUCTURE
+```
+
+Examples of `NUMERIC_STRUCTURE` candidates include prime-derived spacing, modular patterns, factorization structures and periodic density. These are experimental encodings, not privileged or automatically useful.
+
+The reference tournament measures:
+
+```text
+semantic_roundtrip_rate
+boot_probe_pass_rate
+routing_accuracy
+verified_evidence_rate
+transport_pass_rate
+context_efficiency
+mean_context_tokens
+carrier_bytes
+false_exact
+budget_violations
+unknown_violations
+real_models
+trials
+```
+
+A candidate cannot be recommended when it regresses semantic roundtrip, evidence/routing discipline, UNKNOWN behavior, budget, carrier-size limits or `FALSE_EXACT=0`.
+
+The reference output authority is deliberately:
+
+```text
+TLALOC_RECOMMENDATION_ONLY_ORIGAMI_VALIDATES_TONAL_PROMOTES
+```
+
+Tlaloc never turns the winning experiment directly into canonical Origami.
+
+## One Origami aesthetic, versioned evolution
+
+Tlaloc now tracks the intended Origami rule:
+
+```text
+ONE CANONICAL ORIGAMI AESTHETIC PER PROFILE VERSION
+```
+
+ROSETTA remains mandatory for profile/version, active dimensions and concrete bindings, but it does not mean that each PDF may invent a private visual dialect.
+
+The intended evolution loop is:
+
+```text
+Origami canonical profile N
+        |
+        v
+Tlaloc experiments
+ prompt / geometry / layout / redundancy /
+ color / numeric structure / temporal structure
+        |
+        v
+candidate + evidence
+        |
+        v
+Origami semantic/visual validation
+        |
+        v
+Tonal composition/promotion gate
+        |
+        v
+Origami canonical profile N+1
+```
+
+Old carriers remain readable through their embedded profile/version and ROSETTA.
+
+## Prompt ownership
+
+Origami's universal Master Prompt is the canonical READ/WRITE behavior contract.
+
+Tlaloc may:
+
+- generate operational prompts for a specific experiment/runtime;
+- mutate prompt candidates experimentally;
+- benchmark prompts across real models;
+- distill successful behavior into candidates.
+
+It may not silently redefine what Origami means. Prompt mutations are evaluated against the same semantic and visual contracts as visual mutations.
+
+The Fixed Carrier R2 prompt used by `tlaloc-origami` is therefore an operational receiver bridge for the current profile, not a second semantic source of truth.
+
+## Visual evolution CLI
+
+From `behavior-lab`:
+
+```bash
+go run ./cmd/tlaloc-visual-search \
+  -in experiment.json \
+  -out tournament.json
+```
+
+The input contains one baseline profile metrics set plus candidate mutations and their evidence bundles. The output ranks candidates and may recommend one for **Origami validation**.
+
+A recommendation is not a profile promotion.
+
+## Perception campaign CLI
+
+The alpha.12 campaign machinery remains available through:
+
+```text
+tlaloc-perception-campaign
+```
+
+It executes frozen carrier/prompt trials against OpenAI-compatible image-capable models, calls the independent Origami evaluator and aggregates real-model/tool-loop/routing evidence.
+
+No repository test or mock run is treated as evidence that external VLMs actually support Hybrid or Native Origami.
 
 ## Project skills vs generated skills
 
@@ -44,49 +174,28 @@ The `.claude/skills/` directory contains five checked-in workflow skills owned b
 - `origami-semantics`
 - `tlaloc-release`
 
-Use `tlaloc skills list`, `tlaloc skills path`, and `tlaloc skills install <name>` for these Tlaloc-owned skills. Installation refuses to overwrite a differing local skill unless `--force` is explicit.
+Use `tlaloc skills list/path/install` for these Tlaloc-owned project skills. Project-agnostic `repo-flow` and `gatekeeper` remain Tonal-owned.
 
-Project-agnostic `repo-flow` and `gatekeeper` skills are owned by **Tonal** (`LuigiD5555/tonal`), not Tlaloc. This keeps one authority for Git/repository workflow and project-wide provenance policy.
-
-These checked-in project skills are not a second semantic source of truth and are not output from the Behavior Compiler. The intended architecture has related compiled/distilled/search paths:
-
-```text
-BehaviorSpec -> PromptIR / future SkillIR -> target-specific behavior artifacts
-
-Origami receiver contract -> swarm search -> receiver candidate
-  -> prompt + BOOT/Rosetta strategy + MicroAgent IR
-  -> Origami validation/promotion
-
-Origami perception contract -> cross-model campaign
-  -> per-trial Origami evaluator reports
-  -> routing/tool-loop/transport gates
-  -> Tlaloc promotion recommendation
-  -> Tonal aggregate promotion
-```
-
-## Project Gatekeeper
-
-Tlaloc follows Tonal's project-wide Gatekeeper R0. `gatekeeper.json` is a local CI mirror and `GATEKEEPER.md` explains the component behavior.
-
-- owner PR (`LuigiD5555` from this canonical repository): normal Tlaloc verification still runs; explicit owner promotion override is allowed;
-- external PR: normal verification still runs and an `APPROVED` review from `LuigiD5555` is mandatory; external override/auto-promotion is denied.
-
-The policy controls promotion authority, not assumptions about code quality.
+Checked-in project skills are not compiler output and are not a second semantic authority.
 
 ## Source-of-truth rule
 
-`BehaviorSpec + invariants` define intended Tlaloc behavior. Prompts and future generated skills are derived artifacts and may be regenerated, replaced or specialized per model family.
+`BehaviorSpec + invariants` define intended Tlaloc behavior.
 
-For Origami work, Origami's semantic/receiver/visual contracts remain upstream sources of truth. Tlaloc may search, mutate, benchmark and distill *how* target models follow those contracts; it does not become the semantic or canonical-artifact authority for Origami.
+For Origami integration:
+
+```text
+Origami contracts = semantic / visual / carrier authority
+Tlaloc             = search / execution / experimentation / recommendation
+Tonal              = composition / aggregate promotion authority
+```
 
 ## Naming
 
-- **Tlaloc** = complete work system.
+- **Tlaloc** = complete work/orchestration/search system.
 - **Tlaloque** = bounded specialist agents coordinated by Tlaloc.
-- **Origami** = independent representation/state-machine language.
-- **reference semantics** = deterministic expected-state calculation; not an agent.
-- **receiver distillation** = conversion of successful rich swarm behavior into simpler prompt/micro-agent candidate behavior for Origami validation.
-- **Tonal** = independent composition/distribution layer for tested Tlaloc + Origami revisions and shared stack-level workflow/promotion policy.
+- **Origami** = independent representation/state-machine/visual language.
+- **Tonal** = independent composition/distribution and stack promotion layer.
 
 See `docs/NOMENCLATURE.md`.
 
@@ -96,13 +205,10 @@ See `docs/NOMENCLATURE.md`.
 - `docs/NOMENCLATURE.md`
 - `docs/ARCHITECTURE.md`
 - `docs/CAPABILITY_STATUS.md`
-- `docs/MODEL_AGENT_GUIDANCE.md`
-- `docs/BEHAVIOR_COMPILATION.md`
 - `docs/ORIGAMI_INTEGRATION_CONTRACT.md`
+- `docs/ORIGAMI_VISUAL_EVOLUTION_R0.md`
 
 ## Install from source
-
-Requirements: Linux/macOS shell, Go toolchain, and standard POSIX userland tools. The installer is user-scoped and does not require `sudo`.
 
 ```bash
 git clone git@github.com:LuigiD5555/tlaloc.git
@@ -110,20 +216,22 @@ cd tlaloc
 ./install.sh
 ```
 
-Tlaloc installs under `~/.local/share/tlaloc/versions/<version>` and links its CLI under `~/.local/bin` by default.
+Tlaloc installs user-locally under `~/.local/share/tlaloc/versions/<version>` and does not install Origami as a mandatory dependency.
 
-Origami is **not installed by this repository**. It remains an independent optional project at `LuigiD5555/origami`.
+## Hard boundaries
 
-Before removing legacy Origami/OHF/VCL residues, inspect them first:
-
-```bash
-./legacy-cleanup.sh --scan
+```text
+MOCK != EMPIRICAL EVIDENCE
+ONE REAL TRIAL != SUPPORTED
+HYBRID_SUPPORTED != NATIVE_VISUAL_SUPPORTED
+ONE DOCUMENT != ONE NEW ORIGAMI AESTHETIC
+TLALOC CANDIDATE != CANONICAL ORIGAMI PROFILE
+SEMANTIC ROUNDTRIP MUST NOT REGRESS
+FALSE_EXACT = 0
+UNKNOWN DISCIPLINE MUST NOT REGRESS
+TLALOC RECOMMENDS / ORIGAMI VALIDATES / TONAL PROMOTES
 ```
 
-Tlaloc itself can be removed with:
+## Version
 
-```bash
-tlaloc-uninstall --yes
-```
-
-The retrocompatible legacy cleaner preserves BPFW/PipeCraft and `.me/origami` workspaces by design.
+`6.0.0-alpha.13`
