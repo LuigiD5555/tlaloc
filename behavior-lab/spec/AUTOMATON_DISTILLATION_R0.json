@@ -1,0 +1,37 @@
+{
+  "contract_id": "tlaloc.automaton-distillation.r0",
+  "status": "EXPERIMENTAL_REFERENCE_IMPLEMENTATION",
+  "purpose": "Distill successful bounded Tlaloque behavior traces into a portable deterministic semantic graph automaton suitable for an Origami target or another compatible consumer.",
+  "input": "tlaloc.tlaloque-action-trace.r0",
+  "output": "origami.automaton.r0-compatible IR",
+  "pipeline": [
+    "ORDER_TRACE",
+    "IDENTIFY_ACTOR_CELLS",
+    "CANONICALIZE_LOCAL_TRANSITIONS",
+    "DEDUP_REPEATED_RULES",
+    "DERIVE_DECLARED_DEPENDENCY_EDGES",
+    "EMIT_AUTOMATON_IR",
+    "MEASURE_DISTILLATION"
+  ],
+  "boundary": {
+    "tlaloque_runtime_required_after_distillation": false,
+    "origami_runtime_required_by_tlaloc": false,
+    "target_owns_final_semantics": true,
+    "trace_is_not_deployment_artifact": true
+  },
+  "metrics": [
+    "trace_steps",
+    "unique_cells",
+    "unique_rules",
+    "repeated_transitions_removed",
+    "distillation_ratio"
+  ],
+  "hard_invariants": [
+    "TRACE_ORDER_IS_EXPLICIT",
+    "UNDECLARED_DEPENDENCY_IS_NOT_INFERRED",
+    "REPEATED_IDENTICAL_TRANSITION_DEDUPLICATES",
+    "DISTILLED_AUTOMATON_NE_ORIGINAL_SWARM_TRACE",
+    "TLALOC_NE_RUNTIME_REQUIREMENT",
+    "TARGET_PROJECT_OWNS_ADOPTION"
+  ]
+}
