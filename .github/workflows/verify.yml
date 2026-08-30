@@ -26,6 +26,7 @@ jobs:
           bash tests/test-skills.sh
           bash tests/test-project-skill-install.sh
           bash tests/test-visual-evolution-contract.sh
+          bash tests/test-prompt-first-contract.sh
           bash tests/test-gatekeeper.sh
       - name: Verify isolated managed install lifecycle
         run: bash tests/test-independent-install.sh
