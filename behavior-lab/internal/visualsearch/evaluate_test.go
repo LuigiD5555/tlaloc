@@ -9,9 +9,14 @@ func baselineMetrics() Metrics {
 		RoutingAccuracy: 0.96,
 		VerifiedEvidenceRate: 0.97,
 		TransportPassRate: 0.80,
+		PerceptualRevealRate: 1,
 		ContextEfficiency: 0.70,
 		MeanContextTokens: 1500,
 		CarrierBytes: 8192,
+		RecoverableSemanticUnits: 1000,
+		MeanRecognitionMillis: 1200,
+		MeanBootstrapSteps: 6,
+		MeanDecodeSteps: 12,
 		FalseExact: 0,
 		BudgetViolations: 0,
 		UnknownViolations: 0,
@@ -34,6 +39,10 @@ func improvedMetrics() Metrics {
 	m.BootProbePassRate = .98
 	m.TransportPassRate = .95
 	m.ContextEfficiency = .80
+	m.RecoverableSemanticUnits = 1200
+	m.MeanRecognitionMillis = 900
+	m.MeanBootstrapSteps = 5
+	m.MeanDecodeSteps = 9
 	return m
 }
 
@@ -90,4 +99,33 @@ func TestTournamentRanksOnlyGatePassingCandidates(t *testing.T) {
 	if report.Authority != "TLALOC_RECOMMENDATION_ONLY_ORIGAMI_VALIDATES_TONAL_PROMOTES" {
 		t.Fatalf("authority boundary lost: %s", report.Authority)
 	}
+}
+
+func TestMoireCandidateNeedsMeasuredReveal(t *testing.T) {
+	c := candidate("moire-depth", MutationInterferenceStructure, "MOIRE_PHASE_RELATION")
+	m := improvedMetrics(); m.PerceptualRevealRate = .70
+	eval, err := Evaluate(c, baselineMetrics(), Evidence{CandidateID: c.ID, Metrics: m}, DefaultPolicy())
+	if err != nil { t.Fatal(err) }
+	if eval.PromotionCandidate { t.Fatalf("moire candidate promoted without reliable reveal: %+v", eval) }
+}
+
+func TestStereoCandidateCanWinWhenRevealAndSemanticsHold(t *testing.T) {
+	c := candidate("stereo", MutationDepthStructure, "STEREO_BIND_DEPTH")
+	m := improvedMetrics(); m.PerceptualRevealRate = .98
+	eval, err := Evaluate(c, baselineMetrics(), Evidence{CandidateID: c.ID, Metrics: m}, DefaultPolicy())
+	if err != nil { t.Fatal(err) }
+	if !eval.PromotionCandidate { t.Fatalf("evidence-backed depth candidate should be recommendable: %+v", eval) }
+}
+
+func TestOptimizationCanComeFromSmallerFasterFewerSteps(t *testing.T) {
+	c := candidate("compact", MutationLayout, "COMPACT_ROUTE")
+	m := baselineMetrics()
+	m.CarrierBytes = 6144
+	m.MeanRecognitionMillis = 700
+	m.MeanBootstrapSteps = 4
+	m.MeanDecodeSteps = 7
+	m.RecoverableSemanticUnits = 1100
+	eval, err := Evaluate(c, baselineMetrics(), Evidence{CandidateID: c.ID, Metrics: m}, DefaultPolicy())
+	if err != nil { t.Fatal(err) }
+	if !eval.PromotionCandidate { t.Fatalf("measured size/speed/decode improvement should count: %+v", eval) }
 }
