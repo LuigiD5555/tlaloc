@@ -26,7 +26,11 @@ import json,sys
 r=json.load(open(sys.argv[1]))
 assert r['schema']=='tlaloc.automaton-distillation-result.r0'
 assert r['automaton']['schema']=='origami.automaton.r0'
+assert r['temporal_program']['schema']=='origami.temporal-program.r0'
+assert r['temporal_program']['automaton']['id']==r['automaton']['id']
+assert r['temporal_program']['max_steps']==4
 assert r['metrics']['trace_steps']==4
+assert r['metrics']['trace_max_step']==3
 assert r['metrics']['unique_cells']==3
 assert r['metrics']['unique_rules']==3
 assert r['metrics']['repeated_transitions_removed']==1
