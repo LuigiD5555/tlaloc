@@ -1,4 +1,4 @@
-# Tlaloc 6.0.0-alpha.10
+# Tlaloc 6.0.0-alpha.11
 
 **TLALOC — Transformative Latent Adaptive Logic Orchestration Core**
 
@@ -8,16 +8,19 @@ Origami is an independent representation/state-machine language that Tlaloc may 
 
 ## Current R0 implementation
 
+R2 canonical-memory work adds a layout-preserving Canonical Document IR, evidence-backed Tlaloque candidate protocol, deterministic CanonicalState reducer, uncertainty-driven verification queues, Merkle/CID exact plane and External Recursive Attention over a bounded active context.
+
 - `behavior-lab/` — bounded behavior-compilation experiment in Go;
 - `BehaviorSpec` -> `PromptIR` -> compiled prompt;
 - bounded Tlaloque repair proposals with centralized promotion authority;
 - deterministic reference-semantics comparison for the current Origami profile;
 - OpenAI-compatible transport for local/compatible endpoints;
 - `origami.quantum-inspired.r0` as the first bundled executable consumer profile;
-- awareness of Origami `6.0.0-alpha.3` and its `origami.perceptual-channels.r0` upstream semantic contract (runtime generation/evaluation not yet implemented);
+- awareness of Origami through `6.0.0-alpha.5`, including `origami.perceptual-channels.r0` and experimental `origami.fixed-carrier.r2`; perceptual-channel runtime generation/evaluation remains incomplete;
 - experimental `origami-hybrid-receiver-r0` profile and `internal/distill` reference path for turning successful swarm traces into simple deterministic receiver-rule candidates;
 - receiver-candidate fitness gates for bootstrap, carrier-local Rosetta use, navigation, correctness, evidence, UNKNOWN, active-context budget, contamination and false exactness;
 - `CLAUDE.md` + five `.claude/skills/` entries as checked-in guidance specific to Tlaloc/Origami development.
+- `tlaloc-origami` Fixed Carrier R2 PDF memory plane: deterministic PDF ingest, page/CID addressing, Merkle verification, generated Master Prompt, fixed-carrier compilation, `QUERY/EXPAND/VERIFY`, and OpenAI-compatible multimodal tool/text-bridge execution;
 
 The Hybrid Receiver work is **experimental and not yet a promoted compatibility claim**. Its purpose is to use rich Tlaloc swarm/Tlaloque behavior at search time, then distill the externally relevant behavior into a much simpler candidate receiver package: a small universal bootstrap prompt plus deterministic micro-agent rules. Origami remains the authority that validates and stores any promoted receiver artifact.
 

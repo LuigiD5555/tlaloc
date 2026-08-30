@@ -46,3 +46,16 @@ The installer preserves these files inside the managed Tlaloc version but does n
 ## Origami perceptual-contract awareness
 
 Tlaloc can track Origami contracts independently of implementing them. Origami `6.0.0-alpha.3` preserves `origami.perceptual-channels.r0` (introduced in alpha.2) and clarifies that OHF is a nested Origami research track; Tlaloc records that contract and hierarchy as upstream-known while the executable behavior profile remains `origami.quantum-inspired.r0`. This prevents semantic drift without pretending that moire, stereoscopic/depth or temporal-latent-image operations already have reference evaluators.
+
+## Fixed Carrier R2 memory plane
+
+Tlaloc now has an optional PDF-specialized exact memory plane for Origami Fixed Carrier R2. Tlaloc owns PDF ingestion, content-addressed page/source storage, routing, tool execution and model/tool orchestration. Origami owns the fixed image format and store-root binding semantics. The carrier size therefore does not scale with corpus size.
+
+```text
+model + MASTER_PROMPT + origami.png
+        -> BOOT via actual image
+        -> Tlaloc tool plane
+        -> address/CID/store root
+        -> bounded ContextPacket
+        -> model answer
+```

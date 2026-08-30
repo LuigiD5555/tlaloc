@@ -59,6 +59,7 @@ mkdir -p "$TLALOC_DST.tmp"
 mkdir -p "$TLALOC_DST.tmp/bin" "$TLALOC_DST.tmp/tools"
 
 (cd "$TLALOC_DST.tmp/behavior-lab" && CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-behavior-lab" ./cmd/behaviorlab)
+(cd "$TLALOC_DST.tmp/behavior-lab" && CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-origami" ./cmd/tlaloc-origami)
 cp -a "$HERE/tools/tlaloc" "$TLALOC_DST.tmp/bin/tlaloc"
 cp -a "$HERE/tools/doctor.sh" "$TLALOC_DST.tmp/tools/doctor.sh"
 cp -a "$HERE/tools/legacy-cleanup.sh" "$TLALOC_DST.tmp/tools/legacy-cleanup.sh"
@@ -74,6 +75,7 @@ mv "$TLALOC_DST.tmp" "$TLALOC_DST"
 ln -sfn "$TLALOC_DST" "$TLALOC_ROOT/current"
 ln -sfn "$TLALOC_DST/bin/tlaloc" "$BIN_HOME/tlaloc"
 ln -sfn "$TLALOC_DST/bin/tlaloc-behavior-lab" "$BIN_HOME/tlaloc-behavior-lab"
+ln -sfn "$TLALOC_DST/bin/tlaloc-origami" "$BIN_HOME/tlaloc-origami"
 ln -sfn "$TLALOC_DST/tools/uninstall.sh" "$BIN_HOME/tlaloc-uninstall"
 
 rm -f -- "$STATE_HOME/tlaloc/install-manifest-v1.tsv"

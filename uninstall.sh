@@ -106,7 +106,7 @@ remove_component_current() {
   fi
 
   if [[ "$name" == tlaloc ]]; then
-    for b in tlaloc tlaloc-behavior-lab tlaloc-uninstall; do remove_bin_link_if_owned "$BIN_HOME/$b" "$root"; done
+    for b in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-uninstall; do remove_bin_link_if_owned "$BIN_HOME/$b" "$root"; done
   else
     remove_bin_link_if_owned "$BIN_HOME/origami" "$root"
     remove_bin_link_if_owned "$BIN_HOME/origami-uninstall" "$root"
@@ -124,7 +124,7 @@ remove_all_managed_component() {
     [[ -f "$root/.origami-managed-v1" || -f "$root/.tlaloc-managed-v1" ]] || { echo "INFO  no managed $name root"; return 0; }
   fi
   if [[ "$name" == tlaloc ]]; then
-    for b in tlaloc tlaloc-behavior-lab tlaloc-uninstall; do remove_bin_link_if_owned "$BIN_HOME/$b" "$root"; done
+    for b in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-uninstall; do remove_bin_link_if_owned "$BIN_HOME/$b" "$root"; done
   else
     remove_bin_link_if_owned "$BIN_HOME/origami" "$root"
     remove_bin_link_if_owned "$BIN_HOME/origami-uninstall" "$root"

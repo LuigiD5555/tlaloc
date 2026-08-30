@@ -1,0 +1,46 @@
+{
+  "schema": "tlaloc.origami-fixed-carrier-profile.r2",
+  "status": "EXPERIMENTAL_IMPLEMENTED",
+  "upstream_contract": "origami.fixed-carrier.r2",
+  "tool_protocol": "tlaloc.origami-tools.r2",
+  "address_abi": "ohf-address.r2",
+  "active_context_token_eq": 4000,
+  "canonical_memory": {
+    "canonical_document_ir": true,
+    "ocr_fallback": true,
+    "page_exact_cid": true,
+    "block_exact_cid": true,
+    "region_addresses": true,
+    "canonical_state_reducer": "go-reducer.r0",
+    "merkle_root": true,
+    "external_recursive_attention": [
+      "H0",
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H5"
+    ]
+  },
+  "operations": [
+    "origami_boot",
+    "origami_query",
+    "origami_expand",
+    "origami_verify"
+  ],
+  "model_modes": [
+    "function_tools",
+    "plain_text_bridge"
+  ],
+  "hard_invariants": [
+    "T0_PLAINTEXT_BOOT",
+    "DUPLICATED_VISUAL_PROBE",
+    "OCR_IS_OPTIONAL_NOT_BOOT",
+    "FALSE_EXACT=0",
+    "EXACT_REQUIRES_CID_AND_MERKLE",
+    "STORE_MUST_MATCH_CARRIER_ROOT",
+    "ACTIVE_CONTEXT_NE_TOTAL_MEMORY",
+    "MODELS_PROPOSE_REDUCER_DECIDES",
+    "NO_TOOL_RESULT_FABRICATION"
+  ]
+}

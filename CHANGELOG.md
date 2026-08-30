@@ -1,5 +1,16 @@
 # Tlaloc changelog
 
+## 6.0.0-alpha.11 — Origami Fixed Carrier R2 PDF memory plane
+
+- adds deterministic PDF Tlaloque memory ingestion with exact source preservation, 100% page addressing/CIDs, lexical routing, fixed GraphSketch and Merkle root;
+- adds `tlaloc-origami compile|boot|query|expand|verify|chat`;
+- generates the R1 Master Prompt instead of requiring manual prompt editing;
+- binds the supplied `origami.png` to the exact store through the independent `origami-fixed-carrier` decoder;
+- adds native OpenAI-compatible function-tool loop support for R1 plus a plain-text `<ORIGAMI_CALL>` fallback;
+- treats OCR failure as irrelevant to BOOT and returns explicit capability failures instead of fabricated memory;
+- installs `tlaloc-origami` as an independent Tlaloc CLI;
+- preserves Tlaloc/Origami ownership separation and `FALSE_EXACT=0`.
+
 ## 6.0.0-alpha.10 — Repo-flow ownership migration
 
 - removes the project-agnostic `repo-flow` skill from Tlaloc now that Tonal is its canonical distribution owner;
