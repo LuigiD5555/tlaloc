@@ -1,9 +1,9 @@
 {
   "contract_id": "tlaloc.automaton-distillation.r0",
   "status": "EXPERIMENTAL_REFERENCE_IMPLEMENTATION",
-  "purpose": "Distill successful bounded Tlaloque behavior traces into a portable deterministic semantic graph automaton suitable for an Origami target or another compatible consumer.",
+  "purpose": "Distill successful bounded Tlaloque behavior traces into a portable deterministic semantic graph automaton and temporal program suitable for an Origami target or another compatible consumer.",
   "input": "tlaloc.tlaloque-action-trace.r0",
-  "output": "origami.automaton.r0-compatible IR",
+  "outputs": ["origami.automaton.r0-compatible IR", "origami.temporal-program.r0-compatible IR"],
   "pipeline": [
     "ORDER_TRACE",
     "IDENTIFY_ACTOR_CELLS",
@@ -11,8 +11,17 @@
     "DEDUP_REPEATED_RULES",
     "DERIVE_DECLARED_DEPENDENCY_EDGES",
     "EMIT_AUTOMATON_IR",
+    "DERIVE_EXPLICIT_TEMPORAL_HORIZON",
+    "EMIT_TEMPORAL_PROGRAM_IR",
     "MEASURE_DISTILLATION"
   ],
+  "temporal_policy": {
+    "schedule": "SYNCHRONOUS_R0",
+    "max_steps": "MAX_EXPLICIT_TRACE_STEP_PLUS_ONE",
+    "checkpoint_every": "UNDECLARED_BY_DEFAULT",
+    "hidden_timing_inference": false,
+    "portable_program_schema": "origami.temporal-program.r0"
+  },
   "boundary": {
     "tlaloque_runtime_required_after_distillation": false,
     "origami_runtime_required_by_tlaloc": false,
@@ -21,6 +30,7 @@
   },
   "metrics": [
     "trace_steps",
+    "trace_max_step",
     "unique_cells",
     "unique_rules",
     "repeated_transitions_removed",
@@ -29,8 +39,10 @@
   "hard_invariants": [
     "TRACE_ORDER_IS_EXPLICIT",
     "UNDECLARED_DEPENDENCY_IS_NOT_INFERRED",
+    "UNDECLARED_TIMING_IS_NOT_INFERRED",
     "REPEATED_IDENTICAL_TRANSITION_DEDUPLICATES",
     "DISTILLED_AUTOMATON_NE_ORIGINAL_SWARM_TRACE",
+    "DISTILLED_TEMPORAL_PROGRAM_NE_LITERAL_TRACE",
     "TLALOC_NE_RUNTIME_REQUIREMENT",
     "TARGET_PROJECT_OWNS_ADOPTION"
   ]
