@@ -1,203 +1,159 @@
-# Tlaloc <-> Origami integration contract — R1
+# Tlaloc <-> Origami integration contract — R2
 
-Tlaloc treats Origami as an independent representation/state-machine/visual-language provider, not as the orchestration system and not as a mandatory dependency.
+Tlaloc treats Origami as an independent target/project, not as Tlaloc's identity and not as a mandatory deployment dependency.
+
+## Core relationship
+
+```text
+Tlaloc
+  = development kit
+  = swarm/reference experimentation
+  = prompt/representation candidate search
+  = behavioral distillation
+  = evidence generation
+
+Origami
+  = independent representation/state-machine/visual language
+  = authority over its own semantics, Master Prompt, visual grammar and releases
+```
+
+The preferred compatibility outcome of an Origami-specific Tlaloc experiment is a portable Origami prompt/artifact that can be consumed without requiring Tlaloc when behavioral fidelity permits it.
+
+## Prompt-first rule for Origami work
+
+Tlaloc may use rich development machinery:
+
+```text
+Tlaloque swarms
+Go evaluators
+OCR/document IR
+perception campaigns
+tools
+runtime adapters
+large test corpora
+```
+
+but the deployment ladder remains:
+
+```text
+L0 PROMPT_ONLY
+L1 PROMPT + DECLARATIVE CONTEXT/IR
+L2 PROMPT + TOOLS
+L3 PROMPT + RUNTIME
+L4 SPECIALIZED TARGET
+```
+
+Therefore an Origami Master Prompt candidate should be tested first as a clean L0 artifact whenever the requested READ/WRITE behavior can reasonably fit that level.
+
+Tool-assisted Hybrid operation remains valuable, but Hybrid success is not proof that the same behavior exists in prompt-only mode.
 
 ## Origami may provide
 
 - canonical semantic state/context/rule schemas;
 - supported operations and invariants;
-- deterministic reference semantics for valid transitions;
+- deterministic reference semantics;
 - Fold/Unfold, addressability, memory and verification contracts;
 - perceptual-channel contracts;
 - canonical visual-profile contracts;
 - Writer/construction contracts;
-- the self-boot receiver contract `origami.hybrid-receiver.r0`;
-- carrier fixtures exposing `BOOT -> ROSETTA -> PROGRAM -> INDEX -> MEMORY -> VERIFICATION`;
-- explicit resolution/evidence/exactness boundaries.
+- self-boot receiver contracts;
+- carrier fixtures and evidence/exactness boundaries.
 
-## Canonical visual rule
+## Tlaloc may build development assets
 
-For current Origami integration, Tlaloc recognizes:
-
-```text
-ONE CANONICAL ORIGAMI AESTHETIC PER PROFILE VERSION
-```
-
-ROSETTA remains mandatory but no longer means that every carrier invents a wholly private visual dialect. It self-describes:
+For receiver/writer behavior:
 
 ```text
-profile ID/version
-active dimensions
-profile-bound primitive -> semantic-role mappings
-explicit profile-approved parameters/extensions
-```
-
-Tlaloc must therefore distinguish:
-
-```text
-carrier semantics under a known profile
-```
-
-from:
-
-```text
-experimental candidate changes to the next profile
-```
-
-## Tlaloc builds search and verification assets
-
-Tlaloc may use Origami reference semantics, receiver fixtures, Writer contracts and visual-profile contracts to construct behavior/representation campaigns.
-
-For receiver behavior:
-
-```text
-rich Tlaloque/model behavior
- -> trace / findings / successful route
- -> receiver distillation
- -> prompt/BOOT/ROSETTA/micro-rule candidate
- -> fitness/cross-model evaluation
- -> promotion recommendation
- -> Origami validation/storage
+Origami intent/contracts
+ -> bounded Tlaloque swarm
+ -> working reference behavior
+ -> distillation
+ -> Master Prompt / PromptIR candidate
+ -> clean model trials
+ -> optional richer Hybrid/tool trials
+ -> behavioral/evidence comparison
+ -> recommendation to Origami
 ```
 
 For visual evolution:
 
 ```text
 Origami canonical profile N
- -> Tlaloc experimental mutation
-    PROMPT / CHANNEL_ROLE / PRIMITIVE / LAYOUT /
-    REDUNDANCY / COLOR / NUMERIC / TEMPORAL
+ -> Tlaloc experimental mutations
  -> deterministic + real-model evidence
- -> Tlaloc tournament
- -> recommendation only
- -> Origami semantic/visual validation
- -> Tonal aggregate promotion
- -> canonical profile N+1
+ -> tournament
+ -> recommendation to Origami
+ -> Origami decides whether profile N+1 exists
 ```
+
+Tonal may optionally pin a reproducible toolchain around those exact revisions. Tonal is not part of Origami's semantic/profile promotion authority.
 
 ## Tlaloc supplies
 
-- document acquisition/canonicalization and OCR execution;
-- behavior-compilation lifecycle;
+- behavior decomposition into bounded Tlaloque work;
+- development-time orchestration;
+- source/document adapters where useful;
 - target-model execution;
-- Tlaloque exploration;
-- candidate prompt mutation/repair;
-- candidate visual-profile mutation/search;
+- prompt mutation/repair;
+- representation/profile candidate search;
 - transport/degradation experiments;
-- cross-model perception campaigns;
-- real tool-loop/routing experiments;
-- distillation from successful traces into bounded candidate behavior;
+- cross-model campaigns;
+- tool-loop experiments;
+- distillation from successful traces;
+- prompt-first artifact selection;
 - deterministic candidate tournaments;
-- promotion/rejection recommendations and evidence.
+- recommendation/rejection evidence.
 
 ## Origami retains authority
 
-A Tlaloc candidate is never automatically an Origami artifact/profile.
+A Tlaloc candidate is never automatically an Origami release/profile.
 
 Tlaloc must not:
 
 - redefine Origami state/transition semantics;
-- invent a per-document private aesthetic and call it canonical Origami;
-- alter profile-bound visual meanings without declaring a candidate profile revision;
-- use an experimental color/numeric/temporal channel as canonical authority before promotion;
-- collapse UNKNOWN/absence/inhibition/cancellation distinctions;
+- invent a private per-document aesthetic and call it canonical Origami;
 - weaken exactness/evidence boundaries;
-- promote contamination or `FALSE_EXACT != 0` because another metric improved;
-- write a tournament winner directly into Origami's canonical registry.
+- collapse UNKNOWN/absence/inhibition/cancellation distinctions;
+- write a tournament winner directly into Origami's canonical registry;
+- make Tlaloc runtime access a hidden requirement of a supposedly portable Master Prompt.
 
-Origami owns promoted receiver/Writer/visual artifacts and their provenance. Tlaloc stores experiments and candidate evidence.
+Origami decides whether a candidate becomes part of Origami.
 
-## Candidate visual fitness gates
+## Canonical visual rule
 
-A visual/profile candidate should report at least:
-
-```text
-semantic_roundtrip_rate
-boot_probe_pass_rate
-routing_accuracy
-verified_evidence_rate
-transport_pass_rate
-context_efficiency
-mean_context_tokens
-carrier_bytes
-false_exact
-budget_violations
-unknown_violations
-real_models
-trials
-```
-
-Critical semantic/evidence metrics must not regress. `FALSE_EXACT != 0`, UNKNOWN-discipline failure or configured budget violation makes a candidate ineligible regardless of aesthetic appeal or aggregate score.
-
-Prime-derived, modular, factorization, color, phase and other unusual encodings are treated exactly as experimental candidate channels: they earn promotion only through measured gains and preserved invariants.
-
-## Hybrid division of labor
-
-The preferred receiver remains:
+Tlaloc recognizes:
 
 ```text
-model perception
-  -> BOOT / ROSETTA / coarse route
-Tlaloc + Origami tools
-  -> query / expand / execute / verify
-Origami semantic + canonical visual contracts
-  -> authority for represented state/evidence/profile
-model
-  -> integrate compact state / request next bounded access / answer
+ONE CANONICAL ORIGAMI AESTHETIC PER PROFILE VERSION
 ```
 
-Native-only and Computational-only remain diagnostic/promotion modes.
+ROSETTA self-describes profile/version, active dimensions, mappings and approved reveal procedures. Candidate color, numeric, interference, depth, temporal or emergent channels remain experimental until Origami adopts them.
 
 ## READ / WRITE division
 
 ```text
 READ
-carrier -> BOOT/profile -> ROSETTA -> semantic interpretation
+carrier -> Origami profile + ROSETTA -> model interpretation
 
 WRITE
-PDF/image/source
- -> Tlaloc Canonical Document IR / source extraction
- -> Semantic IR
- -> Origami Writer visual-intent/canonical-profile plan
- -> Origami deterministic compiler
- -> carrier
+source/document semantics
+ -> Origami Writer / semantic intent
+ -> canonical visual grammar
+ -> ROSETTA
+ -> compiler/representation
  -> roundtrip verification
 ```
 
-Tlaloc may prepare source/Semantic IR and experiment with candidate representations, but the canonical Writer/profile contract remains Origami-owned.
+Tlaloc can develop/test the behavior that performs those steps and distill it into a Master Prompt candidate. The canonical semantics and final Origami release remain Origami-owned.
 
-## Prompt boundary
+## Existing richer experiment tracks
 
-Origami's universal Master Prompt is the canonical READ/WRITE behavior contract.
+Canonical Memory R2, Perception Promotion Campaign R1, Hybrid tool loops and Visual Evolution R0 remain available as powerful development/evaluation infrastructure.
 
-Tlaloc operational prompts may specialize a current receiver/tool workflow or act as experimental prompt candidates. They are derived/search artifacts and must not silently redefine Origami semantics or visual profile.
+They are not removed by prompt-first organization. Their role is now explicit:
 
-## Perception Promotion Campaign
-
-Tlaloc alpha.12+ includes:
-
-```text
-original / 75% / 50% / JPEG carrier variants
- -> REAL_MODEL observations
- -> independent Origami per-trial evaluator
- -> real tool-loop/routing evidence
- -> campaign aggregation
-```
-
-Hybrid and Native T3 remain separate candidate claims. MOCK never counts as empirical evidence.
-
-## Visual Evolution R0
-
-Tlaloc alpha.13 introduces `tlaloc.origami-visual-search.r0` and `tlaloc-visual-search`.
-
-The tournament authority is deliberately:
-
-```text
-TLALOC_RECOMMENDATION_ONLY_ORIGAMI_VALIDATES_TONAL_PROMOTES
-```
+> use richer machinery to discover and verify behavior, then remove deployment dependencies whenever a simpler prompt can preserve that behavior.
 
 ## Boundary rule
 
-Tlaloc may discover better ways for models to read, write and navigate Origami. It may experimentally discover that a new layout, color assignment, mathematical structure or prompt is better. It may recommend that result.
-
-It must not redefine what Origami means or what its canonical aesthetic is without the Origami/Tonal validation and promotion path.
+> **Tlaloc helps discover and compress how to use/build Origami. Origami decides what Origami is. A clean prompt is the portable default; tools/runtimes are explicit higher-level options.**
