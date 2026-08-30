@@ -1,0 +1,52 @@
+{
+  "contract_id": "tlaloc.native-semantic-regression.r0",
+  "status": "EXPERIMENTAL_REFERENCE_IMPLEMENTED",
+  "target_contract": "origami.native-semantic-navigation.r0",
+  "purpose": "Turn prompt-only/native semantic failures into deterministic regressions that visual/prompt search candidates must beat before Tlaloc recommends them to Origami.",
+  "first_failure": {
+    "id": "FAILED_TRIAL_001",
+    "question": "What is the index?",
+    "observed": [
+      "BOOT perceived",
+      "T2 semantic index not recovered",
+      "binary/file decoder requested",
+      "unverified byte/hash/compression claims produced"
+    ]
+  },
+  "required_questions": [
+    {"id":"NSN-Q1","class":"IDENTITY","mechanical_decode_allowed":false},
+    {"id":"NSN-Q2","class":"INDEX","mechanical_decode_allowed":false},
+    {"id":"NSN-Q3","class":"OVERVIEW","mechanical_decode_allowed":false},
+    {"id":"NSN-Q4","class":"LOCATE_TOPIC","mechanical_decode_allowed":false},
+    {"id":"NSN-Q5","class":"EXACT","mechanical_decode_allowed":true}
+  ],
+  "metrics": [
+    "native_index_recovery_rate",
+    "native_semantic_answer_rate",
+    "mechanical_dependency_violations",
+    "unverified_mechanical_claims",
+    "mean_recognition_millis",
+    "mean_bootstrap_steps",
+    "mean_decode_steps",
+    "false_exact"
+  ],
+  "default_gates": {
+    "min_native_index_recovery_rate": 0.95,
+    "min_native_semantic_answer_rate": 0.90,
+    "mechanical_dependency_violations": 0,
+    "unverified_mechanical_claims": 0,
+    "false_exact": 0,
+    "min_real_models": 3,
+    "min_trials": 9
+  },
+  "search_rule": "A visually denser or smaller candidate cannot win if semantic navigation becomes mechanically decoder-dependent.",
+  "hard_invariants": [
+    "FAILED_TRIAL_BECOMES_REGRESSION",
+    "INDEX_RECOVERY_IS_FIRST_CLASS_FITNESS",
+    "SEMANTIC_NAVIGATION_NE_BINARY_DECODE",
+    "NO_UNVERIFIED_MECHANICAL_CLAIMS",
+    "PROMPT_ONLY_AND_TOOL_ASSISTED_EVIDENCE_REMAIN_SEPARATE",
+    "TLALOC_RECOMMENDS_ORIGAMI_DECIDES",
+    "FALSE_EXACT=0"
+  ]
+}

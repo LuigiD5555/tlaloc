@@ -1,4 +1,4 @@
-# Capability status — Tlaloc 6.0.0-alpha.14
+# Capability status — Tlaloc 6.0.0-alpha.15
 
 Repository lifecycle: Tlaloc installs/uninstalls independently and can target Origami or unrelated behaviors. This file distinguishes development machinery, reference evidence, deployable artifacts and empirical support.
 
@@ -13,6 +13,11 @@ Repository lifecycle: Tlaloc installs/uninstalls independently and can target Or
 | Clean-target requirement | **alpha.14 contract + tests** | L0 evaluation may not inherit swarm traces, hidden sandbox/tool state or Tlaloc runtime state. |
 | L0 no-tool/no-sandbox compatibility | **alpha.14 hard invariant** | Prompt-only means target LLM text interface only. |
 | Behavioral fidelity vs trace similarity | **alpha.14 formalized** | Distillation targets behavior, not textual reproduction of a swarm trace. |
+| Failure-to-regression conversion | **alpha.15 implemented for Native semantic trial** | Failed real behavior can become a deterministic regression instead of anecdotal evidence. |
+| Native semantic response evaluator | **alpha.15 implemented** | Deterministically detects index recovery, mechanical-dependency failure and unverified byte/hash/compression claims. |
+| Native T2 index recovery gate | **alpha.15 implemented** | Visual/prompt candidates require >=.95 reference recovery under configured policy. |
+| No-mechanical-dependency gate | **alpha.15 implemented** | Semantic navigation candidates cannot rely on undeclared file/binary/sandbox/decompression access. |
+| `tlaloc-native-eval` CLI | **alpha.15 implemented** | Evaluates recorded target output without an LLM judge. |
 | Receiver swarm-trace distillation | experimental R0 implemented | Existing Origami receiver-specific distillation remains a target-specific implementation. |
 | Receiver candidate tournament | experimental R0 implemented | Existing target-specific tournament retained. |
 | Project-local Claude Code skills | R0 implemented | Development assets; not portable behavior output. |
@@ -21,7 +26,7 @@ Repository lifecycle: Tlaloc installs/uninstalls independently and can target Or
 | OpenAI-compatible text transport | R0 implemented | LM Studio and compatible endpoints. |
 | OpenAI-compatible Hybrid multimodal/tool loop | experimental implemented | Higher-level development/deployment machinery, not L0 baseline. |
 | General model-weight training | not implemented | Current distillation/search operates on explicit behavior artifacts/traces. |
-| Managed installer/uninstaller | R0 implemented | Tlaloc development environment installs independently. |
+| Managed installer/uninstaller | R0 implemented | Tlaloc development environment installs independently; alpha.15 includes native evaluator CLI. |
 | Origami Semantic Spine awareness | contract-known | Target-specific integration; Tlaloc does not redefine Origami. |
 | Origami canonical visual profile awareness | alpha.13 contract-known | One canonical Origami aesthetic per profile version. |
 | Origami Writer awareness | alpha.13 contract-known | Tlaloc can develop/test behaviors that feed Writer, but is not pixel authority. |
@@ -30,6 +35,7 @@ Repository lifecycle: Tlaloc installs/uninstalls independently and can target Or
 | Perception transport variants | alpha.12 implemented | Original PNG, 75%, 50%, JPEG preview. |
 | Cross-model perception campaign aggregation | alpha.12 implemented | Development evidence machinery, not portable baseline. |
 | Origami Visual Evolution R0 | alpha.13 implemented | Searches evidence-backed profile/prompt candidates and recommends only. |
+| Native semantic fitness in visual search | **alpha.15 implemented** | Adds native index/answer rates and zero mechanical/unverified-claim gates. |
 | Prime/modular/factorization visual search | candidate family | No canonical authority without Origami adoption. |
 | Moire/phase/depth/temporal visual search | candidate families | Reveal reliability and UNKNOWN discipline required. |
 | Canonical Origami profile promotion | Origami-owned external authority | Tlaloc can recommend; Origami decides. |
@@ -65,6 +71,30 @@ The current deterministic selector defaults to behavioral fidelity >= .95, pass 
 
 A richer runtime does not outrank a valid L0 prompt merely because its fidelity is marginally higher. Tlaloc minimizes deployment requirements subject to the required behavior.
 
+## Native semantic regression R0
+
+The first failure-driven Native regression comes from an external Origami trial that could read BOOT but failed the index question. The response requested binary/file decoding and emitted unverified byte, compression and hash information.
+
+Alpha.15 makes that failure testable through:
+
+```text
+behavior-lab/internal/nativeeval
+behavior-lab/spec/NATIVE_SEMANTIC_REGRESSION_R0.json
+tlaloc-native-eval
+```
+
+Visual-search candidates now include first-class gates for:
+
+```text
+native_index_recovery_rate >= 0.95
+native_semantic_answer_rate >= 0.90
+mechanical_dependency_violations = 0
+unverified_mechanical_claims = 0
+FALSE_EXACT = 0
+```
+
+These are development/recommendation gates. They do not claim that the corrected Origami carrier has already passed held-out VLM trials.
+
 ## Development vs deployment
 
 Tlaloc may use large swarms, sandboxes, Go utilities, tools, evaluators and many models during development. Those resources are not automatically inherited by the distilled artifact.
@@ -87,6 +117,7 @@ Existing Origami work remains intact:
 Canonical Memory R2
 Perception Promotion Campaign R1
 Origami Visual Evolution R0
+Native Semantic Regression R0
 prompt/representation experiments
 ```
 

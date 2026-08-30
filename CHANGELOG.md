@@ -1,5 +1,19 @@
 # Tlaloc changelog
 
+## 6.0.0-alpha.15 — Native Semantic Regression R0
+
+- turns a failed real prompt-only/multimodal Origami index trial into a deterministic regression instead of discarding it as anecdotal evidence;
+- adds `tlaloc.native-semantic-regression.r0` and a non-LLM `nativeeval` scorer;
+- adds `tlaloc-native-eval` for evaluating recorded target output from the command line;
+- adds first-class `native_index_recovery_rate` and `native_semantic_answer_rate` to Origami visual/profile search;
+- blocks candidate recommendations when semantic navigation requires undeclared binary/file/sandbox/decompression access;
+- blocks unverified byte/hash/compression/archive claims in prompt-only semantic trials;
+- preserves exact/mechanical capabilities for questions that actually require exact recovery and explicitly declare those capabilities;
+- adds Native semantic fitness to candidate scoring so smaller/denser/faster visual changes cannot win by making semantic navigation unusable;
+- preserves Prompt-First Distillation: the corrected target behavior must still work at the declared deployment level rather than inheriting hidden development machinery;
+- installs/uninstalls `tlaloc-native-eval` with the managed Tlaloc development toolchain;
+- does not claim the corrected Origami carrier has already passed held-out real-model trials; Tlaloc measures/recommends and Origami owns adoption.
+
 ## 6.0.0-alpha.14 — Prompt-First Distillation R0
 
 - redefines Tlaloc's core as a behavioral development kit rather than an Origami-centered runtime;
