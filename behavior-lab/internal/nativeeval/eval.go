@@ -1,8 +1,6 @@
 package nativeeval
 
-import (
-	"strings"
-)
+import "strings"
 
 const SchemaR0 = "tlaloc.native-semantic-regression.r0"
 
@@ -17,23 +15,28 @@ const (
 )
 
 type Trial struct {
-	Schema          string     `json:"schema"`
-	ID              string     `json:"id"`
-	QueryClass      QueryClass `json:"query_class"`
-	Question        string     `json:"question"`
-	ExpectedEntries []string   `json:"expected_entries,omitempty"`
-	ModelOutput     string     `json:"model_output"`
-	DeclaredExactCapability bool `json:"declared_exact_capability"`
+	Schema                     string     `json:"schema"`
+	ID                         string     `json:"id"`
+	QueryClass                 QueryClass `json:"query_class"`
+	Question                   string     `json:"question"`
+	ExpectedEntries            []string   `json:"expected_entries,omitempty"`
+	ModelOutput                string     `json:"model_output"`
+	DeclaredExactCapability    bool       `json:"declared_exact_capability"`
+	ExpectedSemanticDecoder    string     `json:"expected_semantic_decoder,omitempty"`
+	DeclaredSemanticDecoder    string     `json:"declared_semantic_decoder,omitempty"`
 }
 
 type Result struct {
-	Schema                        string   `json:"schema"`
-	TrialID                       string   `json:"trial_id"`
-	IndexRecoveryRate             float64  `json:"index_recovery_rate"`
-	SemanticAnswerPresent         bool     `json:"semantic_answer_present"`
-	MechanicalDependencyViolation bool     `json:"mechanical_dependency_violation"`
-	UnverifiedMechanicalClaims    []string `json:"unverified_mechanical_claims,omitempty"`
-	Pass                          bool     `json:"pass"`
+	Schema                            string   `json:"schema"`
+	TrialID                           string   `json:"trial_id"`
+	IndexRecoveryRate                 float64  `json:"index_recovery_rate"`
+	SemanticAnswerPresent             bool     `json:"semantic_answer_present"`
+	DeclaredDecoderDiscovered         bool     `json:"declared_decoder_discovered"`
+	UndeclaredExternalCodecDependency bool     `json:"undeclared_external_codec_dependency"`
+	SemanticToExactEscalation         bool     `json:"semantic_to_exact_escalation"`
+	MechanicalDependencyViolation     bool     `json:"mechanical_dependency_violation"`
+	UnverifiedMechanicalClaims        []string `json:"unverified_mechanical_claims,omitempty"`
+	Pass                              bool     `json:"pass"`
 }
 
 func Evaluate(t Trial) Result {
@@ -47,13 +50,27 @@ func Evaluate(t Trial) Result {
 		result.IndexRecoveryRate = float64(matched) / float64(len(t.ExpectedEntries))
 	}
 	result.SemanticAnswerPresent = semanticAnswerPresent(t.QueryClass, result.IndexRecoveryRate, out)
-	if isSemantic(t.QueryClass) {
-		result.MechanicalDependencyViolation = containsAny(out, []string{
-			"NEED THE ORIGINAL FILE", "NEED THE IMAGE FILE", "NEED ACCESS TO THE FILE", "NEED THE BINARY",
-			"EXTRACT THE BITS", "EXTRACT BITS", "READ THE BITS", "DECODE THE BINARY", "DECOMPRESS THE",
-			"CANNOT READ THE PAYLOAD", "NEED A DECODER",
-		})
+
+	if t.ExpectedSemanticDecoder == "" {
+		result.DeclaredDecoderDiscovered = true
+	} else {
+		expected := normalize(t.ExpectedSemanticDecoder)
+		declared := normalize(t.DeclaredSemanticDecoder)
+		result.DeclaredDecoderDiscovered = declared == expected || strings.Contains(out, expected)
 	}
+
+	if isSemantic(t.QueryClass) {
+		result.UndeclaredExternalCodecDependency = containsAny(out, []string{
+			"NEED AN EXTERNAL DECODER", "NEED EXTERNAL DECODER", "NEED THE ORIGINAL FILE", "NEED THE IMAGE FILE",
+			"NEED ACCESS TO THE FILE", "NEED THE BINARY", "CANNOT READ THE PAYLOAD", "CANNOT ACCESS THE PAYLOAD",
+		})
+		result.SemanticToExactEscalation = containsAny(out, []string{
+			"EXTRACT THE BITS", "EXTRACT BITS", "READ THE BITS", "DECODE THE BINARY", "DECOMPRESS THE",
+			"BZIP2", "GZIP", "ZSTD", "MERKLE PROOF FIRST", "VERIFY HASH FIRST",
+		})
+		result.MechanicalDependencyViolation = result.UndeclaredExternalCodecDependency || result.SemanticToExactEscalation
+	}
+
 	if !t.DeclaredExactCapability {
 		for _, marker := range []struct{label string; phrases []string}{
 			{"BYTE_LAYOUT", []string{" BYTES", "BYTE HEADER", "BYTE PAYLOAD"}},
@@ -64,7 +81,11 @@ func Evaluate(t Trial) Result {
 			if containsAny(out, marker.phrases) { result.UnverifiedMechanicalClaims = append(result.UnverifiedMechanicalClaims, marker.label) }
 		}
 	}
-	result.Pass = result.SemanticAnswerPresent && !result.MechanicalDependencyViolation && len(result.UnverifiedMechanicalClaims) == 0
+
+	result.Pass = result.SemanticAnswerPresent && result.DeclaredDecoderDiscovered && !result.MechanicalDependencyViolation && len(result.UnverifiedMechanicalClaims) == 0
+	if t.QueryClass == QueryExact {
+		result.Pass = result.SemanticAnswerPresent && len(result.UnverifiedMechanicalClaims) == 0
+	}
 	return result
 }
 
@@ -90,6 +111,4 @@ func containsAny(text string, phrases []string) bool {
 	return false
 }
 
-func normalize(value string) string {
-	return strings.Join(strings.Fields(strings.ToUpper(value)), " ")
-}
+func normalize(value string) string { return strings.Join(strings.Fields(strings.ToUpper(value)), " ") }
