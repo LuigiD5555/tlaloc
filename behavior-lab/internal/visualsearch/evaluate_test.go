@@ -83,7 +83,7 @@ func TestMutationMustRemainExperimentalBeforePromotion(t *testing.T) {
 	c := candidate("bad", MutationPrimitive, "NEW_SHAPE")
 	c.Mutations[0].Experimental = false
 	_, err := Evaluate(c, baselineMetrics(), Evidence{CandidateID: c.ID, Metrics: improvedMetrics()}, DefaultPolicy())
-	if err == nil { t.Fatal("candidate claimed canonical status before Origami/Tonal promotion") }
+	if err == nil { t.Fatal("candidate claimed canonical status before Origami promotion") }
 }
 
 func TestTournamentRanksOnlyGatePassingCandidates(t *testing.T) {
@@ -96,7 +96,7 @@ func TestTournamentRanksOnlyGatePassingCandidates(t *testing.T) {
 	if report.WinnerID != "good" || report.Recommendation != "RECOMMEND_WINNER_TO_ORIGAMI_FOR_CANONICAL_PROFILE_VALIDATION" {
 		t.Fatalf("unexpected tournament: %+v", report)
 	}
-	if report.Authority != "TLALOC_RECOMMENDATION_ONLY_ORIGAMI_VALIDATES_TONAL_PROMOTES" {
+	if report.Authority != "TLALOC_RECOMMENDATION_ONLY_ORIGAMI_OWNS_PROFILE_PROMOTION_TONAL_COMPOSES_TOOLCHAINS" {
 		t.Fatalf("authority boundary lost: %s", report.Authority)
 	}
 }
