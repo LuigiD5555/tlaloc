@@ -2,7 +2,8 @@
   "contract_id": "tlaloc.origami-visual-search.r0",
   "status": "EXPERIMENTAL_SEARCH_MACHINERY",
   "base_origami_profile": "origami.canonical-aesthetic.r0",
-  "purpose": "Search and rank evidence-backed candidate improvements to the single canonical Origami visual profile and Master Prompt without creating per-document private aesthetics.",
+  "upstream_perceptual_contract": "origami.perceptual-channels.r0",
+  "purpose": "Search and rank evidence-backed candidate improvements to the single canonical Origami visual profile and Master Prompt without creating per-document private aesthetics. New versions optimize recoverable semantic capacity, carrier size, recognition time and bootstrap/decode work while preserving semantic/evidence invariants.",
   "candidate_mutations": [
     "PROMPT",
     "CHANNEL_ROLE",
@@ -11,23 +12,56 @@
     "REDUNDANCY",
     "COLOR_USAGE",
     "NUMERIC_STRUCTURE",
-    "TEMPORAL_STRUCTURE"
+    "INTERFERENCE_STRUCTURE",
+    "DEPTH_STRUCTURE",
+    "TEMPORAL_STRUCTURE",
+    "EMERGENT_STRUCTURE"
   ],
+  "perceptual_operation_examples": {
+    "interference": ["MOIRE", "PHASE_SHIFT"],
+    "depth": ["STEREO_BIND", "PARALLAX_RESOLVE"],
+    "temporal": ["KINETIC_REVEAL", "TEMPORAL_INTEGRATE", "TEMPORAL_DECAY"],
+    "emergent": ["MULTI_LAYER_REVEAL", "RELATIONAL_PERCEPT"]
+  },
   "numeric_structure_examples": [
     "PRIME_DERIVED_SPACING",
     "MODULAR_PATTERN",
     "FACTORIZATION_STRUCTURE",
     "PERIODIC_DENSITY"
   ],
+  "optimization_objectives": {
+    "maximize": [
+      "semantic_roundtrip_rate",
+      "recoverable_semantic_units_per_carrier_byte",
+      "boot_probe_pass_rate",
+      "routing_accuracy",
+      "verified_evidence_rate",
+      "transport_pass_rate",
+      "perceptual_reveal_rate"
+    ],
+    "minimize": [
+      "carrier_bytes",
+      "mean_recognition_millis",
+      "mean_bootstrap_steps",
+      "mean_decode_steps",
+      "mean_context_tokens"
+    ],
+    "hard_zero": ["false_exact", "budget_violations", "unknown_violations"]
+  },
   "default_metrics": [
     "semantic_roundtrip_rate",
     "boot_probe_pass_rate",
     "routing_accuracy",
     "verified_evidence_rate",
     "transport_pass_rate",
+    "perceptual_reveal_rate",
     "context_efficiency",
     "mean_context_tokens",
     "carrier_bytes",
+    "recoverable_semantic_units",
+    "mean_recognition_millis",
+    "mean_bootstrap_steps",
+    "mean_decode_steps",
     "false_exact",
     "budget_violations",
     "unknown_violations",
@@ -40,13 +74,17 @@
     "min_semantic_roundtrip_rate": 1.0,
     "min_verified_evidence_rate": 0.95,
     "min_routing_accuracy": 0.95,
+    "min_perceptual_reveal_rate": 0.95,
     "min_real_models_for_perception": 3,
     "min_trials": 9,
     "min_improvement": 0.01
   },
+  "profile_evolution_rule": "A perceptual/numeric/color/layout candidate may change the canonical Origami aesthetic only after measured improvement, Origami semantic/visual validation and Tonal promotion. ROSETTA in the promoted profile declares how the adopted channel is revealed and what semantic role it carries.",
   "hard_invariants": [
     "ONE_CANONICAL_AESTHETIC_PER_ORIGAMI_PROFILE_VERSION",
     "CANDIDATE_MUTATION_REMAINS_EXPERIMENTAL",
+    "ROSETTA_DECLARES_PROMOTED_CHANNEL_SEMANTICS_AND_REVEAL",
+    "UNAVAILABLE_PERCEPTUAL_CHANNEL_RETURNS_UNKNOWN",
     "SEMANTIC_ROUNDTRIP_NON_REGRESSION",
     "FALSE_EXACT=0",
     "BUDGET_VIOLATIONS=0",
