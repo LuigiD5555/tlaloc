@@ -1,5 +1,26 @@
 # Tlaloc changelog
 
+## 6.0.0-alpha.14 — Prompt-First Distillation R0
+
+- redefines Tlaloc's core as a behavioral development kit rather than an Origami-centered runtime;
+- formalizes the Tlaloque swarm as a development/reference laboratory used to discover working procedures;
+- makes prompt-only deployment the portable default for target LLMs with no sandbox, tools, Go/Python runtime, file access or Tlaloc installation;
+- adds deployment ladder `L0 PROMPT_ONLY -> L1 prompt+context/IR -> L2 prompt+tools -> L3 prompt+runtime -> L4 specialized target`;
+- adds deterministic least-demanding-artifact selection under behavioral-fidelity/pass/regression/clean-target gates;
+- formalizes `Behavior(candidate) ~= Behavior(reference swarm)` as the distillation objective instead of trace-text similarity;
+- requires clean-target evaluation and forbids hidden development dependencies in L0 candidates;
+- adds `tlaloc.prompt-first-distillation.r0`, `docs/PROMPT_FIRST_R0.md`, Go reference selection logic and CI gates;
+- clarifies Origami as one possible development target and Tonal as an optional multi-tool composition layer.
+
+## 6.0.0-alpha.13 — Origami Visual Evolution R0
+
+- adds evidence-gated search over candidate Origami prompt, primitive, layout, redundancy, color, numeric, interference, depth, temporal and emergent representation changes;
+- adds prime/modular/factorization and perceptual-channel candidates without granting them canonical authority;
+- measures semantic roundtrip, routing/evidence, transport robustness, perceptual reveal reliability, semantic units per byte, recognition time, bootstrap/decode steps, context and carrier size;
+- requires real-model evidence for perceptual candidates and preserves `UNKNOWN` when reveal conditions are not established;
+- adds `tlaloc-visual-search` and managed installation for both visual search and perception campaign CLIs;
+- preserves the authority boundary: Tlaloc recommends with evidence; Origami decides whether Origami changes.
+
 ## 6.0.0-alpha.12 — Perception Promotion Campaign R1
 
 - adds deterministic generation of original, 75%, 50% and JPEG-preview visual transports from one canonical Origami carrier;
@@ -11,7 +32,7 @@
 - separates `HYBRID_SUPPORTED_CANDIDATE` from `NATIVE_VISUAL_SUPPORTED_CANDIDATE`; Hybrid does not require Native T3;
 - reuses the existing alpha.11 `CompleteHybrid` + Fixed Origami executor path for real tool-loop evidence;
 - adds `tlaloc-perception-campaign` campaign runner machinery;
-- does not fabricate external VLM results and does not itself promote Tonal stack support.
+- does not fabricate external VLM results.
 
 ## 6.0.0-alpha.11 — Origami Fixed Carrier R2 PDF memory plane
 
@@ -101,7 +122,7 @@ Tlaloc advances to `6.0.0-alpha.4`. Origami remains `6.0.0-alpha.1`; its represe
 ### Corrected
 - separated current architecture docs from historical records;
 - removed mandatory-dependency wording between Tlaloc and Origami;
-- clarified Origami reference semantics vs Tlaloc oracle/evaluation authority;
+- clarified Origami reference semantics vs Tlaloc evaluation authority;
 - removed global `Master Prompt` terminology from current architecture;
 - documented actual model support without claiming native Claude/skills support;
 - moved the bundled Origami behavior contract into an explicit profile namespace;
@@ -139,8 +160,3 @@ Common historical branch point of Tlaloc and Origami.
 - deterministic regression/evaluation path;
 - OpenAI-compatible local target adapter;
 - Origami quantum-inspired behavior profile as the first consumer profile.
-
-### Naming correction
-- `Origami Behavior Lab` -> `Tlaloc Behavior Lab`;
-- Go module `origami.local/behaviorlab` -> `tlaloc.local/behaviorlab`;
-- compiled prompt ownership moved to Tlaloc.

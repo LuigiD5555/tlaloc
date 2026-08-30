@@ -1,61 +1,139 @@
 # Tlaloc current architecture
 
-**TLALOC — Transformative Latent Adaptive Logic Orchestration Core** is the work system.
+**TLALOC — Transformative Latent Adaptive Logic Orchestration Core** is a development kit for behavioral discovery, experimentation and distillation.
+
+## Canonical lifecycle
 
 ```text
 Intent
-  -> BehaviorSpec / invariants
-  -> PromptIR / future SkillIR
-  -> target-family compiler
-  -> model execution
-  -> evaluator / reference-semantics comparison
-  -> bounded Tlaloque diagnosis + repair proposals
-  -> regression + promotion decision
+  -> BehaviorSpec + invariants
+  -> bounded Tlaloque swarm
+  -> execution / observations / traces
+  -> reference behavior evidence
+  -> distillation
+  -> PromptIR / prompt candidates
+  -> clean target-family execution
+  -> behavioral-fidelity evaluation
+  -> regression / candidate selection
+  -> portable prompt artifact
 ```
 
-## Ownership boundary
+The swarm is a **reference laboratory** used to discover a procedure that works. It is not the default production architecture.
 
-Tlaloc owns orchestration, behavior compilation, model-facing adapters, Tlaloque coordination/training, evaluation campaigns, verification and promotion control.
+## Prompt-first deployment
 
-Origami is an independent representation project. It can supply state schemas, semantics and a reference semantics engine to Tlaloc, but Tlaloc does not own or redefine Origami semantics. Tlaloc can also operate with representations other than Origami.
+The portable deployment target is `L0_PROMPT_ONLY` whenever the required behavior can be preserved there.
+
+```text
+L0 PROMPT_ONLY
+L1 PROMPT_PLUS_DECLARATIVE_CONTEXT_OR_IR
+L2 PROMPT_PLUS_TOOLS
+L3 PROMPT_PLUS_RUNTIME
+L4 SPECIALIZED_MODEL_OR_TARGET_SPECIFIC_SYSTEM
+```
+
+Tlaloc minimizes deployment requirements subject to behavioral fidelity.
+
+This means development may use a sandbox, tools, Go, many agents and large evaluators while an accepted L0 artifact must still work with only an LLM text interface.
 
 ## Authority hierarchy
 
-1. `BehaviorSpec` + declared invariants are the source of truth for desired behavior.
-2. A representation provider (for example Origami) is authoritative for its own semantic contract.
-3. Reference semantics calculate expected state behavior; Tlaloc evaluators compare model behavior against those expectations.
-4. Prompts, skills and target-specific instruction packages are compiled artifacts, never the source of truth.
-5. Tlaloque may propose bounded repairs; promotion authority remains centralized and test-gated in Tlaloc.
+1. `BehaviorSpec` + declared invariants define desired behavior.
+2. Swarm execution and tests demonstrate a reference procedure that can satisfy that behavior.
+3. Distillation extracts compact behavioral rules/instructions from successful traces.
+4. Prompt/PromptIR artifacts are deployment candidates, not truth merely because they were generated.
+5. Clean-target evaluation compares the candidate against the requested/reference behavior.
+6. A target project remains authoritative over its own releases and contracts.
 
 ## Tlaloque
 
-Tlaloque are deliberately small specialist agents under Tlaloc. They are not a second source of truth and they do not self-promote changes. The current R0 implementation uses rule-based Tlaloque guards; later versions may add small models where a deterministic worker is insufficient.
+Tlaloque are deliberately small specialist workers under Tlaloc. They are useful because decomposition makes a complex requested behavior observable and testable as many simple actions.
 
-## Current implementation boundary (R0)
+A Tlaloque can perform a bounded operation, inspect one piece of state, test one predicate, compare one item, open one evidence source or propose one repair. Complex behavior comes from their composition, not from treating each Tlaloque as a general autonomous intelligence.
 
-The lifecycle is general, but the bundled evaluator, reference engine, Tlaloque guards and curriculum are still specialized for the first consumer profile: `origami.quantum-inspired.r0`. Model-family-specific compilation (Claude/GPT/Qwen/LFM profiles and generated skills) is not implemented in this release.
+## Behavioral distillation
 
-See `NOMENCLATURE.md` for naming rules.
+The distillation target is:
+
+```text
+Behavior(candidate artifact) ~= Behavior(reference swarm)
+```
+
+not textual reproduction of the trace.
+
+A trace with dozens of agents and intermediate actions may compress to a much smaller prompt if the prompt captures the decision order, invariants, uncertainty behavior and verification rules that caused success.
+
+## General target boundary
+
+Tlaloc is not defined by Origami.
+
+Possible targets include:
+
+```text
+Origami
+calculator behavior
+document workflows
+classifiers
+other prompted applications
+other software/tool behavior
+```
+
+Target-specific adapters and experiments may be extensive, but they remain profiles on top of the general behavioral lifecycle.
+
+## Origami target profile
+
+For Origami, Tlaloc currently provides optional development machinery such as:
+
+- Canonical Document IR / OCR and exact-memory experiments;
+- Tlaloque proposal generation;
+- cross-model perception campaigns;
+- prompt/representation search;
+- color/numeric/interference/depth/temporal candidate experiments;
+- evidence-backed visual-profile tournaments.
+
+Origami owns Origami semantics, its Master Prompt releases, visual grammar and canonical profile promotion. Tlaloc supplies experimental candidates and evidence.
+
+## Tonal boundary
+
+Tonal is not a required Tlaloc layer. Tonal may compose several independent development systems, for example Tlaloc plus Blueprint Framework, and pin exact revisions for reproducibility.
+
+```text
+Tonal
+  -> Tlaloc
+  -> Blueprint Framework
+  -> other development tools
+  -> target revisions
+```
+
+Tonal does not define Tlaloc's behavioral semantics and does not own releases of target projects.
+
+## Clean-target rule
+
+An L0 prompt candidate may not depend on:
+
+- Tlaloc internal state;
+- swarm traces;
+- a hidden sandbox;
+- undeclared tools;
+- evaluator ground truth;
+- private target answers.
+
+Higher deployment levels may use additional dependencies only when those dependencies are explicitly declared.
+
+## Existing richer runtimes
+
+Existing Hybrid, tool-loop, PDF-memory, Origami visual-search and other runtime components remain valuable **development/evaluation machinery** and explicit higher-level deployment options. They do not change the prompt-first baseline.
 
 ## Operational agent guidance
 
-`CLAUDE.md` and `.claude/skills/` are checked-in instructions for coding agents working on this repository. They summarize architecture and workflows but do not define model behavior. The behavioral source of truth remains `BehaviorSpec + invariants`, and future compiler-generated SkillIR remains a separate, not-yet-implemented layer.
+`CLAUDE.md` and `.claude/skills/` are checked-in instructions for coding agents working on this repository. They are development assets, not Tlaloc's portable behavioral output.
 
-The installer preserves these files inside the managed Tlaloc version but does not install or modify global `~/.claude` configuration.
+## Current implementation
 
-## Origami perceptual-contract awareness
+`behavior-lab/internal/distill/promptfirst.go` implements deterministic selection of the least demanding behaviorally valid artifact. The existing receiver distillation, PromptIR/compiler, evaluator, Tlaloque and target adapters remain available and are now interpreted within this general hierarchy.
 
-Tlaloc can track Origami contracts independently of implementing them. Origami `6.0.0-alpha.3` preserves `origami.perceptual-channels.r0` (introduced in alpha.2) and clarifies that OHF is a nested Origami research track; Tlaloc records that contract and hierarchy as upstream-known while the executable behavior profile remains `origami.quantum-inspired.r0`. This prevents semantic drift without pretending that moire, stereoscopic/depth or temporal-latent-image operations already have reference evaluators.
+See also:
 
-## Fixed Carrier R2 memory plane
-
-Tlaloc now has an optional PDF-specialized exact memory plane for Origami Fixed Carrier R2. Tlaloc owns PDF ingestion, content-addressed page/source storage, routing, tool execution and model/tool orchestration. Origami owns the fixed image format and store-root binding semantics. The carrier size therefore does not scale with corpus size.
-
-```text
-model + MASTER_PROMPT + origami.png
-        -> BOOT via actual image
-        -> Tlaloc tool plane
-        -> address/CID/store root
-        -> bounded ContextPacket
-        -> model answer
-```
+- `docs/PROMPT_FIRST_R0.md`
+- `behavior-lab/spec/PROMPT_FIRST_DISTILLATION_R0.json`
+- `docs/NOMENCLATURE.md`
