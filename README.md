@@ -1,4 +1,4 @@
-# Tlaloc 6.0.0-alpha.15
+# Tlaloc 6.0.0-alpha.16
 
 **TLALOC — Transformative Latent Adaptive Logic Orchestration Core**
 
@@ -120,28 +120,35 @@ NATIVE SEMANTIC REGRESSION R0
 failed prompt-only/native trial
         -> deterministic failure classification
         -> permanent regression
-        -> T2/index + semantic-answer + no-mechanical-dependency gates
+        -> T2/index + semantic-answer + no-undeclared-external-codec gates
         -> visual/prompt candidates must beat the failure
+
+PROTOCOL INTEROP R0
+Origami semantic state
+        -> declared E* encoder
+        -> Origami message
+        -> declared S* decoder in another model
+        -> structural comparison / semantic drift
+        -> optional A -> B -> C multi-hop campaign
 ```
 
 These components do not make Tlaloc an Origami runtime dependency.
 
-## Failure-driven Native semantic evaluation — alpha.15
+## Failure-driven Native semantic evaluation — alpha.15+
 
 A real external trial asked a model for the index of an Origami book carrier. The model could read the bootstrap but then treated the carrier as a binary archive: it requested file/decoder access and produced unverified byte, compression and hash claims instead of reading the semantic index.
 
-Tlaloc alpha.15 turns that failure into an executable development constraint. `behavior-lab/internal/nativeeval` and `tlaloc-native-eval` score target output without using another LLM as judge.
-
-For semantic queries such as identity, index, overview and topic location, Tlaloc now tracks:
+Tlaloc alpha.15 turned that failure into an executable development constraint. Alpha.16 refines the rule now that Origami Protocol R0 carries self-declared codecs:
 
 ```text
-native_index_recovery_rate
-native_semantic_answer_rate
-mechanical_dependency_violations
-unverified_mechanical_claims
+DECLARED SEMANTIC DECODER SUCH AS S2 = VALID
+UNDECLARED EXTERNAL DECODER / FILE / BINARY DEPENDENCY = FAILURE
+SEMANTIC QUERY -> UNNECESSARY EXACT/BINARY ESCALATION = FAILURE
 ```
 
-A candidate Origami profile/prompt cannot be recommended when semantic navigation requires undeclared binary extraction, filesystem/sandbox access or decompression. A visually denser or smaller carrier is not an improvement if a plain multimodal model cannot use its semantic plane.
+`behavior-lab/internal/nativeeval` and `tlaloc-native-eval` score target output without using another LLM as judge.
+
+For semantic queries such as identity, index, overview and topic location, Tlaloc tracks index recovery, semantic answer presence, declared codec discovery, undeclared external-codec dependency, unnecessary semantic-to-exact escalation and unverified mechanical claims.
 
 Reference gates are described in `behavior-lab/spec/NATIVE_SEMANTIC_REGRESSION_R0.json`.
 
@@ -152,6 +159,56 @@ Manual evaluation example:
 ```
 
 The matching Origami change owns the actual T2/semantic carrier correction; Tlaloc only measures candidates and turns failures into regressions.
+
+## Origami Protocol interoperability evaluation — alpha.16
+
+Alpha.16 adds a deterministic evaluator for Origami as a read/write communication protocol between models.
+
+The reference path is:
+
+```text
+Semantic State
+  -> E2 ENCODE_SUPERINDEX
+  -> Origami
+  -> S2 READ_SUPERINDEX
+  -> Semantic State
+```
+
+and the multi-model path is:
+
+```text
+Model A -> Origami -> Model B -> Origami -> Model C
+```
+
+`behavior-lab/internal/protocoleval` and `tlaloc-protocol-eval` measure:
+
+```text
+decoder discovery
+encoder discovery
+entity preservation
+relation preservation
+hierarchy preservation
+evidence preservation
+uncertainty preservation
+invented facts
+semantic drift
+hop-to-hop drift
+cross-model read success
+cross-model write success
+undeclared external codec dependencies
+semantic-to-exact escalations
+```
+
+The comparison is deterministic and structural; another LLM is not used as judge.
+
+Synthetic fixtures such as `behavior-lab/testdata/protocol/perfect-multihop.json` validate the evaluator itself. They are **not** empirical interoperability evidence. Real held-out model output must be recorded verbatim and evaluated separately; `behavior-lab/testdata/protocol/REAL_TRIAL_TEMPLATE.json` exists for that purpose.
+
+See:
+
+- `behavior-lab/PROTOCOL_INTEROP_LAB_R0.md`
+- `behavior-lab/spec/ORIGAMI_PROTOCOL_INTEROP_R0.json`
+- `behavior-lab/spec/CODEC_ROUNDTRIP_R0.json`
+- `behavior-lab/spec/CROSS_MODEL_COMMUNICATION_R0.json`
 
 ## Development complexity vs deployment complexity
 
@@ -200,6 +257,8 @@ This prevents a prompt from appearing successful merely because the development 
 - clean-target behavioral comparison;
 - failure-to-regression conversion;
 - deterministic Native semantic response evaluation;
+- deterministic Origami read/write codec discovery evaluation;
+- structural semantic roundtrip and A→B→C drift evaluation;
 - regression gates;
 - OpenAI-compatible model adapters;
 - target-specific experiment tracks, including Origami.
@@ -239,7 +298,7 @@ TEMPORAL_STRUCTURE
 EMERGENT_STRUCTURE
 ```
 
-Alpha.15 adds first-class Native semantic fitness: index recovery and semantic usability without undeclared mechanical decoding must not regress.
+Alpha.15 added first-class Native semantic fitness. Alpha.16 adds codec-aware read/write and cross-model drift evaluation. None of these deterministic harnesses substitutes for real held-out model evidence.
 
 Prime/modular patterns, moire/phase, stereo/parallax, temporal and emergent structures remain candidates until real evidence demonstrates improvement.
 
@@ -286,7 +345,7 @@ A prompt is not authoritative merely because Tlaloc generated it. It becomes use
 
 - **Tlaloc** = behavioral development/discovery/distillation kit.
 - **Tlaloque** = deliberately bounded workers used to explore and execute micro-steps.
-- **Origami** = independent representation/state-machine/visual language and one possible Tlaloc target.
+- **Origami** = independent representation/state-machine/visual language/protocol and one possible Tlaloc target.
 - **Tonal** = optional multi-tool composition/reproducibility layer.
 
 See `docs/NOMENCLATURE.md`.
@@ -299,6 +358,7 @@ See `docs/NOMENCLATURE.md`.
 - `docs/CAPABILITY_STATUS.md`
 - `docs/ORIGAMI_INTEGRATION_CONTRACT.md`
 - `docs/ORIGAMI_VISUAL_EVOLUTION_R0.md`
+- `behavior-lab/PROTOCOL_INTEROP_LAB_R0.md`
 - `behavior-lab/spec/NATIVE_SEMANTIC_REGRESSION_R0.json`
 - `GATEKEEPER.md`
 
@@ -324,7 +384,10 @@ DEVELOPMENT DEPENDENCIES != DEPLOYMENT DEPENDENCIES
 BEHAVIORAL FIDELITY != TRACE TEXT SIMILARITY
 CLEAN TARGET EVALUATION REQUIRED
 FAILED REAL TRIAL -> REGRESSION
-SEMANTIC NAVIGATION != UNDECLARED BINARY DECODE
+DECLARED SEMANTIC CODEC = ALLOWED
+UNDECLARED EXTERNAL CODEC DEPENDENCY = FAILURE
+SEMANTIC NAVIGATION != UNNECESSARY EXACT/BINARY DECODE
+SYNTHETIC INTEROP FIXTURE != REAL MODEL EVIDENCE
 UNVERIFIED MECHANICAL CLAIMS BLOCK RECOMMENDATION
 ORIGAMI IS A TARGET, NOT TLALOC'S IDENTITY
 TLALOC CANDIDATE != CANONICAL ORIGAMI PROFILE
@@ -334,4 +397,4 @@ FALSE_EXACT = 0 WHERE EXACTNESS IS CLAIMED
 
 ## Version
 
-`6.0.0-alpha.15`
+`6.0.0-alpha.16`

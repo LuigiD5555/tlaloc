@@ -1,0 +1,56 @@
+{
+  "schema": "tlaloc.origami-protocol-interop.r0.trial",
+  "id": "REPLACE_WITH_TRIAL_ID",
+  "mode": "MULTIHOP",
+  "required_decoder": "S2",
+  "required_encoder": "E2",
+  "source": {
+    "entities": [],
+    "relations": [],
+    "hierarchy": [],
+    "evidence": [],
+    "uncertainty": []
+  },
+  "hops": [
+    {
+      "model_id": "REAL_MODEL_A_ID",
+      "decoder_codec": "",
+      "encoder_codec": "",
+      "decoded": {
+        "entities": [],
+        "relations": [],
+        "hierarchy": [],
+        "evidence": [],
+        "uncertainty": []
+      },
+      "reencoded": {
+        "entities": [],
+        "relations": [],
+        "hierarchy": [],
+        "evidence": [],
+        "uncertainty": []
+      },
+      "model_output": "PASTE_VERBATIM_MODEL_OUTPUT_HERE"
+    },
+    {
+      "model_id": "REAL_MODEL_B_ID",
+      "decoder_codec": "",
+      "encoder_codec": "",
+      "decoded": {
+        "entities": [],
+        "relations": [],
+        "hierarchy": [],
+        "evidence": [],
+        "uncertainty": []
+      },
+      "reencoded": {
+        "entities": [],
+        "relations": [],
+        "hierarchy": [],
+        "evidence": [],
+        "uncertainty": []
+      },
+      "model_output": "PASTE_VERBATIM_MODEL_OUTPUT_HERE"
+    }
+  ]
+}
