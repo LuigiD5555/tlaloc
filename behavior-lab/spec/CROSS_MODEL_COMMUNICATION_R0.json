@@ -1,0 +1,44 @@
+{
+  "contract_id": "tlaloc.cross-model-communication.r0",
+  "status": "EXPERIMENTAL_REFERENCE_IMPLEMENTED_EVIDENCE_PENDING",
+  "purpose": "Evaluate Origami as a communication protocol across multiple distinct model hops without silently converting synthetic harness success into a Native interoperability claim.",
+  "reference_topology": "MODEL_A -> ORIGAMI -> MODEL_B -> ORIGAMI -> MODEL_C",
+  "minimum_real_hops": 2,
+  "per_hop_requirements": [
+    "record model identity",
+    "record declared decoder codec",
+    "record declared encoder codec",
+    "record decoded semantic state",
+    "record reencoded semantic state",
+    "preserve raw model output for mechanical-dependency audit"
+  ],
+  "metrics": [
+    "hop_to_hop_drift",
+    "final_semantic_drift",
+    "mean_semantic_drift",
+    "cross_model_read_success",
+    "cross_model_write_success",
+    "invented_fact_rate",
+    "lost_fact_rate",
+    "codec_discovery_success",
+    "undeclared_external_codec_dependency_count",
+    "semantic_to_exact_escalation_count"
+  ],
+  "promotion_reference": {
+    "final_semantic_drift_max": 0.05,
+    "invented_fact_rate_max": 0.0,
+    "undeclared_external_codec_dependency_count": 0,
+    "semantic_to_exact_escalation_count": 0,
+    "false_exact": 0,
+    "distinct_models_required": true,
+    "real_trials_required": true
+  },
+  "hard_invariants": [
+    "A_TO_B_TO_C_MUST_PRESERVE_GROUND_TRUTH_STRUCTURE",
+    "SYNTHETIC_PERFECT_TRIAL_ONLY_VALIDATES_EVALUATOR",
+    "HELD_OUT_MODEL_OUTPUT_IS_EVIDENCE",
+    "NO_LLM_AS_JUDGE",
+    "UNKNOWN_OVER_INVENTION",
+    "FALSE_EXACT=0"
+  ]
+}
