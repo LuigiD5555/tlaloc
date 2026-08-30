@@ -21,6 +21,7 @@ func Distill(trace ActionTrace) (Result, error) {
 	}
 
 	steps := append([]TraceStep(nil), trace.Steps...)
+	maxStep := 0
 	for i := range steps {
 		steps[i].Tlaloque = strings.TrimSpace(steps[i].Tlaloque)
 		steps[i].FromState = strings.TrimSpace(steps[i].FromState)
@@ -28,6 +29,7 @@ func Distill(trace ActionTrace) (Result, error) {
 		if steps[i].Step < 0 || steps[i].Tlaloque == "" || steps[i].FromState == "" || steps[i].ToState == "" {
 			return Result{}, fmt.Errorf("invalid trace step at index %d", i)
 		}
+		if steps[i].Step > maxStep { maxStep = steps[i].Step }
 		steps[i].Requires = canonicalPredicates(steps[i].Requires)
 		steps[i].EmitsTo = canonicalStrings(steps[i].EmitsTo)
 	}
@@ -113,11 +115,16 @@ func Distill(trace ActionTrace) (Result, error) {
 	traceDigest := sha256.Sum256(traceBytes)
 	ratio := 0.0
 	if len(rules) > 0 { ratio = float64(len(steps)) / float64(len(rules)) }
+	automatonIR := AutomatonIR{Schema: AutomatonSchema, ID: trace.ID + "-distilled", Cells: cells, Rules: rules, Edges: edges, SourceTraceSHA256: hex.EncodeToString(traceDigest[:])}
+	// R0 derives only a bounded synchronous horizon from the explicitly ordered
+	// trace. It does not invent hidden timing or checkpoint placement.
+	temporalIR := TemporalProgramIR{Schema: TemporalProgramSchema, ID: trace.ID + "-temporal", Automaton: automatonIR, MaxSteps: maxStep + 1}
 
 	return Result{
 		Schema: "tlaloc.automaton-distillation-result.r0",
-		Automaton: AutomatonIR{Schema: AutomatonSchema, ID: trace.ID + "-distilled", Cells: cells, Rules: rules, Edges: edges, SourceTraceSHA256: hex.EncodeToString(traceDigest[:])},
-		Metrics: Metrics{TraceSteps: len(steps), UniqueCells: len(cells), UniqueRules: len(rules), RepeatedTransitionsRemoved: len(steps)-len(rules), DistillationRatio: ratio},
+		Automaton: automatonIR,
+		TemporalProgram: temporalIR,
+		Metrics: Metrics{TraceSteps: len(steps), TraceMaxStep: maxStep, UniqueCells: len(cells), UniqueRules: len(rules), RepeatedTransitionsRemoved: len(steps)-len(rules), DistillationRatio: ratio},
 	}, nil
 }
 
