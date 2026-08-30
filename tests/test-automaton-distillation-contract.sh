@@ -5,12 +5,17 @@ python3 - <<'PY' "$ROOT/behavior-lab/spec/AUTOMATON_DISTILLATION_R0.json"
 import json,sys
 p=json.load(open(sys.argv[1]))
 assert p['contract_id']=='tlaloc.automaton-distillation.r0'
-assert p['output']=='origami.automaton.r0-compatible IR'
+assert 'origami.automaton.r0-compatible IR' in p['outputs']
+assert 'origami.temporal-program.r0-compatible IR' in p['outputs']
+assert p['temporal_policy']['schedule']=='SYNCHRONOUS_R0'
+assert p['temporal_policy']['hidden_timing_inference'] is False
 assert p['boundary']['tlaloque_runtime_required_after_distillation'] is False
 assert p['boundary']['origami_runtime_required_by_tlaloc'] is False
 assert p['boundary']['target_owns_final_semantics'] is True
 assert 'UNDECLARED_DEPENDENCY_IS_NOT_INFERRED' in p['hard_invariants']
+assert 'UNDECLARED_TIMING_IS_NOT_INFERRED' in p['hard_invariants']
 assert 'DISTILLED_AUTOMATON_NE_ORIGINAL_SWARM_TRACE' in p['hard_invariants']
+assert 'DISTILLED_TEMPORAL_PROGRAM_NE_LITERAL_TRACE' in p['hard_invariants']
 print('automaton-distillation-contract: PASS')
 PY
 TMP="$(mktemp -d)"
