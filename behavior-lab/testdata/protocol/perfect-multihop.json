@@ -1,0 +1,71 @@
+{
+  "schema": "tlaloc.origami-protocol-interop.r0.trial",
+  "id": "synthetic-perfect-multihop",
+  "mode": "MULTIHOP",
+  "required_decoder": "S2",
+  "required_encoder": "E2",
+  "source": {
+    "entities": ["Sun","Earth","Moon"],
+    "relations": [
+      {"subject":"Earth","predicate":"orbits","object":"Sun"},
+      {"subject":"Moon","predicate":"orbits","object":"Earth"}
+    ],
+    "hierarchy": [{"subject":"Moon","predicate":"member_of","object":"Earth system"}],
+    "evidence": ["observation-1"],
+    "uncertainty": ["none declared"]
+  },
+  "hops": [
+    {
+      "model_id": "synthetic-model-a",
+      "decoder_codec": "S2",
+      "encoder_codec": "E2",
+      "decoded": {
+        "entities": ["Sun","Earth","Moon"],
+        "relations": [
+          {"subject":"Earth","predicate":"orbits","object":"Sun"},
+          {"subject":"Moon","predicate":"orbits","object":"Earth"}
+        ],
+        "hierarchy": [{"subject":"Moon","predicate":"member_of","object":"Earth system"}],
+        "evidence": ["observation-1"],
+        "uncertainty": ["none declared"]
+      },
+      "reencoded": {
+        "entities": ["Sun","Earth","Moon"],
+        "relations": [
+          {"subject":"Earth","predicate":"orbits","object":"Sun"},
+          {"subject":"Moon","predicate":"orbits","object":"Earth"}
+        ],
+        "hierarchy": [{"subject":"Moon","predicate":"member_of","object":"Earth system"}],
+        "evidence": ["observation-1"],
+        "uncertainty": ["none declared"]
+      },
+      "model_output": "Used declared S2 then E2."
+    },
+    {
+      "model_id": "synthetic-model-b",
+      "decoder_codec": "S2",
+      "encoder_codec": "E2",
+      "decoded": {
+        "entities": ["Sun","Earth","Moon"],
+        "relations": [
+          {"subject":"Earth","predicate":"orbits","object":"Sun"},
+          {"subject":"Moon","predicate":"orbits","object":"Earth"}
+        ],
+        "hierarchy": [{"subject":"Moon","predicate":"member_of","object":"Earth system"}],
+        "evidence": ["observation-1"],
+        "uncertainty": ["none declared"]
+      },
+      "reencoded": {
+        "entities": ["Sun","Earth","Moon"],
+        "relations": [
+          {"subject":"Earth","predicate":"orbits","object":"Sun"},
+          {"subject":"Moon","predicate":"orbits","object":"Earth"}
+        ],
+        "hierarchy": [{"subject":"Moon","predicate":"member_of","object":"Earth system"}],
+        "evidence": ["observation-1"],
+        "uncertainty": ["none declared"]
+      },
+      "model_output": "Used declared S2 then E2."
+    }
+  ]
+}
