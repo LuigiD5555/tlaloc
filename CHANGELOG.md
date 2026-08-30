@@ -1,5 +1,18 @@
 # Tlaloc changelog
 
+## 6.0.0-alpha.12 — Perception Promotion Campaign R1
+
+- adds deterministic generation of original, 75%, 50% and JPEG-preview visual transports from one canonical Origami carrier;
+- adds a strict OpenAI-compatible multimodal perception call that gives target models only the declared prompt, question and image;
+- adds structured observation parsing that rejects undeclared evaluator/ground-truth fields;
+- bridges every trial to Origami's independent `origami-perception-eval` instead of letting Tlaloc score its own visual ground truth;
+- adds campaign aggregation requiring REAL_MODEL evidence, 3 models x 3 original trials by default, transport coverage, real tool-loop success and held-out routing evidence;
+- preserves `FALSE_EXACT=0`, zero budget violations and evidence-routing thresholds as hard promotion gates;
+- separates `HYBRID_SUPPORTED_CANDIDATE` from `NATIVE_VISUAL_SUPPORTED_CANDIDATE`; Hybrid does not require Native T3;
+- reuses the existing alpha.11 `CompleteHybrid` + Fixed Origami executor path for real tool-loop evidence;
+- adds `tlaloc-perception-campaign` campaign runner machinery;
+- does not fabricate external VLM results and does not itself promote Tonal stack support.
+
 ## 6.0.0-alpha.11 — Origami Fixed Carrier R2 PDF memory plane
 
 - adds deterministic PDF Tlaloque memory ingestion with exact source preservation, 100% page addressing/CIDs, lexical routing, fixed GraphSketch and Merkle root;
