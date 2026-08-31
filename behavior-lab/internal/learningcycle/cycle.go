@@ -53,6 +53,25 @@ func BuildPlanWithGenome(root string, events []learningmemory.Event, genome prom
 // advertises/implements them; they are not silently converted into specimens.
 func synthesize(intent experimentpolicy.ExperimentIntent, parents []string, programSHA, payloadSHA string) []experimentpolicy.CandidateManifest {
 	target := strings.ToUpper(strings.TrimSpace(intent.MutableModule))
+	if target=="CELL_IDENTITY_ENCODING"{
+		preserved:=appendUnique(append([]string(nil),intent.Preserve...),"TEMPORAL_GRAMMAR","EXECUTION_POLICY","PROGRAM_SEMANTICS","PAYLOAD","INITIAL_STATES")
+		forbidden:=appendUnique(append([]string(nil),intent.Avoid...),"RULE_MUTATION","STATE_MUTATION","EXECUTION_POLICY_MUTATION","CHECKPOINT_MUTATION","PAYLOAD_MUTATION","GENERATIVE_SEMANTIC_REWRITE","MULTI_MODULE_MUTATION","TEMPORAL_RULE_MUTATION")
+		return []experimentpolicy.CandidateManifest{{
+			Schema:experimentpolicy.CandidateSchemaR1,
+			ID:"cell-identity-redundancy-r1",
+			ParentID:intent.BaselineCandidateID,
+			ProgramSHA256:programSHA,
+			PayloadSHA256:payloadSHA,
+			Mutations:[]experimentpolicy.Mutation{{Kind:"REDUNDANCY",Target:"CELL_IDENTITY_ENCODING",Value:"VISIBLE_CELL_ID_REDUNDANCY_R1"}},
+			ChangedModules:[]string{"CELL_IDENTITY_ENCODING"},
+			PreservedModules:preserved,
+			ForbiddenChanges:forbidden,
+			ExpectedSemanticChanges:[]experimentpolicy.SemanticFact{{Key:"VISIBLE_CELL_ID_A",Value:"A[01]"},{Key:"VISIBLE_CELL_ID_B",Value:"B[02]"},{Key:"VISIBLE_CELL_ID_C",Value:"C[03]"}},
+			ExpectedEffect:"reduce A/B/C confusion while preserving rule recovery and execution",
+			ParentEvidenceIDs:append([]string(nil),parents...),
+		}}
+	}
+
 	type h struct{ id, kind, mutTarget, value, semanticKey, semanticValue, effect string }
 	hs := []h{}
 	switch target {
@@ -85,6 +104,12 @@ func rulesByKind(p learningpolicy.Policy)(preserve,avoid,require []string){
 		switch r.Kind{case learningpolicy.RulePreserve:preserve=append(preserve,r.Target);case learningpolicy.RuleAvoid:avoid=append(avoid,r.Target);case learningpolicy.RuleRequire:require=append(require,r.Target)}
 	}
 	return
+}
+
+func appendUnique(in []string,values ...string)[]string{
+	seen:=map[string]bool{};out:=make([]string,0,len(in)+len(values))
+	for _,v:=range append(in,values...){if v==""||seen[v]{continue};seen[v]=true;out=append(out,v)}
+	return out
 }
 
 func normalize(s string)string{r:=strings.NewReplacer(" ","-","_","-","/","-");s=strings.ToLower(strings.TrimSpace(s));if s==""{return "general"};return r.Replace(s)}
