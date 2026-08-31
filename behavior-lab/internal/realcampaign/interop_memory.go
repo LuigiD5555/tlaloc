@@ -15,12 +15,15 @@ import (
 const WorkingConfigurationSchema = "tlaloc.model-working-configuration.r0"
 
 type WorkingEvidence struct {
-	RecordedAt          string `json:"recorded_at"`
-	Stage               string `json:"stage"`
-	Outcome             string `json:"outcome"`
-	ProgramSHA256       string `json:"program_sha256,omitempty"`
-	CarrierSHA256       string `json:"carrier_sha256,omitempty"`
-	ProbeResponseSHA256 string `json:"probe_response_sha256,omitempty"`
+	RecordedAt          string  `json:"recorded_at"`
+	Stage               string  `json:"stage"`
+	Outcome             string  `json:"outcome"`
+	ProgramSHA256       string  `json:"program_sha256,omitempty"`
+	CarrierSHA256       string  `json:"carrier_sha256,omitempty"`
+	ProbeResponseSHA256 string  `json:"probe_response_sha256,omitempty"`
+	MeanNativeScore     float64 `json:"mean_native_score,omitempty"`
+	MeanOverallScore    float64 `json:"mean_overall_score,omitempty"`
+	ExecutionErrors     int     `json:"execution_errors,omitempty"`
 }
 
 type WorkingConfiguration struct {
