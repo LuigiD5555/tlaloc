@@ -3,22 +3,38 @@ package learningcycle
 import (
 	"testing"
 
+	"tlaloc.local/behaviorlab/internal/experimentpolicy"
 	"tlaloc.local/behaviorlab/internal/learningmemory"
 	"tlaloc.local/behaviorlab/internal/promptgenome"
 )
 
 func boolp(v bool)*bool{return &v}
 
-func TestBuildPlanTargetsExecutionPolicy(t *testing.T){
+func TestBuildPlanTargetsExecutionPolicyCompliance(t *testing.T){
 	events:=[]learningmemory.Event{{Schema:learningmemory.EventSchema,EventID:"e1",EventType:learningmemory.EventObservation,EvidenceClass:learningmemory.EvidenceRealModel,BenchmarkID:"b",TrialID:"t",QuestionID:"q",Pass:boolp(false),LastCompletedStage:"T2_RULE_MICROGRAMMAR",FailureCode:"TEMPORAL_EXECUTION_INCOMPLETE",ScoreLayer:"T_TEMPORAL"}}
 	g:=promptgenome.Genome{Schema:promptgenome.GenomeSchemaR1,ID:"g",Version:1,Modules:[]promptgenome.Module{{ID:"TEMPORAL_GRAMMAR",Version:1,Text:"rules",Priority:10,Protected:true,Maturity:"PROVISIONAL_WIN"},{ID:"EXECUTION_POLICY",Version:1,Text:"execute",Priority:9}}}
 	p:=BuildPlanWithGenome("memory",events,g,"baseline","program","payload",3)
-	if p.Intent.MutableModule!="EXECUTION_POLICY"{t.Fatalf("mutable=%q",p.Intent.MutableModule)}
+	if p.Intent.MutableModule!="EXECUTION_POLICY_COMPLIANCE"{t.Fatalf("mutable=%q",p.Intent.MutableModule)}
 	if len(p.Candidates)!=1{t.Fatalf("only negotiated materializable candidate expected, got=%d",len(p.Candidates))}
 	if err:=ValidatePlan(p);err!=nil{t.Fatal(err)}
-	if p.Candidates[0].Mutations[0].Value!="EXECUTE_VISIBLE_RULES_TO_STABLE_R1"{t.Fatalf("mutation=%#v",p.Candidates[0].Mutations[0])}
+	if p.Candidates[0].Mutations[0].Value!="EXECUTE_DONT_SUMMARIZE_TO_STABLE_R1"{t.Fatalf("mutation=%#v",p.Candidates[0].Mutations[0])}
 	found:=false;for _,x:=range p.Intent.Preserve{if x=="TEMPORAL_GRAMMAR"{found=true}}
 	if !found{t.Fatalf("protected prior win missing from preserve: %#v",p.Intent.Preserve)}
+}
+
+func TestBuildPlanCarriesCrossModelPanel(t *testing.T){
+	baseline:="rule-role-binding-unseen-rules-r1"
+	events:=[]learningmemory.Event{
+		{Schema:learningmemory.EventSchema,EventID:"deepseek-r5-pass",EventType:learningmemory.EventObservation,EvidenceClass:learningmemory.EvidenceRealModel,ModelID:"deepseek-unspecified",SpecimenID:baseline,Pass:boolp(true),LastCompletedStage:"TEMPORAL_EXECUTION",ScoreLayer:"T_TEMPORAL"},
+		{Schema:learningmemory.EventSchema,EventID:"qwen-r5-fail",EventType:learningmemory.EventObservation,EvidenceClass:learningmemory.EvidenceRealModel,ModelID:"qwen-unspecified",SpecimenID:baseline+"-fixed-title",Pass:boolp(false),LastCompletedStage:"TEMPORAL_EXECUTION",FailureCode:"TEMPORAL_EXECUTION_INCOMPLETE",ScoreLayer:"T_TEMPORAL"},
+	}
+	p:=BuildPlan("memory",events,baseline,"program","",1)
+	if p.Intent.MutableModule!="EXECUTION_POLICY_COMPLIANCE"{t.Fatalf("intent=%#v",p.Intent)}
+	if len(p.Intent.CompatibilityPanel)!=2{t.Fatalf("panel=%#v",p.Intent.CompatibilityPanel)}
+	if len(p.Candidates)!=1||len(p.Candidates[0].CompatibilityPanel)!=2{t.Fatalf("candidate panel=%#v",p.Candidates)}
+	byModel:=map[string]experimentpolicy.ModelCompatibilityRequirement{};for _,r:=range p.Intent.CompatibilityPanel{byModel[r.ModelID]=r}
+	if byModel["deepseek-unspecified"].Mode!=experimentpolicy.ModelCompatibilityPreservePass||!byModel["deepseek-unspecified"].BaselinePass{t.Fatalf("deepseek requirement=%#v",byModel["deepseek-unspecified"])}
+	if byModel["qwen-unspecified"].Mode!=experimentpolicy.ModelCompatibilityImproveToPass||byModel["qwen-unspecified"].BaselinePass{t.Fatalf("qwen requirement=%#v",byModel["qwen-unspecified"])}
 }
 
 func TestBuildPlanTargetsCellIdentityEncoding(t *testing.T){
