@@ -1,0 +1,26 @@
+{
+  "schema": "tlaloc.temporal-native-benchmark.r0.campaign",
+  "benchmark_id": "manual-deepseek-signal-chain-r0-2026-08-30",
+  "trials": [
+    {
+      "id": "deepseek-manual-001",
+      "model_id": "deepseek-unspecified",
+      "provider": "DeepSeek",
+      "condition": "NATIVE_PNG_ONLY_MANUAL",
+      "specimen": {
+        "id": "origami-alpha15-signal-chain-r0-baseline",
+        "sha256": "ac40044663a4524f12097a691bff5d73b7a18fcbfb5eee4f07969ec66c43cd0e",
+        "variant": "BASELINE_TEMPORAL_CARRIER_R0",
+        "png_bytes": 8192,
+        "width": 640,
+        "height": 640
+      },
+      "responses": [
+        {
+          "question_id": "QRAW",
+          "text": "External manual DeepSeek response preserved verbatim in raw-response.md. The model correctly recovered BOOT/ROSETTA symbols, cells A/B/C, initial states and payload format; it did not recover the declared causal rules, checkpoints or final state sequence and explicitly labeled its temporal evolution as hypothetical."
+        }
+      ]
+    }
+  ]
+}
