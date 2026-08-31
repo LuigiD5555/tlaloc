@@ -15,7 +15,7 @@ func Derive(events []learningmemory.Event) Policy {
 		Rules:           []Rule{},
 		Invariants:      []LearnedInvariant{},
 		AntiPatterns:    []AntiPattern{},
-		Guardrails:      []string{"ONE_PRIMARY_MUTATION", "FALSE_EXACT_ZERO", "INVALID_SPECIMEN_DOES_NOT_PENALIZE_MODEL", "SEMANTIC_PARITY_BEFORE_REAL_MODEL", "VISIBLE_TEXT_FIDELITY_BEFORE_REAL_MODEL", "REGRESSION_PRECHECK_BEFORE_REAL_MODEL", "TLALOC_RECOMMENDS_ORIGAMI_DECIDES"},
+		Guardrails:      []string{"ONE_PRIMARY_MUTATION", "FALSE_EXACT_ZERO", "INVALID_SPECIMEN_DOES_NOT_PENALIZE_MODEL", "SEMANTIC_PARITY_BEFORE_REAL_MODEL", "VISIBLE_TEXT_FIDELITY_BEFORE_REAL_MODEL", "REGRESSION_PRECHECK_BEFORE_REAL_MODEL", "CROSS_MODEL_NON_REGRESSION", "MODEL_PANEL_BEFORE_PROMOTION", "TLALOC_RECOMMENDS_ORIGAMI_DECIDES"},
 		Authority:       "EXPERIMENT_PLANNING_ONLY",
 	}
 	if len(summary.TopRealFailurePatterns) > 0 {
@@ -45,6 +45,28 @@ func Derive(events []learningmemory.Event) Policy {
 		}
 	}
 
+	// A model that already passes a real-model baseline becomes a protected
+	// compatibility invariant. Future candidates may improve other panel members,
+	// but they may not trade away this success.
+	passModels := map[string][]string{}
+	passEvidence := map[string][]string{}
+	for _, e := range events {
+		if e.EventType != learningmemory.EventObservation || e.EvidenceClass != learningmemory.EvidenceRealModel || e.Pass == nil || !*e.Pass || strings.TrimSpace(e.ModelID) == "" { continue }
+		key := strings.TrimSpace(e.CandidateID)
+		if key == "" { key = strings.TrimSpace(e.SpecimenID) }
+		if key == "" { continue }
+		passModels[key] = append(passModels[key], e.ModelID)
+		if e.EventID != "" { passEvidence[key] = append(passEvidence[key], e.EventID) }
+	}
+	for baseline, models := range passModels {
+		models = uniqueSorted(models)
+		evidence := uniqueSorted(passEvidence[baseline])
+		p.Invariants = append(p.Invariants, LearnedInvariant{
+			ID: "cross-model-preserve-" + sanitize(baseline), Scope: "model-compatibility", Maturity: MaturityObservedWin,
+			Preserve: []string{"REAL_MODEL_PASS"}, Reason: "models that pass the baseline must remain passing on promoted candidates", EvidenceIDs: evidence, Models: models, Protected: true,
+		})
+	}
+
 	invalidIDs := []string{}
 	for _, e := range events {
 		if strings.EqualFold(e.FailureCode, "ARTIFACT_GENERATION_REGRESSION") || hasTag(e.Tags, "invalid-specimen") || hasTag(e.Tags, "semantic-drift") {
@@ -64,7 +86,7 @@ func Derive(events []learningmemory.Event) Policy {
 
 	// Integrity gates are permanent system requirements. Memory explains why they
 	// exist, but a fresh/rotated memory store must never silently disable them.
-	for _, target := range []string{"SEMANTIC_PARITY_GATE", "VISIBLE_TEXT_FIDELITY_GATE", "REGRESSION_PRECHECK", "PROGRAM_SHA", "PAYLOAD_SHA", "PROVENANCE", "RAW_RESPONSE_IMMUTABILITY"} {
+	for _, target := range []string{"SEMANTIC_PARITY_GATE", "VISIBLE_TEXT_FIDELITY_GATE", "REGRESSION_PRECHECK", "CROSS_MODEL_COMPATIBILITY_GATE", "PROGRAM_SHA", "PAYLOAD_SHA", "PROVENANCE", "RAW_RESPONSE_IMMUTABILITY"} {
 		p.Rules = append(p.Rules, Rule{Kind: RuleRequire, Target: target, Reason: "experimental integrity"})
 	}
 	return dedupe(p)
@@ -104,6 +126,7 @@ func evidenceIDsForPattern(events []learningmemory.Event, stage, failure, layer 
 	return out
 }
 
+func uniqueSorted(in []string) []string { set:=map[string]bool{};for _,v:=range in{v=strings.TrimSpace(v);if v!=""{set[v]=true}};out:=make([]string,0,len(set));for v:=range set{out=append(out,v)};sort.Strings(out);return out }
 func hasTag(tags []string, want string) bool { for _, t := range tags { if strings.EqualFold(t, want) { return true } }; return false }
 func confidenceForOutcome(n int) string { switch { case n >= 9: return "HIGH"; case n >= 3: return "MEDIUM"; default: return "LOW" } }
 func maturityForOutcome(n int) string { switch { case n >= 9: return MaturityReplicatedWin; case n >= 3: return MaturityProvisionalWin; default: return MaturityObservedWin } }
