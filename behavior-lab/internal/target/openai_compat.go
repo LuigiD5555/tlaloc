@@ -19,6 +19,7 @@ type OpenAICompat struct {
 	Temperature    float64
 	Compatibility  MultimodalCompatibilityStrategy
 	RequestTimeout time.Duration
+	Observer       ModelTraceObserver
 }
 
 type chatRequest struct {
