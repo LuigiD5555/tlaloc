@@ -36,6 +36,20 @@ func TestDebugSummaryLocatesFailureFrontier(t *testing.T) {
 	if s.MostCommonFailureCode!="T2_NOT_FOUND" { t.Fatalf("failure=%s",s.MostCommonFailureCode) }
 }
 
+func TestTargetedDiagnosticRetryScoresOnlyRequestedQuestion(t *testing.T) {
+	trial:=Trial{
+		ID:"diag-q3", ModelID:"SYNTHETIC", Condition:"NATIVE_PNG_ONLY", DiagnosticMode:true,
+		DiagnosticQuestionIDs:[]string{"Q3"}, Specimen:Specimen{ID:"s"},
+		Responses:[]Response{{QuestionID:"Q3",Text:`Cannot locate T2.
+ORIGAMI_DEBUG_R0={"schema":"tlaloc.origami-debug-trace.r0","status":"FAIL","last_completed_stage":"ROSETTA","selected_codec":"ST2","last_instruction":"READ_ROSETTA","next_instruction":"LOCATE_T2","failure_code":"T2_NOT_FOUND","evidence_refs":["T0","T1"],"confidence":0.7}`}},
+	}
+	got:=EvaluateTrial(trial)
+	if len(got.Questions)!=1 || got.Questions[0].QuestionID!="Q3" { t.Fatalf("unexpected questions: %#v",got.Questions) }
+	if got.MissingQuestionCount!=0 { t.Fatalf("missing=%d",got.MissingQuestionCount) }
+	if got.DebugSummary==nil || got.DebugSummary.TraceCoverage!=1 { t.Fatalf("summary=%#v",got.DebugSummary) }
+	if got.DebugSummary.DominantFailureFrontier!="ROSETTA" { t.Fatalf("frontier=%s",got.DebugSummary.DominantFailureFrontier) }
+}
+
 func TestDiagnosticInstructionDoesNotRequestChainOfThought(t *testing.T) {
 	s:=strings.ToLower(DiagnosticInstruction())
 	if !strings.Contains(s,"not private reasoning") { t.Fatal("must explicitly exclude private reasoning") }
