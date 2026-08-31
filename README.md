@@ -1,4 +1,4 @@
-# Tlaloc 6.0.0-alpha.19
+# Tlaloc 6.0.0-alpha.20
 
 **TLALOC — Transformative Latent Adaptive Logic Orchestration Core**
 
@@ -122,6 +122,11 @@ persistent real failures -> mutation priorities -> candidate queue -> real evide
 CLOSED EXPERIMENTAL LOOP
 current experimental incumbent PNG -> clean trials -> diagnostics -> memory
   -> adaptive candidate trials -> evidence-gated incumbent advance -> next active frontier
+
+AUTO CANDIDATE GENERATION
+current failure plan -> SuggestedMutations -> builder capability negotiation
+  -> deterministic one-mutation CandidateConfigs -> target-owned PNG builder
+  -> held-out candidate trials -> evidence
 ```
 
 These tracks are development machinery. They do not make Tlaloc an Origami runtime dependency.
@@ -250,9 +255,9 @@ MEMORY PRIORITY != PROMOTION SCORE
 
 Memory decides what to test first. Evidence decides what worked.
 
-## Closed Experimental Loop R0 — alpha.18 / alpha.19
+## Closed Experimental Loop R0 — alpha.18 / alpha.19 / alpha.20
 
-Alpha.18 introduced the config-driven runner that could execute a complete baseline/candidate experiment cycle against OpenAI-compatible multimodal endpoints. Alpha.19 closes the remaining inter-generation gap by making the best non-regressing improvement the **experimental incumbent** for the next generation.
+Alpha.18 introduced the config-driven runner. Alpha.19 closed the inter-generation gap by making the best non-regressing improvement the **experimental incumbent** for the next generation. Alpha.20 removes the remaining requirement to hand-author a candidate bank when an explicit target-owned builder supports the requested mutation family.
 
 The current loop is:
 
@@ -263,8 +268,11 @@ current experimental incumbent Origami PNG
   -> retry only failed questions in diagnostic mode
   -> persist real evidence
   -> calculate the incumbent's active failure frontier
-  -> prioritize eligible candidate PNGs
-  -> record CHANGE_ATTEMPT
+  -> Adaptive Search produces SuggestedMutations
+  -> query target-owned builder capabilities
+  -> filter unsupported mutation families before model inference
+  -> derive deterministic one-mutation CandidateConfigs
+  -> delegate PNG build to the explicit target-owned builder
   -> run selected candidates with the same models/questions
   -> targeted diagnostic retries where needed
   -> persist candidate evidence
@@ -277,6 +285,33 @@ current experimental incumbent Origami PNG
 
 The incumbent is laboratory state only. It is not a canonical Origami profile and it never updates the Origami repository.
 
+### Automatic candidate generation — alpha.20
+
+Automatic candidate generation is opt-in:
+
+```json
+{
+  "auto_candidates": true,
+  "candidate_builder": ["origami-candidate-build"],
+  "auto_candidate_base_profile_id": "origami.temporal-carrier.r0.profile-1",
+  "auto_candidates_per_generation": 4
+}
+```
+
+Before spending model trials, Tlaloc asks the builder for its declared capabilities. A builder must support the configured parent profile and declare `exact_plane_mutation=false`. Unsupported mutation families are skipped; Tlaloc does not approximate target pixels itself.
+
+Every automatic candidate contains exactly one mutation so that before/after evidence can be attributed to a specific experimental change. Its ID is deterministic from:
+
+```text
+parent specimen ID
++ parent PNG SHA-256
++ canonical mutation
+```
+
+The alpha.20 synthetic end-to-end regression uses a fake OpenAI-compatible VLM and fake builder to prove orchestration only: failure detection, adaptive generation, builder invocation, candidate evaluation, memory linkage and experimental-incumbent advancement. It is **not** real-model evidence.
+
+See `docs/AUTO_CANDIDATE_GENERATION_R0.md` and `behavior-lab/spec/AUTO_CANDIDATE_GENERATION_R0.json`.
+
 ### CLI
 
 ```bash
@@ -285,9 +320,9 @@ tlaloc-closed-loop validate -config closed-loop.json
 tlaloc-closed-loop run -config closed-loop.json
 ```
 
-`validate` checks the local configuration, Master Prompt, candidate-parent DAG and PNG inputs without running inference. A missing candidate PNG is allowed only when the candidate declares an explicit external `build_command`.
+`validate` checks the local configuration, Master Prompt, candidate-parent DAG and PNG inputs without running inference. In automatic mode it also negotiates the explicit builder capability contract.
 
-`run` executes the configured experiment generations.
+`run` executes the configured experiment generations. When `auto_candidates=false`, the alpha.19 manual candidate path remains unchanged.
 
 ### Local LM Studio
 
@@ -371,10 +406,11 @@ The parent graph is validated and rejects cycles or unknown parents.
 
 Tlaloc accepts:
 
-1. pre-rendered experimental Origami PNG candidates; or
-2. an explicit `build_command` hook that creates the declared PNG path.
+1. pre-rendered experimental Origami PNG candidates;
+2. an explicit per-candidate `build_command`; or
+3. alpha.20 automatic CandidateConfig generation using an explicit target-owned builder.
 
-The hook receives:
+The builder hook receives:
 
 ```text
 TLALOC_CANDIDATE_ID
@@ -399,6 +435,8 @@ generation-001/
   plan-before.json
   candidate-queue.json
   plan-after.json
+  auto-candidates/
+    <candidate>.png
   <incumbent>/
     campaign.json
     result.json
@@ -416,7 +454,7 @@ A run stops when:
 ```text
 current incumbent execution is unavailable
 OR current incumbent has no active failed benchmark questions
-OR no eligible candidate remains for the current incumbent
+OR no supported eligible candidate remains for the current incumbent
 OR configured generation budget is exhausted
 ```
 
@@ -424,7 +462,7 @@ OR configured generation budget is exhausted
 
 Stopping never means promotion.
 
-See `behavior-lab/CLOSED_EXPERIMENTAL_LOOP_R0.md` and `behavior-lab/spec/CLOSED_EXPERIMENTAL_LOOP_R0.json`.
+See `behavior-lab/CLOSED_EXPERIMENTAL_LOOP_R0.md`, `behavior-lab/spec/CLOSED_EXPERIMENTAL_LOOP_R0.json`, `docs/AUTO_CANDIDATE_GENERATION_R0.md` and `behavior-lab/spec/AUTO_CANDIDATE_GENERATION_R0.json`.
 
 ## Current managed CLIs
 
@@ -471,6 +509,8 @@ DIAGNOSTIC RETRY != SELF-BOOTSTRAP EVIDENCE
 TRANSPORT FAILURE != MODEL SEMANTIC FAILURE
 MEMORY != CANONICAL ORIGAMI TRUTH
 ADAPTIVE PRIORITY != PROMOTION SCORE
+AUTO CANDIDATE GENERATION != PIXEL AUTHORITY
+CANDIDATE BUILD SUCCESS != MODEL IMPROVEMENT
 EXPERIMENTAL INCUMBENT != CANONICAL ORIGAMI PROFILE
 TLALOC RECOMMENDATION != CANONICAL ORIGAMI PROFILE
 COMPLETED CLOSED LOOP != AUTOMATIC PROMOTION
@@ -500,6 +540,7 @@ See `docs/NOMENCLATURE.md`.
 - `docs/ORIGAMI_INTEGRATION_CONTRACT.md`
 - `docs/ORIGAMI_VISUAL_EVOLUTION_R0.md`
 - `docs/TEMPORAL_NATIVE_DEBUG_R0.md`
+- `docs/AUTO_CANDIDATE_GENERATION_R0.md`
 - `behavior-lab/LEARNING_MEMORY_R0.md`
 - `behavior-lab/ADAPTIVE_SEARCH_R0.md`
 - `behavior-lab/CLOSED_EXPERIMENTAL_LOOP_R0.md`
@@ -547,6 +588,11 @@ MEMORY != AUTOMATIC PROMOTION
 MEMORY GUIDES EXPERIMENT BUDGET, NOT PROMOTION SCORE
 REAL MODEL FAILURES DRIVE ADAPTIVE FOCUS
 EXPLORATION FLOOR > 0
+AUTO CANDIDATE GENERATION IS OPT-IN
+TLALOC GENERATES MUTATION INTENT, NOT CANONICAL PIXELS
+UNSUPPORTED BUILDER CAPABILITY -> FILTER BEFORE INFERENCE
+ONE AUTOMATIC CANDIDATE = ONE MUTATION
+CANDIDATE BUILD SUCCESS != MODEL IMPROVEMENT
 EXPERIMENTAL INCUMBENT != CANONICAL ORIGAMI PROFILE
 TLALOC CANDIDATE != CANONICAL ORIGAMI PROFILE
 CLOSED LOOP != SELF-MODIFYING CANONICAL ORIGAMI
@@ -555,4 +601,4 @@ ORIGAMI IS A TARGET, NOT TLALOC'S IDENTITY
 
 ## Version
 
-`6.0.0-alpha.19`
+`6.0.0-alpha.20`

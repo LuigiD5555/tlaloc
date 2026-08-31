@@ -1,5 +1,54 @@
 # Tlaloc changelog
 
+## 6.0.0-alpha.20 — Auto Candidate Generation R0
+
+- closes the remaining candidate-provisioning gap in the alpha.19 closed experimental loop;
+- adds opt-in automatic conversion of adaptive `SuggestedMutations` into deterministic one-mutation CandidateConfigs;
+- adds explicit candidate-builder capability negotiation before spending model trials;
+- filters unsupported mutation families rather than approximating target pixels inside Tlaloc;
+- derives automatic candidate identity from parent specimen ID + parent PNG SHA-256 + canonical mutation;
+- requires automatic builders to support the configured parent profile and declare `exact_plane_mutation=false`;
+- reuses the alpha.19 `TLALOC_*` parent-aware build-hook contract and all existing clean-trial, diagnostic, learning-memory, non-regression and incumbent-advancement gates;
+- preserves manual candidate banks and per-candidate build commands when `auto_candidates=false`;
+- adds `tlaloc.auto-candidate-generation.r0`, docs and CI contract gates;
+- adds a synthetic fake-VLM/fake-builder end-to-end regression proving generation -> build -> evaluation -> memory -> experimental incumbent orchestration without claiming real-model evidence;
+- preserves authority: Tlaloc generates mutation intent and experimental order; target-owned builders compile pixels; canonical Origami promotion remains Origami-owned.
+
+## 6.0.0-alpha.19 — Incumbent Closed Experimental Loop R0
+
+- makes the best improved non-regressing candidate the next **experimental incumbent** rather than resetting every generation to the original baseline;
+- recalculates the active failure frontier from the current incumbent run so resolved failures stop dominating current search while remaining in regression history;
+- adds per-question non-regression checks, missing-question guards and invented-exact-claim guards before incumbent advancement;
+- adds `parent_specimen_id` candidate DAG semantics so staged candidates become eligible only when their parent is the active incumbent;
+- passes current parent specimen ID/PNG to external candidate build hooks;
+- keeps historical outcomes as bounded adaptive-search signal without making them promotion score;
+- allows cross-run retesting while suppressing duplicate candidate execution within one closed-loop run;
+- adds multi-generation regression coverage for incumbent advance and moving failure frontiers;
+- preserves `EXPERIMENTAL_INCUMBENT != CANONICAL_ORIGAMI_PROFILE`.
+
+## 6.0.0-alpha.18 — Closed Experimental Loop R0
+
+- adds config-driven `tlaloc-closed-loop` execution against OpenAI-compatible multimodal endpoints;
+- connects clean incumbent trials, deterministic Temporal Native Benchmark scoring, targeted diagnostic retries, persistent learning memory, adaptive candidate ordering, candidate trials and before/after outcome linkage;
+- separates transport/execution failures from BOOT/ROSETTA/T2/model-semantic evidence;
+- retries only failed questions in diagnostic mode and excludes diagnostics from clean Native/R4 scores;
+- adds explicit external candidate `build_command` support while keeping candidate rendering outside Tlaloc authority;
+- stops safely when no clean incumbent trial completes or no eligible candidate remains;
+- writes per-generation campaign/result/plan/queue artifacts plus a top-level closed-loop report;
+- keeps canonical Origami promotion external and evidence-gated.
+
+## 6.0.0-alpha.17 — Temporal Learning Memory + Adaptive Search R0
+
+- adds deterministic Tlaloque trace -> Origami automaton/temporal-program distillation;
+- adds Temporal Native Benchmark R0 with perception, ROSETTA/protocol, semantic, temporal and exactness/honesty layers;
+- adds observable Debug Trace R0 for targeted failed-question retries without requesting private chain-of-thought;
+- adds immutable content-addressed Learning Memory R0 for observation, change-attempt and outcome events;
+- separates real-model and synthetic evidence so synthetic fixtures cannot silently drive empirical promotion/adaptive focus;
+- adds failure-pattern indexing and next-debug-target selection from persistent real-model evidence;
+- adds Adaptive Search R0 using failure frontiers plus bounded historical outcome adjustment while preserving an exploration floor;
+- adds `tlaloc-temporal-bench`, `tlaloc-learning-memory` and `tlaloc-adaptive-search` managed CLIs;
+- formalizes `MEMORY_PRIORITY != PROMOTION_SCORE` and preserves Tlaloc recommendation vs Origami authority.
+
 ## 6.0.0-alpha.16 — Origami Protocol Interoperability R0
 
 - adds deterministic READ/WRITE/ROUNDTRIP/MULTIHOP evaluation for Origami Protocol R0;

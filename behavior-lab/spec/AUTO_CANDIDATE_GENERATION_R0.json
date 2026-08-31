@@ -1,0 +1,55 @@
+{
+  "schema": "tlaloc.auto-candidate-generation.r0",
+  "status": "EXPERIMENTAL_IMPLEMENTED_EVIDENCE_PENDING",
+  "purpose": "Generate deterministic one-mutation experimental candidate configs from the current adaptive plan and delegate pixel compilation to an explicit target-owned builder.",
+  "inputs": [
+    "current experimental incumbent PNG",
+    "current adaptive SuggestedMutations",
+    "candidate builder capability report",
+    "closed-loop experiment budget"
+  ],
+  "flow": [
+    "RUN_CURRENT_INCUMBENT",
+    "BUILD_ACTIVE_FAILURE_PLAN",
+    "QUERY_TARGET_OWNED_BUILDER_CAPABILITIES",
+    "FILTER_UNSUPPORTED_MUTATION_FAMILIES",
+    "DERIVE_ONE_MUTATION_CANDIDATE_CONFIGS",
+    "CONTENT_ADDRESS_ID_FROM_PARENT_SHA_PLUS_MUTATION",
+    "PRIORITIZE_WITH_EXISTING_ADAPTIVE_POLICY",
+    "DELEGATE_PNG_BUILD_TO_EXPLICIT_BUILDER",
+    "RUN_HELD_OUT_MODEL_TRIALS",
+    "APPLY_EXISTING_NON_REGRESSION_AND_IMPROVEMENT_GATES",
+    "PERSIST_CHANGE_AND_OUTCOME_MEMORY"
+  ],
+  "invariants": [
+    "AUTO_CANDIDATE_MODE_IS_OPT_IN",
+    "MANUAL_CANDIDATE_MODE_REMAINS_BACKWARD_COMPATIBLE",
+    "TLALOC_GENERATES_MUTATION_INTENT_NOT_CANONICAL_PIXELS",
+    "BUILDER_CAPABILITY_NEGOTIATION_PRECEDES_MODEL_TRIALS",
+    "UNSUPPORTED_MUTATION_KIND_IS_FILTERED_BEFORE_INFERENCE",
+    "AUTO_CANDIDATE_HAS_EXACTLY_ONE_MUTATION",
+    "AUTO_CANDIDATE_ID_IS_DETERMINISTIC_FROM_PARENT_ID_PARENT_PNG_SHA_AND_MUTATION",
+    "AUTO_CANDIDATE_PARENT_IS_CURRENT_EXPERIMENTAL_INCUMBENT",
+    "BUILDER_MUST_DECLARE_EXACT_PLANE_MUTATION_FALSE",
+    "BUILDER_MUST_SUPPORT_DECLARED_PARENT_PROFILE",
+    "CANDIDATE_BUILD_SUCCESS_NE_MODEL_IMPROVEMENT",
+    "MODEL_TRIAL_TRANSPORT_ERROR_NE_SEMANTIC_FAILURE",
+    "MEMORY_PRIORITY_NE_PROMOTION_SCORE",
+    "EXPERIMENTAL_INCUMBENT_NE_CANONICAL_ORIGAMI",
+    "TLALOC_RECOMMENDS_ORIGAMI_DECIDES"
+  ],
+  "default_parent_profile": "origami.temporal-carrier.r0.profile-1",
+  "default_auto_candidates_per_generation": 4,
+  "builder_protocol": {
+    "capabilities_subcommand": "capabilities",
+    "required_capability_schema": "origami.experimental-candidate.r0.capabilities",
+    "build_environment": [
+      "TLALOC_CANDIDATE_ID",
+      "TLALOC_OUTPUT_PNG",
+      "TLALOC_MUTATIONS_JSON",
+      "TLALOC_PARENT_SPECIMEN_ID",
+      "TLALOC_PARENT_PNG"
+    ]
+  },
+  "authority": "TLALOC_OWNS_EXPERIMENT_SELECTION_AND_EVIDENCE_TARGET_PROJECT_OWNS_CANDIDATE_COMPILATION"
+}
