@@ -1,0 +1,14 @@
+{
+  "schema": "tlaloc.origami-visual-search.r0",
+  "id": "t2-temporal-grammar-visible-r1",
+  "base_profile_id": "origami.temporal-carrier.r0.profile-1",
+  "mutations": [
+    {
+      "kind": "TEMPORAL_STRUCTURE",
+      "target": "T2_SEMANTIC_TEMPORAL_SUPERGRAPH",
+      "value": "VISIBLE_RULE_MICROGRAMMAR_R1",
+      "rationale": "DeepSeek manual external trial recovered BOOT/ROSETTA, entities and initial states but failed declared causal rule recovery and final-state simulation. Make rule preconditions and state transitions visible without changing the exact TemporalProgram payload.",
+      "experimental": true
+    }
+  ]
+}
