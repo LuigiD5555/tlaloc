@@ -47,22 +47,26 @@ func Run(ctx context.Context, cfg Config) (Report, error) {
 	tested := map[string]bool{}
 	for gen:=1; gen<=p.cfg.MaxGenerations; gen++ {
 		genDir:=filepath.Join(p.cfg.OutputDir,fmt.Sprintf("generation-%03d",gen)); if err:=os.MkdirAll(genDir,0o755);err!=nil{return report,err}
-		baseRun, errs, err:=p.runSpecimen(ctx,gen,genDir,p.cfg.Baseline,"",nil); report.ExecutionErrors=append(report.ExecutionErrors,errs...); if err!=nil{return report,err}
+		baseRun, errs, err:=p.runSpecimen(ctx,gen,genDir,p.cfg.Baseline,""); report.ExecutionErrors=append(report.ExecutionErrors,errs...); if err!=nil{return report,err}
 		events,err:=p.store.LoadAll();if err!=nil{return report,err}
 		planBefore:=adaptivesearch.BuildPlan(p.store.Root,events);planBeforePath:=filepath.Join(genDir,"plan-before.json");if err:=writeJSON(planBeforePath,planBefore);err!=nil{return report,err}
+		g:=GenerationReport{Generation:gen,PlanBeforePath:planBeforePath,Baseline:baseRun.report}
+		if baseRun.report.Scores.CleanTrials==0 {
+			g.PlanAfterPath=planBeforePath;g.RemainingBank=len(p.cfg.Candidates);report.Generations=append(report.Generations,g);report.FinalPlanPath=planBeforePath;report.StopReason="BASELINE_EXECUTION_UNAVAILABLE";break
+		}
 		visualCandidates,cfgByID:=p.availableCandidates(events,tested)
 		queue:=adaptivesearch.Prioritize(planBefore,visualCandidates,p.cfg.CandidatesPerGeneration)
-		queuePath:=filepath.Join(genDir,"candidate-queue.json");if err:=writeJSON(queuePath,queue);err!=nil{return report,err}
+		queuePath:=filepath.Join(genDir,"candidate-queue.json");if err:=writeJSON(queuePath,queue);err!=nil{return report,err};g.QueuePath=queuePath
 		changeIDs:=map[string][]string{}
 		changeEvents:=adaptivesearch.ChangeAttemptEvents(queue,visualCandidates)
 		if len(changeEvents)==0 && len(queue.CandidateOrder)>0 { changeEvents=p.explorationChangeEvents(queue,baseRun.events,cfgByID) }
 		if len(changeEvents)>0 { _,_,stored,putErr:=p.store.PutAll(changeEvents);if putErr!=nil{return report,putErr};for _,e:=range stored{changeIDs[e.CandidateID]=append(changeIDs[e.CandidateID],e.EventID)} }
-		g:=GenerationReport{Generation:gen,PlanBeforePath:planBeforePath,QueuePath:queuePath,Baseline:baseRun.report}
 		baselineMetric:=metricValue(baseRun.report.Scores,p.cfg.OutcomeMetric)
 		for _,item:=range queue.CandidateOrder {
 			cc,ok:=cfgByID[item.CandidateID];if !ok{continue};tested[cc.ID]=true;g.SelectedIDs=append(g.SelectedIDs,cc.ID)
 			if err:=p.ensureCandidatePNG(ctx,cc);err!=nil{report.ExecutionErrors=append(report.ExecutionErrors,ExecutionError{Generation:gen,SpecimenID:cc.ID,CandidateID:cc.ID,Error:"candidate build: "+err.Error()});continue}
-			run,runErrs,runErr:=p.runSpecimen(ctx,gen,genDir,SpecimenConfig{ID:cc.ID,PNG:cc.PNG},cc.ID,cc.Mutations);report.ExecutionErrors=append(report.ExecutionErrors,runErrs...);if runErr!=nil{return report,runErr};g.Candidates=append(g.Candidates,run.report)
+			run,runErrs,runErr:=p.runSpecimen(ctx,gen,genDir,SpecimenConfig{ID:cc.ID,PNG:cc.PNG},cc.ID);report.ExecutionErrors=append(report.ExecutionErrors,runErrs...);if runErr!=nil{return report,runErr};g.Candidates=append(g.Candidates,run.report)
+			if run.report.Scores.CleanTrials==0 { continue }
 			after:=metricValue(run.report.Scores,p.cfg.OutcomeMetric);out:=CandidateOutcome{CandidateID:cc.ID,Metric:p.cfg.OutcomeMetric,Before:baselineMetric,After:after,Delta:after-baselineMetric}
 			parents:=append([]string(nil),changeIDs[cc.ID]...);parents=append(parents,observationIDs(run.events)...);parents=dedupeLimit(parents,30)
 			if len(parents)>=2 && len(changeIDs[cc.ID])>0 {
@@ -97,7 +101,7 @@ func prepare(cfg Config, checkFiles bool)(prepared,error){
 	return prepared{cfg:cfg,master:master,conditions:conditions,store:learningmemory.New(cfg.MemoryRoot)},nil
 }
 
-func (p prepared) runSpecimen(ctx context.Context,generation int,genDir string,s SpecimenConfig,candidateID string,mutations []visualsearch.Mutation)(specimenRun,[]ExecutionError,error){
+func (p prepared) runSpecimen(ctx context.Context,generation int,genDir string,s SpecimenConfig,candidateID string)(specimenRun,[]ExecutionError,error){
 	meta,err:=readPNGMeta(s.PNG);if err!=nil{return specimenRun{},nil,err};imageBytes:=meta.bytes
 	campaign:=temporalbench.Campaign{Schema:temporalbench.CampaignSchema,BenchmarkID:p.cfg.BenchmarkID};errs:=[]ExecutionError{};questions:=temporalbench.CanonicalQuestions()
 	models:=map[string]ModelConfig{};for _,m:=range p.cfg.Models{models[m.Name]=m}
@@ -110,8 +114,8 @@ func (p prepared) runSpecimen(ctx context.Context,generation int,genDir string,s
 	clean:=temporalbench.EvaluateCampaign(campaign)
 	if p.cfg.DiagnosticRetries{
 		byTrial:=map[string]temporalbench.Trial{};for _,t:=range campaign.Trials{byTrial[t.ID]=t}
-		for _,tr:=range clean.Trials{failed:=[]string{};for _,q:=range tr.Questions{if !q.Pass{failed=append(failed,q.QuestionID)}};if len(failed)==0{continue};source:=byTrial[tr.TrialID];m,ok:=models[source.ModelID];if !ok{continue};diag:=temporalbench.Trial{ID:source.ID+"-diag",ModelID:source.ModelID,Provider:source.Provider,Condition:source.Condition,DiagnosticMode:true,DiagnosticQuestionIDs:failed,Specimen:source.Specimen};system:=strings.TrimSpace(p.systemFor(source.Condition)+"\n\n"+temporalbench.DiagnosticInstruction())
-			qByID:=map[string]string{};for _,q:=range questions{qByID[q.ID]=q.Text};for _,qid:=range failed{r,callErr:=p.call(ctx,m,system,qByID[qid],imageBytes);if callErr!=nil{errs=append(errs,ExecutionError{Generation:generation,SpecimenID:s.ID,CandidateID:candidateID,ModelID:m.Name,Condition:source.Condition,QuestionID:qid,Diagnostic:true,Error:callErr.Error()});continue};r.QuestionID=qid;diag.Responses=append(diag.Responses,r)};if len(diag.Responses)>0{campaign.Trials=append(campaign.Trials,diag)}
+		for _,tr:=range clean.Trials{failed:=[]string{};for _,q:=range tr.Questions{if !q.Pass{failed=append(failed,q.QuestionID)}};if len(failed)==0{continue};source:=byTrial[tr.TrialID];m,ok:=models[source.ModelID];if !ok{continue};diag:=temporalbench.Trial{ID:source.ID+"-diag",ModelID:source.ModelID,Provider:source.Provider,Condition:source.Condition,DiagnosticMode:true,DiagnosticQuestionIDs:failed,Specimen:source.Specimen};system:=strings.TrimSpace(p.systemFor(source.Condition)+"\n\n"+temporalbench.DiagnosticInstruction());diagComplete:=true
+			qByID:=map[string]string{};for _,q:=range questions{qByID[q.ID]=q.Text};for _,qid:=range failed{r,callErr:=p.call(ctx,m,system,qByID[qid],imageBytes);if callErr!=nil{errs=append(errs,ExecutionError{Generation:generation,SpecimenID:s.ID,CandidateID:candidateID,ModelID:m.Name,Condition:source.Condition,QuestionID:qid,Diagnostic:true,Error:callErr.Error()});diagComplete=false;break};r.QuestionID=qid;diag.Responses=append(diag.Responses,r)};if diagComplete&&len(diag.Responses)==len(failed){campaign.Trials=append(campaign.Trials,diag)}
 		}
 	}
 	result:=temporalbench.EvaluateCampaign(campaign);specDir:=filepath.Join(genDir,slug(s.ID));if err:=os.MkdirAll(specDir,0o755);err!=nil{return specimenRun{},errs,err};campaignPath:=filepath.Join(specDir,"campaign.json");resultPath:=filepath.Join(specDir,"result.json");campaignBody,_:=json.MarshalIndent(campaign,"","  ");campaignBody=append(campaignBody,'\n');resultBody,_:=json.MarshalIndent(result,"","  ");resultBody=append(resultBody,'\n');if err:=os.WriteFile(campaignPath,campaignBody,0o644);err!=nil{return specimenRun{},errs,err};if err:=os.WriteFile(resultPath,resultBody,0o644);err!=nil{return specimenRun{},errs,err}
