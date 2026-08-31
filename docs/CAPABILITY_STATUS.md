@@ -1,4 +1,4 @@
-# Capability status — Tlaloc 6.0.0-alpha.18
+# Capability status — Tlaloc 6.0.0-alpha.19
 
 Repository lifecycle: Tlaloc installs/uninstalls independently and can target Origami or unrelated behaviors. This file distinguishes development machinery, reference evidence, deployable artifacts and empirical support.
 
@@ -14,14 +14,14 @@ Repository lifecycle: Tlaloc installs/uninstalls independently and can target Or
 | L0 no-tool/no-sandbox compatibility | **alpha.14 hard invariant** | Prompt-only means target LLM text interface only. |
 | Behavioral fidelity vs trace similarity | **alpha.14 formalized** | Distillation targets behavior, not textual reproduction of a swarm trace. |
 | Failure-to-regression conversion | **alpha.15 implemented for Native semantic trial** | Failed real behavior can become a deterministic regression instead of anecdotal evidence. |
-| Native semantic response evaluator | **alpha.16 codec-aware** | Index/semantic response scoring now distinguishes a declared semantic decoder from an undeclared external decoder/file/binary dependency. |
+| Native semantic response evaluator | **alpha.16 codec-aware** | Index/semantic response scoring distinguishes a declared semantic decoder from an undeclared external decoder/file/binary dependency. |
 | Native T2 index recovery gate | **alpha.15 implemented** | Visual/prompt candidates require >=.95 reference recovery under configured policy. |
 | Declared semantic decoder rule | **alpha.16 implemented** | A self-declared codec such as S2 is valid; hidden/external decoder dependency remains a failure. |
 | Semantic-to-exact escalation gate | **alpha.16 implemented** | Semantic questions fail when they unnecessarily route through bit extraction/decompression/exact mechanics. |
 | `tlaloc-native-eval` CLI | **alpha.16 refined** | Evaluates recorded target output without an LLM judge and records declared codec discovery. |
 | Origami Protocol interoperability evaluator | **alpha.16 implemented / real evidence pending** | Deterministic READ/WRITE/ROUNDTRIP/MULTIHOP structural evaluation. |
 | S2/E2 codec discovery metrics | **alpha.16 implemented** | Measures whether target outputs identify the required semantic decoder/encoder. |
-| Semantic preservation/drift evaluator | **alpha.16 implemented** | Tracks entities, relations, hierarchy, evidence, uncertainty, invented atoms and Jaccard-style structural drift. |
+| Semantic preservation/drift evaluator | **alpha.16 implemented** | Tracks entities, relations, hierarchy, evidence, uncertainty, invented atoms and structural drift. |
 | Cross-model A→B→C evaluator | **alpha.16 implemented / real evidence pending** | Measures hop-to-hop/final drift and read/write success; synthetic fixtures validate only the evaluator. |
 | `tlaloc-protocol-eval` CLI | **alpha.16 implemented** | Evaluates recorded protocol trials deterministically without another LLM as judge. |
 | Tlaloque trace -> automaton distillation | **alpha.17 implemented** | Converts ordered Tlaloque action traces into deterministic portable `origami.automaton.r0` and `origami.temporal-program.r0` artifacts. |
@@ -33,18 +33,23 @@ Repository lifecycle: Tlaloc installs/uninstalls independently and can target Or
 | Failure-pattern index / next debug target | **alpha.17 implemented** | Rebuildable aggregation identifies dominant real-model frontier and suggested next debugging target. |
 | Experiment-history linkage | **alpha.17 implemented** | Links parent evidence -> candidate change -> post-change evidence/outcome without deleting old failures. |
 | Adaptive Search R0 | **alpha.17 implemented** | Uses real failure frontiers to prioritize mutation families and candidate trial order while leaving final promotion scoring untouched. |
-| Bounded historical search signal | **alpha.17 implemented** | Linked outcomes can adjust mutation priority only within +/-0.25 and cannot override the current real failure frontier. |
+| Bounded historical search signal | **alpha.17 implemented** | Linked outcomes can adjust mutation priority only within +/-0.25. |
 | Exploration floor | **alpha.17 hard invariant** | Every supported mutation family retains non-zero weight to avoid permanent search lock-in. |
 | `tlaloc-temporal-bench` CLI | **alpha.17 implemented** | Runs layered benchmark, debug parsing and automatic persistence of real evidence unless explicitly disabled. |
 | `tlaloc-learning-memory` CLI | **alpha.17 implemented** | Ingests/summarizes evidence and records change/outcome links. |
 | `tlaloc-adaptive-search` CLI | **alpha.17 implemented** | Builds memory-guided plans and prioritizes/records pre-evidence candidate attempts. |
-| Closed Experimental Loop R0 | **alpha.18 implemented / real-model run pending** | Executes baseline -> benchmark -> diagnostic retry -> memory -> adaptive queue -> candidate trials -> outcome links -> next plan. |
-| `tlaloc-closed-loop` CLI | **alpha.18 implemented** | `validate`, `run`, and `example` commands; OpenAI-compatible multimodal endpoints including LM Studio. |
+| Closed Experimental Loop R0 runner | **alpha.18 implemented / real-model run pending** | Added config-driven clean trials -> targeted diagnostics -> memory -> adaptive queue -> candidate trials -> outcome linkage. |
+| Experimental incumbent advancement | **alpha.19 implemented / real-model run pending** | Best improved non-regressing candidate becomes the laboratory baseline for the next generation. |
+| Current-incumbent active failure frontier | **alpha.19 implemented** | Active search focus comes from the current incumbent run; old observations remain regression history but do not permanently dominate the frontier. |
+| Per-question incumbent non-regression gate | **alpha.19 implemented** | Advancement rejects candidates that lower any benchmark question mean, increase missing questions or increase invented exact claims. |
+| Candidate DAG (`parent_specimen_id`) | **alpha.19 implemented** | Parent-bound candidates become eligible only when their parent is the current experimental incumbent; cycles/unknown parents are rejected. |
+| Cross-run retest policy | **alpha.19 implemented** | Historical tests affect adaptive priority but do not permanently ban a candidate ID from a later run; duplicates are suppressed inside one run. |
+| `tlaloc-closed-loop` CLI | **alpha.18+ implemented** | `validate`, `run`, and `example` commands; OpenAI-compatible multimodal endpoints including LM Studio. |
 | Transport/semantic failure separation | **alpha.18 hard invariant** | HTTP/timeouts/malformed API responses are execution errors, not BOOT/ROSETTA/T2/model-semantic evidence. |
 | Automatic targeted diagnostic execution | **alpha.18 implemented** | Only failed clean questions are retried, and only complete diagnostic retries become diagnostic benchmark evidence. |
-| Closed-loop before/after outcome linkage | **alpha.18 implemented** | Baseline and candidate scores are linked to CHANGE_ATTEMPT and post-change observations in persistent memory. |
-| Multi-generation candidate-bank execution | **alpha.18 implemented** | Recalculates the adaptive plan each generation and stops on budget or candidate-bank exhaustion. |
-| External candidate build hook | **alpha.18 implemented** | Explicit `build_command` may render a candidate PNG; Tlaloc remains non-authoritative for Origami pixels. |
+| Closed-loop before/after outcome linkage | **alpha.18 implemented** | Incumbent and candidate scores are linked to CHANGE_ATTEMPT and post-change observations in persistent memory. |
+| Multi-generation incumbent execution | **alpha.19 implemented** | Re-runs the current incumbent each generation, advances only after evidence gates, and recalculates the next active frontier. |
+| External candidate build hook | **alpha.18 implemented / alpha.19 parent-aware** | Explicit `build_command` may render a candidate PNG and receives current parent PNG/ID; Tlaloc remains non-authoritative for Origami pixels. |
 | Receiver swarm-trace distillation | experimental R0 implemented | Existing Origami receiver-specific distillation remains a target-specific implementation. |
 | Receiver candidate tournament | experimental R0 implemented | Existing target-specific tournament retained. |
 | Project-local Claude Code skills | R0 implemented | Development assets; not portable behavior output. |
@@ -149,29 +154,31 @@ MEMORY PRIORITY != PROMOTION SCORE
 
 ## Closed Experimental Loop R0
 
-Alpha.18 operationalizes the alpha.17 pieces through one runner:
+Alpha.18 introduced the config-driven operational runner. Alpha.19 closes the inter-generation loop:
 
 ```text
-baseline PNG
+current experimental incumbent PNG
  -> clean Native/R4 VLM trials
  -> deterministic scoring
  -> retry only failed questions with Debug Trace R0
  -> persist real evidence
- -> calculate adaptive failure target
- -> prioritize candidate PNG bank
+ -> derive active failure frontier from current incumbent
+ -> prioritize eligible candidate PNG bank
  -> record change attempts
  -> run selected candidates under the same models/questions
  -> persist candidate evidence
  -> link before/after outcome
- -> calculate next plan
- -> repeat within configured generation budget
+ -> require no per-question/exactness regression + minimum improvement
+ -> best passing candidate becomes next experimental incumbent
+ -> recalculate the newly exposed failure frontier
+ -> repeat
 ```
 
-The loop intentionally stops if no clean baseline trial can be completed. Transport failures are reported separately and are not inserted into semantic learning memory. Candidate diagnostic evidence is admitted only when the complete targeted retry succeeds at the transport layer.
+Transport failures are reported separately and are not inserted into semantic learning memory. A failed transport does not advance the incumbent.
 
-Candidate rendering remains outside Tlaloc authority. A candidate may be pre-rendered or produced through an explicit external `build_command` hook. The hook does not make its output canonical Origami.
+Candidate rendering remains outside Tlaloc authority. A candidate may be pre-rendered or produced through an explicit external `build_command`; alpha.19 also supplies the current parent specimen ID/PNG to staged builders.
 
-Real VLM campaign evidence is still pending until the runner is executed against actual endpoints.
+The experimental incumbent has no canonical authority. Real VLM campaign evidence remains pending until the runner is executed against actual endpoints.
 
 ## Development vs deployment
 
@@ -215,4 +222,4 @@ Tlaloc experiments + evidence
 
 Tonal may optionally record a reproducible multi-tool development composition afterward.
 
-No document should claim that a successful swarm automatically proves a prompt, that a tool-assisted trial proves L0 portability, that a synthetic interop fixture proves real cross-model interoperability, that adaptive memory changes promotion scoring, that a transport failure proves semantic failure, or that a Tlaloc recommendation changes a target project's canonical release.
+No document should claim that a successful swarm automatically proves a prompt, that a tool-assisted trial proves L0 portability, that a synthetic interop fixture proves real cross-model interoperability, that adaptive memory changes promotion scoring, that a transport failure proves semantic failure, that an experimental incumbent is canonical, or that a Tlaloc recommendation changes a target project's canonical release.
