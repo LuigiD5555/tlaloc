@@ -41,8 +41,10 @@ func TestCompleteHybridSendsImageExecutesToolAndReturnsAnswer(t *testing.T) {
 			user := messages[1].(map[string]any)
 			content := user["content"].([]any)
 			if len(content) != 2 { t.Fatalf("unexpected multimodal content: %#v", content) }
-			image := content[1].(map[string]any)["image_url"].(map[string]any)["url"].(string)
+			imageURL := content[1].(map[string]any)["image_url"].(map[string]any)
+			image := imageURL["url"].(string)
 			if !strings.HasPrefix(image, "data:image/png;base64,") { t.Fatalf("missing image data URL: %s", image) }
+			if imageURL["detail"] != "high" { t.Fatalf("unsupported image detail: %#v", imageURL["detail"]) }
 			w.Header().Set("Content-Type", "application/json")
 			fmt.Fprint(w, `{"choices":[{"finish_reason":"tool_calls","message":{"role":"assistant","content":null,"tool_calls":[{"id":"call-1","type":"function","function":{"name":"origami_follow","arguments":"{\"query\":\"K7F91\",\"relation\":\"depends\",\"depth\":2}"}}]}}],"usage":{"prompt_tokens":100,"completion_tokens":20}}`)
 			return
