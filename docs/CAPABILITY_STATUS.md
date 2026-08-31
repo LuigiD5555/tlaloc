@@ -1,4 +1,4 @@
-# Capability status — Tlaloc 6.0.0-alpha.19
+# Capability status — Tlaloc 6.0.0-alpha.20
 
 Repository lifecycle: Tlaloc installs/uninstalls independently and can target Origami or unrelated behaviors. This file distinguishes development machinery, reference evidence, deployable artifacts and empirical support.
 
@@ -44,12 +44,17 @@ Repository lifecycle: Tlaloc installs/uninstalls independently and can target Or
 | Per-question incumbent non-regression gate | **alpha.19 implemented** | Advancement rejects candidates that lower any benchmark question mean, increase missing questions or increase invented exact claims. |
 | Candidate DAG (`parent_specimen_id`) | **alpha.19 implemented** | Parent-bound candidates become eligible only when their parent is the current experimental incumbent; cycles/unknown parents are rejected. |
 | Cross-run retest policy | **alpha.19 implemented** | Historical tests affect adaptive priority but do not permanently ban a candidate ID from a later run; duplicates are suppressed inside one run. |
-| `tlaloc-closed-loop` CLI | **alpha.18+ implemented** | `validate`, `run`, and `example` commands; OpenAI-compatible multimodal endpoints including LM Studio. |
+| `tlaloc-closed-loop` CLI | **alpha.20 auto-candidate capable** | `validate`, `run`, and `example`; OpenAI-compatible multimodal endpoints including LM Studio; optional automatic candidate generation. |
 | Transport/semantic failure separation | **alpha.18 hard invariant** | HTTP/timeouts/malformed API responses are execution errors, not BOOT/ROSETTA/T2/model-semantic evidence. |
 | Automatic targeted diagnostic execution | **alpha.18 implemented** | Only failed clean questions are retried, and only complete diagnostic retries become diagnostic benchmark evidence. |
 | Closed-loop before/after outcome linkage | **alpha.18 implemented** | Incumbent and candidate scores are linked to CHANGE_ATTEMPT and post-change observations in persistent memory. |
 | Multi-generation incumbent execution | **alpha.19 implemented** | Re-runs the current incumbent each generation, advances only after evidence gates, and recalculates the next active frontier. |
 | External candidate build hook | **alpha.18 implemented / alpha.19 parent-aware** | Explicit `build_command` may render a candidate PNG and receives current parent PNG/ID; Tlaloc remains non-authoritative for Origami pixels. |
+| Automatic candidate generation | **alpha.20 implemented / real-model run pending** | Converts adaptive `SuggestedMutations` into deterministic one-mutation CandidateConfigs without requiring a manually authored candidate bank. |
+| Candidate-builder capability negotiation | **alpha.20 implemented** | Queries the explicit target-owned builder before inference and filters unsupported mutation families. |
+| Deterministic auto-candidate identity | **alpha.20 implemented** | Candidate ID binds parent specimen ID + parent PNG SHA-256 + canonical mutation. |
+| Exact-plane builder guard | **alpha.20 hard invariant** | Automatic mode rejects builders that declare exact-plane mutation or do not support the configured parent profile. |
+| Synthetic auto-loop end-to-end regression | **alpha.20 implemented / non-empirical** | Fake VLM + fake builder proves orchestration, candidate generation, build invocation, scoring, memory linkage and incumbent advancement; it is not real-model evidence. |
 | Receiver swarm-trace distillation | experimental R0 implemented | Existing Origami receiver-specific distillation remains a target-specific implementation. |
 | Receiver candidate tournament | experimental R0 implemented | Existing target-specific tournament retained. |
 | Project-local Claude Code skills | R0 implemented | Development assets; not portable behavior output. |
@@ -65,6 +70,7 @@ Repository lifecycle: Tlaloc installs/uninstalls independently and can target Or
 | Origami Writer awareness | alpha.13 contract-known | Tlaloc can develop/test behaviors that feed Writer, but is not pixel authority. |
 | Origami Protocol R0 awareness | **alpha.16 contract-known** | Tlaloc evaluates declared S*/E* behavior but does not own Origami protocol/profile semantics. |
 | Origami temporal automaton/program awareness | **alpha.17 contract-known** | Tlaloc can distill/test temporal automata while Origami owns their canonical representation. |
+| Origami candidate-builder awareness | **alpha.20 contract-known** | Automatic search can consume the Origami alpha.15 candidate-builder capability contract while Origami remains pixel authority. |
 | Origami perceptual channels | contract-known / runtime partial | Moire/phase, stereo/parallax, temporal and emergent candidates remain evidence gated. |
 | Origami Fixed Carrier R2 PDF memory plane | experimental R1 implemented | Target-specific development/runtime support. |
 | Perception transport variants | alpha.12 implemented | Original PNG, 75%, 50% and JPEG preview. |
@@ -154,7 +160,7 @@ MEMORY PRIORITY != PROMOTION SCORE
 
 ## Closed Experimental Loop R0
 
-Alpha.18 introduced the config-driven operational runner. Alpha.19 closes the inter-generation loop:
+Alpha.18 introduced the config-driven operational runner. Alpha.19 closes the inter-generation loop. Alpha.20 removes the remaining manual candidate-provisioning requirement when an explicit target-owned builder supports the requested mutation family.
 
 ```text
 current experimental incumbent PNG
@@ -163,8 +169,11 @@ current experimental incumbent PNG
  -> retry only failed questions with Debug Trace R0
  -> persist real evidence
  -> derive active failure frontier from current incumbent
- -> prioritize eligible candidate PNG bank
- -> record change attempts
+ -> Adaptive Search SuggestedMutations
+ -> query target-owned candidate builder capabilities
+ -> filter unsupported mutation families
+ -> generate deterministic one-mutation CandidateConfigs
+ -> delegate PNG construction to target-owned builder
  -> run selected candidates under the same models/questions
  -> persist candidate evidence
  -> link before/after outcome
@@ -176,9 +185,9 @@ current experimental incumbent PNG
 
 Transport failures are reported separately and are not inserted into semantic learning memory. A failed transport does not advance the incumbent.
 
-Candidate rendering remains outside Tlaloc authority. A candidate may be pre-rendered or produced through an explicit external `build_command`; alpha.19 also supplies the current parent specimen ID/PNG to staged builders.
+Automatic candidate generation is opt-in. Manual candidate banks and explicit per-candidate `build_command` hooks remain supported. Unsupported builder capabilities are filtered before spending model trials, and Tlaloc never substitutes its own pixel approximation.
 
-The experimental incumbent has no canonical authority. Real VLM campaign evidence remains pending until the runner is executed against actual endpoints.
+The experimental incumbent has no canonical authority. The alpha.20 end-to-end fixture proves orchestration only; real VLM campaign evidence remains pending until the runner is executed against actual endpoints.
 
 ## Development vs deployment
 
@@ -207,6 +216,7 @@ Origami Protocol Interop R0
 Temporal Native Benchmark R0
 Adaptive Search R0
 Closed Experimental Loop R0
+Auto Candidate Generation R0
 prompt/representation experiments
 ```
 
@@ -222,4 +232,4 @@ Tlaloc experiments + evidence
 
 Tonal may optionally record a reproducible multi-tool development composition afterward.
 
-No document should claim that a successful swarm automatically proves a prompt, that a tool-assisted trial proves L0 portability, that a synthetic interop fixture proves real cross-model interoperability, that adaptive memory changes promotion scoring, that a transport failure proves semantic failure, that an experimental incumbent is canonical, or that a Tlaloc recommendation changes a target project's canonical release.
+No document should claim that a successful swarm automatically proves a prompt, that a tool-assisted trial proves L0 portability, that a synthetic interop fixture proves real cross-model interoperability, that adaptive memory changes promotion scoring, that a transport failure proves semantic failure, that an experimental incumbent is canonical, that a generated candidate owns target pixels, or that a Tlaloc recommendation changes a target project's canonical release.
