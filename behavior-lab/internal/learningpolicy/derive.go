@@ -23,27 +23,28 @@ func Derive(events []learningmemory.Event) Policy {
 		p.FailureFrontier = f.FailureCode
 		p.ParentEvidenceIDs = evidenceIDsForPattern(events, f.Stage, f.FailureCode, f.ScoreLayer)
 	}
-
-	// Current target is the only mutable development area by default.
 	if p.Target != "" {
 		p.Rules = append(p.Rules, Rule{Kind: RuleMutable, Target: p.Target, Reason: "current real-model failure frontier"})
 	}
 
-	// Successful outcomes are retained as provisional preservation signals.
+	candidateModules := modulesByCandidate(events)
 	for _, out := range summary.CandidateOutcomes {
-		if out.Outcomes > 0 && out.MeanDelta > 0 {
-			p.Rules = append(p.Rules, Rule{Kind: RulePreserve, Target: out.CandidateID, Reason: "historical positive outcome", Confidence: confidenceForOutcome(out.Outcomes)})
-			p.Invariants = append(p.Invariants, LearnedInvariant{
-				ID: "preserve-" + sanitize(out.CandidateID), Scope: "candidate", Maturity: maturityForOutcome(out.Outcomes),
-				Preserve: []string{out.CandidateID}, Reason: "positive outcome must not be changed incidentally", Protected: true,
-			})
-		}
-		if out.Outcomes > 0 && out.MeanDelta < 0 {
-			p.Rules = append(p.Rules, Rule{Kind: RuleAvoid, Target: out.CandidateID, Reason: "historical negative outcome", Confidence: confidenceForOutcome(out.Outcomes)})
+		targets := candidateModules[out.CandidateID]
+		if len(targets)==0 { targets=[]string{out.CandidateID} }
+		for _, target := range targets {
+			if out.Outcomes > 0 && out.MeanDelta > 0 {
+				p.Rules = append(p.Rules, Rule{Kind: RulePreserve, Target: target, Reason: "historical positive outcome", Confidence: confidenceForOutcome(out.Outcomes)})
+				p.Invariants = append(p.Invariants, LearnedInvariant{
+					ID: "preserve-" + sanitize(target), Scope: "prompt-module", Maturity: maturityForOutcome(out.Outcomes),
+					Preserve: []string{target}, Reason: "positive outcome must not be changed incidentally", Protected: true,
+				})
+			}
+			if out.Outcomes > 0 && out.MeanDelta < 0 {
+				p.Rules = append(p.Rules, Rule{Kind: RuleAvoid, Target: target, Reason: "historical negative outcome", Confidence: confidenceForOutcome(out.Outcomes)})
+			}
 		}
 	}
 
-	// Process failures create durable anti-patterns. These do not become model failures.
 	invalidIDs := []string{}
 	for _, e := range events {
 		if strings.EqualFold(e.FailureCode, "ARTIFACT_GENERATION_REGRESSION") || hasTag(e.Tags, "invalid-specimen") || hasTag(e.Tags, "semantic-drift") {
@@ -62,43 +63,47 @@ func Derive(events []learningmemory.Event) Policy {
 		p.Rules = append(p.Rules, Rule{Kind: RuleRequire, Target: "SEMANTIC_PARITY_GATE", Reason: "invalid specimen history", EvidenceIDs: invalidIDs})
 	}
 
-	// Core system invariants are always required.
 	for _, target := range []string{"PROGRAM_SHA", "PAYLOAD_SHA", "PROVENANCE", "RAW_RESPONSE_IMMUTABILITY"} {
 		p.Rules = append(p.Rules, Rule{Kind: RuleRequire, Target: target, Reason: "experimental integrity"})
 	}
+	return dedupe(p)
+}
 
+func modulesByCandidate(events []learningmemory.Event) map[string][]string {
+	sets:=map[string]map[string]bool{}
+	for _,e:=range events{
+		if e.EventType!=learningmemory.EventChange||e.CandidateID==""{continue}
+		for _,tag:=range e.Tags{
+			lower:=strings.ToLower(tag)
+			if !strings.HasPrefix(lower,"module:"){continue}
+			m:=strings.TrimSpace(tag[len("module:"):]);if m==""{continue}
+			if sets[e.CandidateID]==nil{sets[e.CandidateID]=map[string]bool{}}
+			sets[e.CandidateID][m]=true
+		}
+	}
+	out:=map[string][]string{}
+	for id,set:=range sets{for m:=range set{out[id]=append(out[id],m)};sort.Strings(out[id])}
+	return out
+}
+
+func dedupe(p Policy) Policy {
+	seen:=map[string]bool{};rules:=make([]Rule,0,len(p.Rules))
+	for _,r:=range p.Rules{key:=r.Kind+"|"+r.Target;if seen[key]{continue};seen[key]=true;rules=append(rules,r)}
+	p.Rules=rules
 	return p
 }
 
 func evidenceIDsForPattern(events []learningmemory.Event, stage, failure, layer string) []string {
 	out := []string{}
 	for _, e := range events {
-		if e.EventType != learningmemory.EventObservation || e.EvidenceClass != learningmemory.EvidenceRealModel || e.Pass == nil || *e.Pass {
-			continue
-		}
-		if strings.EqualFold(e.LastCompletedStage, stage) && strings.EqualFold(e.FailureCode, failure) && strings.EqualFold(e.ScoreLayer, layer) {
-			out = append(out, e.EventID)
-		}
+		if e.EventType != learningmemory.EventObservation || e.EvidenceClass != learningmemory.EvidenceRealModel || e.Pass == nil || *e.Pass { continue }
+		if strings.EqualFold(e.LastCompletedStage, stage) && strings.EqualFold(e.FailureCode, failure) && strings.EqualFold(e.ScoreLayer, layer) { out = append(out, e.EventID) }
 	}
 	sort.Strings(out)
 	return out
 }
 
-func hasTag(tags []string, want string) bool {
-	for _, t := range tags { if strings.EqualFold(t, want) { return true } }
-	return false
-}
-
-func confidenceForOutcome(n int) string {
-	switch { case n >= 9: return "HIGH"; case n >= 3: return "MEDIUM"; default: return "LOW" }
-}
-
-func maturityForOutcome(n int) string {
-	switch { case n >= 9: return MaturityReplicatedWin; case n >= 3: return MaturityProvisionalWin; default: return MaturityObservedWin }
-}
-
-func sanitize(s string) string {
-	s = strings.ToLower(strings.TrimSpace(s))
-	r := strings.NewReplacer("/", "-", " ", "-", "_", "-", ":", "-")
-	return r.Replace(s)
-}
+func hasTag(tags []string, want string) bool { for _, t := range tags { if strings.EqualFold(t, want) { return true } }; return false }
+func confidenceForOutcome(n int) string { switch { case n >= 9: return "HIGH"; case n >= 3: return "MEDIUM"; default: return "LOW" } }
+func maturityForOutcome(n int) string { switch { case n >= 9: return MaturityReplicatedWin; case n >= 3: return MaturityProvisionalWin; default: return MaturityObservedWin } }
+func sanitize(s string) string { s=strings.ToLower(strings.TrimSpace(s));r:=strings.NewReplacer("/","-"," ","-","_","-",":","-");return r.Replace(s) }
