@@ -84,8 +84,8 @@ type hybridChatResponse struct {
 }
 
 // CompleteHybrid executes the OpenAI-compatible multimodal tool loop used by
-// LM Studio and other compatible servers. Tlaloc coordinates the model/tool
-// exchange; the ToolExecutor remains an external boundary and may be Origami.
+// LM Studio and other compatible servers. Provider-specific payload details
+// are delegated to MultimodalCompatibilityStrategy.
 func (c OpenAICompat) CompleteHybrid(ctx context.Context, input HybridInput) (HybridResult, error) {
 	if c.Model == "" {
 		return HybridResult{}, fmt.Errorf("model is required")
@@ -104,11 +104,12 @@ func (c OpenAICompat) CompleteHybrid(ctx context.Context, input HybridInput) (Hy
 	}
 
 	imageURL := "data:image/png;base64," + base64.StdEncoding.EncodeToString(input.ImagePNG)
+	imagePart := c.multimodalCompatibility().ImageURLPart(imageURL)
 	messages := []map[string]any{
 		{"role": "system", "content": input.SystemPrompt},
 		{"role": "user", "content": []map[string]any{
 			{"type": "text", "text": input.Question},
-			{"type": "image_url", "image_url": map[string]string{"url": imageURL, "detail": "high"}},
+			{"type": "image_url", "image_url": imagePart},
 		}},
 	}
 	result := HybridResult{}
