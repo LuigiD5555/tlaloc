@@ -16,7 +16,7 @@ CURRENT_TARGET="$(readlink -f "$HOME/.local/share/tlaloc/current")"
 [[ "$CURRENT_TARGET" == "$HOME/.local/share/tlaloc/versions/$EXPECTED_VERSION" ]]
 grep -qx $'Tlaloc\t'"$EXPECTED_VERSION" "$CURRENT_TARGET/.tlaloc-managed-version"
 PATH="$HOME/.local/bin:$PATH" tlaloc version | grep -qx "Tlaloc $EXPECTED_VERSION"
-for cli in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench tlaloc-learning-memory tlaloc-adaptive-search tlaloc-closed-loop tlaloc-uninstall; do
+for cli in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench tlaloc-learning-memory tlaloc-adaptive-search tlaloc-closed-loop tlaloc-real-vlm-campaign tlaloc-uninstall; do
   [[ -L "$HOME/.local/bin/$cli" ]] || { echo "missing managed CLI: $cli" >&2; exit 1; }
   [[ -x "$(readlink -f "$HOME/.local/bin/$cli")" ]] || { echo "managed CLI is not executable: $cli" >&2; exit 1; }
 done
@@ -45,6 +45,16 @@ assert r['models'][0]['provider']=='OPENAI_COMPAT'
 assert r['diagnostic_retries'] is True
 assert 'NATIVE_PNG_ONLY' in r['conditions']
 PY
+PATH="$HOME/.local/bin:$PATH" tlaloc-real-vlm-campaign example > "$TMP/real-vlm-example.json"
+python3 - <<'PY' "$TMP/real-vlm-example.json"
+import json,sys
+r=json.load(open(sys.argv[1]))
+assert r['schema']=='tlaloc.real-vlm-campaign.r0.spec'
+assert r['phase']=='SMOKE'
+assert r['endpoint']=='http://127.0.0.1:1234/v1'
+assert r['temporal_carrier']=='origami-temporal-carrier'
+assert r['candidate_builder']=='origami-candidate-build'
+PY
 PATH="$HOME/.local/bin:$PATH" tlaloc skills list | grep -qx 'tlaloc-project'
 if PATH="$HOME/.local/bin:$PATH" tlaloc skills list | grep -qx 'repo-flow'; then
   echo "repo-flow must not be distributed by Tlaloc" >&2
@@ -69,7 +79,7 @@ mkdir -p "$XDG_STATE_HOME/tlaloc/learning-memory"
 printf 'preserve-me\n' > "$XDG_STATE_HOME/tlaloc/learning-memory/uninstall-probe"
 PATH="$HOME/.local/bin:$PATH" tlaloc-uninstall --yes
 [[ ! -e "$HOME/.local/share/tlaloc/current" ]]
-for cli in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench tlaloc-learning-memory tlaloc-adaptive-search tlaloc-closed-loop tlaloc-uninstall; do
+for cli in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench tlaloc-learning-memory tlaloc-adaptive-search tlaloc-closed-loop tlaloc-real-vlm-campaign tlaloc-uninstall; do
   [[ ! -e "$HOME/.local/bin/$cli" ]] || { echo "uninstall left managed CLI: $cli" >&2; exit 1; }
 done
 grep -qx 'preserve-me' "$XDG_STATE_HOME/tlaloc/learning-memory/uninstall-probe"
