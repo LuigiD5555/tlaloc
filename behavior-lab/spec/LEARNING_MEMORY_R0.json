@@ -1,0 +1,79 @@
+{
+  "contract_id": "tlaloc.learning-memory.r0",
+  "status": "EXPERIMENTAL_REFERENCE_IMPLEMENTATION",
+  "purpose": "Persist empirical and synthetic development evidence so Tlaloc can remember failures, successful behavior, attempted changes and measured outcomes across runs without turning derived memory into canonical Origami truth.",
+  "storage": {
+    "default_root": "$XDG_STATE_HOME/tlaloc/learning-memory or ~/.local/state/tlaloc/learning-memory",
+    "event_layout": "events/<event_id>.json",
+    "event_files_immutable": true,
+    "derived_indexes_rebuildable": true,
+    "destructive_forgetting": false
+  },
+  "memory_layers": {
+    "EVIDENCE_LEDGER": "Append-only immutable observations from benchmark/evaluation evidence.",
+    "PATTERN_INDEX": "Rebuildable aggregates keyed by stage, failure code, layer, model, specimen, codec and version.",
+    "EXPERIMENT_HISTORY": "Links evidence -> hypothesis/change -> subsequent evidence/outcome so Tlaloc can learn which modifications helped, hurt or moved the failure frontier."
+  },
+  "event_types": [
+    "OBSERVATION",
+    "CHANGE_ATTEMPT",
+    "OUTCOME_LINK"
+  ],
+  "evidence_classes": [
+    "REAL_MODEL",
+    "SYNTHETIC",
+    "CI",
+    "MANUAL"
+  ],
+  "observation_dimensions": [
+    "benchmark_id",
+    "trial_id",
+    "model_id",
+    "provider",
+    "condition",
+    "specimen_id",
+    "specimen_sha256",
+    "question_id",
+    "score_layer",
+    "pass",
+    "status",
+    "last_completed_stage",
+    "failure_code",
+    "selected_codec",
+    "origami_version",
+    "tlaloc_version",
+    "candidate_id"
+  ],
+  "derived_outputs": [
+    "top_real_failure_patterns",
+    "failure_frontier_counts",
+    "failure_code_counts",
+    "affected_models",
+    "affected_specimens",
+    "candidate_outcomes",
+    "next_debug_target"
+  ],
+  "next_target_policy": {
+    "uses_real_model_failures_first": true,
+    "synthetic_can_validate_memory_but_not_drive_empirical_promotion": true,
+    "successful_observations_are_retained": true,
+    "old_failures_are_retained_as_regression_history": true,
+    "candidate_change_requires_parent_evidence_ids": true,
+    "outcome_link_requires_change_and_post_change_evidence": true
+  },
+  "hard_invariants": [
+    "MEMORY_EVENT_IS_IMMUTABLE",
+    "EVENT_ID_IS_CONTENT_ADDRESSED",
+    "REINGEST_SAME_EVIDENCE_IS_IDEMPOTENT",
+    "DERIVED_INDEX_CAN_BE_REBUILT_FROM_LEDGER",
+    "SYNTHETIC_EVIDENCE_NE_REAL_MODEL_EVIDENCE",
+    "MEMORY_NE_CANONICAL_ORIGAMI_TRUTH",
+    "MEMORY_NE_AUTOMATIC_PROMOTION",
+    "SUCCESS_AND_FAILURE_ARE_BOTH_RETAINED",
+    "CHANGE_ATTEMPT_LINKS_TO_PARENT_EVIDENCE",
+    "OUTCOME_LINKS_CHANGE_TO_POST_CHANGE_EVIDENCE",
+    "OLD_FAILURES_ARE_NOT_DELETED_WHEN_FIXED",
+    "PLACEHOLDER_TRIALS_ARE_NOT_AUTO_INGESTED",
+    "FALSE_EXACT=0"
+  ]
+}
