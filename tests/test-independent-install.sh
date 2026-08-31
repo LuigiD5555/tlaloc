@@ -91,6 +91,37 @@ fi
 grep -q 'repo-flow moved to Tonal' "$TMP/repo-flow.out"
 [[ ! -e "$HOME/.local/share/origami/current" ]]
 PATH="$HOME/.local/bin:$PATH" tlaloc doctor
+
+# Simulate the current standalone Origami installer contract. Tlaloc must
+# recognize and protect it even though there is no origami/versions/current.
+ORIGAMI_PROJECT="$TMP/origami-project"
+ORIGAMI_STATE="$XDG_DATA_HOME/origami/install-state-v1/manifest.tsv"
+mkdir -p "$ORIGAMI_PROJECT" "$(dirname "$ORIGAMI_STATE")" "$HOME/.local/bin"
+printf '6.0.0-alpha.15\n' > "$ORIGAMI_PROJECT/VERSION"
+for name in origami-fixed-carrier origami-temporal-carrier origami-candidate-build ohf-lab; do
+  printf '#!/usr/bin/env sh\nexit 0\n' > "$HOME/.local/bin/$name"
+  chmod +x "$HOME/.local/bin/$name"
+done
+{
+  printf 'META\tformat\t1\t-\t-\t-\n'
+  printf 'META\tproject\t%s\t-\t-\t-\n' "$ORIGAMI_PROJECT"
+  for name in origami-fixed-carrier origami-temporal-carrier origami-candidate-build ohf-lab; do
+    printf 'BIN\t%s\t%s\tdeadbeef\t0\t-\n' "$name" "$HOME/.local/bin/$name"
+  done
+} > "$ORIGAMI_STATE"
+PATH="$HOME/.local/bin:$PATH" tlaloc doctor > "$TMP/doctor-with-origami.out"
+grep -q 'PASS  Standalone Origami installation detected: 6.0.0-alpha.15' "$TMP/doctor-with-origami.out"
+PATH="$HOME/.local/bin:$PATH" tlaloc legacy-scan > "$TMP/legacy-scan.out"
+grep -q 'standalone Origami install: PROTECTED' "$TMP/legacy-scan.out"
+if grep -Fq "$HOME/.local/bin/origami-fixed-carrier" "$TMP/legacy-scan.out"; then
+  echo "standalone Origami binary was incorrectly classified as legacy" >&2
+  exit 1
+fi
+if grep -Fq "$HOME/.local/bin/ohf-lab" "$TMP/legacy-scan.out"; then
+  echo "standalone OHF binary tracked by Origami was incorrectly classified as legacy" >&2
+  exit 1
+fi
+
 mkdir -p "$XDG_STATE_HOME/tlaloc/learning-memory"
 printf 'preserve-me\n' > "$XDG_STATE_HOME/tlaloc/learning-memory/uninstall-probe"
 PATH="$HOME/.local/bin:$PATH" tlaloc-uninstall --yes
@@ -98,4 +129,6 @@ PATH="$HOME/.local/bin:$PATH" tlaloc-uninstall --yes
 for cli in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench tlaloc-learning-memory tlaloc-adaptive-search tlaloc-closed-loop tlaloc-real-vlm-campaign tlaloc-learn tlaloc-prompt tlaloc-uninstall; do
   [[ ! -e "$HOME/.local/bin/$cli" ]] || { echo "uninstall left managed CLI: $cli" >&2; exit 1; }
 done
+[[ -x "$HOME/.local/bin/origami-fixed-carrier" ]]
+[[ -x "$HOME/.local/bin/ohf-lab" ]]
 grep -qx 'preserve-me' "$XDG_STATE_HOME/tlaloc/learning-memory/uninstall-probe"
