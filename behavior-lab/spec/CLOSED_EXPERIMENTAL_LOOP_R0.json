@@ -1,0 +1,66 @@
+{
+  "schema": "tlaloc.closed-experimental-loop.r0",
+  "status": "EXPERIMENTAL_IMPLEMENTED_REAL_MODEL_EVIDENCE_PENDING",
+  "purpose": "Close the Origami-facing experimental cycle from benchmark execution through diagnosis, persistent memory, adaptive prioritization, candidate comparison, outcome linkage and next-plan generation.",
+  "stages": [
+    "VALIDATE_CONFIG",
+    "RUN_BASELINE_CLEAN_TRIALS",
+    "EVALUATE_BASELINE",
+    "RETRY_ONLY_FAILED_QUESTIONS_IN_DIAGNOSTIC_MODE",
+    "PERSIST_REAL_EVIDENCE",
+    "BUILD_ADAPTIVE_PLAN",
+    "PRIORITIZE_CANDIDATE_BANK",
+    "RECORD_CHANGE_ATTEMPTS",
+    "RUN_SELECTED_CANDIDATE_TRIALS",
+    "RETRY_CANDIDATE_FAILURES_DIAGNOSTICALLY",
+    "PERSIST_CANDIDATE_EVIDENCE",
+    "LINK_BEFORE_AFTER_OUTCOMES",
+    "RECALCULATE_NEXT_PLAN"
+  ],
+  "clean_conditions": ["NATIVE_PNG_ONLY", "R4_ASSISTED"],
+  "diagnostic_policy": {
+    "separate_trial": true,
+    "only_failed_question_ids": true,
+    "excluded_from_primary_score": true,
+    "observable_protocol_trace_only": true,
+    "private_chain_of_thought_requested": false
+  },
+  "transport": {
+    "r0_provider": "OPENAI_COMPAT",
+    "png_required": true,
+    "transport_failures_are_model_failures": false,
+    "transport_failures_are_recorded_separately": true,
+    "api_keys_are_read_from_declared_environment_variables": true
+  },
+  "memory": {
+    "real_model_evidence_persisted": true,
+    "synthetic_evidence_empirical": false,
+    "change_attempts_link_to_parent_failure_evidence": true,
+    "outcomes_link_change_attempt_to_post_change_evidence": true,
+    "old_failures_deleted_when_fixed": false
+  },
+  "adaptive_search": {
+    "controls": "EXPERIMENT_BUDGET_AND_ORDER_ONLY",
+    "may_change_final_tournament_score": false,
+    "exploration_floor_gt_zero": true,
+    "historical_signal_bounded": true
+  },
+  "candidate_rendering": {
+    "tlaloc_is_pixel_authority": false,
+    "prebuilt_png_supported": true,
+    "external_build_command_hook_supported": true,
+    "missing_png_without_builder": "FAIL_VALIDATE_OR_BUILD"
+  },
+  "outcome_metrics": ["NATIVE_SCORE", "OVERALL_SCORE"],
+  "hard_invariants": [
+    "CLEAN_NATIVE_TRIAL_EQUALS_PNG_PLUS_QUESTION_ONLY",
+    "DIAGNOSTIC_RETRY_NE_SELF_BOOTSTRAP_EVIDENCE",
+    "TRANSPORT_FAILURE_NE_MODEL_SEMANTIC_FAILURE",
+    "MEMORY_GUIDES_SEARCH_NE_PROMOTION",
+    "FINAL_PROMOTION_REMAINS_EVIDENCE_GATED_AND_ORIGAMI_OWNED",
+    "FALSE_EXACT_EQUALS_0",
+    "UNKNOWN_GT_INVENTION",
+    "SYNTHETIC_FIXTURE_NE_REAL_MODEL_EVIDENCE",
+    "CANDIDATE_PNG_IS_AN_ORIGAMI_ARTIFACT_NOT_TLALOC_CANONICAL_TRUTH"
+  ]
+}

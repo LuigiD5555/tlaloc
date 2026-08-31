@@ -1,4 +1,4 @@
-# Capability status — Tlaloc 6.0.0-alpha.17
+# Capability status — Tlaloc 6.0.0-alpha.18
 
 Repository lifecycle: Tlaloc installs/uninstalls independently and can target Origami or unrelated behaviors. This file distinguishes development machinery, reference evidence, deployable artifacts and empirical support.
 
@@ -38,12 +38,20 @@ Repository lifecycle: Tlaloc installs/uninstalls independently and can target Or
 | `tlaloc-temporal-bench` CLI | **alpha.17 implemented** | Runs layered benchmark, debug parsing and automatic persistence of real evidence unless explicitly disabled. |
 | `tlaloc-learning-memory` CLI | **alpha.17 implemented** | Ingests/summarizes evidence and records change/outcome links. |
 | `tlaloc-adaptive-search` CLI | **alpha.17 implemented** | Builds memory-guided plans and prioritizes/records pre-evidence candidate attempts. |
+| Closed Experimental Loop R0 | **alpha.18 implemented / real-model run pending** | Executes baseline -> benchmark -> diagnostic retry -> memory -> adaptive queue -> candidate trials -> outcome links -> next plan. |
+| `tlaloc-closed-loop` CLI | **alpha.18 implemented** | `validate`, `run`, and `example` commands; OpenAI-compatible multimodal endpoints including LM Studio. |
+| Transport/semantic failure separation | **alpha.18 hard invariant** | HTTP/timeouts/malformed API responses are execution errors, not BOOT/ROSETTA/T2/model-semantic evidence. |
+| Automatic targeted diagnostic execution | **alpha.18 implemented** | Only failed clean questions are retried, and only complete diagnostic retries become diagnostic benchmark evidence. |
+| Closed-loop before/after outcome linkage | **alpha.18 implemented** | Baseline and candidate scores are linked to CHANGE_ATTEMPT and post-change observations in persistent memory. |
+| Multi-generation candidate-bank execution | **alpha.18 implemented** | Recalculates the adaptive plan each generation and stops on budget or candidate-bank exhaustion. |
+| External candidate build hook | **alpha.18 implemented** | Explicit `build_command` may render a candidate PNG; Tlaloc remains non-authoritative for Origami pixels. |
 | Receiver swarm-trace distillation | experimental R0 implemented | Existing Origami receiver-specific distillation remains a target-specific implementation. |
 | Receiver candidate tournament | experimental R0 implemented | Existing target-specific tournament retained. |
 | Project-local Claude Code skills | R0 implemented | Development assets; not portable behavior output. |
 | Tonal-owned `repo-flow` distribution | external / not Tlaloc-owned | Tonal may distribute cross-project workflow skills. |
 | SkillIR / generated Claude Skills | not implemented | Explicit future capability. |
 | OpenAI-compatible text transport | R0 implemented | LM Studio and compatible endpoints. |
+| OpenAI-compatible multimodal transport | **alpha.18 closed-loop reused** | Sends only declared prompt/question/PNG for clean trials. |
 | OpenAI-compatible Hybrid multimodal/tool loop | experimental implemented | Higher-level development/deployment machinery, not L0 baseline. |
 | General model-weight training | not implemented | Current distillation/search operates on explicit behavior artifacts/traces. |
 | Managed installer/uninstaller | R0 implemented | Tlaloc development environment installs independently; learning memory is deliberately preserved. |
@@ -54,7 +62,7 @@ Repository lifecycle: Tlaloc installs/uninstalls independently and can target Or
 | Origami temporal automaton/program awareness | **alpha.17 contract-known** | Tlaloc can distill/test temporal automata while Origami owns their canonical representation. |
 | Origami perceptual channels | contract-known / runtime partial | Moire/phase, stereo/parallax, temporal and emergent candidates remain evidence gated. |
 | Origami Fixed Carrier R2 PDF memory plane | experimental R1 implemented | Target-specific development/runtime support. |
-| Perception transport variants | alpha.12 implemented | Original PNG, 75%, 50%, JPEG preview. |
+| Perception transport variants | alpha.12 implemented | Original PNG, 75%, 50% and JPEG preview. |
 | Cross-model perception campaign aggregation | alpha.12 implemented | Development evidence machinery, not portable baseline. |
 | Origami Visual Evolution R0 | alpha.13 implemented | Searches evidence-backed profile/prompt candidates and recommends only. |
 | Native semantic fitness in visual search | **alpha.15 implemented** | Adds native index/answer rates and zero undeclared mechanical/unverified-claim gates. |
@@ -112,31 +120,7 @@ These are development/recommendation gates. They do not claim that a corrected c
 
 ## Origami Protocol Interop R0
 
-Alpha.16 adds:
-
-```text
-behavior-lab/internal/protocoleval
-behavior-lab/cmd/tlaloc-protocol-eval
-behavior-lab/spec/ORIGAMI_PROTOCOL_INTEROP_R0.json
-behavior-lab/spec/CODEC_ROUNDTRIP_R0.json
-behavior-lab/spec/CROSS_MODEL_COMMUNICATION_R0.json
-```
-
-The evaluator compares canonical semantic structure rather than asking another model to judge a response. The tracked state includes:
-
-```text
-entities
-relations
-hierarchy
-evidence
-uncertainty
-```
-
-It reports decoder/encoder discovery, preservation, invented facts, hop-to-hop drift, final drift, read/write success, undeclared external-codec dependencies and unnecessary semantic-to-exact escalation.
-
-Reference development gates begin at semantic drift <= 0.05, invented fact rate = 0, external codec dependencies = 0, exact escalations = 0 and `FALSE_EXACT=0`.
-
-Synthetic fixtures are harness tests only. **Real-model interoperability remains evidence pending.**
+Alpha.16 adds deterministic protocol evaluation for declared S*/E* read/write behavior, structural semantic preservation and A->B->C multi-hop drift. Synthetic fixtures validate the harness only. Real-model interoperability remains evidence pending.
 
 ## Temporal learning loop R0
 
@@ -157,15 +141,37 @@ real trial
  -> outcome linked back to memory
 ```
 
-The memory stores both successes and failures. Fixing a failure does not delete it; the old event remains available for regression testing.
-
-Adaptive search may use linked historical outcomes to adjust where experiment budget goes, but the adjustment is bounded and every mutation family retains an exploration floor. Memory does not alter the final candidate score or promotion gates.
+The memory stores both successes and failures. Fixing a failure does not delete it; the old event remains available for regression testing. Adaptive search may use linked historical outcomes to adjust experiment budget, but memory does not alter final candidate score or promotion gates.
 
 ```text
 MEMORY PRIORITY != PROMOTION SCORE
 ```
 
-Real-model evidence drives adaptive focus. Synthetic fixtures can validate the memory/planner implementation but cannot select the empirical failure target.
+## Closed Experimental Loop R0
+
+Alpha.18 operationalizes the alpha.17 pieces through one runner:
+
+```text
+baseline PNG
+ -> clean Native/R4 VLM trials
+ -> deterministic scoring
+ -> retry only failed questions with Debug Trace R0
+ -> persist real evidence
+ -> calculate adaptive failure target
+ -> prioritize candidate PNG bank
+ -> record change attempts
+ -> run selected candidates under the same models/questions
+ -> persist candidate evidence
+ -> link before/after outcome
+ -> calculate next plan
+ -> repeat within configured generation budget
+```
+
+The loop intentionally stops if no clean baseline trial can be completed. Transport failures are reported separately and are not inserted into semantic learning memory. Candidate diagnostic evidence is admitted only when the complete targeted retry succeeds at the transport layer.
+
+Candidate rendering remains outside Tlaloc authority. A candidate may be pre-rendered or produced through an explicit external `build_command` hook. The hook does not make its output canonical Origami.
+
+Real VLM campaign evidence is still pending until the runner is executed against actual endpoints.
 
 ## Development vs deployment
 
@@ -193,6 +199,7 @@ Native Semantic Regression R0
 Origami Protocol Interop R0
 Temporal Native Benchmark R0
 Adaptive Search R0
+Closed Experimental Loop R0
 prompt/representation experiments
 ```
 
@@ -208,4 +215,4 @@ Tlaloc experiments + evidence
 
 Tonal may optionally record a reproducible multi-tool development composition afterward.
 
-No document should claim that a successful swarm automatically proves a prompt, that a tool-assisted trial proves L0 portability, that a synthetic interop fixture proves real cross-model interoperability, that adaptive memory changes promotion scoring, or that a Tlaloc recommendation changes a target project's canonical release.
+No document should claim that a successful swarm automatically proves a prompt, that a tool-assisted trial proves L0 portability, that a synthetic interop fixture proves real cross-model interoperability, that adaptive memory changes promotion scoring, that a transport failure proves semantic failure, or that a Tlaloc recommendation changes a target project's canonical release.
