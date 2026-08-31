@@ -1,0 +1,86 @@
+{
+  "schema": "tlaloc.prompt-genome.r1",
+  "id": "origami-master-prompt",
+  "version": 1,
+  "modules": [
+    {
+      "id": "BOOT",
+      "version": 1,
+      "purpose": "identify the Origami carrier and enter its reading protocol",
+      "text": "Treat the image as an Origami carrier. Follow its visible BOOT and Rosetta before interpreting payload semantics.",
+      "min_text": "Follow Origami BOOT and Rosetta.",
+      "priority": 100,
+      "required": true,
+      "protected": true,
+      "maturity": "PROVISIONAL_WIN"
+    },
+    {
+      "id": "ROSETTA",
+      "version": 1,
+      "purpose": "interpret visible symbol-to-role mappings",
+      "text": "Use the carrier's own Rosetta mappings as authoritative for visible primitives, directions, checkpoints and time notation.",
+      "min_text": "Use the visible Rosetta as authoritative.",
+      "priority": 95,
+      "required": true,
+      "protected": true,
+      "maturity": "PROVISIONAL_WIN",
+      "dependencies": ["BOOT"]
+    },
+    {
+      "id": "SEMANTIC_READING",
+      "version": 1,
+      "purpose": "recover declared entities and states without inventing absent facts",
+      "text": "Recover only semantic facts visibly declared by the carrier. Separate certain observations from hypotheses.",
+      "min_text": "Report visible facts; label uncertainty.",
+      "priority": 90,
+      "required": true,
+      "protected": true,
+      "dependencies": ["ROSETTA"]
+    },
+    {
+      "id": "TEMPORAL_GRAMMAR",
+      "version": 1,
+      "purpose": "read visible causal transition rules",
+      "text": "When a temporal rule microgrammar is present, read each condition, source state, target state and transition exactly as displayed. Rules for one tick are evaluated from the same pre-step snapshot.",
+      "min_text": "Read rules exactly; one tick uses the same pre-step snapshot.",
+      "priority": 88,
+      "required": false,
+      "protected": true,
+      "maturity": "PROVISIONAL_WIN",
+      "dependencies": ["SEMANTIC_READING"]
+    },
+    {
+      "id": "EXECUTION_POLICY",
+      "version": 1,
+      "purpose": "execute recovered temporal rules to a stable state",
+      "text": "If execution is requested by the carrier: start from the declared initial state, apply all valid rules simultaneously on the same pre-step snapshot, produce the next state, repeat until no state changes, then report the stable state.",
+      "min_text": "Execute visible rules synchronously until unchanged; report stable state.",
+      "priority": 86,
+      "required": false,
+      "protected": false,
+      "maturity": "HYPOTHESIS",
+      "dependencies": ["TEMPORAL_GRAMMAR"]
+    },
+    {
+      "id": "EXACTNESS_POLICY",
+      "version": 1,
+      "purpose": "prevent false exact claims",
+      "text": "Do not claim exact payload recovery unless it was mechanically decoded and verified. A payload may be physically present even when you cannot decode it visually.",
+      "min_text": "No exact claim without mechanical verification.",
+      "priority": 98,
+      "required": true,
+      "protected": true,
+      "maturity": "PROVISIONAL_WIN"
+    },
+    {
+      "id": "OUTPUT_POLICY",
+      "version": 1,
+      "purpose": "separate recovered facts, derived execution and uncertainty",
+      "text": "Report recovered structure, computed behavior, final state when derivable, and a separate list of information that cannot be recovered with certainty.",
+      "min_text": "Separate facts, computation and uncertainty.",
+      "priority": 70,
+      "required": true,
+      "protected": true
+    }
+  ]
+}
