@@ -60,6 +60,7 @@ func Doctor(ctx context.Context, raw Spec) (DoctorResult, error) {
 	if err != nil {
 		return DoctorResult{}, err
 	}
+	modelInterop := BuildModelInteropProfile(selected, compatibility.Name(), spec.TransportCondition)
 
 	tmp, err := os.MkdirTemp("", "tlaloc-real-vlm-doctor-*")
 	if err != nil {
@@ -106,10 +107,17 @@ func Doctor(ctx context.Context, raw Spec) (DoctorResult, error) {
 	if err != nil {
 		return DoctorResult{}, err
 	}
+	working := BuildWorkingConfiguration(spec, modelInterop, "DOCTOR_TRANSPORT", programSHA, hashBytes(image), probe.Content)
+	workingPath, err := RecordWorkingConfiguration(spec.InteropMemoryRoot, working)
+	if err != nil {
+		return DoctorResult{}, fmt.Errorf("record working configuration: %w", err)
+	}
 	return DoctorResult{
 		Schema:                   SpecSchema + ".doctor",
 		Endpoint:                 spec.Endpoint,
 		CompatibilityStrategy:    compatibility.Name(),
+		ModelInterop:             modelInterop,
+		WorkingConfigurationPath: workingPath,
 		DiscoveredModels:         models,
 		SelectedModel:            selected,
 		VisionTransport:          true,
