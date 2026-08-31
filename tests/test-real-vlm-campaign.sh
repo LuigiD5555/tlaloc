@@ -25,6 +25,7 @@ PY
 grep -q 'Real VLM Campaign R0' "$ROOT/docs/REAL_VLM_CAMPAIGN_R0.md"
 grep -q 'tlaloc-real-vlm-campaign' "$ROOT/install.sh"
 grep -q 'tlaloc-real-vlm-campaign' "$ROOT/uninstall.sh"
-grep -q 'PhaseEvidence' "$ROOT/behavior-lab/internal/realcampaign/runtime.go"
+grep -q 'PhaseEvidence' "$ROOT/behavior-lab/internal/realcampaign/normalize.go"
+grep -q 'PromotionEligible: false' "$ROOT/behavior-lab/internal/realcampaign/prepare.go"
 grep -q 'promotion_eligible = false' "$ROOT/docs/REAL_VLM_CAMPAIGN_R0.md"
 echo REAL_VLM_CAMPAIGN_R0=PASS
