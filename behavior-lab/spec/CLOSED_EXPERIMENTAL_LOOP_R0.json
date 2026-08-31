@@ -1,58 +1,92 @@
 {
   "schema": "tlaloc.closed-experimental-loop.r0",
-  "status": "EXPERIMENTAL_IMPLEMENTED_REAL_MODEL_EVIDENCE_PENDING",
-  "purpose": "Close the Origami-facing experimental cycle from benchmark execution through diagnosis, persistent memory, adaptive prioritization, candidate comparison, outcome linkage and next-plan generation.",
-  "stages": [
-    "VALIDATE_CONFIG",
-    "RUN_BASELINE_CLEAN_TRIALS",
-    "EVALUATE_BASELINE",
+  "version": "R0",
+  "status": "IMPLEMENTED_REAL_MODEL_EVIDENCE_PENDING",
+  "purpose": "Execute the evidence-driven Origami development cycle end-to-end while keeping canonical promotion external and evidence gated.",
+  "loop": [
+    "RUN_CURRENT_EXPERIMENTAL_INCUMBENT",
+    "SCORE_CLEAN_NATIVE_AND_OPTIONAL_ASSISTED_TRIALS",
     "RETRY_ONLY_FAILED_QUESTIONS_IN_DIAGNOSTIC_MODE",
-    "PERSIST_REAL_EVIDENCE",
-    "BUILD_ADAPTIVE_PLAN",
-    "PRIORITIZE_CANDIDATE_BANK",
-    "RECORD_CHANGE_ATTEMPTS",
-    "RUN_SELECTED_CANDIDATE_TRIALS",
-    "RETRY_CANDIDATE_FAILURES_DIAGNOSTICALLY",
-    "PERSIST_CANDIDATE_EVIDENCE",
-    "LINK_BEFORE_AFTER_OUTCOMES",
-    "RECALCULATE_NEXT_PLAN"
+    "PERSIST_REAL_EVIDENCE_AND_DEBUG_FRONTIERS",
+    "BUILD_ACTIVE_FAILURE_PLAN_FROM_CURRENT_INCUMBENT_PLUS_HISTORICAL_OUTCOMES",
+    "PRIORITIZE_ELIGIBLE_CANDIDATES",
+    "BUILD_CANDIDATE_PNG_WHEN_DECLARED",
+    "RUN_CANDIDATE_CAMPAIGNS",
+    "LINK_FAILURE_TO_CHANGE_ATTEMPT_TO_OUTCOME",
+    "ADVANCE_ONLY_A_NON_REGRESSING_IMPROVED_EXPERIMENTAL_INCUMBENT",
+    "RECALCULATE_FAILURE_FRONTIER",
+    "REPEAT_UNTIL_STOP_CONDITION"
   ],
-  "clean_conditions": ["NATIVE_PNG_ONLY", "R4_ASSISTED"],
-  "diagnostic_policy": {
-    "separate_trial": true,
-    "only_failed_question_ids": true,
-    "excluded_from_primary_score": true,
-    "observable_protocol_trace_only": true,
-    "private_chain_of_thought_requested": false
-  },
-  "transport": {
+  "model_transport": {
     "r0_provider": "OPENAI_COMPAT",
-    "png_required": true,
+    "requires_multimodal_image_input": true,
+    "clean_native_input": ["PNG", "QUESTION"],
+    "assisted_input": ["MASTER_PROMPT", "PNG", "QUESTION"],
     "transport_failures_are_model_failures": false,
     "transport_failures_are_recorded_separately": true,
     "api_keys_are_read_from_declared_environment_variables": true
   },
+  "diagnostic_retry": {
+    "separate_from_primary_score": true,
+    "question_scope": "FAILED_QUESTIONS_ONLY",
+    "observable_protocol_trace_only": true,
+    "private_chain_of_thought_required": false
+  },
   "memory": {
-    "real_model_evidence_persisted": true,
-    "synthetic_evidence_empirical": false,
-    "change_attempts_link_to_parent_failure_evidence": true,
-    "outcomes_link_change_attempt_to_post_change_evidence": true,
+    "persistent": true,
+    "append_only": true,
+    "real_evidence_drives_active_failure_focus": true,
+    "historical_change_and_outcome_events_remain_search_signal": true,
+    "historical_observations_do_not_override_the_current_incumbent_frontier": true,
     "old_failures_deleted_when_fixed": false
   },
   "adaptive_search": {
     "controls": "EXPERIMENT_BUDGET_AND_ORDER_ONLY",
-    "may_change_final_tournament_score": false,
+    "may_change_final_promotion_score": false,
     "exploration_floor_gt_zero": true,
     "historical_signal_bounded": true
   },
-  "candidate_rendering": {
+  "candidate_bank": {
+    "bounded": true,
     "tlaloc_is_pixel_authority": false,
     "prebuilt_png_supported": true,
-    "external_build_command_hook_supported": true,
-    "missing_png_without_builder": "FAIL_VALIDATE_OR_BUILD"
+    "candidate_png_required_or_build_command_required": true,
+    "optional_parent_specimen_id_forms_experimental_candidate_dag": true,
+    "build_environment": [
+      "TLALOC_CANDIDATE_ID",
+      "TLALOC_OUTPUT_PNG",
+      "TLALOC_MUTATIONS_JSON",
+      "TLALOC_PARENT_SPECIMEN_ID",
+      "TLALOC_PARENT_PNG"
+    ],
+    "historical_trial_does_not_permanently_ban_retest": true,
+    "same_run_duplicate_candidate_execution": false
+  },
+  "experimental_incumbent": {
+    "canonical_authority": false,
+    "default_min_improvement": 0.01,
+    "requires_complete_clean_trial_count_not_lower_than_incumbent": true,
+    "requires_no_question_score_regression": true,
+    "requires_no_increase_in_missing_questions": true,
+    "requires_no_increase_in_invented_exact_claims": true,
+    "winner_selection": "HIGHEST_OUTCOME_METRIC_THEN_LEXICOGRAPHIC_ID",
+    "next_generation_baseline": "BEST_ADVANCEABLE_CANDIDATE"
+  },
+  "active_frontier": {
+    "current_observations": "CURRENT_INCUMBENT_RUN_ONLY",
+    "historical_observations": "REGRESSION_MEMORY_NOT_ACTIVE_FRONTIER_VOTE",
+    "historical_change_outcome": "BOUNDED_SEARCH_SIGNAL"
   },
   "outcome_metrics": ["NATIVE_SCORE", "OVERALL_SCORE"],
+  "stop_reasons": [
+    "INCUMBENT_EXECUTION_UNAVAILABLE",
+    "INCUMBENT_NO_ACTIVE_FAILURES",
+    "NO_ELIGIBLE_CANDIDATES",
+    "MAX_GENERATIONS_REACHED",
+    "COMPLETED"
+  ],
   "hard_invariants": [
+    "EXPERIMENTAL_INCUMBENT_NE_CANONICAL_ORIGAMI",
     "CLEAN_NATIVE_TRIAL_EQUALS_PNG_PLUS_QUESTION_ONLY",
     "DIAGNOSTIC_RETRY_NE_SELF_BOOTSTRAP_EVIDENCE",
     "TRANSPORT_FAILURE_NE_MODEL_SEMANTIC_FAILURE",
@@ -62,5 +96,6 @@
     "UNKNOWN_GT_INVENTION",
     "SYNTHETIC_FIXTURE_NE_REAL_MODEL_EVIDENCE",
     "CANDIDATE_PNG_IS_AN_ORIGAMI_ARTIFACT_NOT_TLALOC_CANONICAL_TRUTH"
-  ]
+  ],
+  "managed_cli": "tlaloc-closed-loop"
 }
