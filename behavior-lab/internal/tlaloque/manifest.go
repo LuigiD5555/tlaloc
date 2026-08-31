@@ -1,6 +1,7 @@
 package tlaloque
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -25,7 +26,7 @@ func LoadSwarmManifest(path string) (SwarmManifest, error) {
 	body, err := os.ReadFile(path)
 	if err != nil { return SwarmManifest{}, err }
 	var manifest SwarmManifest
-	dec := json.NewDecoder(bytesReader(body))
+	dec := json.NewDecoder(bytes.NewReader(body))
 	dec.DisallowUnknownFields()
 	if err := dec.Decode(&manifest); err != nil {
 		return SwarmManifest{}, fmt.Errorf("swarm manifest: %w", err)
@@ -59,13 +60,4 @@ func (m SwarmManifest) Registry() (*Registry, error) {
 		}
 	}
 	return registry, nil
-}
-
-// tiny wrapper keeps this file independent from bytes.NewReader call sites.
-func bytesReader(body []byte) *byteReader { return &byteReader{body: body} }
-
-type byteReader struct { body []byte; off int }
-func (r *byteReader) Read(p []byte) (int, error) {
-	if r.off >= len(r.body) { return 0, os.ErrClosed }
-	n := copy(p, r.body[r.off:]); r.off += n; return n, nil
 }
