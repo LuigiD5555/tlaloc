@@ -11,6 +11,7 @@ import (
 	"tlaloc.local/behaviorlab/internal/learningcycle"
 	"tlaloc.local/behaviorlab/internal/learningmemory"
 	"tlaloc.local/behaviorlab/internal/outcomelearner"
+	"tlaloc.local/behaviorlab/internal/promptgenome"
 )
 
 func main(){
@@ -18,6 +19,7 @@ func main(){
 	switch os.Args[1]{
 	case "status":status(os.Args[2:])
 	case "plan":plan(os.Args[2:])
+	case "export-origami-spec":exportOrigamiSpec(os.Args[2:])
 	case "validate-parity":validateParity(os.Args[2:])
 	case "assess-outcome":assessOutcome(os.Args[2:])
 	default:usage();os.Exit(2)
@@ -25,13 +27,13 @@ func main(){
 }
 
 func status(args []string){
-	fs:=flag.NewFlagSet("status",flag.ExitOnError);root:=fs.String("store","","learning memory root");fs.Parse(args)
-	store:=learningmemory.New(*root);events,err:=store.LoadAll();die(err);writeJSON(learningcycle.BuildStatus(store.Root,events))
+	fs:=flag.NewFlagSet("status",flag.ExitOnError);root:=fs.String("store","","learning memory root");genomePath:=fs.String("genome","behavior-lab/profiles/prompt-genome-r1.json","prompt genome json");fs.Parse(args)
+	store:=learningmemory.New(*root);events,err:=store.LoadAll();die(err);g:=loadGenome(*genomePath);writeJSON(learningcycle.BuildStatusWithGenome(store.Root,events,g))
 }
 
 func plan(args []string){
-	fs:=flag.NewFlagSet("plan",flag.ExitOnError);root:=fs.String("store","","learning memory root");baseline:=fs.String("baseline","baseline","baseline candidate id");program:=fs.String("program-sha","","canonical program sha256");payload:=fs.String("payload-sha","","exact payload sha256");budget:=fs.Int("budget",3,"candidate budget");record:=fs.Bool("record-attempts",false,"persist CHANGE_ATTEMPT events for generated candidates");fs.Parse(args)
-	store:=learningmemory.New(*root);events,err:=store.LoadAll();die(err);p:=learningcycle.BuildPlan(store.Root,events,*baseline,*program,*payload,*budget);die(learningcycle.ValidatePlan(p))
+	fs:=flag.NewFlagSet("plan",flag.ExitOnError);root:=fs.String("store","","learning memory root");genomePath:=fs.String("genome","behavior-lab/profiles/prompt-genome-r1.json","prompt genome json");baseline:=fs.String("baseline","baseline","baseline candidate id");program:=fs.String("program-sha","","canonical program sha256");payload:=fs.String("payload-sha","","exact payload sha256");budget:=fs.Int("budget",3,"candidate budget");record:=fs.Bool("record-attempts",false,"persist CHANGE_ATTEMPT events for generated candidates");fs.Parse(args)
+	store:=learningmemory.New(*root);events,err:=store.LoadAll();die(err);g:=loadGenome(*genomePath);p:=learningcycle.BuildPlanWithGenome(store.Root,events,g,*baseline,*program,*payload,*budget);die(learningcycle.ValidatePlan(p))
 	if *record {
 		for _,c:=range p.Candidates{
 			parents:=c.ParentEvidenceIDs;if len(parents)==0{parents=p.Status.Policy.ParentEvidenceIDs};if len(parents)==0{continue}
@@ -42,6 +44,14 @@ func plan(args []string){
 		}
 	}
 	writeJSON(p)
+}
+
+func exportOrigamiSpec(args []string){
+	fs:=flag.NewFlagSet("export-origami-spec",flag.ExitOnError);candidatePath:=fs.String("candidate","","tlaloc candidate manifest json");parentSHA:=fs.String("parent-sha","","parent PNG sha256");out:=fs.String("out","","optional Origami CandidateSpec output path");fs.Parse(args)
+	if *candidatePath==""{die(fmt.Errorf("-candidate is required"))}
+	var c experimentpolicy.CandidateManifest;readJSON(*candidatePath,&c);spec,err:=experimentpolicy.ToOrigamiSpec(c,*parentSHA);die(err)
+	if *out!=""{b,err:=json.MarshalIndent(spec,"","  ");die(err);die(os.WriteFile(*out,append(b,'\n'),0o600))}
+	writeJSON(spec)
 }
 
 func validateParity(args []string){
@@ -65,8 +75,9 @@ func assessOutcome(args []string){
 	writeJSON(map[string]any{"assessment":assessment,"knowledge_update":knowledge})
 }
 
+func loadGenome(path string)promptgenome.Genome{var g promptgenome.Genome;readJSON(path,&g);return g}
 func splitCSV(s string)[]string{out:=[]string{};for _,v:=range strings.Split(s,","){if v=strings.TrimSpace(v);v!=""{out=append(out,v)}};return out}
 func readJSON(path string,v any){b,err:=os.ReadFile(path);die(err);die(json.Unmarshal(b,v))}
 func writeJSON(v any){b,err:=json.MarshalIndent(v,"","  ");die(err);fmt.Println(string(b))}
 func die(err error){if err!=nil{fmt.Fprintln(os.Stderr,"error:",err);os.Exit(1)}}
-func usage(){fmt.Fprintln(os.Stderr,"usage: tlaloc-learn <status|plan|validate-parity|assess-outcome> [flags]")}
+func usage(){fmt.Fprintln(os.Stderr,"usage: tlaloc-learn <status|plan|export-origami-spec|validate-parity|assess-outcome> [flags]")}
