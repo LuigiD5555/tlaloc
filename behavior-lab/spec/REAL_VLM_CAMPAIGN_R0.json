@@ -1,0 +1,71 @@
+{
+  "schema": "tlaloc.real-vlm-campaign.r0",
+  "status": "EXPERIMENTAL_IMPLEMENTED_REAL_EXECUTION_PENDING",
+  "purpose": "Prepare and execute reproducible real multimodal-model campaigns against the pinned Origami temporal benchmark without hand-editing closed-loop JSON.",
+  "phases": {
+    "SMOKE": {
+      "default_trials_per_model": 1,
+      "default_candidates_per_generation": 1,
+      "default_max_generations": 1,
+      "memory_policy": "ISOLATED",
+      "promotion_eligible": false,
+      "meaning": "Validate endpoint, visual transport and one bounded real-model loop."
+    },
+    "EVIDENCE": {
+      "minimum_trials_per_model": 3,
+      "default_candidates_per_generation": 2,
+      "default_max_generations": 3,
+      "promotion_eligible": false,
+      "meaning": "Collect repeated real-model evidence for one selected VLM; cross-model confirmation remains required."
+    }
+  },
+  "doctor": [
+    "DISCOVER_OPENAI_COMPAT_MODELS",
+    "REJECT_SYNTHETIC_OR_PLACEHOLDER_MODEL_IDS",
+    "REQUIRE_EXPLICIT_MODEL_WHEN_ENDPOINT_REPORTS_MULTIPLE",
+    "VALIDATE_CANONICAL_SIGNAL_CHAIN_GROUND_TRUTH",
+    "RESOLVE_ORIGAMI_TEMPORAL_CARRIER",
+    "RESOLVE_ORIGAMI_CANDIDATE_BUILDER",
+    "QUERY_BUILDER_CAPABILITIES",
+    "REJECT_EXACT_PLANE_MUTATION_BUILDER",
+    "REQUIRE_TEMPORAL_PARENT_PROFILE",
+    "BUILD_8192_BYTE_BASELINE",
+    "SEND_REAL_MULTIMODAL_TRANSPORT_PROBE"
+  ],
+  "provenance": [
+    "MODEL_ID",
+    "ENDPOINT",
+    "TLALOC_VERSION",
+    "ORIGAMI_EXPECTED_VERSION",
+    "PROGRAM_PATH_AND_SHA256",
+    "BASELINE_PATH_AND_SHA256",
+    "TEMPORAL_CARRIER_PATH_AND_SHA256",
+    "CANDIDATE_BUILDER_PATH_AND_SHA256",
+    "BUILDER_CAPABILITIES",
+    "CLOSED_LOOP_CONFIG_PATH_AND_SHA256",
+    "MEMORY_ROOT",
+    "EVIDENCE_POLICY"
+  ],
+  "invariants": [
+    "CANONICAL_SIGNAL_CHAIN_GROUND_TRUTH_REQUIRED",
+    "REAL_CAMPAIGN_REJECTS_SYNTHETIC_MODEL_ID",
+    "MULTIMODAL_TRANSPORT_PROBE_REQUIRED_BEFORE_RUN",
+    "TRANSPORT_SUCCESS_NE_BENCHMARK_SUCCESS",
+    "TRANSPORT_FAILURE_NE_SEMANTIC_FAILURE",
+    "SMOKE_MEMORY_ISOLATED_FROM_EVIDENCE_MEMORY",
+    "SMOKE_NE_PROMOTION_EVIDENCE",
+    "EVIDENCE_REQUIRES_AT_LEAST_3_TRIALS_PER_MODEL",
+    "SINGLE_MODEL_REPEATED_EVIDENCE_NE_CROSS_MODEL_EVIDENCE",
+    "PROMOTION_ELIGIBLE_FALSE_IN_R0",
+    "CANDIDATE_BUILD_SUCCESS_NE_MODEL_IMPROVEMENT",
+    "EXPERIMENTAL_INCUMBENT_NE_CANONICAL_ORIGAMI",
+    "TLALOC_RECOMMENDS_ORIGAMI_DECIDES",
+    "FALSE_EXACT_0"
+  ],
+  "origami_contract": {
+    "expected_version": "6.0.0-alpha.15",
+    "parent_profile": "origami.temporal-carrier.r0.profile-1",
+    "candidate_capability_schema": "origami.experimental-candidate.r0.capabilities"
+  },
+  "authority": "TLALOC_OWNS_EXPERIMENT_EXECUTION_AND_EVIDENCE_ORIGAMI_OWNS_REPRESENTATION_AND_CANONICAL_PROMOTION"
+}
