@@ -8,6 +8,8 @@ import (
 
 const executeVisibleRulesToStableTextR1 = "EXEC: INIT > APPLY ALL SAME PRE-STEP > NEXT > REPEAT UNTIL UNCHANGED > REPORT STABLE"
 const synchronousRuleTextR1 = "EACH STEP: TEST ALL RULES ON SAME PRE-STEP SNAPSHOT"
+const synchronousConditionTextR1 = "EACH STEP: TEST ALL CONDITIONS ON SAME PRE-STEP SNAPSHOT"
+const visibleFromStatePreconditionR1 = "VISIBLE_FROM_STATE_PRECONDITION_R1"
 
 // CheckVisibleTextFidelity validates Origami's level-1 renderer declaration.
 // This is intentionally not OCR: it checks that all critical strings Origami
@@ -34,7 +36,20 @@ func CheckVisibleTextFidelity(candidate CandidateManifest, semantic SemanticMani
 		requireVisibleFact(&r,vm,"CELL."+id+".INITIAL_TEXT",sm["CELL."+id+".INITIAL"])
 	}
 
-	if sm["TEMPORAL_GRAMMAR"]=="VISIBLE_RULE_MICROGRAMMAR_R1"{
+	if sm["FROM_STATE_PRECONDITION_VISIBILITY"]==visibleFromStatePreconditionR1 {
+		requireVisibleFact(&r,vm,"TEMPORAL_GRAMMAR.SYNC_TEXT",synchronousConditionTextR1)
+		ruleIDs:=semanticRuleIDs(sm)
+		for i,id:=range ruleIDs{
+			if i>=6{break}
+			req:=sm["RULE."+id+".REQUIRES"]
+			if req==""{req="TRUE"}else{req=visibleRequires(req,sm)}
+			target:=sm["RULE."+id+".TARGET"]
+			visibleTarget:=sm["VISIBLE_CELL_ID_"+target];if visibleTarget==""{visibleTarget=target}
+			from:=sm["RULE."+id+".FROM"];if from==""{from="*"}
+			want:=fmt.Sprintf("IF %s AND %s=%s THEN %s -> %s",req,visibleTarget,from,visibleTarget,sm["RULE."+id+".TO"])
+			requireVisibleFact(&r,vm,"RULE."+id+".TEXT",want)
+		}
+	} else if sm["TEMPORAL_GRAMMAR"]=="VISIBLE_RULE_MICROGRAMMAR_R1"{
 		requireVisibleFact(&r,vm,"TEMPORAL_GRAMMAR.SYNC_TEXT",synchronousRuleTextR1)
 		ruleIDs:=semanticRuleIDs(sm)
 		for i,id:=range ruleIDs{
