@@ -1,12 +1,14 @@
 package experimentpolicy
 
 const (
-	IntentSchemaR1      = "tlaloc.experiment-intent.r1"
-	CandidateSchemaR1   = "tlaloc.candidate-manifest.r1"
-	SemanticSchemaR1    = "origami.semantic-manifest.r1"
-	BuildSchemaR1       = "origami.candidate-build-manifest.r1"
-	ParitySchemaR1      = "tlaloc.semantic-parity-report.r1"
-	RegressionSchemaR1  = "tlaloc.regression-report.r1"
+	IntentSchemaR1             = "tlaloc.experiment-intent.r1"
+	CandidateSchemaR1          = "tlaloc.candidate-manifest.r1"
+	SemanticSchemaR1           = "origami.semantic-manifest.r1"
+	VisibleTextSchemaR1        = "origami.visible-text-manifest.r1"
+	BuildSchemaR1              = "origami.candidate-build-manifest.r1"
+	ParitySchemaR1             = "tlaloc.semantic-parity-report.r1"
+	VisibleTextParitySchemaR1  = "tlaloc.visible-text-fidelity-report.r1"
+	RegressionSchemaR1         = "tlaloc.regression-report.r1"
 )
 
 type ExperimentIntent struct {
@@ -33,13 +35,15 @@ type CandidateManifest struct {
 }
 
 type SemanticManifest struct { Schema string `json:"schema"`; ProgramSHA256 string `json:"program_sha256"`; PayloadSHA256 string `json:"payload_sha256,omitempty"`; Facts []SemanticFact `json:"facts"` }
+type VisibleTextManifest struct { Schema string `json:"schema"`; ProgramSHA256 string `json:"program_sha256"`; Facts []SemanticFact `json:"facts"` }
 
 type BuildManifest struct {
 	Schema string `json:"schema"`; CandidateID string `json:"candidate_id"`; RendererVersion string `json:"renderer_version"`; ArtifactSHA256 string `json:"artifact_sha256"`; ArtifactBytes int `json:"artifact_bytes"`; ProgramSHA256 string `json:"program_sha256"`; PayloadSHA256 string `json:"payload_sha256,omitempty"`
-	InheritedMutations []Mutation `json:"inherited_mutations,omitempty"`; AppliedMutations []Mutation `json:"applied_mutations"`; VisibleSemantics SemanticManifest `json:"visible_semantics"`
+	InheritedMutations []Mutation `json:"inherited_mutations,omitempty"`; AppliedMutations []Mutation `json:"applied_mutations"`; VisibleSemantics SemanticManifest `json:"visible_semantics"`; VisibleText VisibleTextManifest `json:"visible_text"`
 }
 
 type Difference struct { Key string `json:"key"`; Expected string `json:"expected,omitempty"`; Actual string `json:"actual,omitempty"`; Allowed bool `json:"allowed"` }
 type ParityReport struct { Schema string `json:"schema"`; CandidateID string `json:"candidate_id"`; Pass bool `json:"pass"`; Differences []Difference `json:"differences,omitempty"`; FailureCode string `json:"failure_code,omitempty"` }
+type VisibleTextFidelityReport struct { Schema string `json:"schema"`; CandidateID string `json:"candidate_id"`; Pass bool `json:"pass"`; Differences []Difference `json:"differences,omitempty"`; FailureCode string `json:"failure_code,omitempty"` }
 type RegressionCheck struct { Name string `json:"name"`; Pass bool `json:"pass"`; Reason string `json:"reason,omitempty"` }
 type RegressionReport struct { Schema string `json:"schema"`; CandidateID string `json:"candidate_id"`; Pass bool `json:"pass"`; Checks []RegressionCheck `json:"checks"` }
