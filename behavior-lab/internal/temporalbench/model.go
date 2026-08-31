@@ -69,18 +69,18 @@ type TrialResult struct {
 type Comparison struct {
 	ModelID          string  `json:"model_id"`
 	SpecimenID       string  `json:"specimen_id"`
-	NativeScore      float64 `json:"native_score,omitempty"`
-	AssistedScore    float64 `json:"assisted_score,omitempty"`
-	AssistanceGain   float64 `json:"assistance_gain,omitempty"`
-	PristineScore    float64 `json:"pristine_score,omitempty"`
-	DegradedScore    float64 `json:"degraded_score,omitempty"`
-	DegradationDelta float64 `json:"degradation_delta,omitempty"`
+	NativeScore      float64 `json:"native_score"`
+	AssistedScore    float64 `json:"assisted_score"`
+	AssistanceGain   float64 `json:"assistance_gain"`
+	PristineScore    float64 `json:"pristine_score"`
+	DegradedScore    float64 `json:"degraded_score"`
+	DegradationDelta float64 `json:"degradation_delta"`
 }
 
 type Result struct {
-	Schema      string        `json:"schema"`
-	BenchmarkID string        `json:"benchmark_id"`
-	Trials      []TrialResult `json:"trials"`
-	Comparisons []Comparison  `json:"comparisons,omitempty"`
-	RealEvidence bool         `json:"real_evidence"`
+	Schema       string        `json:"schema"`
+	BenchmarkID  string        `json:"benchmark_id"`
+	Trials       []TrialResult `json:"trials"`
+	Comparisons  []Comparison  `json:"comparisons,omitempty"`
+	RealEvidence bool          `json:"real_evidence"`
 }
