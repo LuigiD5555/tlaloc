@@ -1,0 +1,26 @@
+{
+  "schema": "tlaloc.temporal-native-benchmark.r0.campaign",
+  "benchmark_id": "manual-deepseek-signal-chain-r1-2026-08-30",
+  "trials": [
+    {
+      "id": "deepseek-manual-r1-001",
+      "model_id": "deepseek-unspecified",
+      "provider": "DeepSeek",
+      "condition": "NATIVE_PNG_ONLY_MANUAL_MATERIALIZED_CANDIDATE",
+      "specimen": {
+        "id": "origami-alpha15-signal-chain-r0-t2-temporal-grammar-visible-r1",
+        "sha256": "94a3e1d8f8e0a97e8daea267f28d1699241c9030b85f44a6e7d3b68aac02879c",
+        "variant": "T2_TEMPORAL_GRAMMAR_VISIBLE_R1_MANUAL_MATERIALIZATION",
+        "png_bytes": 8192,
+        "width": 640,
+        "height": 640
+      },
+      "responses": [
+        {
+          "question_id": "QRAW",
+          "text": "External manual DeepSeek retest preserved verbatim in raw-response.md. The model recovered all four visible causal rules and synchronous pre-step semantics, but did not execute the rules to the stable final state and introduced unsupported cycle/checkpoint/VM interpretations."
+        }
+      ]
+    }
+  ]
+}
