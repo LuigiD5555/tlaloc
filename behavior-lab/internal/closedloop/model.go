@@ -16,6 +16,8 @@ type ModelConfig struct {
 	Model            string  `json:"model"`
 	Compatibility    string  `json:"compatibility_strategy,omitempty"`
 	TraceStream      bool    `json:"trace_stream,omitempty"`
+	MaxOutputTokens  int     `json:"max_output_tokens,omitempty"`
+	GenerationGuard  string  `json:"generation_guard,omitempty"`
 	APIKeyEnv        string  `json:"api_key_env,omitempty"`
 	Temperature      float64 `json:"temperature,omitempty"`
 	TimeoutSeconds   int     `json:"timeout_seconds,omitempty"`
