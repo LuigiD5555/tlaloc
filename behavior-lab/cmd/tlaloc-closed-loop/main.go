@@ -36,7 +36,11 @@ func validate(args []string) {
 	path := fs.String("config", "", "closed-loop config JSON")
 	fs.Parse(args)
 	cfg := load(*path)
-	die(closedloop.ValidateReady(cfg))
+	if cfg.AutoCandidates {
+		die(closedloop.ValidateAutoReady(context.Background(), cfg))
+	} else {
+		die(closedloop.ValidateReady(cfg))
+	}
 	fmt.Println("CLOSED_LOOP_READY")
 }
 
@@ -47,7 +51,13 @@ func run(args []string) {
 	cfg := load(*path)
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
-	report, err := closedloop.Run(ctx, cfg)
+	var report closedloop.Report
+	var err error
+	if cfg.AutoCandidates {
+		report, err = closedloop.RunAuto(ctx, cfg)
+	} else {
+		report, err = closedloop.Run(ctx, cfg)
+	}
 	die(err)
 	write(report)
 }
@@ -73,8 +83,8 @@ func example() {
 		OutputDir:                      "runs/closed-loop/temporal-r0-local-001",
 		MemoryRoot:                     "",
 		MasterPrompt:                   "/path/to/origami/generated/MASTER_PROMPT.md",
-		OrigamiVersion:                 "6.0.0-alpha.14-candidate",
-		TlalocVersion:                  "6.0.0-alpha.19",
+		OrigamiVersion:                 "6.0.0-alpha.15-candidate",
+		TlalocVersion:                  "6.0.0-alpha.20-candidate",
 		TrialsPerModel:                 1,
 		CandidatesPerGeneration:       2,
 		MaxGenerations:                3,
@@ -91,7 +101,11 @@ func example() {
 			TimeoutSeconds:   180,
 			TransportRetries: 1,
 		}},
-		Baseline: closedloop.SpecimenConfig{ID: "signal-chain-r0", PNG: "/path/to/origami-temporal-signal-chain-r0.png"},
+		Baseline:                    closedloop.SpecimenConfig{ID:"signal-chain-r0",PNG:"/path/to/origami-temporal-signal-chain-r0.png"},
+		AutoCandidates:              true,
+		CandidateBuilder:            []string{"origami-candidate-build"},
+		AutoCandidateBaseProfileID:  "origami.temporal-carrier.r0.profile-1",
+		AutoCandidatesPerGeneration: 4,
 	})
 }
 
