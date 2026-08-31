@@ -95,31 +95,33 @@ func Prepare(ctx context.Context, raw Spec) (Prepared, error) {
 		policy = "REAL_MODEL_SINGLE_MODEL_REPEATED_TRIALS_REQUIRES_CROSS_MODEL_CONFIRMATION_FOR_PROMOTION"
 	}
 	manifest := Manifest{
-		Schema:                  ManifestSchema,
-		CampaignID:              spec.CampaignID,
-		Phase:                   spec.Phase,
-		Status:                  status,
-		Endpoint:                spec.Endpoint,
-		CompatibilityStrategy:   spec.Compatibility,
-		ModelID:                 doc.SelectedModel,
-		TlalocVersion:           tlalocVersion,
-		OrigamiExpectedVersion:  "6.0.0-alpha.15",
-		ProgramPath:             spec.Program,
-		ProgramSHA256:           doc.ProgramSHA256,
-		BaselinePNG:             baseline,
-		BaselineSHA256:          baselineSHA,
-		BaselineBytes:           len(baselineBody),
-		TemporalCarrier:         doc.TemporalCarrier,
-		TemporalCarrierSHA256:   doc.TemporalCarrierSHA256,
-		CandidateBuilder:        doc.CandidateBuilder,
-		CandidateBuilderSHA256:  doc.CandidateBuilderSHA256,
-		BuilderCapabilities:     doc.BuilderCapabilities,
-		ClosedLoopConfig:        configPath,
-		ClosedLoopConfigSHA256:  configSHA,
-		MemoryRoot:              memoryRoot,
-		EvidencePolicy:          policy,
-		PromotionEligible:       false,
-		CrossModelEvidence:      false,
+		Schema:                   ManifestSchema,
+		CampaignID:               spec.CampaignID,
+		Phase:                    spec.Phase,
+		Status:                   status,
+		Endpoint:                 spec.Endpoint,
+		CompatibilityStrategy:    spec.Compatibility,
+		ModelID:                  doc.SelectedModel,
+		ModelInterop:             doc.ModelInterop,
+		WorkingConfigurationPath: doc.WorkingConfigurationPath,
+		TlalocVersion:            tlalocVersion,
+		OrigamiExpectedVersion:   "6.0.0-alpha.15",
+		ProgramPath:              spec.Program,
+		ProgramSHA256:            doc.ProgramSHA256,
+		BaselinePNG:              baseline,
+		BaselineSHA256:           baselineSHA,
+		BaselineBytes:            len(baselineBody),
+		TemporalCarrier:          doc.TemporalCarrier,
+		TemporalCarrierSHA256:    doc.TemporalCarrierSHA256,
+		CandidateBuilder:         doc.CandidateBuilder,
+		CandidateBuilderSHA256:   doc.CandidateBuilderSHA256,
+		BuilderCapabilities:      doc.BuilderCapabilities,
+		ClosedLoopConfig:         configPath,
+		ClosedLoopConfigSHA256:   configSHA,
+		MemoryRoot:               memoryRoot,
+		EvidencePolicy:           policy,
+		PromotionEligible:        false,
+		CrossModelEvidence:       false,
 	}
 	manifestPath := filepath.Join(phaseDir, "manifest.json")
 	if err := writeJSON(manifestPath, manifest); err != nil {
@@ -144,6 +146,16 @@ func Run(ctx context.Context, raw Spec) (Prepared, closedloop.Report, error) {
 	if err != nil {
 		return prepared, report, err
 	}
+	working := BuildWorkingConfiguration(prepared.Spec, prepared.Doctor.ModelInterop, "CAMPAIGN_RUN", prepared.Doctor.ProgramSHA256, prepared.Manifest.BaselineSHA256, "")
+	if len(report.Generations) > 0 && len(working.Evidence) > 0 {
+		last := report.Generations[len(report.Generations)-1].Baseline.Scores
+		working.Evidence[0].MeanNativeScore = last.MeanNative
+		working.Evidence[0].MeanOverallScore = last.MeanOverall
+		working.Evidence[0].ExecutionErrors = len(report.ExecutionErrors)
+	}
+	if _, recErr := RecordWorkingConfiguration(prepared.Spec.InteropMemoryRoot, working); recErr != nil {
+		return prepared, report, fmt.Errorf("record campaign working configuration: %w", recErr)
+	}
 	return prepared, report, nil
 }
 
@@ -158,7 +170,7 @@ func detectTlalocVersion() string {
 	}
 	for _, path := range candidates {
 		if body, err := os.ReadFile(path); err == nil && strings.TrimSpace(string(body)) != "" {
-			return strings.TrimSpace(string(body))
+			return strings.TrimSpace(string(body)), nil
 		}
 	}
 	return "UNKNOWN"
