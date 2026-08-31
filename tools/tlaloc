@@ -88,6 +88,7 @@ case "${1:-help}" in
   where) printf '%s\n' "$TLALOC_CURRENT" ;;
   behavior-lab) shift; exec "$TLALOC_CURRENT/bin/tlaloc-behavior-lab" "$@" ;;
   tlaloque) shift; exec "$TLALOC_CURRENT/bin/tlaloc-behavior-lab" tlaloque "$@" ;;
+  swarm) shift; exec "$TLALOC_CURRENT/bin/tlaloc-tlaloque-swarm" "$@" ;;
   origami) shift; exec "$TLALOC_CURRENT/bin/tlaloc-origami" "$@" ;;
   skills) shift; skills_cmd "$@" ;;
   skills-path) printf '%s\n' "$TLALOC_CURRENT/.claude/skills" ;;
@@ -102,6 +103,7 @@ Usage:
   tlaloc where
   tlaloc behavior-lab <compile|train|tlaloque> ...
   tlaloc tlaloque
+  tlaloc swarm <validate|catalog|run|example> ...
   tlaloc origami <compile|boot|query|expand|verify|chat|tools> ...
   tlaloc skills <list|path|install> ...
   tlaloc skills-path
