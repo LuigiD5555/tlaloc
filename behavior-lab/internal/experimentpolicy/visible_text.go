@@ -26,11 +26,11 @@ var executionComplianceVisibleFactsR1 = map[string]string{
 }
 
 var synchronousExecutionFidelityVisibleFactsR1 = map[string]string{
-	"SYNCHRONOUS_EXECUTION_FIDELITY.HEADER_TEXT": "SYNC STEP = FREEZE > SELECT > APPLY",
+	"SYNCHRONOUS_EXECUTION_FIDELITY.HEADER_TEXT": "SYNC: FREEZE > SELECT > APPLY",
 	"SYNCHRONOUS_EXECUTION_FIDELITY.STEP1_TEXT": "1 FREEZE PRE-STEP SNAPSHOT",
-	"SYNCHRONOUS_EXECUTION_FIDELITY.STEP2_TEXT": "2 RULE FIREABLE ONLY IF",
+	"SYNCHRONOUS_EXECUTION_FIDELITY.STEP2_TEXT": "2 FIREABLE IFF:",
 	"SYNCHRONOUS_EXECUTION_FIDELITY.STEP2B_TEXT": "  WHEN TRUE + TARGET=REQUIRE",
-	"SYNCHRONOUS_EXECUTION_FIDELITY.STEP3_TEXT": "3 SELECT ALL FIREABLE RULES",
+	"SYNCHRONOUS_EXECUTION_FIDELITY.STEP3_TEXT": "3 SELECT ALL FIREABLE",
 	"SYNCHRONOUS_EXECUTION_FIDELITY.STEP4_TEXT": "4 APPLY ALL SETS TOGETHER",
 	"SYNCHRONOUS_EXECUTION_FIDELITY.NO_ORDER_TEXT": "NO RULE ORDER",
 	"SYNCHRONOUS_EXECUTION_FIDELITY.NO_CASCADE_TEXT": "NO CASCADE INSIDE STEP",
@@ -59,8 +59,6 @@ func CheckVisibleTextFidelity(candidate CandidateManifest, semantic SemanticMani
 	}
 	if sm["EXECUTION_POLICY"]=="EXECUTE_VISIBLE_RULES_TO_STABLE_R1"{requireVisibleFact(&r,vm,"EXECUTION_POLICY.TEXT",executeVisibleRulesToStableTextR1)}
 	if sm["SYNCHRONOUS_EXECUTION_FIDELITY"]==freezeSelectApplyTogetherR1 {
-		// R7 keeps the R6 EXECUTE mode line but intentionally replaces the compact
-		// R6 checklist with a stricter synchronous freeze/select/apply protocol.
 		requireVisibleFact(&r,vm,"EXECUTION_POLICY_COMPLIANCE.MODE_TEXT",executionComplianceVisibleFactsR1["EXECUTION_POLICY_COMPLIANCE.MODE_TEXT"])
 		keys:=make([]string,0,len(synchronousExecutionFidelityVisibleFactsR1));for k:=range synchronousExecutionFidelityVisibleFactsR1{keys=append(keys,k)};sort.Strings(keys)
 		for _,k:=range keys{requireVisibleFact(&r,vm,k,synchronousExecutionFidelityVisibleFactsR1[k])}
