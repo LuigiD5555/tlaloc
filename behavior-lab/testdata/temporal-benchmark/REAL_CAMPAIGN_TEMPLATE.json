@@ -1,0 +1,56 @@
+{
+  "schema": "tlaloc.temporal-native-benchmark.r0.campaign",
+  "benchmark_id": "signal-chain-r0-real-campaign",
+  "trials": [
+    {
+      "id": "MODEL__native__pristine",
+      "model_id": "REPLACE_WITH_REAL_MODEL_ID",
+      "provider": "REPLACE_WITH_PROVIDER",
+      "condition": "NATIVE_PNG_ONLY",
+      "specimen": {
+        "id": "origami-temporal-signal-chain-r0",
+        "sha256": "REPLACE_WITH_PNG_SHA256",
+        "variant": "PRISTINE",
+        "png_bytes": 8192,
+        "width": 640,
+        "height": 640
+      },
+      "responses": [
+        {"question_id":"Q0","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q1","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q2","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q3","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q4","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q5","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q6","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q7","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q8","text":"PASTE_VERBATIM_RESPONSE"}
+      ]
+    },
+    {
+      "id": "MODEL__r4__pristine",
+      "model_id": "REPLACE_WITH_SAME_REAL_MODEL_ID",
+      "provider": "REPLACE_WITH_PROVIDER",
+      "condition": "R4_ASSISTED",
+      "specimen": {
+        "id": "origami-temporal-signal-chain-r0",
+        "sha256": "REPLACE_WITH_SAME_PNG_SHA256",
+        "variant": "PRISTINE",
+        "png_bytes": 8192,
+        "width": 640,
+        "height": 640
+      },
+      "responses": [
+        {"question_id":"Q0","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q1","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q2","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q3","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q4","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q5","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q6","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q7","text":"PASTE_VERBATIM_RESPONSE"},
+        {"question_id":"Q8","text":"PASTE_VERBATIM_RESPONSE"}
+      ]
+    }
+  ]
+}
