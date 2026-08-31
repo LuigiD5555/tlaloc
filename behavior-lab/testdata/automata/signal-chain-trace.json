@@ -1,0 +1,10 @@
+{
+  "schema": "tlaloc.tlaloque-action-trace.r0",
+  "id": "signal-chain-r0",
+  "steps": [
+    {"step":0,"tlaloque":"A","from_state":"IDLE","to_state":"ACTIVE","emits_to":["B"]},
+    {"step":1,"tlaloque":"B","from_state":"IDLE","to_state":"ACTIVE","requires":[{"cell_id":"A","state":"ACTIVE"}],"emits_to":["C"]},
+    {"step":2,"tlaloque":"B","from_state":"IDLE","to_state":"ACTIVE","requires":[{"cell_id":"A","state":"ACTIVE"}],"emits_to":["C"]},
+    {"step":3,"tlaloque":"C","from_state":"IDLE","to_state":"ACTIVE","requires":[{"cell_id":"B","state":"ACTIVE"}]}
+  ]
+}

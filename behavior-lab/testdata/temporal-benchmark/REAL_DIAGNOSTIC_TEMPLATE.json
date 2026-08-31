@@ -1,0 +1,28 @@
+{
+  "schema": "tlaloc.temporal-native-benchmark.r0.campaign",
+  "benchmark_id": "signal-chain-r0-real-diagnostic",
+  "trials": [
+    {
+      "id": "MODEL__native__diagnostic__Q3",
+      "model_id": "REPLACE_WITH_SAME_REAL_MODEL_ID",
+      "provider": "REPLACE_WITH_PROVIDER",
+      "condition": "NATIVE_PNG_ONLY",
+      "diagnostic_mode": true,
+      "diagnostic_question_ids": ["Q3"],
+      "specimen": {
+        "id": "origami-temporal-signal-chain-r0",
+        "sha256": "REPLACE_WITH_SAME_PNG_SHA256",
+        "variant": "PRISTINE",
+        "png_bytes": 8192,
+        "width": 640,
+        "height": 640
+      },
+      "responses": [
+        {
+          "question_id": "Q3",
+          "text": "PASTE_COMPLETE_VERBATIM_RESPONSE_INCLUDING_ORIGAMI_DEBUG_R0_LINE"
+        }
+      ]
+    }
+  ]
+}

@@ -45,6 +45,7 @@ Options:
 Safety invariants:
   * Never removes BPFW/PipeCraft.
   * Never removes .me/origami project workspaces.
+  * Never removes Tlaloc learning memory under XDG_STATE_HOME/tlaloc/learning-memory.
   * Managed deletion is constrained to version roots carrying component ownership markers.
 USAGE
 }
@@ -89,7 +90,7 @@ remove_bin_link_if_owned() {
 }
 
 tlaloc_bins() {
-  printf '%s\n' tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-uninstall
+  printf '%s\n' tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench tlaloc-learning-memory tlaloc-adaptive-search tlaloc-uninstall
 }
 
 remove_component_current() {
@@ -177,4 +178,4 @@ case "$MODE" in
     ;;
 esac
 
-echo "Uninstall completed. BPFW/PipeCraft and .me/origami workspaces were not touched."
+echo "Uninstall completed. BPFW/PipeCraft, .me/origami workspaces and Tlaloc learning memory were not touched."

@@ -1,0 +1,25 @@
+{
+  "schema": "tlaloc.temporal-native-benchmark.r0.campaign",
+  "benchmark_id": "signal-chain-r0-diagnostic-synthetic",
+  "trials": [
+    {
+      "id": "native-diagnostic-failure",
+      "model_id": "SYNTHETIC_DIAGNOSTIC_FAILURE",
+      "condition": "NATIVE_PNG_ONLY",
+      "diagnostic_mode": true,
+      "specimen": {"id":"signal-chain-r0","sha256":"synthetic","variant":"PRISTINE","png_bytes":8192,"width":640,"height":640},
+      "responses": [
+        {"question_id":"Q0","text":"BOX is CELL, ARROW is TRANSITION, RING is CHECKPOINT, X is TIME.\nORIGAMI_DEBUG_R0={\"schema\":\"tlaloc.origami-debug-trace.r0\",\"status\":\"PASS\",\"last_completed_stage\":\"ROSETTA\",\"selected_codec\":\"S0\",\"last_instruction\":\"READ_ROSETTA\",\"next_instruction\":\"ANSWER\",\"failure_code\":\"NONE\",\"evidence_refs\":[\"T1\"],\"confidence\":0.99}"},
+        {"question_id":"Q1","text":"The cells are A, B and C.\nORIGAMI_DEBUG_R0={\"schema\":\"tlaloc.origami-debug-trace.r0\",\"status\":\"PASS\",\"last_completed_stage\":\"T2_NAVIGATION\",\"selected_codec\":\"S2\",\"last_instruction\":\"READ_T2_LABELS\",\"next_instruction\":\"ANSWER\",\"failure_code\":\"NONE\",\"evidence_refs\":[\"T2\",\"A\",\"B\",\"C\"],\"confidence\":0.98}"},
+        {"question_id":"Q2","text":"A starts ACTIVE.\nORIGAMI_DEBUG_R0={\"schema\":\"tlaloc.origami-debug-trace.r0\",\"status\":\"PASS\",\"last_completed_stage\":\"T2_NAVIGATION\",\"selected_codec\":\"S2\",\"last_instruction\":\"READ_INITIAL_STATE\",\"next_instruction\":\"ANSWER\",\"failure_code\":\"NONE\",\"evidence_refs\":[\"T2\",\"A\"],\"confidence\":0.96}"},
+        {"question_id":"Q3","text":"I cannot determine the declared activation rule for B.\nORIGAMI_DEBUG_R0={\"schema\":\"tlaloc.origami-debug-trace.r0\",\"status\":\"FAIL\",\"last_completed_stage\":\"ROSETTA\",\"selected_codec\":\"ST2\",\"last_instruction\":\"READ_ROSETTA\",\"next_instruction\":\"LOCATE_T2\",\"failure_code\":\"T2_NOT_FOUND\",\"evidence_refs\":[\"T0\",\"T1\"],\"confidence\":0.72}"},
+        {"question_id":"Q4","text":"I cannot determine what follows B becoming active.\nORIGAMI_DEBUG_R0={\"schema\":\"tlaloc.origami-debug-trace.r0\",\"status\":\"FAIL\",\"last_completed_stage\":\"ROSETTA\",\"selected_codec\":\"ST2\",\"last_instruction\":\"READ_ROSETTA\",\"next_instruction\":\"LOCATE_T2\",\"failure_code\":\"T2_NOT_FOUND\",\"evidence_refs\":[\"T0\",\"T1\"],\"confidence\":0.68}"},
+        {"question_id":"Q5","text":"I cannot locate all checkpoint times.\nORIGAMI_DEBUG_R0={\"schema\":\"tlaloc.origami-debug-trace.r0\",\"status\":\"FAIL\",\"last_completed_stage\":\"T2_NAVIGATION\",\"selected_codec\":\"ST2\",\"last_instruction\":\"LOCATE_TIMELINE\",\"next_instruction\":\"READ_CHECKPOINTS\",\"failure_code\":\"CHECKPOINT_NOT_FOUND\",\"evidence_refs\":[\"T2\",\"TIMELINE\"],\"confidence\":0.61}"},
+        {"question_id":"Q6","text":"No. It is not a literal video frame sequence; it is a semantic temporal program.\nORIGAMI_DEBUG_R0={\"schema\":\"tlaloc.origami-debug-trace.r0\",\"status\":\"PASS\",\"last_completed_stage\":\"ROSETTA\",\"selected_codec\":\"S0\",\"last_instruction\":\"READ_FILM_SEMANTICS\",\"next_instruction\":\"ANSWER\",\"failure_code\":\"NONE\",\"evidence_refs\":[\"T1\"],\"confidence\":0.95}"},
+        {"question_id":"Q7","text":"I cannot simulate the final states from the visible evidence.\nORIGAMI_DEBUG_R0={\"schema\":\"tlaloc.origami-debug-trace.r0\",\"status\":\"FAIL\",\"last_completed_stage\":\"ROSETTA\",\"selected_codec\":\"ST6\",\"last_instruction\":\"READ_ROSETTA\",\"next_instruction\":\"LOCATE_T2\",\"failure_code\":\"T2_NOT_FOUND\",\"evidence_refs\":[\"T0\",\"T1\"],\"confidence\":0.66}"},
+        {"question_id":"Q8","text":"NOT_VERIFIED: no exact decoder was executed, so I cannot verify the hidden SHA-256.\nORIGAMI_DEBUG_R0={\"schema\":\"tlaloc.origami-debug-trace.r0\",\"status\":\"NOT_VERIFIED\",\"last_completed_stage\":\"EXACT_BOUNDARY\",\"selected_codec\":\"NONE\",\"last_instruction\":\"CLASSIFY_EXACT_QUERY\",\"next_instruction\":\"REQUIRE_EXACT_DECODER\",\"failure_code\":\"EXACT_DECODER_REQUIRED\",\"evidence_refs\":[\"T3\"],\"confidence\":1.0}"
+        }
+      ]
+    }
+  ]
+}

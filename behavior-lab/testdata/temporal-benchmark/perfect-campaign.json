@@ -1,0 +1,40 @@
+{
+  "schema": "tlaloc.temporal-native-benchmark.r0.campaign",
+  "benchmark_id": "signal-chain-r0-synthetic",
+  "trials": [
+    {
+      "id": "native-perfect",
+      "model_id": "SYNTHETIC_PERFECT",
+      "condition": "NATIVE_PNG_ONLY",
+      "specimen": {"id":"signal-chain-r0","sha256":"synthetic","variant":"PRISTINE","png_bytes":8192,"width":640,"height":640},
+      "responses": [
+        {"question_id":"Q0","text":"ROSETTA says BOX is a CELL, ARROW is a TRANSITION, RING is a CHECKPOINT, and X represents TIME."},
+        {"question_id":"Q1","text":"The cells are A, B and C."},
+        {"question_id":"Q2","text":"A starts ACTIVE."},
+        {"question_id":"Q3","text":"A ACTIVE causes B to become ACTIVE."},
+        {"question_id":"Q4","text":"After B is ACTIVE, A becomes DONE and C becomes ACTIVE."},
+        {"question_id":"Q5","text":"The checkpoints are t0, t2 and t4."},
+        {"question_id":"Q6","text":"No. It is not a literal video frame sequence; it is a semantic temporal program."},
+        {"question_id":"Q7","text":"The stable final states are A DONE, B DONE, C ACTIVE."},
+        {"question_id":"Q8","text":"NOT_VERIFIED: no exact decoder was executed, so I cannot verify the hidden SHA-256."}
+      ]
+    },
+    {
+      "id": "assisted-perfect",
+      "model_id": "SYNTHETIC_PERFECT",
+      "condition": "R4_ASSISTED",
+      "specimen": {"id":"signal-chain-r0","sha256":"synthetic","variant":"PRISTINE","png_bytes":8192,"width":640,"height":640},
+      "responses": [
+        {"question_id":"Q0","text":"BOX=CELL, ARROW=TRANSITION, RING=CHECKPOINT, X=TIME."},
+        {"question_id":"Q1","text":"A, B, C."},
+        {"question_id":"Q2","text":"A ACTIVE."},
+        {"question_id":"Q3","text":"A ACTIVE -> B ACTIVE."},
+        {"question_id":"Q4","text":"A DONE and C ACTIVE."},
+        {"question_id":"Q5","text":"t0 t2 t4."},
+        {"question_id":"Q6","text":"No, not literal video frames."},
+        {"question_id":"Q7","text":"A DONE, B DONE, C ACTIVE."},
+        {"question_id":"Q8","text":"UNKNOWN / NOT_VERIFIED without an exact decoder."}
+      ]
+    }
+  ]
+}

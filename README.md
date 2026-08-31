@@ -1,4 +1,4 @@
-# Tlaloc 6.0.0-alpha.16
+# Tlaloc 6.0.0-alpha.17
 
 **TLALOC — Transformative Latent Adaptive Logic Orchestration Core**
 
@@ -130,6 +130,15 @@ Origami semantic state
         -> declared S* decoder in another model
         -> structural comparison / semantic drift
         -> optional A -> B -> C multi-hop campaign
+
+TEMPORAL + ADAPTIVE DEVELOPMENT R0
+Tlaloque trace -> automaton/temporal IR
+        -> real Native benchmark
+        -> observable debug frontier
+        -> persistent learning memory
+        -> adaptive search plan
+        -> prioritized experiment queue
+        -> evidence-gated tournament
 ```
 
 These components do not make Tlaloc an Origami runtime dependency.
@@ -210,6 +219,49 @@ See:
 - `behavior-lab/spec/CODEC_ROUNDTRIP_R0.json`
 - `behavior-lab/spec/CROSS_MODEL_COMMUNICATION_R0.json`
 
+## Temporal benchmark, debug memory and adaptive search — alpha.17
+
+Alpha.17 extends the development loop from one-shot evaluation to accumulated experimental learning:
+
+```text
+Tlaloque trace
+  -> deterministic automaton + temporal program distillation
+  -> real-model Temporal Native Benchmark
+  -> optional targeted diagnostic retry
+  -> observable failure frontier
+  -> persistent learning memory
+  -> memory-guided adaptive search
+  -> prioritized candidate queue
+  -> real trials
+  -> ordinary evidence-gated tournament
+  -> outcome linked back to memory
+```
+
+The diagnostic trace reports only observable protocol checkpoints such as BOOT, ROSETTA, selected codec, T2 navigation and temporal routing. It never requests private reasoning or chain-of-thought.
+
+`tlaloc.learning-memory.r0` stores immutable content-addressed evidence under XDG state, keeps synthetic and real-model evidence separate, preserves both successes and failures, and links attempted changes to measured outcomes. Old failures remain available as regression history after they are fixed.
+
+`tlaloc.adaptive-search.r0` uses the dominant real-model failure frontier to prioritize mutation families such as `PROMPT`, `LAYOUT`, `REDUNDANCY`, `CHANNEL_ROLE` or `TEMPORAL_STRUCTURE`. Historical outcomes can adjust search priority only within a bounded range and every mutation family retains a non-zero exploration floor.
+
+The crucial boundary is:
+
+```text
+memory priority != promotion score
+```
+
+Adaptive search decides where to spend experiment budget. The existing `tlaloc-visual-search` tournament remains evidence-gated and retains final candidate ranking authority on the Tlaloc side; Origami still owns canonical profile/protocol promotion.
+
+Managed CLIs include:
+
+```text
+tlaloc-automaton-distill
+tlaloc-temporal-bench
+tlaloc-learning-memory
+tlaloc-adaptive-search
+```
+
+See `behavior-lab/AUTOMATON_DISTILLATION_R0.md`, `behavior-lab/TEMPORAL_NATIVE_BENCHMARK_R0.md`, `docs/TEMPORAL_NATIVE_DEBUG_R0.md`, `docs/LEARNING_MEMORY_R0.md` and `behavior-lab/ADAPTIVE_SEARCH_R0.md`.
+
 ## Development complexity vs deployment complexity
 
 Tlaloc is allowed to use expensive machinery while learning:
@@ -259,6 +311,10 @@ This prevents a prompt from appearing successful merely because the development 
 - deterministic Native semantic response evaluation;
 - deterministic Origami read/write codec discovery evaluation;
 - structural semantic roundtrip and A→B→C drift evaluation;
+- deterministic Tlaloque-trace -> automaton/temporal-program distillation;
+- layered Temporal Native Benchmark with targeted observable debug retries;
+- persistent content-addressed experimental learning memory;
+- memory-guided adaptive mutation/candidate prioritization with bounded history signal and exploration floor;
 - regression gates;
 - OpenAI-compatible model adapters;
 - target-specific experiment tracks, including Origami.
@@ -298,7 +354,7 @@ TEMPORAL_STRUCTURE
 EMERGENT_STRUCTURE
 ```
 
-Alpha.15 added first-class Native semantic fitness. Alpha.16 adds codec-aware read/write and cross-model drift evaluation. None of these deterministic harnesses substitutes for real held-out model evidence.
+Alpha.15 added first-class Native semantic fitness. Alpha.16 adds codec-aware read/write and cross-model drift evaluation. Alpha.17 adds temporal debug memory and adaptive pre-evidence search focus. None of these deterministic harnesses substitutes for real held-out model evidence.
 
 Prime/modular patterns, moire/phase, stereo/parallax, temporal and emergent structures remain candidates until real evidence demonstrates improvement.
 
@@ -358,7 +414,12 @@ See `docs/NOMENCLATURE.md`.
 - `docs/CAPABILITY_STATUS.md`
 - `docs/ORIGAMI_INTEGRATION_CONTRACT.md`
 - `docs/ORIGAMI_VISUAL_EVOLUTION_R0.md`
+- `docs/TEMPORAL_NATIVE_DEBUG_R0.md`
+- `docs/LEARNING_MEMORY_R0.md`
 - `behavior-lab/PROTOCOL_INTEROP_LAB_R0.md`
+- `behavior-lab/AUTOMATON_DISTILLATION_R0.md`
+- `behavior-lab/TEMPORAL_NATIVE_BENCHMARK_R0.md`
+- `behavior-lab/ADAPTIVE_SEARCH_R0.md`
 - `behavior-lab/spec/NATIVE_SEMANTIC_REGRESSION_R0.json`
 - `GATEKEEPER.md`
 
@@ -388,6 +449,11 @@ DECLARED SEMANTIC CODEC = ALLOWED
 UNDECLARED EXTERNAL CODEC DEPENDENCY = FAILURE
 SEMANTIC NAVIGATION != UNNECESSARY EXACT/BINARY DECODE
 SYNTHETIC INTEROP FIXTURE != REAL MODEL EVIDENCE
+MEMORY != CANONICAL ORIGAMI TRUTH
+MEMORY != AUTOMATIC PROMOTION
+MEMORY GUIDES EXPERIMENT BUDGET, NOT PROMOTION SCORE
+REAL MODEL FAILURES DRIVE ADAPTIVE FOCUS
+EXPLORATION FLOOR > 0
 UNVERIFIED MECHANICAL CLAIMS BLOCK RECOMMENDATION
 ORIGAMI IS A TARGET, NOT TLALOC'S IDENTITY
 TLALOC CANDIDATE != CANONICAL ORIGAMI PROFILE
@@ -397,4 +463,4 @@ FALSE_EXACT = 0 WHERE EXACTNESS IS CLAIMED
 
 ## Version
 
-`6.0.0-alpha.16`
+`6.0.0-alpha.17`
