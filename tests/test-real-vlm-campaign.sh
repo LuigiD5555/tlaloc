@@ -8,17 +8,21 @@ assert s['schema']=='tlaloc.real-vlm-campaign.r0'
 assert s['phases']['SMOKE']['promotion_eligible'] is False
 assert s['phases']['EVIDENCE']['promotion_eligible'] is False
 assert s['phases']['EVIDENCE']['minimum_trials_per_model'] >= 3
+assert {'lm-studio','openai','minimal'} <= set(s['compatibility_strategies'])
 inv=set(s['invariants'])
 for x in [
   'CANONICAL_SIGNAL_CHAIN_GROUND_TRUTH_REQUIRED',
   'REAL_CAMPAIGN_REJECTS_SYNTHETIC_MODEL_ID',
   'MULTIMODAL_TRANSPORT_PROBE_REQUIRED_BEFORE_RUN',
+  'COMPATIBILITY_QUIRKS_MUST_BE_ISOLATED_BY_STRATEGY',
+  'COMPATIBILITY_STRATEGY_RECORDED_IN_PROVENANCE',
   'SMOKE_NE_PROMOTION_EVIDENCE',
   'SINGLE_MODEL_REPEATED_EVIDENCE_NE_CROSS_MODEL_EVIDENCE',
   'PROMOTION_ELIGIBLE_FALSE_IN_R0',
   'TRANSPORT_FAILURE_NE_SEMANTIC_FAILURE',
   'EXPERIMENTAL_INCUMBENT_NE_CANONICAL_ORIGAMI',
 ]: assert x in inv,x
+assert 'MULTIMODAL_COMPATIBILITY_STRATEGY' in s['provenance']
 assert s['origami_contract']['expected_version']=='6.0.0-alpha.15'
 assert s['origami_contract']['parent_profile']=='origami.temporal-carrier.r0.profile-1'
 PY
@@ -26,6 +30,8 @@ grep -q 'Real VLM Campaign R0' "$ROOT/docs/REAL_VLM_CAMPAIGN_R0.md"
 grep -q 'tlaloc-real-vlm-campaign' "$ROOT/install.sh"
 grep -q 'tlaloc-real-vlm-campaign' "$ROOT/uninstall.sh"
 grep -q 'PhaseEvidence' "$ROOT/behavior-lab/internal/realcampaign/normalize.go"
-grep -q 'PromotionEligible: false' "$ROOT/behavior-lab/internal/realcampaign/prepare.go"
+grep -Eq 'PromotionEligible:[[:space:]]+false' "$ROOT/behavior-lab/internal/realcampaign/prepare.go"
+grep -q 'compatibility_strategy' "$ROOT/behavior-lab/internal/realcampaign/model.go"
+grep -q 'ResolveMultimodalCompatibility' "$ROOT/behavior-lab/internal/target/multimodal_compatibility_strategy.go"
 grep -q 'promotion_eligible = false' "$ROOT/docs/REAL_VLM_CAMPAIGN_R0.md"
 echo REAL_VLM_CAMPAIGN_R0=PASS
