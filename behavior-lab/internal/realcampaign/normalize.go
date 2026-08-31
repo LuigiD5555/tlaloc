@@ -38,6 +38,7 @@ func Normalize(spec Spec) (Spec, error) {
 		return Spec{}, err
 	}
 	spec.Compatibility = strategy.Name()
+	spec.TransportCondition = NormalizeTransportCondition(spec.TransportCondition, spec.Compatibility)
 	for name, value := range map[string]string{
 		"program": spec.Program,
 		"temporal_carrier": spec.TemporalCarrier,
