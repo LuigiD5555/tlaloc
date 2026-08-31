@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"tlaloc.local/behaviorlab/internal/target"
 )
 
 const parentProfile = "origami.temporal-carrier.r0.profile-1"
@@ -28,6 +30,14 @@ func Normalize(spec Spec) (Spec, error) {
 		spec.Endpoint = "http://127.0.0.1:1234/v1"
 	}
 	spec.Endpoint = strings.TrimRight(spec.Endpoint, "/")
+	if strings.TrimSpace(spec.Compatibility) == "" {
+		spec.Compatibility = target.CompatibilityLMStudio
+	}
+	strategy, err := target.ResolveMultimodalCompatibility(spec.Compatibility)
+	if err != nil {
+		return Spec{}, err
+	}
+	spec.Compatibility = strategy.Name()
 	for name, value := range map[string]string{
 		"program": spec.Program,
 		"temporal_carrier": spec.TemporalCarrier,
