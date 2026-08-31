@@ -1,6 +1,7 @@
 package target
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"testing"
@@ -34,7 +35,7 @@ func TestRepetitionGuardAllowsNormalAnswer(t *testing.T) {
 
 func TestGenerationPolicyContext(t *testing.T) {
 	guard := RepetitionGuard{MinRepeatedLines: 16}
-	ctx := WithGenerationPolicy(t.Context(), GenerationPolicy{MaxTokens: 512, Guard: guard})
+	ctx := WithGenerationPolicy(context.Background(), GenerationPolicy{MaxTokens: 512, Guard: guard})
 	policy := GenerationPolicyFromContext(ctx)
 	if policy.MaxTokens != 512 {
 		t.Fatalf("max tokens=%d", policy.MaxTokens)
