@@ -10,11 +10,12 @@ import (
 )
 
 const (
-	TraceRequestStart = "request.start"
-	TraceFirstDelta   = "response.first_delta"
-	TraceDelta        = "response.delta"
-	TraceRequestDone  = "request.done"
-	TraceRequestError = "request.error"
+	TraceRequestStart   = "request.start"
+	TraceFirstDelta     = "response.first_delta"
+	TraceDelta          = "response.delta"
+	TraceGuardTriggered = "response.guard_triggered"
+	TraceRequestDone    = "request.done"
+	TraceRequestError   = "request.error"
 )
 
 type ModelTraceEvent struct {
@@ -78,6 +79,8 @@ func (o *WriterTraceObserver) Observe(event ModelTraceEvent) {
 		fmt.Fprintf(o.w, "[trace] first-delta after=%s\n", event.Elapsed.Round(time.Millisecond))
 	case TraceDelta:
 		fmt.Fprint(o.w, event.Delta)
+	case TraceGuardTriggered:
+		fmt.Fprintf(o.w, "\n[trace] generation.guard model=%s elapsed=%s error=%v\n", event.Model, event.Elapsed.Round(time.Millisecond), event.Err)
 	case TraceRequestDone:
 		fmt.Fprintf(o.w, "\n[trace] request.done model=%s elapsed=%s chars=%d\n", event.Model, event.Elapsed.Round(time.Millisecond), event.Characters)
 	case TraceRequestError:
