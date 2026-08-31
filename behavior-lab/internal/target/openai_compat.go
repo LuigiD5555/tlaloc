@@ -12,12 +12,13 @@ import (
 )
 
 type OpenAICompat struct {
-	BaseURL       string
-	Model         string
-	APIKey        string
-	Client        *http.Client
-	Temperature   float64
-	Compatibility MultimodalCompatibilityStrategy
+	BaseURL        string
+	Model          string
+	APIKey         string
+	Client         *http.Client
+	Temperature    float64
+	Compatibility  MultimodalCompatibilityStrategy
+	RequestTimeout time.Duration
 }
 
 type chatRequest struct {
@@ -34,6 +35,17 @@ type chatResponse struct {
 	} `json:"choices"`
 }
 
+func (c OpenAICompat) httpClient() *http.Client {
+	if c.Client != nil {
+		return c.Client
+	}
+	timeout := c.RequestTimeout
+	if timeout <= 0 {
+		timeout = 90 * time.Second
+	}
+	return &http.Client{Timeout: timeout}
+}
+
 func (c OpenAICompat) Complete(ctx context.Context, systemPrompt, user string) (string, error) {
 	base := strings.TrimRight(c.BaseURL, "/")
 	if base == "" {
@@ -42,10 +54,7 @@ func (c OpenAICompat) Complete(ctx context.Context, systemPrompt, user string) (
 	if c.Model == "" {
 		return "", fmt.Errorf("model is required")
 	}
-	client := c.Client
-	if client == nil {
-		client = &http.Client{Timeout: 90 * time.Second}
-	}
+	client := c.httpClient()
 	body, _ := json.Marshal(chatRequest{Model: c.Model, Messages: []map[string]string{{"role": "system", "content": systemPrompt}, {"role": "user", "content": user}}, Temperature: c.Temperature})
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, base+"/chat/completions", bytes.NewReader(body))
 	if err != nil {
