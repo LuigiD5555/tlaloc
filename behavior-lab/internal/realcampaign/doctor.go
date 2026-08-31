@@ -60,6 +60,10 @@ func Doctor(ctx context.Context, raw Spec) (DoctorResult, error) {
 	if err != nil {
 		return DoctorResult{}, err
 	}
+	guard, err := target.ResolveGenerationGuard(spec.GenerationGuard)
+	if err != nil {
+		return DoctorResult{}, err
+	}
 	modelInterop := BuildModelInteropProfile(selected, compatibility.Name(), spec.TransportCondition)
 
 	tmp, err := os.MkdirTemp("", "tlaloc-real-vlm-doctor-*")
@@ -88,6 +92,8 @@ func Doctor(ctx context.Context, raw Spec) (DoctorResult, error) {
 		Temperature:   spec.Temperature,
 		APIKey:        apiKey(spec.APIKeyEnv),
 		Compatibility: compatibility,
+		MaxTokens:     spec.MaxOutputTokens,
+		Guard:         guard,
 	}
 	if spec.TraceStream {
 		client.Observer = target.NewWriterTraceObserver(os.Stderr)
@@ -120,6 +126,8 @@ func Doctor(ctx context.Context, raw Spec) (DoctorResult, error) {
 		Endpoint:                 spec.Endpoint,
 		CompatibilityStrategy:    compatibility.Name(),
 		TraceStream:              spec.TraceStream,
+		MaxOutputTokens:          spec.MaxOutputTokens,
+		GenerationGuard:          spec.GenerationGuard,
 		ModelInterop:             modelInterop,
 		WorkingConfigurationPath: workingPath,
 		DiscoveredModels:         models,
