@@ -2,7 +2,9 @@
 
 Status: `IMPLEMENTED_REAL_MODEL_EVIDENCE_PENDING`
 
-Tlaloc alpha.18 closes the Origami-facing operational experiment loop. It can execute repeated model campaigns, diagnose failures, learn from persistent evidence, prioritize candidate changes, compare them, advance a better experimental incumbent, and continue from the newly exposed failure frontier.
+Tlaloc alpha.19 closes the Origami-facing operational experiment loop. It can execute repeated model campaigns, diagnose failures, learn from persistent evidence, prioritize candidate changes, compare them, advance a better experimental incumbent, and continue from the newly exposed failure frontier.
+
+Alpha.18 introduced the config-driven runner; alpha.19 closes the remaining inter-generation gap by advancing an evidence-gated experimental incumbent instead of re-running the original baseline forever.
 
 It does **not** promote Origami automatically and it does not make Tlaloc the visual authority.
 
@@ -66,7 +68,7 @@ Diagnostic trials are marked `diagnostic_mode=true`, remain outside Native/R4 co
 
 ## Transport failures
 
-HTTP errors, timeouts and malformed API responses are written to `execution_errors` and do not become semantic failure observations. A transport failure is not evidence that the model failed BOOT, ROSETTA, T2, semantic decode or temporal reasoning.
+HTTP errors, timeouts and malformed API responses are written to `execution_errors` and do not become semantic failure observations. A transport failure is not evidence that the model failed BOOT, ROSETTA, T2, semantic decode or temporal reasoning. It also cannot advance the experimental incumbent.
 
 ## Persistent memory
 
