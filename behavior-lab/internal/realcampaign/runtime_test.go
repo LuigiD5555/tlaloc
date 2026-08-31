@@ -1,8 +1,11 @@
 package realcampaign
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"image"
+	"image/png"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -23,7 +26,7 @@ func TestNormalizeRejectsSyntheticAndWeakEvidence(t *testing.T){
 
 func TestDoctorAndPrepareDiscoverOneRealModel(t *testing.T){
 	if runtime.GOOS=="windows"{t.Skip("POSIX fixture")}
-	dir:=t.TempDir();program:=writeCanonicalProgram(t,dir)
+	dir:=t.TempDir();program:=writeCanonicalProgram(t,dir);fixturePNG:=writeFrozenPNG(t,dir)
 	carrier:=filepath.Join(dir,"carrier");builder:=filepath.Join(dir,"builder")
 	carrierScript:=`#!/bin/sh
 out=""
@@ -32,7 +35,7 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 [ -n "$out" ] || exit 8
-head -c 8192 /dev/zero > "$out"
+cp "$FIXTURE_PNG" "$out"
 `
 	builderScript:=`#!/bin/sh
 if [ "$1" = "capabilities" ]; then
@@ -45,6 +48,7 @@ exit 9
 `
 	if err:=os.WriteFile(carrier,[]byte(carrierScript),0o755);err!=nil{t.Fatal(err)}
 	if err:=os.WriteFile(builder,[]byte(builderScript),0o755);err!=nil{t.Fatal(err)}
+	t.Setenv("FIXTURE_PNG",fixturePNG)
 	server:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
 		w.Header().Set("Content-Type","application/json")
 		switch r.URL.Path{
@@ -68,6 +72,14 @@ exit 9
 func TestSelectModelRequiresChoiceWhenMultiple(t *testing.T){
 	if _,err:=selectModel("",[]string{"a","b"});err==nil{t.Fatal("expected explicit selection error")}
 	m,err:=selectModel("b",[]string{"a","b"});if err!=nil||m!="b"{t.Fatalf("selection=%q err=%v",m,err)}
+}
+
+func writeFrozenPNG(t *testing.T,dir string)string{
+	t.Helper();img:=image.NewGray(image.Rect(0,0,640,640));var b bytes.Buffer
+	if err:=png.Encode(&b,img);err!=nil{t.Fatal(err)}
+	if b.Len()>8192{t.Fatalf("fixture PNG too large: %d",b.Len())}
+	data:=append([]byte(nil),b.Bytes()...);data=append(data,make([]byte,8192-len(data))...)
+	path:=filepath.Join(dir,"fixture.png");if err:=os.WriteFile(path,data,0o644);err!=nil{t.Fatal(err)};return path
 }
 
 func writeCanonicalProgram(t *testing.T,dir string)string{
