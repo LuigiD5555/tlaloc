@@ -11,6 +11,7 @@ import (
 const (
 	GenerationGuardNone         = "none"
 	GenerationGuardRepetitionR0 = "repetition-r0"
+	GenerationFailureClass      = "MODEL_OUTPUT_DEGENERATION"
 )
 
 type GenerationGuard interface {
@@ -45,9 +46,9 @@ type GenerationDegenerationError struct {
 
 func (e *GenerationDegenerationError) Error() string {
 	if e == nil {
-		return "model output degeneration"
+		return GenerationFailureClass
 	}
-	return fmt.Sprintf("model output degeneration guard=%s: %s", e.Guard, e.Reason)
+	return fmt.Sprintf("%s guard=%s: %s", GenerationFailureClass, e.Guard, e.Reason)
 }
 
 func AsGenerationDegeneration(err error) (*GenerationDegenerationError, bool) {
