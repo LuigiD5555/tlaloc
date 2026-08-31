@@ -1,0 +1,44 @@
+{
+  "schema": "tlaloc.temporal-native-benchmark.r0.result",
+  "benchmark_id": "manual-r4-from-state-precondition-visible-r1-2026-08-31",
+  "trials": [
+    {
+      "trial_id": "manual-r4-interpretation-1",
+      "model_id": "external-vlm-unspecified",
+      "condition": "NATIVE_PNG_ONLY_USER_MEDIATED",
+      "specimen_id": "from-state-precondition-visible-r1",
+      "questions": [
+        {"question_id":"CELL_IDENTITY","layer":"T_TEMPORAL","pass":true,"score":0.90},
+        {"question_id":"SAME_PRE_STEP_PARALLELISM","layer":"T_TEMPORAL","pass":true,"score":0.90},
+        {"question_id":"RULE_ROLE_BINDING","layer":"T_TEMPORAL","pass":false,"score":0.45,"violations":["CONDITION_TARGET_BINDING_CONFUSION","RULE_OMISSION","RULE_OPERAND_MISBINDING"]},
+        {"question_id":"PAYLOAD_RECOGNITION","layer":"X_EXACTNESS","pass":true,"score":0.85}
+      ],
+      "debug_reports": [
+        {"question_id":"RULE_ROLE_BINDING","present":true,"valid":true,"status":"FAIL","last_completed_stage":"T2_RULE_MICROGRAMMAR","failure_code":"CONDITION_TARGET_BINDING_CONFUSION","evidence_refs":["raw-response-1.md"],"confidence":0.95}
+      ]
+    },
+    {
+      "trial_id": "manual-r4-interpretation-2",
+      "model_id": "external-vlm-unspecified",
+      "condition": "NATIVE_PNG_ONLY_USER_MEDIATED",
+      "specimen_id": "from-state-precondition-visible-r1",
+      "questions": [
+        {"question_id":"CELL_IDENTITY","layer":"T_TEMPORAL","pass":true,"score":0.90},
+        {"question_id":"SAME_PRE_STEP_PARALLELISM","layer":"T_TEMPORAL","pass":true,"score":0.95},
+        {"question_id":"RULE_ROLE_BINDING","layer":"T_TEMPORAL","pass":false,"score":0.40,"violations":["CONDITION_TARGET_BINDING_CONFUSION","IMPOSSIBLE_SAME_CELL_PRECONDITION","RULE_OPERAND_MISBINDING"]},
+        {"question_id":"PAYLOAD_RECOGNITION","layer":"X_EXACTNESS","pass":true,"score":0.90}
+      ],
+      "debug_reports": [
+        {"question_id":"RULE_ROLE_BINDING","present":true,"valid":true,"status":"FAIL","last_completed_stage":"T2_RULE_MICROGRAMMAR","failure_code":"CONDITION_TARGET_BINDING_CONFUSION","evidence_refs":["raw-response-2.md"],"confidence":0.99}
+      ]
+    }
+  ],
+  "real_evidence": true,
+  "provenance": {
+    "source": "user_supplied_raw_responses",
+    "model_identity": "not_reported",
+    "fabricated_evidence": false
+  },
+  "failure_frontier": "CONDITION_TARGET_BINDING_CONFUSION",
+  "next_target": "RULE_ROLE_BINDING"
+}
