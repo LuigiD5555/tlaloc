@@ -1,7 +1,5 @@
 package experimentpolicy
 
-import "strings"
-
 // CheckRegressionPreconditions verifies that the candidate changed only the
 // declared experimental surface before any real VLM sees the specimen.
 func CheckRegressionPreconditions(candidate CandidateManifest, expected SemanticManifest, build BuildManifest) RegressionReport {
@@ -11,12 +9,12 @@ func CheckRegressionPreconditions(candidate CandidateManifest, expected Semantic
 	add("PROGRAM_SHA_PRESERVED",expected.ProgramSHA256==build.VisibleSemantics.ProgramSHA256&&build.ProgramSHA256==build.VisibleSemantics.ProgramSHA256,"canonical TemporalProgram hash must remain unchanged")
 	if candidate.PayloadSHA256!=""{add("PAYLOAD_SHA_PRESERVED",candidate.PayloadSHA256==build.PayloadSHA256,"payload hash must remain unchanged")}
 
-	exp:=factMap(expected.Facts);act:=factMap(build.VisibleSemantics.Facts)
+	exp:=factMap(expected.Facts);act:=factMap(build.VisibleSemantics.Facts);declared:=factMap(candidate.ExpectedSemanticChanges)
 	frozen:=true
 	for k,want:=range exp{
-		if strings.HasPrefix(k,"VISIBLE_CELL_ID_"){continue}
+		if _,allowed:=declared[k];allowed{continue}
 		if act[k]!=want{frozen=false;break}
 	}
-	add("FROZEN_TEMPORAL_SEMANTICS",frozen,"rules, initial states, timing and execution policy inherited from the parent must not regress")
+	add("FROZEN_TEMPORAL_SEMANTICS",frozen,"all semantic facts outside the declared mutation must remain identical to the parent")
 	return r
 }
