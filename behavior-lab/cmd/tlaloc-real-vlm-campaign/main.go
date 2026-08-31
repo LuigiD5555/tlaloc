@@ -41,8 +41,10 @@ func flags(name string, args []string) (realcampaign.Spec, *flag.FlagSet) {
 	fs.StringVar(&s.CampaignID, "id", "origami-temporal-real-vlm-r0", "campaign id")
 	fs.StringVar(&s.Phase, "phase", "SMOKE", "SMOKE or EVIDENCE")
 	fs.StringVar(&s.Endpoint, "endpoint", "http://127.0.0.1:1234/v1", "OpenAI-compatible base URL")
-	fs.StringVar(&s.Model, "model", "", "model id; auto-selected only when endpoint reports exactly one model")
-	fs.StringVar(&s.Compatibility, "compatibility", target.CompatibilityLMStudio, "multimodal compatibility strategy: lm-studio|openai|minimal")
+	fs.StringVar(&s.Model, "model", "", "exact model id; auto-selected only when endpoint reports exactly one model")
+	fs.StringVar(&s.Compatibility, "compatibility", target.CompatibilityLMStudio, "multimodal payload strategy: lm-studio|openai|minimal")
+	fs.StringVar(&s.TransportCondition, "transport-condition", "", "experimental transport identity: DIRECT_IMAGE_API|PLATFORM_MEDIATED|custom")
+	fs.StringVar(&s.InteropMemoryRoot, "interop-memory", "", "persistent per-model working-configuration registry; defaults to XDG/local state")
 	fs.StringVar(&s.APIKeyEnv, "api-key-env", "", "environment variable containing API key")
 	fs.StringVar(&s.Program, "program", "", "canonical Origami signal-chain TemporalProgram JSON")
 	fs.StringVar(&s.TemporalCarrier, "carrier", "origami-temporal-carrier", "Origami temporal carrier executable")
@@ -82,17 +84,18 @@ func run(ctx context.Context, args []string) {
 
 func example() {
 	write(realcampaign.Spec{
-		Schema:           realcampaign.SpecSchema,
-		CampaignID:       "origami-temporal-real-vlm-r0",
-		Phase:            realcampaign.PhaseSmoke,
-		Endpoint:         "http://127.0.0.1:1234/v1",
-		Compatibility:    target.CompatibilityLMStudio,
-		Program:          "/path/to/origami/experiments/temporal-automaton-r0/signal-chain.json",
-		TemporalCarrier:  "origami-temporal-carrier",
-		CandidateBuilder: "origami-candidate-build",
-		OutputDir:        "runs/real-vlm/origami-temporal-r0",
-		TimeoutSeconds:   180,
-		TransportRetries: 1,
+		Schema:             realcampaign.SpecSchema,
+		CampaignID:         "origami-temporal-real-vlm-r0",
+		Phase:              realcampaign.PhaseSmoke,
+		Endpoint:           "http://127.0.0.1:1234/v1",
+		Compatibility:      target.CompatibilityLMStudio,
+		TransportCondition: realcampaign.TransportDirectImageAPI,
+		Program:            "/path/to/origami/experiments/temporal-automaton-r0/signal-chain.json",
+		TemporalCarrier:    "origami-temporal-carrier",
+		CandidateBuilder:   "origami-candidate-build",
+		OutputDir:          "runs/real-vlm/origami-temporal-r0",
+		TimeoutSeconds:     180,
+		TransportRetries:   1,
 	})
 }
 
