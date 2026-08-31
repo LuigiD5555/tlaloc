@@ -114,15 +114,29 @@ PY
 [[ "$(wc -c < "$CANDIDATE_PNG" | tr -d ' ')" == "8192" ]]
 [[ "$(sha256sum "$CANDIDATE_PNG" | awk '{print $1}')" != "$BASELINE_SHA256" ]]
 
+BASELINE_RESULT="$(python3 - <<'PY' "$REPORT"
+import json,sys
+print(json.load(open(sys.argv[1]))['generations'][0]['baseline']['result_path'])
+PY
+)"
+CANDIDATE_RESULT="$(python3 - <<'PY' "$REPORT"
+import json,sys
+print(json.load(open(sys.argv[1]))['generations'][0]['candidates'][0]['result_path'])
+PY
+)"
+
 "$TMP/bin/origami-temporal-carrier" -mode decode -in "$TMP/baseline.png" -out "$TMP/baseline-program.json" > "$TMP/baseline-decode.json"
 "$TMP/bin/origami-temporal-carrier" -mode decode -in "$CANDIDATE_PNG" -out "$TMP/candidate-program.json" > "$TMP/candidate-decode.json"
-python3 - <<'PY' "$TMP/baseline-program.json" "$TMP/candidate-program.json" "$TMP/memory"
+python3 - <<'PY' "$TMP/baseline-program.json" "$TMP/candidate-program.json" "$BASELINE_RESULT" "$CANDIDATE_RESULT" "$TMP/memory"
 import json, pathlib, sys
 base=json.load(open(sys.argv[1])); cand=json.load(open(sys.argv[2]))
 assert base==cand, 'TemporalProgram changed across candidate build'
-root=pathlib.Path(sys.argv[3])
+base_result=json.load(open(sys.argv[3])); cand_result=json.load(open(sys.argv[4]))
+assert base_result['real_evidence'] is False, base_result['real_evidence']
+assert cand_result['real_evidence'] is False, cand_result['real_evidence']
+root=pathlib.Path(sys.argv[5])
 raw='\n'.join(p.read_text(errors='ignore') for p in root.rglob('*') if p.is_file())
-assert 'SYNTHETIC' in raw.upper(), 'synthetic evidence marker missing from memory'
+assert '"evidence_class":"REAL_MODEL"' not in raw.replace(' ',''), 'synthetic fixture contaminated persistent memory as REAL_MODEL'
 PY
 
 printf 'ORIGAMI_TLALOC_CROSS_REPO_R0=PASS\n'
@@ -131,4 +145,4 @@ printf 'TLALOC_VERSION=6.0.0-alpha.20\n'
 printf 'PARENT_BYTES=8192\n'
 printf 'CANDIDATE_BYTES=8192\n'
 printf 'EXACT_TEMPORAL_PROGRAM_PRESERVED=YES\n'
-printf 'MODEL_EVIDENCE=SYNTHETIC_ONLY\n'
+printf 'MODEL_EVIDENCE=SYNTHETIC_ONLY_NOT_PERSISTED_AS_REAL_MODEL\n'
