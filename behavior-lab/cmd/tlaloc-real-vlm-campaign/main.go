@@ -46,6 +46,7 @@ func flags(name string, args []string) (realcampaign.Spec, *flag.FlagSet) {
 	fs.StringVar(&s.Model, "model", "", "exact model id; auto-selected only when endpoint reports exactly one model")
 	fs.StringVar(&s.Compatibility, "compatibility", target.CompatibilityLMStudio, "multimodal payload strategy: lm-studio|openai|minimal")
 	fs.StringVar(&s.TransportCondition, "transport-condition", "", "experimental transport identity: DIRECT_IMAGE_API|PLATFORM_MEDIATED|custom")
+	fs.BoolVar(&s.TraceStream, "trace-stream", false, "stream live model output to stderr without changing benchmark scoring")
 	fs.StringVar(&s.InteropMemoryRoot, "interop-memory", "", "persistent per-model working-configuration registry; defaults to XDG/local state")
 	fs.StringVar(&s.APIKeyEnv, "api-key-env", "", "environment variable containing API key")
 	fs.StringVar(&s.Program, "program", "", "canonical Origami signal-chain TemporalProgram JSON")
