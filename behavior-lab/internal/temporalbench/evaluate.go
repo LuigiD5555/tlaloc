@@ -34,23 +34,31 @@ func EvaluateCampaign(c Campaign) Result {
 
 func EvaluateTrial(t Trial) TrialResult {
 	defs := definitions()
-	byID := map[string]string{}
-	for _, r := range t.Responses { byID[r.QuestionID] = r.Text }
-	res := TrialResult{TrialID: t.ID, ModelID: t.ModelID, Condition: t.Condition, SpecimenID: t.Specimen.ID}
+	byID := map[string]Response{}
+	for _, r := range t.Responses { byID[r.QuestionID] = r }
+	res := TrialResult{TrialID: t.ID, ModelID: t.ModelID, Condition: t.Condition, DiagnosticMode:t.DiagnosticMode, SpecimenID: t.Specimen.ID}
 	layers := map[string]*LayerScore{}
+	debugReports := []DebugResult{}
 	for _, d := range defs {
-		text, ok := byID[d.ID]
+		response, ok := byID[d.ID]
 		if !ok {
 			res.MissingQuestionCount++
 			qr := QuestionResult{QuestionID: d.ID, Layer: d.Layer, Pass: false, Score: 0, Missing: []string{"RESPONSE"}}
 			res.Questions = append(res.Questions, qr)
 			accumulate(layers, qr)
+			if t.DiagnosticMode {
+				debugReports=append(debugReports,DebugResult{QuestionID:d.ID,Present:false,Valid:false,Violations:[]string{"DEBUG_TRACE_MISSING"}})
+			}
 			continue
 		}
-		qr := d.Check(text); qr.QuestionID = d.ID; qr.Layer = d.Layer
+		answer, trace, parseViolations := ParseDebugFromResponse(response)
+		qr := d.Check(answer); qr.QuestionID = d.ID; qr.Layer = d.Layer
 		res.Questions = append(res.Questions, qr)
 		accumulate(layers, qr)
 		res.InventedExactClaims += countViolation(qr, "UNVERIFIED_EXACT_CLAIM")
+		if t.DiagnosticMode || trace!=nil || len(parseViolations)>0 {
+			debugReports=append(debugReports,makeDebugResult(qr,response,t.DiagnosticMode))
+		}
 	}
 	keys := make([]string,0,len(layers)); for k := range layers { keys=append(keys,k) }; sort.Strings(keys)
 	passed,total := 0,0
@@ -62,6 +70,10 @@ func EvaluateTrial(t Trial) TrialResult {
 	res.SelfBootstrapScore = averageLayer(layers, "P_PERCEPTION", "R_PROTOCOL", "S_SEMANTIC")
 	res.TemporalReasoning = layerValue(layers,"T_TEMPORAL")
 	res.ExactHonesty = layerValue(layers,"X_EXACTNESS")
+	if len(debugReports)>0 {
+		res.DebugReports=debugReports
+		res.DebugSummary=summarizeDebug(debugReports,t.DiagnosticMode)
+	}
 	return res
 }
 
@@ -120,7 +132,10 @@ func countViolation(q QuestionResult, v string) int { n:=0; for _,x:=range q.Vio
 
 func compare(in []TrialResult) []Comparison {
 	type key struct{ model,spec string }; grouped:=map[key]map[string]TrialResult{}
-	for _,r:=range in{ k:=key{r.ModelID,r.SpecimenID}; if grouped[k]==nil{grouped[k]=map[string]TrialResult{}}; grouped[k][r.Condition]=r }
+	for _,r:=range in{
+		if r.DiagnosticMode { continue }
+		k:=key{r.ModelID,r.SpecimenID}; if grouped[k]==nil{grouped[k]=map[string]TrialResult{}}; grouped[k][r.Condition]=r
+	}
 	keys:=make([]key,0,len(grouped)); for k:=range grouped{keys=append(keys,k)}; sort.Slice(keys,func(i,j int)bool{if keys[i].model!=keys[j].model{return keys[i].model<keys[j].model};return keys[i].spec<keys[j].spec})
 	out:=[]Comparison{}
 	for _,k:=range keys{ g:=grouped[k]; c:=Comparison{ModelID:k.model,SpecimenID:k.spec}
