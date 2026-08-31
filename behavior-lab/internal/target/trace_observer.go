@@ -1,6 +1,7 @@
 package target
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"strings"
@@ -28,6 +29,23 @@ type ModelTraceEvent struct {
 
 type ModelTraceObserver interface {
 	Observe(ModelTraceEvent)
+}
+
+type modelTraceObserverContextKey struct{}
+
+func WithModelTraceObserver(ctx context.Context, observer ModelTraceObserver) context.Context {
+	if observer == nil {
+		return ctx
+	}
+	return context.WithValue(ctx, modelTraceObserverContextKey{}, observer)
+}
+
+func ModelTraceObserverFromContext(ctx context.Context) ModelTraceObserver {
+	if ctx == nil {
+		return nil
+	}
+	observer, _ := ctx.Value(modelTraceObserverContextKey{}).(ModelTraceObserver)
+	return observer
 }
 
 // WriterTraceObserver renders live model output without contaminating the
