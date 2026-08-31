@@ -72,6 +72,9 @@ func (c OpenAICompat) CompletePerception(ctx context.Context, input PerceptionIn
 	if input.MediaType == "" {
 		input.MediaType = "image/png"
 	}
+	if c.Observer == nil {
+		c.Observer = ModelTraceObserverFromContext(ctx)
+	}
 	base := strings.TrimRight(c.BaseURL, "/")
 	if base == "" {
 		base = "http://127.0.0.1:1234/v1"
