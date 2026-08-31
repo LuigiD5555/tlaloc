@@ -162,10 +162,10 @@ func Run(ctx context.Context, cfg Config) (Report, error) {
 
 			if err := p.ensureCandidatePNG(ctx, cc, incumbent); err != nil {
 				report.ExecutionErrors = append(report.ExecutionErrors, ExecutionError{
-					Generation: gen,
-					SpecimenID: cc.ID,
+					Generation:  gen,
+					SpecimenID:  cc.ID,
 					CandidateID: cc.ID,
-					Error:      "candidate build: " + err.Error(),
+					Error:       "candidate build: " + err.Error(),
 				})
 				continue
 			}
@@ -213,15 +213,15 @@ func Run(ctx context.Context, cfg Config) (Report, error) {
 					fmt.Sprintf("advanceable:%t", advanceable),
 				}
 				ev := learningmemory.Event{
-					Schema:        learningmemory.EventSchema,
-					EventType:     learningmemory.EventOutcome,
-					EvidenceClass: learningmemory.EvidenceManual,
-					CandidateID:   cc.ID,
+					Schema:         learningmemory.EventSchema,
+					EventType:      learningmemory.EventOutcome,
+					EvidenceClass:  learningmemory.EvidenceManual,
+					CandidateID:    cc.ID,
 					ParentEventIDs: parents,
-					BeforeScore:   &beforeCopy,
-					AfterScore:    &afterCopy,
-					Delta:         &deltaCopy,
-					Tags:          tags,
+					BeforeScore:    &beforeCopy,
+					AfterScore:     &afterCopy,
+					Delta:          &deltaCopy,
+					Tags:           tags,
 				}
 				_, stored, putErr := p.store.Put(ev)
 				if putErr != nil {
@@ -364,6 +364,14 @@ func prepare(cfg Config, checkFiles bool) (prepared, error) {
 		if m.Model == "" {
 			return prepared{}, fmt.Errorf("model %d model is required", i)
 		}
+		if m.Compatibility == "" {
+			m.Compatibility = target.CompatibilityOpenAI
+		}
+		strategy, err := target.ResolveMultimodalCompatibility(m.Compatibility)
+		if err != nil {
+			return prepared{}, fmt.Errorf("model %s compatibility: %w", m.Name, err)
+		}
+		m.Compatibility = strategy.Name()
 		if modelNames[m.Name] {
 			return prepared{}, fmt.Errorf("duplicate model name %q", m.Name)
 		}
@@ -620,7 +628,11 @@ func (p prepared) runSpecimen(ctx context.Context, generation int, genDir string
 }
 
 func (p prepared) call(parent context.Context, m ModelConfig, system, question string, image []byte) (temporalbench.Response, error) {
-	client := target.OpenAICompat{BaseURL: m.BaseURL, Model: m.Model, Temperature: m.Temperature}
+	compatibility, err := target.ResolveMultimodalCompatibility(m.Compatibility)
+	if err != nil {
+		return temporalbench.Response{}, err
+	}
+	client := target.OpenAICompat{BaseURL: m.BaseURL, Model: m.Model, Temperature: m.Temperature, Compatibility: compatibility}
 	if m.APIKeyEnv != "" {
 		client.APIKey = os.Getenv(m.APIKeyEnv)
 	}
@@ -743,7 +755,6 @@ func planningEvents(all, current []learningmemory.Event) []learningmemory.Event 
 			}
 			continue
 		}
-		// Change/outcome history remains available only as bounded historical signal.
 		out = append(out, e)
 	}
 	return out
@@ -846,8 +857,8 @@ func questionMeans(r temporalbench.Result) map[string]float64 {
 }
 
 type pngMeta struct {
-	bytes        []byte
-	sha          string
+	bytes         []byte
+	sha           string
 	width, height int
 }
 
