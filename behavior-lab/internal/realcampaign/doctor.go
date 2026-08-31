@@ -56,6 +56,10 @@ func Doctor(ctx context.Context, raw Spec) (DoctorResult, error) {
 	if err := validateRealModelID(selected); err != nil {
 		return DoctorResult{}, err
 	}
+	compatibility, err := target.ResolveMultimodalCompatibility(spec.Compatibility)
+	if err != nil {
+		return DoctorResult{}, err
+	}
 
 	tmp, err := os.MkdirTemp("", "tlaloc-real-vlm-doctor-*")
 	if err != nil {
@@ -77,7 +81,13 @@ func Doctor(ctx context.Context, raw Spec) (DoctorResult, error) {
 	if len(questions) == 0 {
 		return DoctorResult{}, fmt.Errorf("temporal benchmark has no questions")
 	}
-	client := target.OpenAICompat{BaseURL: spec.Endpoint, Model: selected, Temperature: spec.Temperature, APIKey: apiKey(spec.APIKeyEnv)}
+	client := target.OpenAICompat{
+		BaseURL:       spec.Endpoint,
+		Model:         selected,
+		Temperature:   spec.Temperature,
+		APIKey:        apiKey(spec.APIKeyEnv),
+		Compatibility: compatibility,
+	}
 	probeCtx, cancel := context.WithTimeout(ctx, time.Duration(spec.TimeoutSeconds)*time.Second)
 	defer cancel()
 	probe, err := client.CompletePerception(probeCtx, target.PerceptionInput{Question: questions[0].Text, Image: image, MediaType: "image/png"})
@@ -97,20 +107,21 @@ func Doctor(ctx context.Context, raw Spec) (DoctorResult, error) {
 		return DoctorResult{}, err
 	}
 	return DoctorResult{
-		Schema: SpecSchema + ".doctor",
-		Endpoint: spec.Endpoint,
-		DiscoveredModels: models,
-		SelectedModel: selected,
-		VisionTransport: true,
-		ProbeResponse: probe.Content,
-		TemporalCarrier: carrier,
-		TemporalCarrierSHA256: carrierSHA,
-		CandidateBuilder: builder,
-		CandidateBuilderSHA256: builderSHA,
-		BuilderCapabilities: caps,
-		ProgramSHA256: programSHA,
-		ParentProfile: parentProfile,
-		Ready: true,
+		Schema:                   SpecSchema + ".doctor",
+		Endpoint:                 spec.Endpoint,
+		CompatibilityStrategy:    compatibility.Name(),
+		DiscoveredModels:         models,
+		SelectedModel:            selected,
+		VisionTransport:          true,
+		ProbeResponse:            probe.Content,
+		TemporalCarrier:          carrier,
+		TemporalCarrierSHA256:    carrierSHA,
+		CandidateBuilder:         builder,
+		CandidateBuilderSHA256:   builderSHA,
+		BuilderCapabilities:      caps,
+		ProgramSHA256:            programSHA,
+		ParentProfile:            parentProfile,
+		Ready:                    true,
 	}, nil
 }
 
