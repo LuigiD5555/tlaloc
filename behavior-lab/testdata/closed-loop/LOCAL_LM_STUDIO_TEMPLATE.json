@@ -6,7 +6,7 @@
   "memory_root": "",
   "master_prompt": "/ABSOLUTE/PATH/TO/origami/generated/MASTER_PROMPT.md",
   "origami_version": "6.0.0-alpha.14-candidate",
-  "tlaloc_version": "6.0.0-alpha.18",
+  "tlaloc_version": "6.0.0-alpha.19",
   "trials_per_model": 1,
   "candidates_per_generation": 2,
   "max_generations": 3,
