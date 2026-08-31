@@ -39,6 +39,21 @@ func Normalize(spec Spec) (Spec, error) {
 	}
 	spec.Compatibility = strategy.Name()
 	spec.TransportCondition = NormalizeTransportCondition(spec.TransportCondition, spec.Compatibility)
+	if spec.MaxOutputTokens <= 0 {
+		spec.MaxOutputTokens = 512
+	}
+	if strings.TrimSpace(spec.GenerationGuard) == "" {
+		spec.GenerationGuard = target.GenerationGuardRepetitionR0
+	}
+	guard, err := target.ResolveGenerationGuard(spec.GenerationGuard)
+	if err != nil {
+		return Spec{}, err
+	}
+	if guard == nil {
+		spec.GenerationGuard = target.GenerationGuardNone
+	} else {
+		spec.GenerationGuard = guard.Name()
+	}
 	if strings.TrimSpace(spec.InteropMemoryRoot) == "" {
 		spec.InteropMemoryRoot = DefaultInteropMemoryRoot()
 	}
