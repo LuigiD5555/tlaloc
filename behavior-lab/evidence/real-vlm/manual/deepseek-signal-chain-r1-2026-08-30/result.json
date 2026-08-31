@@ -1,0 +1,121 @@
+{
+  "schema": "tlaloc.temporal-native-benchmark.r0.result",
+  "benchmark_id": "manual-deepseek-signal-chain-r1-2026-08-30",
+  "trials": [
+    {
+      "trial_id": "deepseek-manual-r1-001",
+      "model_id": "deepseek-unspecified",
+      "condition": "NATIVE_PNG_ONLY_MANUAL_MATERIALIZED_CANDIDATE",
+      "specimen_id": "origami-alpha15-signal-chain-r0-t2-temporal-grammar-visible-r1",
+      "questions": [
+        {
+          "question_id": "MP_PERCEPTION",
+          "layer": "P_PERCEPTION",
+          "pass": true,
+          "score": 0.95
+        },
+        {
+          "question_id": "MR_PROTOCOL",
+          "layer": "R_PROTOCOL",
+          "pass": true,
+          "score": 0.90
+        },
+        {
+          "question_id": "MS_SEMANTIC_RELATIONS",
+          "layer": "S_SEMANTIC",
+          "pass": true,
+          "score": 0.90,
+          "violations": [
+            "UNSUPPORTED_CYCLE_INFERENCE"
+          ]
+        },
+        {
+          "question_id": "MT_RULE_RECOVERY",
+          "layer": "T_TEMPORAL",
+          "pass": true,
+          "score": 0.95
+        },
+        {
+          "question_id": "MT_FINAL_STATE",
+          "layer": "T_TEMPORAL",
+          "pass": false,
+          "score": 0.50,
+          "missing": [
+            "A_DONE",
+            "B_DONE",
+            "C_ACTIVE",
+            "CHECKPOINT_TIMES_T0_T2_T4"
+          ],
+          "violations": [
+            "TEMPORAL_EXECUTION_NOT_PERFORMED",
+            "UNSUPPORTED_CYCLE_INFERENCE"
+          ]
+        },
+        {
+          "question_id": "MX_EXACTNESS",
+          "layer": "X_EXACTNESS",
+          "pass": true,
+          "score": 0.80,
+          "violations": [
+            "PAYLOAD_PRESENT_BUT_REPORTED_AS_NOT_PRESENT",
+            "UNSUPPORTED_VM_INTERPRETER_INFERENCE",
+            "UNSUPPORTED_CHECKPOINT_RESTART_INFERENCE"
+          ]
+        }
+      ],
+      "debug_reports": [
+        {
+          "question_id": "MT_FINAL_STATE",
+          "present": true,
+          "valid": true,
+          "status": "FAIL",
+          "last_completed_stage": "T2_RULE_MICROGRAMMAR",
+          "failure_code": "TEMPORAL_EXECUTION_INCOMPLETE",
+          "evidence_refs": [
+            "raw-response.md"
+          ],
+          "confidence": 0.95
+        }
+      ],
+      "layers": [
+        {
+          "layer": "P_PERCEPTION",
+          "passed": 1,
+          "total": 1,
+          "score": 0.95
+        },
+        {
+          "layer": "R_PROTOCOL",
+          "passed": 1,
+          "total": 1,
+          "score": 0.90
+        },
+        {
+          "layer": "S_SEMANTIC",
+          "passed": 1,
+          "total": 1,
+          "score": 0.90
+        },
+        {
+          "layer": "T_TEMPORAL",
+          "passed": 1,
+          "total": 2,
+          "score": 0.725
+        },
+        {
+          "layer": "X_EXACTNESS",
+          "passed": 1,
+          "total": 1,
+          "score": 0.80
+        }
+      ],
+      "overall_score": 0.8333333333,
+      "self_bootstrap_score": 0.9166666667,
+      "temporal_reasoning_score": 0.725,
+      "exact_honesty_score": 0.80,
+      "invented_exact_claims": 0,
+      "missing_question_count": 0
+    }
+  ],
+  "real_evidence": true
+}
