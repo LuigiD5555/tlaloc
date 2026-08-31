@@ -1,0 +1,79 @@
+{
+  "schema": "tlaloc.cross-model-manual-result.r1",
+  "candidate_id": "execution-policy-compliance-cross-model-r1",
+  "baseline_candidate_id": "rule-role-binding-unseen-rules-r1",
+  "condition": "NATIVE_PNG_ONLY_USER_MEDIATED_R6_CROSS_MODEL",
+  "real_evidence": true,
+  "provenance": {
+    "source": "user_supplied_raw_responses",
+    "model_versions": "not_reported",
+    "fabricated_evidence": false
+  },
+  "expected_final_state": {
+    "A": "DONE",
+    "B": "ACTIVE",
+    "C": "DONE"
+  },
+  "models": [
+    {
+      "model_id": "qwen-unspecified",
+      "baseline_requirement": "IMPROVE_TO_PASS",
+      "overall_pass": false,
+      "checks": {
+        "TITLE_RECOVERY": "PASS",
+        "CELL_IDENTITY": "PASS",
+        "RULE_ROLE_BINDING": "PASS",
+        "EXECUTION_POLICY_COMPLIANCE": "PASS",
+        "FINAL_STABLE_STATE": "PASS",
+        "RULE_FIRING_PRECONDITIONS": "FAIL",
+        "EXECUTION_TRACE_FIDELITY": "FAIL"
+      },
+      "observed_final_state": {
+        "A": "DONE",
+        "B": "ACTIVE",
+        "C": "DONE"
+      },
+      "failure_code": "RULE_FIRING_PRECONDITION_VIOLATION",
+      "violations": [
+        "At Step 1 the response fires R3 while the same pre-step snapshot has B[02]=IDLE; R3 requires B[02]=ACTIVE.",
+        "The final state is correct but was reached through an invalid temporal trajectory."
+      ]
+    },
+    {
+      "model_id": "deepseek-unspecified",
+      "baseline_requirement": "PRESERVE_PASS",
+      "overall_pass": false,
+      "checks": {
+        "CELL_IDENTITY": "PASS",
+        "RULE_ROLE_BINDING": "PASS",
+        "EXECUTION_POLICY_COMPLIANCE": "PASS",
+        "FINAL_STABLE_STATE": "PASS",
+        "EXECUTION_TRACE_FIDELITY": "PASS",
+        "SAME_PRE_STEP_SEMANTICS": "FAIL"
+      },
+      "observed_final_state": {
+        "A": "DONE",
+        "B": "ACTIVE",
+        "C": "DONE"
+      },
+      "failure_code": "EXECUTION_SEMANTICS_CONTRADICTION",
+      "violations": [
+        "The explicit step trace matches the deterministic reference trajectory.",
+        "The response also says rule order is applied sequentially per step, which contradicts the carrier's same-pre-step synchronous semantics.",
+        "It says R1 and R2 can both be true at Step 2 even though R1's target REQUIRE A[01]=IDLE is false when A[01]=ACTIVE."
+      ]
+    }
+  ],
+  "cross_model_gate": {
+    "pass": false,
+    "decision": "REJECT_R6",
+    "reason": "Qwen improved from non-execution to execution but still violates a rule firing precondition, and the protected DeepSeek baseline PASS regressed on explicit execution-semantics fidelity."
+  },
+  "failure_frontier": "EXECUTION_TRACE_FIDELITY",
+  "next_target": "SYNCHRONOUS_EXECUTION_FIDELITY",
+  "notes": [
+    "R6 successfully caused Qwen to execute and report the correct final stable state.",
+    "Correct final state alone is insufficient; the temporal trajectory must be valid.",
+    "R6 is not promoted because cross-model compatibility requires both improvement and preservation of prior model wins."
+  ]
+}
