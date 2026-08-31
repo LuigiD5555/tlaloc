@@ -63,6 +63,10 @@ type Config struct {
 	Models                        []ModelConfig     `json:"models"`
 	Baseline                      SpecimenConfig    `json:"baseline"`
 	Candidates                    []CandidateConfig `json:"candidates,omitempty"`
+	AutoCandidates                bool              `json:"auto_candidates,omitempty"`
+	CandidateBuilder              []string          `json:"candidate_builder,omitempty"`
+	AutoCandidateBaseProfileID    string            `json:"auto_candidate_base_profile_id,omitempty"`
+	AutoCandidatesPerGeneration   int               `json:"auto_candidates_per_generation,omitempty"`
 }
 
 type ExecutionError struct {
