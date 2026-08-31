@@ -5,21 +5,30 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 )
 
-const SwarmManifestSchemaR0 = "tlaloc.tlaloque-swarm-manifest.r0"
+const (
+	SwarmManifestSchemaR0 = "tlaloc.tlaloque-swarm-manifest.r0"
+	TransportProcess      = "PROCESS"
+)
 
-type ProcessWorkerSpec struct {
+type WorkerSpec struct {
 	Descriptor CapabilityDescriptor `json:"descriptor"`
-	Command    []string             `json:"command"`
+	Transport  string               `json:"transport,omitempty"`
+	Command    []string             `json:"command,omitempty"`
+	Endpoint   string               `json:"endpoint,omitempty"`
 	TimeoutMS  int                  `json:"timeout_ms,omitempty"`
 }
 
+// Backward-compatible source alias for early R0 callers.
+type ProcessWorkerSpec = WorkerSpec
+
 type SwarmManifest struct {
-	Schema  string              `json:"schema"`
-	Workers []ProcessWorkerSpec `json:"workers"`
-	Plan    SwarmPlan           `json:"plan"`
+	Schema  string       `json:"schema"`
+	Workers []WorkerSpec `json:"workers"`
+	Plan    SwarmPlan    `json:"plan"`
 }
 
 func LoadSwarmManifest(path string) (SwarmManifest, error) {
@@ -37,11 +46,21 @@ func LoadSwarmManifest(path string) (SwarmManifest, error) {
 	}
 	if len(manifest.Workers) == 0 { return SwarmManifest{}, fmt.Errorf("manifest requires workers") }
 	for i := range manifest.Workers {
-		d, err := manifest.Workers[i].Descriptor.Normalize()
+		spec := &manifest.Workers[i]
+		d, err := spec.Descriptor.Normalize()
 		if err != nil { return SwarmManifest{}, fmt.Errorf("worker[%d]: %w", i, err) }
-		manifest.Workers[i].Descriptor = d
-		if len(manifest.Workers[i].Command) == 0 {
-			return SwarmManifest{}, fmt.Errorf("worker %q command is required", d.ID)
+		spec.Descriptor = d
+		spec.Transport = strings.ToUpper(strings.TrimSpace(spec.Transport))
+		if spec.Transport == "" {
+			if strings.TrimSpace(spec.Endpoint) != "" { spec.Transport = TransportHTTPJSON } else { spec.Transport = TransportProcess }
+		}
+		switch spec.Transport {
+		case TransportProcess:
+			if len(spec.Command) == 0 { return SwarmManifest{}, fmt.Errorf("worker %q command is required for PROCESS transport", d.ID) }
+		case TransportHTTPJSON:
+			if strings.TrimSpace(spec.Endpoint) == "" { return SwarmManifest{}, fmt.Errorf("worker %q endpoint is required for HTTP_JSON transport", d.ID) }
+		default:
+			return SwarmManifest{}, fmt.Errorf("worker %q unsupported transport %q", d.ID, spec.Transport)
 		}
 	}
 	plan, err := manifest.Plan.Normalize()
@@ -55,9 +74,14 @@ func (m SwarmManifest) Registry() (*Registry, error) {
 	for _, spec := range m.Workers {
 		var timeout time.Duration
 		if spec.TimeoutMS > 0 { timeout = time.Duration(spec.TimeoutMS) * time.Millisecond }
-		if err := registry.Register(ProcessWorker{Desc: spec.Descriptor, Command: spec.Command, Timeout: timeout}); err != nil {
-			return nil, err
+		var worker CapabilityWorker
+		switch spec.Transport {
+		case TransportHTTPJSON:
+			worker = HTTPWorker{Desc: spec.Descriptor, Endpoint: spec.Endpoint, Timeout: timeout}
+		default:
+			worker = ProcessWorker{Desc: spec.Descriptor, Command: spec.Command, Timeout: timeout}
 		}
+		if err := registry.Register(worker); err != nil { return nil, err }
 	}
 	return registry, nil
 }
