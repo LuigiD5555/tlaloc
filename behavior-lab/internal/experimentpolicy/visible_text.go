@@ -11,6 +11,18 @@ const synchronousRuleTextR1 = "EACH STEP: TEST ALL RULES ON SAME PRE-STEP SNAPSH
 const synchronousConditionTextR1 = "EACH STEP: TEST ALL CONDITIONS ON SAME PRE-STEP SNAPSHOT"
 const visibleFromStatePreconditionR1 = "VISIBLE_FROM_STATE_PRECONDITION_R1"
 const visibleRuleRoleBindingR1 = "VISIBLE_RULE_ROLE_BINDING_R1"
+const executeDontSummarizeToStableR1 = "EXECUTE_DONT_SUMMARIZE_TO_STABLE_R1"
+
+var executionComplianceVisibleFactsR1 = map[string]string{
+	"EXECUTION_POLICY_COMPLIANCE.MODE_TEXT":  "MODE: EXECUTE PROGRAM | DO NOT SUMMARIZE OR DESCRIBE",
+	"EXECUTION_POLICY_COMPLIANCE.STEP1_TEXT": "1 READ INITIAL CELL STATES",
+	"EXECUTION_POLICY_COMPLIANCE.STEP2_TEXT": "2 TEST ALL RULES",
+	"EXECUTION_POLICY_COMPLIANCE.STEP3_TEXT": "3 USE SAME PRE-STEP",
+	"EXECUTION_POLICY_COMPLIANCE.STEP4_TEXT": "4 APPLY FIRED SETS",
+	"EXECUTION_POLICY_COMPLIANCE.STEP5_TEXT": "5 REPEAT UNTIL UNCHANGED",
+	"EXECUTION_POLICY_COMPLIANCE.STEP6_TEXT": "6 REPORT FINAL A/B/C",
+	"EXECUTION_POLICY_COMPLIANCE.STOP_TEXT":  "STOP ONLY WHEN UNCHANGED",
+}
 
 func CheckVisibleTextFidelity(candidate CandidateManifest, semantic SemanticManifest, visible VisibleTextManifest) VisibleTextFidelityReport {
 	r:=VisibleTextFidelityReport{Schema:VisibleTextParitySchemaR1,CandidateID:candidate.ID,Pass:true}
@@ -32,6 +44,10 @@ func CheckVisibleTextFidelity(candidate CandidateManifest, semantic SemanticMani
 		for i,id:=range semanticRuleIDs(sm){if i>=6{break};req:=sm["RULE."+id+".REQUIRES"];if req==""{req="TRUE"}else{req=visibleRequires(req,sm)};target:=sm["RULE."+id+".TARGET"];visibleTarget:=sm["VISIBLE_CELL_ID_"+target];if visibleTarget==""{visibleTarget=target};from:=sm["RULE."+id+".FROM"];if from==""{from="*"};want:=fmt.Sprintf("IF %s => %s:%s>%s",req,visibleTarget,from,sm["RULE."+id+".TO"]);requireVisibleFact(&r,vm,"RULE."+id+".TEXT",want)}
 	}
 	if sm["EXECUTION_POLICY"]=="EXECUTE_VISIBLE_RULES_TO_STABLE_R1"{requireVisibleFact(&r,vm,"EXECUTION_POLICY.TEXT",executeVisibleRulesToStableTextR1)}
+	if sm["EXECUTION_POLICY_COMPLIANCE"]==executeDontSummarizeToStableR1 {
+		keys:=make([]string,0,len(executionComplianceVisibleFactsR1));for k:=range executionComplianceVisibleFactsR1{keys=append(keys,k)};sort.Strings(keys)
+		for _,k:=range keys{requireVisibleFact(&r,vm,k,executionComplianceVisibleFactsR1[k])}
+	}
 	if !r.Pass&&r.FailureCode==""{r.FailureCode="VISIBLE_TEXT_FIDELITY_FAILED"};return r
 }
 
