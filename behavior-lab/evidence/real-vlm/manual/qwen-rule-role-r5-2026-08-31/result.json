@@ -1,0 +1,26 @@
+{
+  "schema": "tlaloc.real-model-manual-evidence.r1",
+  "specimen_id": "rule-role-binding-unseen-rules-r1",
+  "condition": "NATIVE_PNG_ONLY_MANUAL_R5_RULE_ROLE_BINDING",
+  "evidence_origin": "user_supplied_raw_response",
+  "real_evidence": true,
+  "model_id": "qwen-unspecified",
+  "pass": false,
+  "classification": {
+    "CELL_IDENTITY": "PASS",
+    "WHEN_SOURCE_BINDING": "PASS_PARTIAL",
+    "TARGET_BINDING": "PASS_PARTIAL",
+    "REQUIRE_FROM_STATE_BINDING": "PASS_PARTIAL",
+    "SET_TO_STATE_BINDING": "PASS_PARTIAL",
+    "SAME_PRE_STEP_EXECUTION": "NOT_EXECUTED",
+    "FINAL_STABLE_STATE": "NOT_REPORTED",
+    "UNAUTHORIZED_TRANSITIONS": "NOT_OBSERVED"
+  },
+  "failure_code": "TEMPORAL_EXECUTION_INCOMPLETE",
+  "notes": [
+    "Correctly recognized the three cells, state vocabulary, execution-loop text, and the explicit role-bound R1 example.",
+    "Did not execute the visible program to stability despite recognizing the EXEC directive.",
+    "Misread the clipped title as IGAMI; this is a renderer defect, not attributed to model semantics.",
+    "No final-state claim was made, so final-state correctness is not scored as an incorrect state."
+  ]
+}
