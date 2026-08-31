@@ -7,12 +7,8 @@ import (
 
 func CheckParity(candidate CandidateManifest, expected, actual SemanticManifest) ParityReport {
 	r := ParityReport{Schema:ParitySchemaR1, CandidateID:candidate.ID, Pass:true}
-	if candidate.Schema != CandidateSchemaR1 {
-		r.Pass=false; r.FailureCode="INVALID_CANDIDATE_MANIFEST"; return r
-	}
-	if expected.Schema != SemanticSchemaR1 || actual.Schema != SemanticSchemaR1 {
-		r.Pass=false; r.FailureCode="INVALID_SEMANTIC_MANIFEST"; return r
-	}
+	if candidate.Schema != CandidateSchemaR1 { r.Pass=false; r.FailureCode="INVALID_CANDIDATE_MANIFEST"; return r }
+	if expected.Schema != SemanticSchemaR1 || actual.Schema != SemanticSchemaR1 { r.Pass=false; r.FailureCode="INVALID_SEMANTIC_MANIFEST"; return r }
 	if candidate.ProgramSHA256 != "" && actual.ProgramSHA256 != candidate.ProgramSHA256 {
 		r.Differences=append(r.Differences,Difference{Key:"PROGRAM_SHA256",Expected:candidate.ProgramSHA256,Actual:actual.ProgramSHA256,Allowed:false})
 	}
@@ -23,19 +19,21 @@ func CheckParity(candidate CandidateManifest, expected, actual SemanticManifest)
 		r.Differences=append(r.Differences,Difference{Key:"PAYLOAD_SHA256",Expected:expected.PayloadSHA256,Actual:actual.PayloadSHA256,Allowed:false})
 	}
 
-	allowed := map[string]bool{}
-	for _, m := range candidate.Mutations { allowed[m.Target]=true }
-	exp := factMap(expected.Facts); act := factMap(actual.Facts)
-	keys := map[string]bool{}
-	for k := range exp { keys[k]=true }; for k := range act { keys[k]=true }
-	ordered:=make([]string,0,len(keys)); for k:=range keys{ordered=append(ordered,k)}; sort.Strings(ordered)
-	for _, k := range ordered {
-		if exp[k] == act[k] { continue }
-		ok := allowed[k]
-		r.Differences=append(r.Differences,Difference{Key:k,Expected:exp[k],Actual:act[k],Allowed:ok})
+	declared:=factMap(candidate.ExpectedSemanticChanges)
+	exp:=factMap(expected.Facts); act:=factMap(actual.Facts)
+	keys:=map[string]bool{}
+	for k:=range exp{keys[k]=true};for k:=range act{keys[k]=true};for k:=range declared{keys[k]=true}
+	ordered:=make([]string,0,len(keys));for k:=range keys{ordered=append(ordered,k)};sort.Strings(ordered)
+	for _,k:=range ordered{
+		want,changed:=declared[k]
+		if changed {
+			if act[k]==want { if exp[k]!=act[k]{r.Differences=append(r.Differences,Difference{Key:k,Expected:want,Actual:act[k],Allowed:true})};continue }
+			r.Differences=append(r.Differences,Difference{Key:k,Expected:want,Actual:act[k],Allowed:false});continue
+		}
+		if exp[k]!=act[k]{r.Differences=append(r.Differences,Difference{Key:k,Expected:exp[k],Actual:act[k],Allowed:false})}
 	}
-	for _, d := range r.Differences { if !d.Allowed { r.Pass=false } }
-	if !r.Pass { r.FailureCode="UNAUTHORIZED_SEMANTIC_DRIFT" }
+	for _,d:=range r.Differences{if !d.Allowed{r.Pass=false}}
+	if !r.Pass{r.FailureCode="UNAUTHORIZED_SEMANTIC_DRIFT"}
 	return r
 }
 
