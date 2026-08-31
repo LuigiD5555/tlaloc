@@ -1,0 +1,17 @@
+{
+  "schema": "tlaloc.manual-invalid-specimen.r0",
+  "id": "deepseek-signal-chain-r2-invalid-2026-08-30",
+  "provider": "DeepSeek",
+  "model_id": "deepseek-unspecified",
+  "candidate_id": "t2-execute-to-stable-r1",
+  "status": "INVALID_SPECIMEN",
+  "failure_stage": "ARTIFACT_GENERATION",
+  "failure_code": "VISIBLE_SEMANTICS_DRIFT",
+  "model_fault": false,
+  "intended_rule": "IF A=ACTIVE => B:IDLE>ACTIVE",
+  "visible_rule": "IF B=ACTIVE => B:IDLE>ACTIVE",
+  "visible_execution_correct": true,
+  "score_for_candidate": null,
+  "promotion_eligible": false,
+  "next_required_gate": "VISIBLE_EXACT_SEMANTIC_PARITY"
+}
