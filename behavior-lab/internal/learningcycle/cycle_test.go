@@ -22,6 +22,24 @@ func TestBuildPlanTargetsExecutionPolicyCompliance(t *testing.T){
 	if !found{t.Fatalf("protected prior win missing from preserve: %#v",p.Intent.Preserve)}
 }
 
+func TestBuildPlanTargetsSynchronousExecutionFidelity(t *testing.T){
+	baseline:="execution-policy-compliance-cross-model-r1"
+	events:=[]learningmemory.Event{
+		{Schema:learningmemory.EventSchema,EventID:"qwen-r6-fail",EventType:learningmemory.EventObservation,EvidenceClass:learningmemory.EvidenceRealModel,ModelID:"qwen-unspecified",SpecimenID:baseline,Pass:boolp(false),LastCompletedStage:"TEMPORAL_EXECUTION",FailureCode:"RULE_FIRING_PRECONDITION_VIOLATION",ScoreLayer:"T_TEMPORAL"},
+		{Schema:learningmemory.EventSchema,EventID:"deepseek-r6-fail",EventType:learningmemory.EventObservation,EvidenceClass:learningmemory.EvidenceRealModel,ModelID:"deepseek-unspecified",SpecimenID:baseline,Pass:boolp(false),LastCompletedStage:"TEMPORAL_EXECUTION",FailureCode:"EXECUTION_SEMANTICS_CONTRADICTION",ScoreLayer:"T_TEMPORAL"},
+	}
+	p:=BuildPlan("memory",events,baseline,"program","",1)
+	if p.Intent.MutableModule!="SYNCHRONOUS_EXECUTION_FIDELITY"{t.Fatalf("intent=%#v",p.Intent)}
+	if len(p.Candidates)!=1{t.Fatalf("candidates=%#v",p.Candidates)}
+	if err:=ValidatePlan(p);err!=nil{t.Fatal(err)}
+	c:=p.Candidates[0]
+	if c.ID!="synchronous-execution-fidelity-cross-model-r1"{t.Fatalf("candidate=%#v",c)}
+	if c.Mutations[0].Target!="SYNCHRONOUS_EXECUTION_FIDELITY"||c.Mutations[0].Value!="FREEZE_SELECT_APPLY_TOGETHER_R1"{t.Fatalf("mutation=%#v",c.Mutations[0])}
+	for _,want:=range []string{"RULE_ROLE_BINDING","EXECUTION_POLICY_COMPLIANCE","PROGRAM_SEMANTICS","PAYLOAD"}{if !contains(c.PreservedModules,want){t.Fatalf("missing preserve %s: %#v",want,c.PreservedModules)}}
+	if len(c.CompatibilityPanel)!=2{t.Fatalf("panel=%#v",c.CompatibilityPanel)}
+	for _,r:=range c.CompatibilityPanel{if r.Mode!=experimentpolicy.ModelCompatibilityImproveToPass||r.BaselinePass{t.Fatalf("R7 panel requirement=%#v",r)}}
+}
+
 func TestBuildPlanCarriesCrossModelPanel(t *testing.T){
 	baseline:="rule-role-binding-unseen-rules-r1"
 	events:=[]learningmemory.Event{
