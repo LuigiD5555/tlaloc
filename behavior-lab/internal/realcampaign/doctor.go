@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"image/png"
 	"io"
 	"net/http"
 	"os"
@@ -69,8 +70,8 @@ func Doctor(ctx context.Context, raw Spec) (DoctorResult, error) {
 	if err != nil {
 		return DoctorResult{}, err
 	}
-	if len(image) != 8192 {
-		return DoctorResult{}, fmt.Errorf("expected frozen 8192-byte temporal carrier, got %d", len(image))
+	if err := validateCarrierBytes(image); err != nil {
+		return DoctorResult{}, err
 	}
 	questions := temporalbench.CanonicalQuestions()
 	if len(questions) == 0 {
@@ -111,6 +112,20 @@ func Doctor(ctx context.Context, raw Spec) (DoctorResult, error) {
 		ParentProfile: parentProfile,
 		Ready: true,
 	}, nil
+}
+
+func validateCarrierBytes(image []byte) error {
+	if len(image) != 8192 {
+		return fmt.Errorf("expected frozen 8192-byte temporal carrier, got %d", len(image))
+	}
+	cfg, err := png.DecodeConfig(bytes.NewReader(image))
+	if err != nil {
+		return fmt.Errorf("temporal carrier is not a valid PNG: %w", err)
+	}
+	if cfg.Width != 640 || cfg.Height != 640 {
+		return fmt.Errorf("expected 640x640 temporal carrier, got %dx%d", cfg.Width, cfg.Height)
+	}
+	return nil
 }
 
 func discoverModels(ctx context.Context, base, key string) ([]string, error) {
