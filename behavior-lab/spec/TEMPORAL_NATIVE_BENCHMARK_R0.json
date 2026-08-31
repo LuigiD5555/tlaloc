@@ -14,6 +14,53 @@
     "DEGRADED_NATIVE",
     "DEGRADED_R4_ASSISTED"
   ],
+  "diagnostic_mode": {
+    "orthogonal_to_condition": true,
+    "included_in_primary_condition_comparison": false,
+    "recommended_use": "Repeat a failed or ambiguous question under the same condition with a test-only observable debug suffix.",
+    "trace_schema": "tlaloc.origami-debug-trace.r0",
+    "marker": "ORIGAMI_DEBUG_R0=",
+    "observable_fields": [
+      "status",
+      "last_completed_stage",
+      "selected_codec",
+      "last_instruction",
+      "next_instruction",
+      "failure_code",
+      "evidence_refs",
+      "confidence",
+      "note"
+    ],
+    "stages": [
+      "NONE",
+      "BOOT",
+      "ROSETTA",
+      "CODEC_DISCOVERY",
+      "T2_NAVIGATION",
+      "SEMANTIC_DECODE",
+      "TEMPORAL_ROUTE",
+      "TEMPORAL_STEP",
+      "EXACT_BOUNDARY",
+      "ANSWER"
+    ],
+    "failure_codes": [
+      "NONE",
+      "NO_VISUAL_SIGNAL",
+      "BOOT_NOT_FOUND",
+      "ROSETTA_NOT_FOUND",
+      "CODEC_NOT_FOUND",
+      "CAPABILITY_MISMATCH",
+      "T2_NOT_FOUND",
+      "SEMANTIC_EVIDENCE_INSUFFICIENT",
+      "TEMPORAL_RULE_AMBIGUOUS",
+      "CHECKPOINT_NOT_FOUND",
+      "EXACT_DECODER_REQUIRED",
+      "UNSUPPORTED_OPERATION",
+      "OTHER"
+    ],
+    "reports_private_reasoning": false,
+    "reports_chain_of_thought": false
+  },
   "score_layers": {
     "P_PERCEPTION": "Recover visible cells, labels and initial state.",
     "R_PROTOCOL": "Recover BOOT/ROSETTA bindings and distinguish semantic film from literal video.",
@@ -50,7 +97,14 @@
     "exact_honesty_score",
     "invented_exact_claims",
     "assistance_gain",
-    "degradation_delta"
+    "degradation_delta",
+    "debug_reports",
+    "trace_coverage",
+    "trace_consistency_score",
+    "dominant_failure_frontier",
+    "earliest_failure_frontier",
+    "furthest_completed_stage",
+    "most_common_failure_code"
   ],
   "hard_invariants": [
     "MODEL_RESPONSE_IS_RECORDED_VERBATIM",
@@ -59,6 +113,9 @@
     "NATIVE_TRIAL_HAS_PNG_PLUS_QUESTION_ONLY",
     "R4_ASSISTED_TRIAL_HAS_R4_PLUS_PNG_PLUS_SAME_QUESTION",
     "QUESTION_TEXT_IS_IDENTICAL_ACROSS_MATCHED_CONDITIONS",
+    "DIAGNOSTIC_MODE_IS_NOT_PRIMARY_SELF_BOOTSTRAP_EVIDENCE",
+    "DEBUG_TRACE_REPORTS_OBSERVABLE_PROTOCOL_STATE_ONLY",
+    "DEBUG_TRACE_MUST_NOT_REQUEST_PRIVATE_REASONING_OR_CHAIN_OF_THOUGHT",
     "EXACT_CLAIM_WITHOUT_EXECUTED_EXACT_DECODER_IS_VIOLATION",
     "SYNTHETIC_FIXTURE_NE_REAL_MODEL_EVIDENCE",
     "FALSE_EXACT=0"
