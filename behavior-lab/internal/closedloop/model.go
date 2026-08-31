@@ -14,6 +14,7 @@ type ModelConfig struct {
 	Provider         string  `json:"provider,omitempty"`
 	BaseURL          string  `json:"base_url"`
 	Model            string  `json:"model"`
+	Compatibility    string  `json:"compatibility_strategy,omitempty"`
 	APIKeyEnv        string  `json:"api_key_env,omitempty"`
 	Temperature      float64 `json:"temperature,omitempty"`
 	TimeoutSeconds   int     `json:"timeout_seconds,omitempty"`
@@ -113,32 +114,32 @@ type CandidateOutcome struct {
 }
 
 type GenerationReport struct {
-	Generation          int                `json:"generation"`
-	PlanBeforePath      string             `json:"plan_before_path"`
-	QueuePath           string             `json:"queue_path,omitempty"`
-	Baseline            SpecimenReport     `json:"baseline"`
-	IncumbentBeforeID   string             `json:"incumbent_before_id"`
-	IncumbentAfterID    string             `json:"incumbent_after_id"`
-	IncumbentAdvanced   bool               `json:"incumbent_advanced"`
-	IncumbentReason     string             `json:"incumbent_reason,omitempty"`
-	ActiveFailureCount  int                `json:"active_failure_count"`
-	Candidates          []SpecimenReport   `json:"candidates,omitempty"`
-	Outcomes            []CandidateOutcome `json:"outcomes,omitempty"`
-	PlanAfterPath       string             `json:"plan_after_path"`
-	SelectedIDs         []string           `json:"selected_candidate_ids,omitempty"`
-	RemainingBank       int                `json:"remaining_candidate_bank"`
+	Generation         int                `json:"generation"`
+	PlanBeforePath     string             `json:"plan_before_path"`
+	QueuePath          string             `json:"queue_path,omitempty"`
+	Baseline           SpecimenReport     `json:"baseline"`
+	IncumbentBeforeID  string             `json:"incumbent_before_id"`
+	IncumbentAfterID   string             `json:"incumbent_after_id"`
+	IncumbentAdvanced  bool               `json:"incumbent_advanced"`
+	IncumbentReason    string             `json:"incumbent_reason,omitempty"`
+	ActiveFailureCount int                `json:"active_failure_count"`
+	Candidates         []SpecimenReport   `json:"candidates,omitempty"`
+	Outcomes           []CandidateOutcome `json:"outcomes,omitempty"`
+	PlanAfterPath      string             `json:"plan_after_path"`
+	SelectedIDs        []string           `json:"selected_candidate_ids,omitempty"`
+	RemainingBank      int                `json:"remaining_candidate_bank"`
 }
 
 type Report struct {
-	Schema             string             `json:"schema"`
-	RunID              string             `json:"run_id"`
-	OutputDir          string             `json:"output_dir"`
-	MemoryRoot         string             `json:"memory_root"`
-	InitialBaselineID  string             `json:"initial_baseline_id"`
-	FinalIncumbentID   string             `json:"final_incumbent_id"`
-	Generations        []GenerationReport `json:"generations"`
-	ExecutionErrors    []ExecutionError   `json:"execution_errors,omitempty"`
-	FinalPlanPath      string             `json:"final_plan_path,omitempty"`
-	StopReason         string             `json:"stop_reason"`
-	Authority          string             `json:"authority"`
+	Schema            string             `json:"schema"`
+	RunID             string             `json:"run_id"`
+	OutputDir         string             `json:"output_dir"`
+	MemoryRoot        string             `json:"memory_root"`
+	InitialBaselineID string             `json:"initial_baseline_id"`
+	FinalIncumbentID  string             `json:"final_incumbent_id"`
+	Generations       []GenerationReport `json:"generations"`
+	ExecutionErrors   []ExecutionError   `json:"execution_errors,omitempty"`
+	FinalPlanPath     string             `json:"final_plan_path,omitempty"`
+	StopReason        string             `json:"stop_reason"`
+	Authority         string             `json:"authority"`
 }
