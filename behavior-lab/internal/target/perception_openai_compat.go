@@ -1,6 +1,7 @@
 package target
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"encoding/base64"
@@ -9,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type PerceptionInput struct {
@@ -22,6 +24,7 @@ type perceptionRequest struct {
 	Model       string           `json:"model"`
 	Messages    []map[string]any `json:"messages"`
 	Temperature float64          `json:"temperature"`
+	Stream      bool             `json:"stream,omitempty"`
 }
 
 type perceptionResponse struct {
@@ -29,6 +32,18 @@ type perceptionResponse struct {
 		Message struct {
 			Content *string `json:"content"`
 		} `json:"message"`
+	} `json:"choices"`
+	Usage struct {
+		PromptTokens     int `json:"prompt_tokens"`
+		CompletionTokens int `json:"completion_tokens"`
+	} `json:"usage"`
+}
+
+type perceptionStreamChunk struct {
+	Choices []struct {
+		Delta struct {
+			Content *string `json:"content"`
+		} `json:"delta"`
 	} `json:"choices"`
 	Usage struct {
 		PromptTokens     int `json:"prompt_tokens"`
@@ -44,7 +59,9 @@ type PerceptionResult struct {
 
 // CompletePerception sends only the declared system prompt, user question and
 // one visual carrier. It intentionally exposes no private evaluator manifest,
-// expected probe bits, canonical decode or registry data.
+// expected probe bits, canonical decode or registry data. When an Observer is
+// attached, the request uses OpenAI-compatible SSE streaming; deltas are
+// observed live and accumulated into the same final response used by scoring.
 func (c OpenAICompat) CompletePerception(ctx context.Context, input PerceptionInput) (PerceptionResult, error) {
 	if c.Model == "" {
 		return PerceptionResult{}, fmt.Errorf("model is required")
@@ -70,7 +87,8 @@ func (c OpenAICompat) CompletePerception(ctx context.Context, input PerceptionIn
 			{"type": "image_url", "image_url": imagePart},
 		}},
 	}
-	body, err := json.Marshal(perceptionRequest{Model: c.Model, Messages: messages, Temperature: c.Temperature})
+	stream := c.Observer != nil
+	body, err := json.Marshal(perceptionRequest{Model: c.Model, Messages: messages, Temperature: c.Temperature, Stream: stream})
 	if err != nil {
 		return PerceptionResult{}, err
 	}
@@ -82,28 +100,120 @@ func (c OpenAICompat) CompletePerception(ctx context.Context, input PerceptionIn
 	if c.APIKey != "" {
 		req.Header.Set("Authorization", "Bearer "+c.APIKey)
 	}
+
+	start := time.Now()
+	c.observe(ModelTraceEvent{Type: TraceRequestStart, Model: c.Model, Question: input.Question})
 	resp, err := client.Do(req)
 	if err != nil {
+		c.observe(ModelTraceEvent{Type: TraceRequestError, Model: c.Model, Elapsed: time.Since(start), Err: err})
 		return PerceptionResult{}, err
 	}
 	defer resp.Body.Close()
-	raw, err := io.ReadAll(io.LimitReader(resp.Body, 8<<20))
-	if err != nil {
+	if resp.StatusCode/100 != 2 {
+		raw, readErr := io.ReadAll(io.LimitReader(resp.Body, 8<<20))
+		if readErr != nil {
+			c.observe(ModelTraceEvent{Type: TraceRequestError, Model: c.Model, Elapsed: time.Since(start), Err: readErr})
+			return PerceptionResult{}, readErr
+		}
+		err := fmt.Errorf("target status %s: %s", resp.Status, string(raw))
+		c.observe(ModelTraceEvent{Type: TraceRequestError, Model: c.Model, Elapsed: time.Since(start), Err: err})
 		return PerceptionResult{}, err
 	}
-	if resp.StatusCode/100 != 2 {
-		return PerceptionResult{}, fmt.Errorf("target status %s: %s", resp.Status, string(raw))
+
+	if stream && strings.Contains(strings.ToLower(resp.Header.Get("Content-Type")), "text/event-stream") {
+		result, err := c.readPerceptionStream(resp.Body, start)
+		if err != nil {
+			c.observe(ModelTraceEvent{Type: TraceRequestError, Model: c.Model, Elapsed: time.Since(start), Err: err})
+			return PerceptionResult{}, err
+		}
+		return result, nil
+	}
+
+	// Some compatible servers may ignore stream=true and return ordinary JSON.
+	// Keep that transport usable and still expose the completed text to the
+	// observer as one delta.
+	raw, err := io.ReadAll(io.LimitReader(resp.Body, 8<<20))
+	if err != nil {
+		c.observe(ModelTraceEvent{Type: TraceRequestError, Model: c.Model, Elapsed: time.Since(start), Err: err})
+		return PerceptionResult{}, err
 	}
 	var out perceptionResponse
 	if err := json.Unmarshal(raw, &out); err != nil {
+		c.observe(ModelTraceEvent{Type: TraceRequestError, Model: c.Model, Elapsed: time.Since(start), Err: err})
 		return PerceptionResult{}, err
 	}
 	if len(out.Choices) == 0 || out.Choices[0].Message.Content == nil {
-		return PerceptionResult{}, fmt.Errorf("target returned no perception content")
+		err := fmt.Errorf("target returned no perception content")
+		c.observe(ModelTraceEvent{Type: TraceRequestError, Model: c.Model, Elapsed: time.Since(start), Err: err})
+		return PerceptionResult{}, err
 	}
-	content := strings.TrimSpace(*out.Choices[0].Message.Content)
-	if content == "" {
-		return PerceptionResult{}, fmt.Errorf("target returned empty perception content")
+	content := *out.Choices[0].Message.Content
+	if strings.TrimSpace(content) == "" {
+		err := fmt.Errorf("target returned empty perception content")
+		c.observe(ModelTraceEvent{Type: TraceRequestError, Model: c.Model, Elapsed: time.Since(start), Err: err})
+		return PerceptionResult{}, err
 	}
-	return PerceptionResult{Content: content, PromptTokensReported: out.Usage.PromptTokens, CompletionTokensReported: out.Usage.CompletionTokens}, nil
+	if c.Observer != nil {
+		c.observe(ModelTraceEvent{Type: TraceFirstDelta, Model: c.Model, Elapsed: time.Since(start)})
+		c.observe(ModelTraceEvent{Type: TraceDelta, Model: c.Model, Delta: content})
+	}
+	c.observe(ModelTraceEvent{Type: TraceRequestDone, Model: c.Model, Elapsed: time.Since(start), Characters: len(content)})
+	return PerceptionResult{Content: strings.TrimSpace(content), PromptTokensReported: out.Usage.PromptTokens, CompletionTokensReported: out.Usage.CompletionTokens}, nil
+}
+
+func (c OpenAICompat) readPerceptionStream(r io.Reader, start time.Time) (PerceptionResult, error) {
+	scanner := bufio.NewScanner(r)
+	scanner.Buffer(make([]byte, 64*1024), 2<<20)
+	var content strings.Builder
+	promptTokens := 0
+	completionTokens := 0
+	first := true
+
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || !strings.HasPrefix(line, "data:") {
+			continue
+		}
+		data := strings.TrimSpace(strings.TrimPrefix(line, "data:"))
+		if data == "[DONE]" {
+			break
+		}
+		var chunk perceptionStreamChunk
+		if err := json.Unmarshal([]byte(data), &chunk); err != nil {
+			return PerceptionResult{}, fmt.Errorf("decode streaming chunk: %w", err)
+		}
+		if chunk.Usage.PromptTokens != 0 {
+			promptTokens = chunk.Usage.PromptTokens
+		}
+		if chunk.Usage.CompletionTokens != 0 {
+			completionTokens = chunk.Usage.CompletionTokens
+		}
+		for _, choice := range chunk.Choices {
+			if choice.Delta.Content == nil || *choice.Delta.Content == "" {
+				continue
+			}
+			delta := *choice.Delta.Content
+			if first {
+				c.observe(ModelTraceEvent{Type: TraceFirstDelta, Model: c.Model, Elapsed: time.Since(start)})
+				first = false
+			}
+			content.WriteString(delta)
+			c.observe(ModelTraceEvent{Type: TraceDelta, Model: c.Model, Delta: delta})
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return PerceptionResult{}, err
+	}
+	raw := content.String()
+	if strings.TrimSpace(raw) == "" {
+		return PerceptionResult{}, fmt.Errorf("target returned empty perception stream")
+	}
+	c.observe(ModelTraceEvent{Type: TraceRequestDone, Model: c.Model, Elapsed: time.Since(start), Characters: len(raw)})
+	return PerceptionResult{Content: strings.TrimSpace(raw), PromptTokensReported: promptTokens, CompletionTokensReported: completionTokens}, nil
+}
+
+func (c OpenAICompat) observe(event ModelTraceEvent) {
+	if c.Observer != nil {
+		c.Observer.Observe(event)
+	}
 }
