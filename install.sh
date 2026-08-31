@@ -73,6 +73,7 @@ mkdir -p "$TLALOC_DST.tmp/bin" "$TLALOC_DST.tmp/tools"
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-adaptive-search" ./cmd/tlaloc-adaptive-search
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-closed-loop" ./cmd/tlaloc-closed-loop
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-real-vlm-campaign" ./cmd/tlaloc-real-vlm-campaign
+  CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-tlaloque-swarm" ./cmd/tlaloc-tlaloque-swarm
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-learn" ./cmd/tlaloc-learn
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-prompt" ./cmd/tlaloc-prompt
 )
