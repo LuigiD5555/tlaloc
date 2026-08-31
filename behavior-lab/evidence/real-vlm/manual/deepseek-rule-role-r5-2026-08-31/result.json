@@ -1,0 +1,30 @@
+{
+  "schema": "tlaloc.real-model-manual-evidence.r1",
+  "specimen_id": "rule-role-binding-unseen-rules-r1",
+  "condition": "NATIVE_PNG_ONLY_MANUAL_R5_RULE_ROLE_BINDING",
+  "evidence_origin": "user_supplied_raw_response",
+  "real_evidence": true,
+  "model_id": "deepseek-unspecified",
+  "pass": true,
+  "classification": {
+    "CELL_IDENTITY": "PASS",
+    "WHEN_SOURCE_BINDING": "PASS",
+    "TARGET_BINDING": "PASS",
+    "REQUIRE_FROM_STATE_BINDING": "PASS",
+    "SET_TO_STATE_BINDING": "PASS",
+    "SAME_PRE_STEP_EXECUTION": "PASS",
+    "FINAL_STABLE_STATE": "PASS",
+    "UNAUTHORIZED_TRANSITIONS": "PASS"
+  },
+  "observed_final_state": {
+    "A": "DONE",
+    "B": "ACTIVE",
+    "C": "DONE"
+  },
+  "failure_code": "",
+  "notes": [
+    "Recovered the unseen R5 causal program correctly from the visible role-bound grammar.",
+    "Executed all rules synchronously from the same pre-step snapshot.",
+    "Reached the deterministic reference stable state without inventing transitions."
+  ]
+}
