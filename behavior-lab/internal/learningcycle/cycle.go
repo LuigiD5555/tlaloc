@@ -8,16 +8,26 @@ import (
 	"tlaloc.local/behaviorlab/internal/experimentpolicy"
 	"tlaloc.local/behaviorlab/internal/learningmemory"
 	"tlaloc.local/behaviorlab/internal/learningpolicy"
+	"tlaloc.local/behaviorlab/internal/promptgenome"
 )
 
 func BuildStatus(root string, events []learningmemory.Event) Status {
+	return BuildStatusWithGenome(root,events,promptgenome.Genome{})
+}
+
+func BuildStatusWithGenome(root string, events []learningmemory.Event, genome promptgenome.Genome) Status {
 	policy := learningpolicy.Derive(events)
+	if genome.Schema==promptgenome.GenomeSchemaR1 { policy=learningpolicy.ApplyGenomeProtection(policy,genome) }
 	adaptive := adaptivesearch.BuildPlan(root, events)
 	return Status{Schema:StatusSchemaR1, FailureFrontier:policy.FailureFrontier, NextTarget:policy.Target, Policy:policy, AdaptiveSearch:adaptive, Promotion:"NOT_EVALUATED_BY_LEARNING_CYCLE"}
 }
 
 func BuildPlan(root string, events []learningmemory.Event, baseline, programSHA, payloadSHA string, budget int) Plan {
-	st := BuildStatus(root, events)
+	return BuildPlanWithGenome(root,events,promptgenome.Genome{},baseline,programSHA,payloadSHA,budget)
+}
+
+func BuildPlanWithGenome(root string, events []learningmemory.Event, genome promptgenome.Genome, baseline, programSHA, payloadSHA string, budget int) Plan {
+	st := BuildStatusWithGenome(root, events, genome)
 	if budget <= 0 { budget = 3 }
 	preserve, avoid, require := rulesByKind(st.Policy)
 	intent := experimentpolicy.ExperimentIntent{
@@ -38,27 +48,25 @@ func BuildPlan(root string, events []learningmemory.Event, baseline, programSHA,
 	return Plan{Schema:PlanSchemaR1, Status:st, Intent:intent, Candidates:candidates}
 }
 
+// synthesize emits only mutations with a known deterministic materialization
+// path. Unsupported ideas remain Adaptive Search suggestions until Origami
+// advertises/implements them; they are not silently converted into specimens.
 func synthesize(intent experimentpolicy.ExperimentIntent, parents []string, programSHA, payloadSHA string) []experimentpolicy.CandidateManifest {
 	target := strings.ToUpper(strings.TrimSpace(intent.MutableModule))
 	type h struct{ id, kind, mutTarget, value, effect string }
 	hs := []h{}
 	switch target {
 	case "EXECUTION_POLICY":
-		hs = []h{
-			{"execute-to-stable-text-r1","PROMPT","EXECUTION_POLICY","EXECUTE_VISIBLE_RULES_TO_STABLE_R1","receiver executes visible rules until no state changes"},
-			{"execute-loop-compact-r1","PROMPT","EXECUTION_POLICY","INIT_APPLY_NEXT_REPEAT_STABLE_COMPACT_R1","compact loop improves execution compliance"},
-			{"stop-condition-redundant-r1","REDUNDANCY","EXECUTION_POLICY","REPEAT_UNTIL_UNCHANGED_REPORT_FINAL_R1","redundant stop condition improves stable-state reporting"},
-		}
+		hs = []h{{"execute-to-stable-text-r1","PROMPT","EXECUTION_POLICY","EXECUTE_VISIBLE_RULES_TO_STABLE_R1","receiver executes visible rules until no state changes"}}
 	case "TEMPORAL_GRAMMAR":
-		hs = []h{{"temporal-grammar-visible-r1","TEMPORAL_STRUCTURE","TEMPORAL_GRAMMAR","VISIBLE_RULE_MICROGRAMMAR_R1","make causal rule semantics recoverable"}}
+		hs = []h{{"temporal-grammar-visible-r1","TEMPORAL_STRUCTURE","T2_SEMANTIC_TEMPORAL_SUPERGRAPH","VISIBLE_RULE_MICROGRAMMAR_R1","make causal rule semantics recoverable"}}
 	case "SEMANTIC_PARITY_GATE":
-		hs = []h{{"semantic-parity-hard-gate-r1","VALIDATION","SEMANTIC_PARITY_GATE","REJECT_UNAUTHORIZED_SEMANTIC_DRIFT","prevent invalid specimens from reaching models"}}
+		// Validation-only target: no visual specimen should be synthesized.
+		return nil
 	default:
-		hs = []h{
-			{"target-prompt-r1","PROMPT",target,"SHORT_EXPLICIT_PROTOCOL_INSTRUCTION","isolate prompt guidance for current frontier"},
-			{"target-layout-r1","LAYOUT",target,"LOCALIZE_FAILURE_TARGET_REGION","isolate layout guidance for current frontier"},
-			{"target-redundancy-r1","REDUNDANCY",target,"BOUNDED_REDUNDANT_ANCHOR","isolate bounded redundant cue for current frontier"},
-		}
+		// Generic Adaptive Search can rank ideas, but guarded synthesis refuses to
+		// invent an Origami renderer contract that has not been negotiated.
+		return nil
 	}
 	out := make([]experimentpolicy.CandidateManifest,0,len(hs))
 	for _, x := range hs {
