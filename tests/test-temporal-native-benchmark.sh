@@ -11,10 +11,13 @@ assert set(p['score_layers'])=={'P_PERCEPTION','R_PROTOCOL','S_SEMANTIC','T_TEMP
 assert p['questions'][-1]['id']=='Q8'
 assert p['diagnostic_mode']['orthogonal_to_condition'] is True
 assert p['diagnostic_mode']['included_in_primary_condition_comparison'] is False
+assert p['diagnostic_mode']['partial_retry_allowed'] is True
+assert p['diagnostic_mode']['partial_retry_field']=='diagnostic_question_ids'
 assert p['diagnostic_mode']['reports_private_reasoning'] is False
 assert p['diagnostic_mode']['reports_chain_of_thought'] is False
 assert 'ROSETTA' in p['diagnostic_mode']['stages']
 assert 'T2_NOT_FOUND' in p['diagnostic_mode']['failure_codes']
+assert 'DIAGNOSTIC_RETRY_MAY_TARGET_ONLY_FAILED_QUESTION_IDS' in p['hard_invariants']
 assert 'DEBUG_TRACE_MUST_NOT_REQUEST_PRIVATE_REASONING_OR_CHAIN_OF_THOUGHT' in p['hard_invariants']
 assert 'NO_LLM_JUDGE' in p['hard_invariants']
 assert 'FALSE_EXACT=0' in p['hard_invariants']
@@ -63,7 +66,6 @@ assert trial['debug_summary']['missing_trace_count']==0
 assert trial['debug_summary']['invalid_trace_count']==0
 assert trial['debug_summary']['answer_trace_mismatch_count']==0
 assert len(trial['debug_reports'])==9
-# Diagnostic repetitions must not enter Native-vs-R4 primary comparison.
 assert d.get('comparisons',[])==[]
 
 instruction=open(sys.argv[3]).read()
