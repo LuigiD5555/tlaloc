@@ -9,7 +9,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"time"
 )
 
 type ToolFunction struct {
@@ -177,10 +176,7 @@ func (c OpenAICompat) hybridChat(ctx context.Context, messages []map[string]any,
 	if base == "" {
 		base = "http://127.0.0.1:1234/v1"
 	}
-	client := c.Client
-	if client == nil {
-		client = &http.Client{Timeout: 90 * time.Second}
-	}
+	client := c.httpClient()
 	body, err := json.Marshal(hybridChatRequest{Model: c.Model, Messages: messages, Temperature: c.Temperature, Tools: tools})
 	if err != nil {
 		return hybridChatResponse{}, err
