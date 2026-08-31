@@ -15,6 +15,7 @@ type ModelConfig struct {
 	BaseURL          string  `json:"base_url"`
 	Model            string  `json:"model"`
 	Compatibility    string  `json:"compatibility_strategy,omitempty"`
+	TraceStream      bool    `json:"trace_stream,omitempty"`
 	APIKeyEnv        string  `json:"api_key_env,omitempty"`
 	Temperature      float64 `json:"temperature,omitempty"`
 	TimeoutSeconds   int     `json:"timeout_seconds,omitempty"`
