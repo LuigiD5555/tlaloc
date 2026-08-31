@@ -26,6 +26,7 @@ Usage: ./install.sh [options]
 
 Installs Tlaloc only, entirely under XDG user directories; sudo is not required.
 Origami is independent and optional. BPFW/PipeCraft are external and never modified.
+Learning memory is runtime state under XDG_STATE_HOME and is preserved across version upgrades.
 USAGE
 }
 while (($#)); do
@@ -68,6 +69,7 @@ mkdir -p "$TLALOC_DST.tmp/bin" "$TLALOC_DST.tmp/tools"
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-protocol-eval" ./cmd/tlaloc-protocol-eval
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-automaton-distill" ./cmd/tlaloc-automaton-distill
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-temporal-bench" ./cmd/tlaloc-temporal-bench
+  CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-learning-memory" ./cmd/tlaloc-learning-memory
 )
 cp -a "$HERE/tools/tlaloc" "$TLALOC_DST.tmp/bin/tlaloc"
 cp -a "$HERE/tools/doctor.sh" "$TLALOC_DST.tmp/tools/doctor.sh"
@@ -82,7 +84,7 @@ printf 'Tlaloc\t%s\n' "$TLALOC_VERSION" > "$TLALOC_DST.tmp/.tlaloc-managed-versi
 rm -rf -- "$TLALOC_DST"
 mv "$TLALOC_DST.tmp" "$TLALOC_DST"
 ln -sfn "$TLALOC_DST" "$TLALOC_ROOT/current"
-for b in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench; do
+for b in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench tlaloc-learning-memory; do
   ln -sfn "$TLALOC_DST/bin/$b" "$BIN_HOME/$b"
 done
 ln -sfn "$TLALOC_DST/tools/uninstall.sh" "$BIN_HOME/tlaloc-uninstall"
