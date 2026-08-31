@@ -74,7 +74,7 @@ func example() {
 		MemoryRoot:                     "",
 		MasterPrompt:                   "/path/to/origami/generated/MASTER_PROMPT.md",
 		OrigamiVersion:                 "6.0.0-alpha.14-candidate",
-		TlalocVersion:                  "6.0.0-alpha.18",
+		TlalocVersion:                  "6.0.0-alpha.19",
 		TrialsPerModel:                 1,
 		CandidatesPerGeneration:       2,
 		MaxGenerations:                3,
