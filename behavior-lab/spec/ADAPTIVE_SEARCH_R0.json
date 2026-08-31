@@ -1,0 +1,79 @@
+{
+  "contract_id": "tlaloc.adaptive-search.r0",
+  "status": "EXPERIMENTAL_REFERENCE_IMPLEMENTATION",
+  "purpose": "Use persistent real-model failure memory to prioritize the next experimental mutation families and candidate queue without allowing memory to bias evidence scoring or canonical promotion.",
+  "input": {
+    "required": [
+      "tlaloc.learning-memory.r0 event ledger"
+    ],
+    "optional": [
+      "candidate set for pre-evidence prioritization"
+    ]
+  },
+  "pipeline": [
+    "LOAD_IMMUTABLE_MEMORY",
+    "BUILD_REAL_FAILURE_PATTERNS",
+    "SELECT_PRIMARY_FAILURE_FRONTIER",
+    "MAP_FRONTIER_TO_MUTATION_FAMILIES",
+    "APPLY_BOUNDED_HISTORICAL_OUTCOME_SIGNAL",
+    "PRESERVE_EXPLORATION_FLOOR",
+    "NORMALIZE_MUTATION_PRIORITIES",
+    "PRIORITIZE_PRE_EVIDENCE_CANDIDATE_QUEUE",
+    "OPTIONALLY_RECORD_CHANGE_ATTEMPTS_WITH_PARENT_EVIDENCE",
+    "RUN_REAL_TRIALS",
+    "USE_NORMAL_EVIDENCE_GATED_TOURNAMENT"
+  ],
+  "failure_target_to_mutations": {
+    "VISUAL_SIGNAL": ["PRIMITIVE", "REDUNDANCY", "LAYOUT", "COLOR_USAGE"],
+    "BOOT": ["PROMPT", "LAYOUT", "REDUNDANCY", "PRIMITIVE"],
+    "ROSETTA": ["PROMPT", "LAYOUT", "REDUNDANCY", "PRIMITIVE"],
+    "CODEC_REGISTRY": ["PROMPT", "LAYOUT", "CHANNEL_ROLE", "REDUNDANCY"],
+    "CAPABILITY_FALLBACK": ["PROMPT", "CHANNEL_ROLE", "REDUNDANCY"],
+    "T2_NAVIGATION": ["LAYOUT", "PROMPT", "REDUNDANCY", "CHANNEL_ROLE"],
+    "SEMANTIC_LAYOUT": ["LAYOUT", "PRIMITIVE", "REDUNDANCY", "CHANNEL_ROLE"],
+    "TEMPORAL_GRAMMAR": ["TEMPORAL_STRUCTURE", "PROMPT", "PRIMITIVE", "CHANNEL_ROLE"],
+    "TEMPORAL_ROUTING": ["TEMPORAL_STRUCTURE", "LAYOUT", "REDUNDANCY", "PROMPT"],
+    "CAPABILITY_PROFILE": ["PROMPT", "CHANNEL_ROLE", "REDUNDANCY"],
+    "ROSETTA_TO_T2_ROUTE": ["LAYOUT", "PROMPT", "REDUNDANCY", "CHANNEL_ROLE"],
+    "TEMPORAL_PROGRAM": ["TEMPORAL_STRUCTURE", "LAYOUT", "PROMPT", "REDUNDANCY"]
+  },
+  "historical_signal": {
+    "source": "CHANGE_ATTEMPT tags + linked OUTCOME_LINK deltas",
+    "tag_format": "mutation:<MUTATION_KIND>",
+    "effect": "bounded priority adjustment only",
+    "maximum_absolute_adjustment": 0.25,
+    "may_override_real_failure_frontier": false
+  },
+  "exploration": {
+    "required": true,
+    "minimum_normalized_floor_per_supported_mutation_family": 0.01,
+    "reason": "Avoid permanent lock-in to a locally successful mutation family and retain the ability to discover alternatives."
+  },
+  "candidate_queue": {
+    "purpose": "Order which already-declared experimental candidates should receive trial budget first.",
+    "final_promotion_score_affected": false,
+    "candidate_without_matching_priority": "retained below matched candidates unless queue limit excludes it",
+    "tie_break": "candidate_id lexical ascending"
+  },
+  "memory_linkage": {
+    "selected_candidates_may_be_recorded_as": "CHANGE_ATTEMPT",
+    "must_reference": "parent real-model failure event ids used by the plan",
+    "recommended_tags": [
+      "adaptive-search",
+      "target:<failure_target>",
+      "mutation:<mutation_kind>"
+    ]
+  },
+  "hard_invariants": [
+    "REAL_MODEL_FAILURES_DRIVE_ADAPTIVE_FOCUS",
+    "SYNTHETIC_EVIDENCE_NE_EMPIRICAL_SEARCH_TARGET",
+    "MEMORY_GUIDES_EXPERIMENT_BUDGET_NOT_PROMOTION_SCORE",
+    "FINAL_TOURNAMENT_REMAINS_EVIDENCE_GATED",
+    "EXPLORATION_FLOOR_GT_0",
+    "HISTORICAL_OUTCOME_SIGNAL_IS_BOUNDED",
+    "PARENT_EVIDENCE_TRACEABILITY_REQUIRED_FOR_RECORDED_ATTEMPTS",
+    "MEMORY_NE_CANONICAL_ORIGAMI_TRUTH",
+    "TLALOC_RECOMMENDS_ORIGAMI_DECIDES",
+    "FALSE_EXACT=0"
+  ]
+}
