@@ -1,5 +1,20 @@
 # Tlaloc changelog
 
+## 6.0.0-alpha.21 — Real VLM Campaign R0
+
+- adds `tlaloc-real-vlm-campaign` with `doctor`, `prepare`, `run` and `example` surfaces for reproducible execution against real OpenAI-compatible multimodal models;
+- discovers `/v1/models`, auto-selects only when exactly one real model is exposed and rejects `SYNTHETIC_*` or placeholder model IDs;
+- validates the canonical signal-chain benchmark fixture before scoring real trials;
+- resolves and hashes `origami-temporal-carrier` and `origami-candidate-build`, negotiates builder capabilities and preserves the alpha.20 exact-plane guard;
+- builds the canonical 640x640 / 8192-byte baseline PNG and separates visual transport success from semantic benchmark success;
+- adds isolated SMOKE defaults for one real-model trial, one candidate and one generation without promotion eligibility;
+- adds EVIDENCE defaults requiring at least three trials/model, two candidates/generation and up to three generations while remaining single-model/non-promotional in R0;
+- records reproducible manifests binding model, endpoint, program, carrier, builder, baseline, config, hashes, learning-memory root and evidence policy;
+- keeps SMOKE and EVIDENCE output/memory roots isolated;
+- reuses the alpha.20 closed loop, diagnostics, persistent memory, adaptive search, target-owned candidate generation and per-question non-regression gates;
+- adds formal campaign spec/docs, managed install/uninstall coverage and deterministic OpenAI-compatible transport/runtime tests without fabricating external model evidence;
+- preserves `VISION_TRANSPORT_PASS != SEMANTIC_PASS`, `SMOKE != PROMOTION_EVIDENCE`, and `SINGLE_MODEL_REPEATED_EVIDENCE != CROSS_MODEL_EVIDENCE`.
+
 ## 6.0.0-alpha.20 — Auto Candidate Generation R0
 
 - closes the remaining candidate-provisioning gap in the alpha.19 closed experimental loop;

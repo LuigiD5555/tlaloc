@@ -33,6 +33,7 @@ jobs:
           bash tests/test-adaptive-search.sh
           bash tests/test-closed-loop-contract.sh
           bash tests/test-auto-candidate-generation.sh
+          bash tests/test-real-vlm-campaign.sh
           bash tests/test-gatekeeper.sh
       - name: Verify isolated managed install lifecycle
         run: bash tests/test-independent-install.sh

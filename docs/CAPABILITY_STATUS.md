@@ -1,4 +1,4 @@
-# Capability status — Tlaloc 6.0.0-alpha.20
+# Capability status — Tlaloc 6.0.0-alpha.21
 
 Repository lifecycle: Tlaloc installs/uninstalls independently and can target Origami or unrelated behaviors. This file distinguishes development machinery, reference evidence, deployable artifacts and empirical support.
 
@@ -55,6 +55,10 @@ Repository lifecycle: Tlaloc installs/uninstalls independently and can target Or
 | Deterministic auto-candidate identity | **alpha.20 implemented** | Candidate ID binds parent specimen ID + parent PNG SHA-256 + canonical mutation. |
 | Exact-plane builder guard | **alpha.20 hard invariant** | Automatic mode rejects builders that declare exact-plane mutation or do not support the configured parent profile. |
 | Synthetic auto-loop end-to-end regression | **alpha.20 implemented / non-empirical** | Fake VLM + fake builder proves orchestration, candidate generation, build invocation, scoring, memory linkage and incumbent advancement; it is not real-model evidence. |
+| Real VLM Campaign R0 | **alpha.21 implemented / external real-model run pending** | Packages doctor, prepare and run around the alpha.20 closed loop for reproducible execution against a real OpenAI-compatible multimodal model. |
+| Real-model discovery and synthetic-ID rejection | **alpha.21 implemented** | Discovers `/v1/models`, auto-selects only an unambiguous real model and rejects `SYNTHETIC_*` or placeholder IDs. |
+| Real visual transport doctor | **alpha.21 implemented / semantic evidence pending** | Resolves and hashes Origami carrier/builder executables, negotiates builder capabilities, builds the canonical 8192-byte PNG and verifies multimodal transport without treating transport success as semantic success. |
+| SMOKE/EVIDENCE phase isolation | **alpha.21 implemented** | Smoke is isolated and non-promotional; evidence requires >=3 trials/model. R0 remains single-model and sets `promotion_eligible=false`, `cross_model_evidence=false`. |
 | Receiver swarm-trace distillation | experimental R0 implemented | Existing Origami receiver-specific distillation remains a target-specific implementation. |
 | Receiver candidate tournament | experimental R0 implemented | Existing target-specific tournament retained. |
 | Project-local Claude Code skills | R0 implemented | Development assets; not portable behavior output. |
