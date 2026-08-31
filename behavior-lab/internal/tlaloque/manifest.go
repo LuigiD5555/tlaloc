@@ -28,7 +28,7 @@ type ProcessWorkerSpec = WorkerSpec
 type SwarmManifest struct {
 	Schema  string       `json:"schema"`
 	Workers []WorkerSpec `json:"workers"`
-	Plan    SwarmPlan    `json:"plan"`
+	Plan    SwarmPlan    `json:"plan,omitempty"`
 }
 
 func LoadSwarmManifest(path string) (SwarmManifest, error) {
@@ -37,13 +37,9 @@ func LoadSwarmManifest(path string) (SwarmManifest, error) {
 	var manifest SwarmManifest
 	dec := json.NewDecoder(bytes.NewReader(body))
 	dec.DisallowUnknownFields()
-	if err := dec.Decode(&manifest); err != nil {
-		return SwarmManifest{}, fmt.Errorf("swarm manifest: %w", err)
-	}
+	if err := dec.Decode(&manifest); err != nil { return SwarmManifest{}, fmt.Errorf("swarm manifest: %w", err) }
 	if manifest.Schema == "" { manifest.Schema = SwarmManifestSchemaR0 }
-	if manifest.Schema != SwarmManifestSchemaR0 {
-		return SwarmManifest{}, fmt.Errorf("unexpected swarm manifest schema %q", manifest.Schema)
-	}
+	if manifest.Schema != SwarmManifestSchemaR0 { return SwarmManifest{}, fmt.Errorf("unexpected swarm manifest schema %q", manifest.Schema) }
 	if len(manifest.Workers) == 0 { return SwarmManifest{}, fmt.Errorf("manifest requires workers") }
 	for i := range manifest.Workers {
 		spec := &manifest.Workers[i]
@@ -63,9 +59,11 @@ func LoadSwarmManifest(path string) (SwarmManifest, error) {
 			return SwarmManifest{}, fmt.Errorf("worker %q unsupported transport %q", d.ID, spec.Transport)
 		}
 	}
-	plan, err := manifest.Plan.Normalize()
-	if err != nil { return SwarmManifest{}, err }
-	manifest.Plan = plan
+	if manifest.Plan.ID != "" || len(manifest.Plan.Nodes) > 0 {
+		plan, err := manifest.Plan.Normalize()
+		if err != nil { return SwarmManifest{}, err }
+		manifest.Plan = plan
+	}
 	return manifest, nil
 }
 
