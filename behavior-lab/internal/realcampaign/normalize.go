@@ -39,6 +39,9 @@ func Normalize(spec Spec) (Spec, error) {
 	}
 	spec.Compatibility = strategy.Name()
 	spec.TransportCondition = NormalizeTransportCondition(spec.TransportCondition, spec.Compatibility)
+	if strings.TrimSpace(spec.InteropMemoryRoot) == "" {
+		spec.InteropMemoryRoot = DefaultInteropMemoryRoot()
+	}
 	for name, value := range map[string]string{
 		"program": spec.Program,
 		"temporal_carrier": spec.TemporalCarrier,
