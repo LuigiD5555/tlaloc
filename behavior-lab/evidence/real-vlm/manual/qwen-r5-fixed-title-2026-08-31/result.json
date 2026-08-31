@@ -1,0 +1,30 @@
+{
+  "schema": "tlaloc.real-vlm.manual-result.r1",
+  "specimen_id": "rule-role-binding-unseen-rules-r1-fixed-title",
+  "model_id": "qwen-unspecified",
+  "condition": "NATIVE_PNG_ONLY_MANUAL_R5_FIXED_TITLE",
+  "evidence_origin": "user_supplied_raw_response",
+  "real_evidence": true,
+  "overall_pass": false,
+  "failure_code": "TEMPORAL_EXECUTION_INCOMPLETE",
+  "failure_frontier": "EXECUTION_POLICY_COMPLIANCE",
+  "checks": {
+    "TITLE_RECOVERY": "PASS",
+    "CELL_IDENTITY": "PASS",
+    "WHEN_SOURCE_BINDING": "PASS",
+    "TARGET_BINDING": "PASS",
+    "REQUIRE_FROM_STATE_BINDING": "PASS",
+    "SET_TO_STATE_BINDING": "PASS",
+    "SAME_PRE_STEP_SEMANTICS_RECOGNITION": "PASS",
+    "EXECUTE_TO_STABLE": "FAIL",
+    "FINAL_STABLE_STATE": "NOT_ATTEMPTED",
+    "UNAUTHORIZED_TRANSITIONS": "NOT_OBSERVED"
+  },
+  "notes": [
+    "The corrected title was recovered as ORIGAMI TEMPORAL CARRIER R0.",
+    "All four unseen R5 rules were recovered with correct WHEN, TARGET, REQUIRE and SET bindings.",
+    "The response explicitly recognized the instruction REPEAT UNTIL UNCHANGED > REPORT STABLE, but did not execute the temporal program.",
+    "No final stable state was reported, so this is classified as execution incompleteness rather than an incorrect final-state computation.",
+    "The previous IGAMI reading is attributed to the renderer overlap bug and is not counted as a model semantic failure in this fixed-title run."
+  ]
+}
