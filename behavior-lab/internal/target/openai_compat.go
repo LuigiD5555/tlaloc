@@ -19,13 +19,16 @@ type OpenAICompat struct {
 	Temperature    float64
 	Compatibility  MultimodalCompatibilityStrategy
 	RequestTimeout time.Duration
+	MaxTokens      int
 	Observer       ModelTraceObserver
+	Guard          GenerationGuard
 }
 
 type chatRequest struct {
 	Model       string              `json:"model"`
 	Messages    []map[string]string `json:"messages"`
 	Temperature float64             `json:"temperature"`
+	MaxTokens   int                 `json:"max_tokens,omitempty"`
 }
 
 type chatResponse struct {
@@ -66,7 +69,7 @@ func (c OpenAICompat) Complete(ctx context.Context, systemPrompt, user string) (
 		return "", fmt.Errorf("model is required")
 	}
 	client := c.httpClient(ctx)
-	body, _ := json.Marshal(chatRequest{Model: c.Model, Messages: []map[string]string{{"role": "system", "content": systemPrompt}, {"role": "user", "content": user}}, Temperature: c.Temperature})
+	body, _ := json.Marshal(chatRequest{Model: c.Model, Messages: []map[string]string{{"role": "system", "content": systemPrompt}, {"role": "user", "content": user}}, Temperature: c.Temperature, MaxTokens: c.MaxTokens})
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, base+"/chat/completions", bytes.NewReader(body))
 	if err != nil {
 		return "", err
