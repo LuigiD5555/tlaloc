@@ -1,6 +1,7 @@
 package target
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"regexp"
@@ -15,6 +16,25 @@ const (
 type GenerationGuard interface {
 	Name() string
 	Check(accumulated string) error
+}
+
+type GenerationPolicy struct {
+	MaxTokens int
+	Guard     GenerationGuard
+}
+
+type generationPolicyContextKey struct{}
+
+func WithGenerationPolicy(ctx context.Context, policy GenerationPolicy) context.Context {
+	return context.WithValue(ctx, generationPolicyContextKey{}, policy)
+}
+
+func GenerationPolicyFromContext(ctx context.Context) GenerationPolicy {
+	if ctx == nil {
+		return GenerationPolicy{}
+	}
+	policy, _ := ctx.Value(generationPolicyContextKey{}).(GenerationPolicy)
+	return policy
 }
 
 type GenerationDegenerationError struct {
