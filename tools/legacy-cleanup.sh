@@ -16,6 +16,7 @@ GO_BIN="${GOBIN:-${GOPATH:-$HOME_DIR/go}/bin}"
 CARGO_BIN="$HOME_DIR/.cargo/bin"
 USER_BIN="$HOME_DIR/bin"
 LOCAL_LIB="$HOME_DIR/.local/lib"
+ORIGAMI_INSTALL_STATE="$DATA_HOME/origami/install-state-v1/manifest.tsv"
 
 usage() {
   cat <<'USAGE'
@@ -53,6 +54,12 @@ if [[ "$ACTION" == remove && "$YES" -ne 1 ]]; then
   exit 2
 fi
 
+origami_manifest_tracks() {
+  local p="$1"
+  [[ -f "$ORIGAMI_INSTALL_STATE" ]] || return 1
+  awk -F '\t' -v want="$p" '$1=="BIN" && $3==want {found=1} END{exit found?0:1}' "$ORIGAMI_INSTALL_STATE"
+}
+
 is_protected() {
   local p="$1" r=""
   case "$p" in
@@ -62,6 +69,12 @@ is_protected() {
   case "$p" in
     "$DATA_HOME/tlaloc"|"$DATA_HOME/tlaloc/"*) return 0 ;;
   esac
+  if [[ -f "$ORIGAMI_INSTALL_STATE" ]]; then
+    case "$p" in
+      "$DATA_HOME/origami"|"$DATA_HOME/origami/"*) return 0 ;;
+    esac
+    origami_manifest_tracks "$p" && return 0
+  fi
   if [[ -e "$p" || -L "$p" ]]; then
     r="$(readlink -f "$p" 2>/dev/null || true)"
     case "$r" in
@@ -91,7 +104,7 @@ for base in "$DATA_HOME" "$CONFIG_HOME" "$CACHE_HOME" "$STATE_HOME" "$LOCAL_LIB"
   add_candidate "$base/origami-hyperfold" HIGH "legacy Origami HyperFold root"
   add_candidate "$base/origami_hyperfold" HIGH "legacy Origami HyperFold root"
   add_candidate "$base/vcl" MEDIUM "legacy VCL root; generic name requires aggressive mode"
-  if [[ "$base" != "$DATA_HOME" || ! ( -f "$DATA_HOME/origami/.origami-managed-v1" || -f "$DATA_HOME/origami/.tlaloc-managed-v1" ) ]]; then
+  if [[ "$base" != "$DATA_HOME" || ! ( -f "$DATA_HOME/origami/.origami-managed-v1" || -f "$DATA_HOME/origami/.tlaloc-managed-v1" || -f "$ORIGAMI_INSTALL_STATE" ) ]]; then
     add_candidate "$base/origami" HIGH "legacy Origami root"
   fi
 done
@@ -147,7 +160,9 @@ fi
 printf 'Legacy Origami/OHF/VCL inventory\n'
 printf '  action: %s\n' "$ACTION"
 printf '  BPFW/PipeCraft: PROTECTED\n'
-printf '  .me/origami workspaces: PROTECTED\n\n'
+printf '  .me/origami workspaces: PROTECTED\n'
+if [[ -f "$ORIGAMI_INSTALL_STATE" ]]; then printf '  standalone Origami install: PROTECTED\n'; fi
+printf '\n'
 
 if ((${#CANDIDATES[@]} == 0)); then
   echo "No legacy system-install artifacts detected in known locations."
