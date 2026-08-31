@@ -1,18 +1,18 @@
 package temporalbench
 
 const (
-	CampaignSchema  = "tlaloc.temporal-native-benchmark.r0.campaign"
-	ResultSchema    = "tlaloc.temporal-native-benchmark.r0.result"
+	CampaignSchema   = "tlaloc.temporal-native-benchmark.r0.campaign"
+	ResultSchema     = "tlaloc.temporal-native-benchmark.r0.result"
 	DebugTraceSchema = "tlaloc.origami-debug-trace.r0"
 )
 
 type Specimen struct {
-	ID         string `json:"id"`
-	SHA256     string `json:"sha256"`
-	Variant    string `json:"variant"`
-	PNGBytes   int    `json:"png_bytes,omitempty"`
-	Width      int    `json:"width,omitempty"`
-	Height     int    `json:"height,omitempty"`
+	ID       string `json:"id"`
+	SHA256   string `json:"sha256"`
+	Variant  string `json:"variant"`
+	PNGBytes int    `json:"png_bytes,omitempty"`
+	Width    int    `json:"width,omitempty"`
+	Height   int    `json:"height,omitempty"`
 }
 
 type DebugTrace struct {
@@ -36,13 +36,14 @@ type Response struct {
 }
 
 type Trial struct {
-	ID             string     `json:"id"`
-	ModelID        string     `json:"model_id"`
-	Provider       string     `json:"provider,omitempty"`
-	Condition      string     `json:"condition"`
-	DiagnosticMode bool       `json:"diagnostic_mode,omitempty"`
-	Specimen       Specimen   `json:"specimen"`
-	Responses      []Response `json:"responses"`
+	ID                    string     `json:"id"`
+	ModelID               string     `json:"model_id"`
+	Provider              string     `json:"provider,omitempty"`
+	Condition             string     `json:"condition"`
+	DiagnosticMode        bool       `json:"diagnostic_mode,omitempty"`
+	DiagnosticQuestionIDs []string   `json:"diagnostic_question_ids,omitempty"`
+	Specimen              Specimen   `json:"specimen"`
+	Responses             []Response `json:"responses"`
 }
 
 type Campaign struct {
@@ -76,23 +77,23 @@ type DebugResult struct {
 }
 
 type DebugSummary struct {
-	DiagnosticMode              bool    `json:"diagnostic_mode"`
-	TraceCoverage               float64 `json:"trace_coverage"`
-	TraceConsistencyScore       float64 `json:"trace_consistency_score"`
-	DominantFailureFrontier     string  `json:"dominant_failure_frontier,omitempty"`
-	EarliestFailureFrontier     string  `json:"earliest_failure_frontier,omitempty"`
-	FurthestCompletedStage      string  `json:"furthest_completed_stage,omitempty"`
-	MostCommonFailureCode       string  `json:"most_common_failure_code,omitempty"`
-	MissingTraceCount           int     `json:"missing_trace_count"`
-	InvalidTraceCount           int     `json:"invalid_trace_count"`
-	AnswerTraceMismatchCount    int     `json:"answer_trace_mismatch_count"`
+	DiagnosticMode           bool    `json:"diagnostic_mode"`
+	TraceCoverage            float64 `json:"trace_coverage"`
+	TraceConsistencyScore    float64 `json:"trace_consistency_score"`
+	DominantFailureFrontier  string  `json:"dominant_failure_frontier,omitempty"`
+	EarliestFailureFrontier  string  `json:"earliest_failure_frontier,omitempty"`
+	FurthestCompletedStage   string  `json:"furthest_completed_stage,omitempty"`
+	MostCommonFailureCode    string  `json:"most_common_failure_code,omitempty"`
+	MissingTraceCount        int     `json:"missing_trace_count"`
+	InvalidTraceCount        int     `json:"invalid_trace_count"`
+	AnswerTraceMismatchCount int     `json:"answer_trace_mismatch_count"`
 }
 
 type LayerScore struct {
-	Layer   string  `json:"layer"`
-	Passed  int     `json:"passed"`
-	Total   int     `json:"total"`
-	Score   float64 `json:"score"`
+	Layer  string  `json:"layer"`
+	Passed int     `json:"passed"`
+	Total  int     `json:"total"`
+	Score  float64 `json:"score"`
 }
 
 type TrialResult struct {
