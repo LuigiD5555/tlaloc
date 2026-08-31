@@ -24,6 +24,7 @@ type perceptionRequest struct {
 	Model       string           `json:"model"`
 	Messages    []map[string]any `json:"messages"`
 	Temperature float64          `json:"temperature"`
+	MaxTokens   int              `json:"max_tokens,omitempty"`
 	Stream      bool             `json:"stream,omitempty"`
 }
 
@@ -59,9 +60,9 @@ type PerceptionResult struct {
 
 // CompletePerception sends only the declared system prompt, user question and
 // one visual carrier. It intentionally exposes no private evaluator manifest,
-// expected probe bits, canonical decode or registry data. When an Observer is
-// attached, the request uses OpenAI-compatible SSE streaming; deltas are
-// observed live and accumulated into the same final response used by scoring.
+// expected probe bits, canonical decode or registry data. When an Observer or
+// GenerationGuard is attached, the request uses OpenAI-compatible SSE
+// streaming; deltas are accumulated into the same response used by scoring.
 func (c OpenAICompat) CompletePerception(ctx context.Context, input PerceptionInput) (PerceptionResult, error) {
 	if c.Model == "" {
 		return PerceptionResult{}, fmt.Errorf("model is required")
@@ -90,8 +91,8 @@ func (c OpenAICompat) CompletePerception(ctx context.Context, input PerceptionIn
 			{"type": "image_url", "image_url": imagePart},
 		}},
 	}
-	stream := c.Observer != nil
-	body, err := json.Marshal(perceptionRequest{Model: c.Model, Messages: messages, Temperature: c.Temperature, Stream: stream})
+	stream := c.Observer != nil || c.Guard != nil
+	body, err := json.Marshal(perceptionRequest{Model: c.Model, Messages: messages, Temperature: c.Temperature, MaxTokens: c.MaxTokens, Stream: stream})
 	if err != nil {
 		return PerceptionResult{}, err
 	}
@@ -133,8 +134,6 @@ func (c OpenAICompat) CompletePerception(ctx context.Context, input PerceptionIn
 	}
 
 	// Some compatible servers may ignore stream=true and return ordinary JSON.
-	// Keep that transport usable and still expose the completed text to the
-	// observer as one delta.
 	raw, err := io.ReadAll(io.LimitReader(resp.Body, 8<<20))
 	if err != nil {
 		c.observe(ModelTraceEvent{Type: TraceRequestError, Model: c.Model, Elapsed: time.Since(start), Err: err})
@@ -159,6 +158,9 @@ func (c OpenAICompat) CompletePerception(ctx context.Context, input PerceptionIn
 	if c.Observer != nil {
 		c.observe(ModelTraceEvent{Type: TraceFirstDelta, Model: c.Model, Elapsed: time.Since(start)})
 		c.observe(ModelTraceEvent{Type: TraceDelta, Model: c.Model, Delta: content})
+	}
+	if err := c.checkGeneration(content, start); err != nil {
+		return PerceptionResult{}, err
 	}
 	c.observe(ModelTraceEvent{Type: TraceRequestDone, Model: c.Model, Elapsed: time.Since(start), Characters: len(content)})
 	return PerceptionResult{Content: strings.TrimSpace(content), PromptTokensReported: out.Usage.PromptTokens, CompletionTokensReported: out.Usage.CompletionTokens}, nil
@@ -202,6 +204,9 @@ func (c OpenAICompat) readPerceptionStream(r io.Reader, start time.Time) (Percep
 			}
 			content.WriteString(delta)
 			c.observe(ModelTraceEvent{Type: TraceDelta, Model: c.Model, Delta: delta})
+			if err := c.checkGeneration(content.String(), start); err != nil {
+				return PerceptionResult{}, err
+			}
 		}
 	}
 	if err := scanner.Err(); err != nil {
@@ -213,6 +218,20 @@ func (c OpenAICompat) readPerceptionStream(r io.Reader, start time.Time) (Percep
 	}
 	c.observe(ModelTraceEvent{Type: TraceRequestDone, Model: c.Model, Elapsed: time.Since(start), Characters: len(raw)})
 	return PerceptionResult{Content: strings.TrimSpace(raw), PromptTokensReported: promptTokens, CompletionTokensReported: completionTokens}, nil
+}
+
+func (c OpenAICompat) checkGeneration(content string, start time.Time) error {
+	if c.Guard == nil {
+		return nil
+	}
+	if err := c.Guard.Check(content); err != nil {
+		if degeneration, ok := AsGenerationDegeneration(err); ok && degeneration.Partial == "" {
+			degeneration.Partial = content
+		}
+		c.observe(ModelTraceEvent{Type: TraceGuardTriggered, Model: c.Model, Elapsed: time.Since(start), Characters: len(content), Err: err})
+		return err
+	}
+	return nil
 }
 
 func (c OpenAICompat) observe(event ModelTraceEvent) {
