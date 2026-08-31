@@ -49,7 +49,7 @@ Old failures are never rewritten after a correction succeeds.
 
 ## Current observations
 
-### 2026-08-30 — DeepSeek / signal-chain-r0
+### 2026-08-30 — DeepSeek / signal-chain-r0 baseline
 
 Path:
 
@@ -87,3 +87,57 @@ TEMPORAL_STRUCTURE -> VISIBLE_RULE_MICROGRAMMAR_R1
 ```
 
 See `EXPERIMENT.md`, `raw-response.md`, `campaign.json`, `result.json` and `change-proposal.json` for the complete evidence chain.
+
+### 2026-08-30 — DeepSeek / signal-chain-r1 retest
+
+Path:
+
+```text
+deepseek-signal-chain-r1-2026-08-30/
+```
+
+Observed outcome:
+
+```text
+BOOT/ROSETTA perception: preserved/improved
+initial-state perception: preserved
+causal-rule recovery: PASS
+same-pre-step synchronous semantics: PASS
+stable final-state execution: failed
+checkpoint times t0,t2,t4: not recovered
+exact-honesty: preserved; FALSE_EXACT=0
+```
+
+Manual diagnostic movement:
+
+```text
+overall:    0.68  -> 0.8333333333
+T_TEMPORAL: 0.30  -> 0.725
+```
+
+Resolved frontier for this single manual trial:
+
+```text
+TEMPORAL_RULE_AMBIGUOUS
+```
+
+New dominant frontier:
+
+```text
+TEMPORAL_EXECUTION_INCOMPLETE
+```
+
+Suggested next target:
+
+```text
+TEMPORAL_EXECUTION_DIRECTIVE
+```
+
+Proposed next candidate:
+
+```text
+t2-execute-to-stable-r1
+PROMPT -> EXECUTE_VISIBLE_RULES_TO_STABLE_R1
+```
+
+The R1 result is a successful learning step, not promotion evidence. See `OUTCOME.md`, `raw-response.md`, `campaign.json`, `result.json` and `next-change-proposal.json`.

@@ -1,0 +1,14 @@
+{
+  "schema": "tlaloc.origami-visual-search.r0",
+  "id": "t2-execute-to-stable-r1",
+  "base_profile_id": "origami.temporal-carrier.r0.profile-1",
+  "mutations": [
+    {
+      "kind": "PROMPT",
+      "target": "ROSETTA.TEMPORAL_EXECUTION_DIRECTIVE",
+      "value": "EXECUTE_VISIBLE_RULES_TO_STABLE_R1",
+      "rationale": "The DeepSeek R1 retest recovered all four causal rules and same-pre-step synchronous semantics, but did not execute those rules to the stable final state. Add a compact internal directive to simulate from the declared initial state until no state changes, without changing the visible rule grammar or exact TemporalProgram.",
+      "experimental": true
+    }
+  ]
+}
