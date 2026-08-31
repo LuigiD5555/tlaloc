@@ -1,4 +1,4 @@
-# Tlaloc 6.0.0-alpha.18
+# Tlaloc 6.0.0-alpha.19
 
 **TLALOC — Transformative Latent Adaptive Logic Orchestration Core**
 
@@ -120,7 +120,8 @@ ADAPTIVE SEARCH
 persistent real failures -> mutation priorities -> candidate queue -> real evidence
 
 CLOSED EXPERIMENTAL LOOP
-baseline PNG -> clean trials -> diagnostics -> memory -> candidate trials -> outcomes -> next plan
+current experimental incumbent PNG -> clean trials -> diagnostics -> memory
+  -> adaptive candidate trials -> evidence-gated incumbent advance -> next active frontier
 ```
 
 These tracks are development machinery. They do not make Tlaloc an Origami runtime dependency.
@@ -249,26 +250,32 @@ MEMORY PRIORITY != PROMOTION SCORE
 
 Memory decides what to test first. Evidence decides what worked.
 
-## Closed Experimental Loop R0 — alpha.18
+## Closed Experimental Loop R0 — alpha.18 / alpha.19
 
-Alpha.18 operationalizes the complete experiment cycle through one runner:
+Alpha.18 introduced the config-driven runner that could execute a complete baseline/candidate experiment cycle against OpenAI-compatible multimodal endpoints. Alpha.19 closes the remaining inter-generation gap by making the best non-regressing improvement the **experimental incumbent** for the next generation.
+
+The current loop is:
 
 ```text
-baseline Origami PNG
+current experimental incumbent Origami PNG
   -> clean Native / R4 trials
   -> deterministic benchmark
   -> retry only failed questions in diagnostic mode
   -> persist real evidence
-  -> calculate adaptive failure target
-  -> prioritize candidate PNG bank
+  -> calculate the incumbent's active failure frontier
+  -> prioritize eligible candidate PNGs
   -> record CHANGE_ATTEMPT
   -> run selected candidates with the same models/questions
   -> targeted diagnostic retries where needed
   -> persist candidate evidence
-  -> link baseline/candidate OUTCOME
-  -> recalculate next Adaptive Search plan
-  -> repeat within generation budget
+  -> link incumbent/candidate OUTCOME
+  -> require per-question non-regression + exactness discipline + minimum improvement
+  -> best passing candidate becomes next experimental incumbent
+  -> recalculate the newly exposed failure frontier
+  -> repeat
 ```
+
+The incumbent is laboratory state only. It is not a canonical Origami profile and it never updates the Origami repository.
 
 ### CLI
 
@@ -278,7 +285,7 @@ tlaloc-closed-loop validate -config closed-loop.json
 tlaloc-closed-loop run -config closed-loop.json
 ```
 
-`validate` checks the local configuration, Master Prompt and PNG inputs without running inference. A missing candidate PNG is allowed only when the candidate declares an explicit external `build_command`.
+`validate` checks the local configuration, Master Prompt, candidate-parent DAG and PNG inputs without running inference. A missing candidate PNG is allowed only when the candidate declares an explicit external `build_command`.
 
 `run` executes the configured experiment generations.
 
@@ -318,17 +325,49 @@ It does not expose ground truth, memory, decoder internals, candidate metadata o
 
 A timeout, HTTP error or malformed compatible API response is an execution/transport error, not evidence that the model failed BOOT, ROSETTA, T2 or temporal reasoning.
 
-If no clean baseline trial completes, the generation stops with:
+If no clean incumbent trial completes, the run stops with:
 
 ```text
-BASELINE_EXECUTION_UNAVAILABLE
+INCUMBENT_EXECUTION_UNAVAILABLE
 ```
 
-and does not compare candidates against a fabricated zero baseline.
+The incumbent is not advanced and transport failures are not inserted into semantic learning memory.
 
 A diagnostic retry is admitted into benchmark evidence only when the complete targeted retry succeeds at the transport layer.
 
-### Candidate PNG bank
+### Evidence-gated incumbent advancement
+
+A candidate can become the next experimental incumbent only when:
+
+```text
+candidate clean trial count >= incumbent clean trial count
+no benchmark question score decreases
+missing-question count does not increase
+invented exact claims do not increase
+selected outcome metric improves by >= min_incumbent_improvement
+```
+
+The default minimum improvement is `0.01`. If multiple candidates pass, the highest selected outcome metric wins; candidate ID is the deterministic tie-breaker.
+
+### Active failure frontier
+
+Old observations remain in persistent memory as regression history, but they no longer permanently vote as the current failure frontier. Each generation derives active failures from the **current incumbent run**. Historical `CHANGE_ATTEMPT` and `OUTCOME_LINK` events remain available only as bounded search signal.
+
+This allows the loop to move naturally:
+
+```text
+T2_NOT_FOUND
+ -> layout candidate fixes T2
+ -> layout candidate becomes experimental incumbent
+ -> next run exposes TEMPORAL_RULE_AMBIGUOUS
+ -> adaptive search moves to temporal grammar
+```
+
+### Candidate DAG and build hooks
+
+A candidate may optionally declare `parent_specimen_id`. A parent-bound candidate becomes eligible only when that parent is the current experimental incumbent. Candidates without a parent remain general alternatives.
+
+The parent graph is validated and rejects cycles or unknown parents.
 
 Tlaloc accepts:
 
@@ -341,9 +380,13 @@ The hook receives:
 TLALOC_CANDIDATE_ID
 TLALOC_OUTPUT_PNG
 TLALOC_MUTATIONS_JSON
+TLALOC_PARENT_SPECIMEN_ID
+TLALOC_PARENT_PNG
 ```
 
 Invoking a renderer does not make Tlaloc the canonical Origami pixel authority.
+
+A candidate tested in an older run is not permanently banned. Persistent history can alter its priority; duplicate execution is suppressed only inside the current closed-loop run.
 
 ### Run output
 
@@ -356,7 +399,7 @@ generation-001/
   plan-before.json
   candidate-queue.json
   plan-after.json
-  <baseline>/
+  <incumbent>/
     campaign.json
     result.json
   <candidate>/
@@ -364,17 +407,20 @@ generation-001/
     result.json
 ```
 
-Campaign files preserve model responses verbatim. Result files contain deterministic scoring and diagnostic summaries.
+Campaign files preserve model responses verbatim. Result files contain deterministic scoring and diagnostic summaries. The top-level report records the incumbent before/after each generation and why advancement did or did not occur.
 
 ### Stopping
 
 A run stops when:
 
 ```text
-configured generation budget is exhausted
-OR candidate bank is exhausted
-OR baseline execution is unavailable
+current incumbent execution is unavailable
+OR current incumbent has no active failed benchmark questions
+OR no eligible candidate remains for the current incumbent
+OR configured generation budget is exhausted
 ```
+
+`continue_exploration_when_stable=true` can explicitly continue experimentation after a failure-free incumbent, but still grants no canonical authority.
 
 Stopping never means promotion.
 
@@ -425,6 +471,7 @@ DIAGNOSTIC RETRY != SELF-BOOTSTRAP EVIDENCE
 TRANSPORT FAILURE != MODEL SEMANTIC FAILURE
 MEMORY != CANONICAL ORIGAMI TRUTH
 ADAPTIVE PRIORITY != PROMOTION SCORE
+EXPERIMENTAL INCUMBENT != CANONICAL ORIGAMI PROFILE
 TLALOC RECOMMENDATION != CANONICAL ORIGAMI PROFILE
 COMPLETED CLOSED LOOP != AUTOMATIC PROMOTION
 ```
@@ -500,6 +547,7 @@ MEMORY != AUTOMATIC PROMOTION
 MEMORY GUIDES EXPERIMENT BUDGET, NOT PROMOTION SCORE
 REAL MODEL FAILURES DRIVE ADAPTIVE FOCUS
 EXPLORATION FLOOR > 0
+EXPERIMENTAL INCUMBENT != CANONICAL ORIGAMI PROFILE
 TLALOC CANDIDATE != CANONICAL ORIGAMI PROFILE
 CLOSED LOOP != SELF-MODIFYING CANONICAL ORIGAMI
 ORIGAMI IS A TARGET, NOT TLALOC'S IDENTITY
@@ -507,4 +555,4 @@ ORIGAMI IS A TARGET, NOT TLALOC'S IDENTITY
 
 ## Version
 
-`6.0.0-alpha.18`
+`6.0.0-alpha.19`
