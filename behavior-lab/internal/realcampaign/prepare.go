@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"tlaloc.local/behaviorlab/internal/closedloop"
+	"tlaloc.local/behaviorlab/internal/target"
 )
 
 func Prepare(ctx context.Context, raw Spec) (Prepared, error) {
@@ -143,6 +144,9 @@ func Run(ctx context.Context, raw Spec) (Prepared, closedloop.Report, error) {
 	}
 	if err := closedloop.ValidateAutoReady(ctx, cfg); err != nil {
 		return prepared, closedloop.Report{}, err
+	}
+	if prepared.Spec.TraceStream {
+		ctx = target.WithModelTraceObserver(ctx, target.NewWriterTraceObserver(os.Stderr))
 	}
 	report, err := closedloop.RunAuto(ctx, cfg)
 	if err != nil {
