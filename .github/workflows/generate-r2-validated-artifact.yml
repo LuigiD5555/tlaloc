@@ -1,0 +1,199 @@
+name: generate-r2-validated-artifact
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/generate-r2-validated-artifact.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Tlaloc
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: tlaloc
+
+      - name: Checkout Origami main
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: LuigiD5555/origami
+          ref: main
+          path: origami
+
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: '1.23.12'
+          cache: false
+
+      - name: Build deterministic tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/bin"
+          (
+            cd origami
+            CGO_ENABLED=0 go build -trimpath -o "$GITHUB_WORKSPACE/bin/origami-temporal-carrier" ./cmd/origami-temporal-carrier
+            CGO_ENABLED=0 go build -trimpath -o "$GITHUB_WORKSPACE/bin/origami-candidate-build" ./cmd/origami-candidate-build
+          )
+          (
+            cd tlaloc/behavior-lab
+            CGO_ENABLED=0 go build -trimpath -o "$GITHUB_WORKSPACE/bin/tlaloc-learn" ./cmd/tlaloc-learn
+          )
+
+      - name: Build canonical baseline and R1 grammar candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p work
+          "$GITHUB_WORKSPACE/bin/origami-temporal-carrier" \
+            -mode build \
+            -in origami/experiments/temporal-automaton-r0/signal-chain.json \
+            -out work/baseline.png > work/baseline-meta.json
+
+          cat > work/r1-spec.json <<'JSON'
+          {
+            "schema": "origami.experimental-candidate.r0",
+            "id": "t2-temporal-grammar-visible-r1",
+            "mutations": [
+              {
+                "kind": "TEMPORAL_STRUCTURE",
+                "target": "T2_SEMANTIC_TEMPORAL_SUPERGRAPH",
+                "value": "VISIBLE_RULE_MICROGRAMMAR_R1",
+                "experimental": true
+              }
+            ]
+          }
+          JSON
+
+          "$GITHUB_WORKSPACE/bin/origami-candidate-build" build \
+            -parent work/baseline.png \
+            -out work/r1.png \
+            -spec work/r1-spec.json \
+            -interop-report work/r1-build-manifest.json \
+            > work/r1-build-report.json
+
+          cat > work/inherited-mutations.json <<'JSON'
+          [
+            {
+              "kind": "TEMPORAL_STRUCTURE",
+              "target": "T2_SEMANTIC_TEMPORAL_SUPERGRAPH",
+              "value": "VISIBLE_RULE_MICROGRAMMAR_R1",
+              "experimental": true
+            }
+          ]
+          JSON
+
+          "$GITHUB_WORKSPACE/bin/origami-candidate-build" semantic-manifest \
+            -in work/r1.png \
+            -mutations-json "$(cat work/inherited-mutations.json)" \
+            -out work/r1-semantic-manifest.json
+
+      - name: Prepare R2 through Tlaloc semantic parity gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          PROGRAM_SHA="$(python3 - <<'PY'
+          import json
+          print(json.load(open('work/r1-semantic-manifest.json'))['program_sha256'])
+          PY
+          )"
+
+          cat > work/r2-candidate-manifest.json <<JSON
+          {
+            "schema": "tlaloc.candidate-manifest.r1",
+            "id": "execute-to-stable-text-r1",
+            "parent_id": "t2-temporal-grammar-visible-r1",
+            "program_sha256": "$PROGRAM_SHA",
+            "mutations": [
+              {
+                "kind": "PROMPT",
+                "target": "EXECUTION_POLICY",
+                "value": "EXECUTE_VISIBLE_RULES_TO_STABLE_R1"
+              }
+            ],
+            "changed_modules": ["EXECUTION_POLICY"],
+            "preserved_modules": ["TEMPORAL_GRAMMAR"],
+            "forbidden_changes": ["PROGRAM_SEMANTICS", "PAYLOAD", "UNRELATED_PROMPT_MODULES"],
+            "expected_semantic_changes": [
+              {
+                "key": "EXECUTION_POLICY",
+                "value": "EXECUTE_VISIBLE_RULES_TO_STABLE_R1"
+              }
+            ],
+            "expected_effect": "receiver executes visible rules until no state changes"
+          }
+          JSON
+
+          "$GITHUB_WORKSPACE/bin/tlaloc-learn" prepare-candidate \
+            -candidate work/r2-candidate-manifest.json \
+            -parent work/r1.png \
+            -builder "$GITHUB_WORKSPACE/bin/origami-candidate-build" \
+            -inherited-mutations work/inherited-mutations.json \
+            -out-dir work/r2 > work/r2-preparation-stdout.json
+
+          python3 - <<'PY'
+          import json, pathlib
+          report=json.load(open('work/r2/preparation-report.json'))
+          assert report['eligible_for_vlm'] is True, report
+          assert report['parity']['pass'] is True, report
+          build=json.load(open('work/r2/build-manifest.json'))
+          expected=json.load(open('work/r2/expected-semantics.json'))
+          facts={x['key']:x['value'] for x in build['visible_semantics']['facts']}
+          efacts={x['key']:x['value'] for x in expected['facts']}
+          assert build['program_sha256']==expected['program_sha256']
+          assert facts['TEMPORAL_GRAMMAR']=='VISIBLE_RULE_MICROGRAMMAR_R1'
+          assert efacts['TEMPORAL_GRAMMAR']=='VISIBLE_RULE_MICROGRAMMAR_R1'
+          assert facts['EXECUTION_POLICY']=='EXECUTE_VISIBLE_RULES_TO_STABLE_R1'
+          assert efacts['EXECUTION_POLICY']=='NONE'
+          print('R2_SEMANTIC_PARITY=PASS')
+          PY
+
+      - name: Freeze hashes and evidence summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum work/baseline.png work/r1.png work/r2/execute-to-stable-text-r1.png > work/SHA256SUMS.txt
+          python3 - <<'PY'
+          import json, hashlib, pathlib
+          p=pathlib.Path('work')
+          prep=json.load(open(p/'r2/preparation-report.json'))
+          build=json.load(open(p/'r2/build-manifest.json'))
+          summary={
+            'schema':'tlaloc.r2-manual-vlm-artifact.r1',
+            'candidate_id':'execute-to-stable-text-r1',
+            'eligible_for_vlm':prep['eligible_for_vlm'],
+            'parity_pass':prep['parity']['pass'],
+            'artifact_sha256':build['artifact_sha256'],
+            'artifact_bytes':build['artifact_bytes'],
+            'program_sha256':build['program_sha256'],
+            'inherited_semantics':['TEMPORAL_GRAMMAR=VISIBLE_RULE_MICROGRAMMAR_R1'],
+            'changed_semantics':['EXECUTION_POLICY=EXECUTE_VISIBLE_RULES_TO_STABLE_R1'],
+            'promotion_claim':False,
+            'real_vlm_evidence':False
+          }
+          json.dump(summary,open(p/'R2_EVIDENCE_SUMMARY.json','w'),indent=2)
+          open(p/'R2_EVIDENCE_SUMMARY.json','a').write('\n')
+          PY
+
+      - name: Upload validated R2 artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: origami-r2-execute-to-stable-validated
+          path: |
+            work/r2/execute-to-stable-text-r1.png
+            work/r2/preparation-report.json
+            work/r2/build-manifest.json
+            work/r2/expected-semantics.json
+            work/r2-candidate-manifest.json
+            work/r1-semantic-manifest.json
+            work/SHA256SUMS.txt
+            work/R2_EVIDENCE_SUMMARY.json
+          if-no-files-found: error
+          retention-days: 30
