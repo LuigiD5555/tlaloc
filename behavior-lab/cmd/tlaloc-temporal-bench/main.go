@@ -13,7 +13,11 @@ import (
 func main() {
 	in := flag.String("in", "-", "benchmark campaign JSON or - for stdin")
 	out := flag.String("out", "-", "benchmark result JSON or - for stdout")
+	printDebug := flag.Bool("print-debug-instruction", false, "print the test-only observable diagnostic suffix and exit")
+	printExample := flag.Bool("print-debug-example", false, "print one valid ORIGAMI_DEBUG_R0 footer example and exit")
 	flag.Parse()
+	if *printDebug { fmt.Println(temporalbench.DiagnosticInstruction()); return }
+	if *printExample { fmt.Println(temporalbench.FormatDebugExample()); return }
 	body, err := read(*in); die(err)
 	var campaign temporalbench.Campaign
 	dec := json.NewDecoder(bytes.NewReader(body)); dec.DisallowUnknownFields(); die(dec.Decode(&campaign))
