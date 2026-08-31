@@ -47,6 +47,8 @@ func flags(name string, args []string) (realcampaign.Spec, *flag.FlagSet) {
 	fs.StringVar(&s.Compatibility, "compatibility", target.CompatibilityLMStudio, "multimodal payload strategy: lm-studio|openai|minimal")
 	fs.StringVar(&s.TransportCondition, "transport-condition", "", "experimental transport identity: DIRECT_IMAGE_API|PLATFORM_MEDIATED|custom")
 	fs.BoolVar(&s.TraceStream, "trace-stream", false, "stream live model output to stderr without changing benchmark scoring")
+	fs.IntVar(&s.MaxOutputTokens, "max-output-tokens", 512, "maximum generated tokens per model answer")
+	fs.StringVar(&s.GenerationGuard, "generation-guard", target.GenerationGuardRepetitionR0, "generation safety policy: repetition-r0|none")
 	fs.StringVar(&s.InteropMemoryRoot, "interop-memory", "", "persistent per-model working-configuration registry; defaults to XDG/local state")
 	fs.StringVar(&s.APIKeyEnv, "api-key-env", "", "environment variable containing API key")
 	fs.StringVar(&s.Program, "program", "", "canonical Origami signal-chain TemporalProgram JSON")
@@ -120,6 +122,8 @@ func example() {
 		Endpoint:           "http://127.0.0.1:1234/v1",
 		Compatibility:      target.CompatibilityLMStudio,
 		TransportCondition: realcampaign.TransportDirectImageAPI,
+		MaxOutputTokens:    512,
+		GenerationGuard:    target.GenerationGuardRepetitionR0,
 		Program:            "/path/to/origami/experiments/temporal-automaton-r0/signal-chain.json",
 		TemporalCarrier:    "origami-temporal-carrier",
 		CandidateBuilder:   "origami-candidate-build",
