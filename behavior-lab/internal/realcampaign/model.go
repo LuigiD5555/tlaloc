@@ -14,6 +14,7 @@ type Spec struct {
 	Endpoint           string   `json:"endpoint"`
 	Model              string   `json:"model,omitempty"`
 	Compatibility      string   `json:"compatibility_strategy,omitempty"`
+	TransportCondition string   `json:"transport_condition,omitempty"`
 	APIKeyEnv          string   `json:"api_key_env,omitempty"`
 	Program            string   `json:"program"`
 	TemporalCarrier    string   `json:"temporal_carrier"`
@@ -42,6 +43,7 @@ type DoctorResult struct {
 	Schema                  string              `json:"schema"`
 	Endpoint                string              `json:"endpoint"`
 	CompatibilityStrategy   string              `json:"compatibility_strategy"`
+	ModelInterop            ModelInteropProfile `json:"model_interop"`
 	DiscoveredModels        []string            `json:"discovered_models"`
 	SelectedModel           string              `json:"selected_model"`
 	VisionTransport         bool                `json:"vision_transport"`
@@ -64,6 +66,7 @@ type Manifest struct {
 	Endpoint                string              `json:"endpoint"`
 	CompatibilityStrategy   string              `json:"compatibility_strategy"`
 	ModelID                 string              `json:"model_id"`
+	ModelInterop            ModelInteropProfile `json:"model_interop"`
 	TlalocVersion           string              `json:"tlaloc_version"`
 	OrigamiExpectedVersion  string              `json:"origami_expected_version"`
 	ProgramPath             string              `json:"program_path"`
