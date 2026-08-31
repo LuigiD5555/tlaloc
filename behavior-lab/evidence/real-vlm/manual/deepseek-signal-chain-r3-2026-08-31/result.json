@@ -1,0 +1,84 @@
+{
+  "schema": "tlaloc.temporal-native-benchmark.r0.result",
+  "benchmark_id": "manual-deepseek-signal-chain-r3-2026-08-31",
+  "trials": [
+    {
+      "trial_id": "deepseek-manual-r3-001",
+      "model_id": "deepseek-unspecified",
+      "condition": "NATIVE_PNG_ONLY_MANUAL_R3_CELL_IDENTITY",
+      "specimen_id": "cell-identity-redundancy-r1",
+      "questions": [
+        {
+          "question_id": "MT_CELL_IDENTITY",
+          "layer": "T_TEMPORAL",
+          "pass": true,
+          "score": 1.0
+        },
+        {
+          "question_id": "MT_RULE_RECOVERY",
+          "layer": "T_TEMPORAL",
+          "pass": true,
+          "score": 1.0
+        },
+        {
+          "question_id": "MT_SYNCHRONOUS_SEMANTICS",
+          "layer": "T_TEMPORAL",
+          "pass": true,
+          "score": 1.0
+        },
+        {
+          "question_id": "MT_FROM_STATE_PRECONDITION",
+          "layer": "T_TEMPORAL",
+          "pass": false,
+          "score": 0.0,
+          "violations": [
+            "TARGET_FROM_STATE_NOT_ENFORCED",
+            "RULE_REFIRED_AFTER_TARGET_LEFT_FROM_STATE"
+          ]
+        },
+        {
+          "question_id": "MT_FINAL_STATE",
+          "layer": "T_TEMPORAL",
+          "pass": false,
+          "score": 0.0,
+          "missing": [
+            "FINAL_A_DONE_B_DONE_C_ACTIVE"
+          ],
+          "violations": [
+            "UNSUPPORTED_C_ACTIVE_TO_DONE_TRANSITION",
+            "INCORRECT_ALL_DONE_STABLE_STATE"
+          ]
+        }
+      ],
+      "debug_reports": [
+        {
+          "question_id": "MT_FROM_STATE_PRECONDITION",
+          "present": true,
+          "valid": true,
+          "status": "FAIL",
+          "last_completed_stage": "TEMPORAL_STEP",
+          "failure_code": "FROM_STATE_PRECONDITION_CONFUSION",
+          "evidence_refs": [
+            "raw-response.md"
+          ],
+          "confidence": 0.99
+        }
+      ],
+      "layers": [
+        {
+          "layer": "T_TEMPORAL",
+          "passed": 3,
+          "total": 5,
+          "score": 0.6
+        }
+      ],
+      "overall_score": 0.6,
+      "temporal_reasoning_score": 0.6,
+      "invented_exact_claims": 0,
+      "missing_question_count": 0
+    }
+  ],
+  "real_evidence": true,
+  "evidence_origin": "user_supplied_raw_response",
+  "classification_note": "R3 resolves cell identity confusion but exposes failure to enforce Rule.FromState as a mandatory target-state firing precondition."
+}
