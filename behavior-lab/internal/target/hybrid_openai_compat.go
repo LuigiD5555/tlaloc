@@ -108,7 +108,7 @@ func (c OpenAICompat) CompleteHybrid(ctx context.Context, input HybridInput) (Hy
 		{"role": "system", "content": input.SystemPrompt},
 		{"role": "user", "content": []map[string]any{
 			{"type": "text", "text": input.Question},
-			{"type": "image_url", "image_url": map[string]string{"url": imageURL, "detail": "original"}},
+			{"type": "image_url", "image_url": map[string]string{"url": imageURL, "detail": "high"}},
 		}},
 	}
 	result := HybridResult{}
