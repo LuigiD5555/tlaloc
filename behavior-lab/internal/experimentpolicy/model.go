@@ -3,8 +3,8 @@ package experimentpolicy
 const (
 	IntentSchemaR1      = "tlaloc.experiment-intent.r1"
 	CandidateSchemaR1   = "tlaloc.candidate-manifest.r1"
-	SemanticSchemaR1    = "tlaloc.semantic-manifest.r1"
-	BuildSchemaR1       = "tlaloc.build-manifest.r1"
+	SemanticSchemaR1    = "origami.semantic-manifest.r1"
+	BuildSchemaR1       = "origami.candidate-build-manifest.r1"
 	ParitySchemaR1      = "tlaloc.semantic-parity-report.r1"
 	RegressionSchemaR1  = "tlaloc.regression-report.r1"
 )
@@ -59,14 +59,14 @@ type SemanticManifest struct {
 }
 
 type BuildManifest struct {
-	Schema          string           `json:"schema"`
-	CandidateID     string           `json:"candidate_id"`
-	RendererVersion string           `json:"renderer_version"`
-	ArtifactSHA256  string           `json:"artifact_sha256"`
-	ArtifactBytes   int              `json:"artifact_bytes"`
-	ProgramSHA256   string           `json:"program_sha256"`
-	PayloadSHA256   string           `json:"payload_sha256,omitempty"`
-	AppliedMutations []Mutation      `json:"applied_mutations"`
+	Schema           string           `json:"schema"`
+	CandidateID      string           `json:"candidate_id"`
+	RendererVersion  string           `json:"renderer_version"`
+	ArtifactSHA256   string           `json:"artifact_sha256"`
+	ArtifactBytes    int              `json:"artifact_bytes"`
+	ProgramSHA256    string           `json:"program_sha256"`
+	PayloadSHA256    string           `json:"payload_sha256,omitempty"`
+	AppliedMutations []Mutation       `json:"applied_mutations"`
 	VisibleSemantics SemanticManifest `json:"visible_semantics"`
 }
 
