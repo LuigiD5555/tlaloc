@@ -9,7 +9,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"time"
 )
 
 type PerceptionInput struct {
@@ -60,10 +59,7 @@ func (c OpenAICompat) CompletePerception(ctx context.Context, input PerceptionIn
 	if base == "" {
 		base = "http://127.0.0.1:1234/v1"
 	}
-	client := c.Client
-	if client == nil {
-		client = &http.Client{Timeout: 90 * time.Second}
-	}
+	client := c.httpClient()
 
 	imageURL := "data:" + input.MediaType + ";base64," + base64.StdEncoding.EncodeToString(input.Image)
 	imagePart := c.multimodalCompatibility().ImageURLPart(imageURL)
