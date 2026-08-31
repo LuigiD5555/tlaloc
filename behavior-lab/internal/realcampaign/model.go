@@ -15,6 +15,7 @@ type Spec struct {
 	Model              string   `json:"model,omitempty"`
 	Compatibility      string   `json:"compatibility_strategy,omitempty"`
 	TransportCondition string   `json:"transport_condition,omitempty"`
+	TraceStream        bool     `json:"trace_stream,omitempty"`
 	InteropMemoryRoot  string   `json:"interop_memory_root,omitempty"`
 	APIKeyEnv          string   `json:"api_key_env,omitempty"`
 	Program            string   `json:"program"`
@@ -44,6 +45,7 @@ type DoctorResult struct {
 	Schema                    string              `json:"schema"`
 	Endpoint                  string              `json:"endpoint"`
 	CompatibilityStrategy     string              `json:"compatibility_strategy"`
+	TraceStream               bool                `json:"trace_stream"`
 	ModelInterop              ModelInteropProfile `json:"model_interop"`
 	WorkingConfigurationPath  string              `json:"working_configuration_path,omitempty"`
 	DiscoveredModels          []string            `json:"discovered_models"`
@@ -67,6 +69,7 @@ type Manifest struct {
 	Status                    string              `json:"status"`
 	Endpoint                  string              `json:"endpoint"`
 	CompatibilityStrategy     string              `json:"compatibility_strategy"`
+	TraceStream               bool                `json:"trace_stream"`
 	ModelID                   string              `json:"model_id"`
 	ModelInterop              ModelInteropProfile `json:"model_interop"`
 	WorkingConfigurationPath  string              `json:"working_configuration_path,omitempty"`
