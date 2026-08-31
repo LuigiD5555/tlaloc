@@ -24,15 +24,19 @@ type Request struct {
 }
 
 type Report struct {
-	Schema           string                        `json:"schema"`
-	CandidateID      string                        `json:"candidate_id"`
-	EligibleForVLM   bool                          `json:"eligible_for_vlm"`
-	ParentSHA256     string                        `json:"parent_sha256"`
-	CandidatePNG     string                        `json:"candidate_png"`
-	OrigamiSpec      string                        `json:"origami_spec"`
-	ExpectedSemantics string                       `json:"expected_semantics"`
-	BuildManifest    string                        `json:"build_manifest"`
-	Parity           experimentpolicy.ParityReport `json:"parity"`
+	Schema              string                                     `json:"schema"`
+	CandidateID         string                                     `json:"candidate_id"`
+	EligibleForVLM      bool                                       `json:"eligible_for_vlm"`
+	ParentSHA256        string                                     `json:"parent_sha256"`
+	CandidatePNG        string                                     `json:"candidate_png"`
+	OrigamiSpec         string                                     `json:"origami_spec"`
+	ExpectedSemantics   string                                     `json:"expected_semantics"`
+	BuildManifest       string                                     `json:"build_manifest"`
+	VisibleTextManifest string                                     `json:"visible_text_manifest"`
+	BuildValid          bool                                       `json:"build_valid"`
+	Parity              experimentpolicy.ParityReport              `json:"parity"`
+	VisibleTextFidelity experimentpolicy.VisibleTextFidelityReport `json:"visible_text_fidelity"`
+	RegressionPrecheck  experimentpolicy.RegressionReport          `json:"regression_precheck"`
 }
 
 func Prepare(req Request) (Report,error) {
@@ -45,6 +49,7 @@ func Prepare(req Request) (Report,error) {
 	specPath:=filepath.Join(req.OutputDir,"origami-candidate-spec.json")
 	expectedPath:=filepath.Join(req.OutputDir,"expected-semantics.json")
 	buildPath:=filepath.Join(req.OutputDir,"build-manifest.json")
+	visibleTextPath:=filepath.Join(req.OutputDir,"visible-text-manifest.json")
 	pngPath:=filepath.Join(req.OutputDir,req.Candidate.ID+".png")
 	if err:=writeJSON(specPath,origamiSpec);err!=nil{return Report{},err}
 	inherited,err:=json.Marshal(req.InheritedMutations);if err!=nil{return Report{},err}
@@ -52,11 +57,23 @@ func Prepare(req Request) (Report,error) {
 	if err:=run(req.Builder,"build","-parent",req.ParentPNG,"-out",pngPath,"-spec",specPath,"-inherited-mutations-json",string(inherited),"-interop-report",buildPath);err!=nil{return Report{},fmt.Errorf("candidate build: %w",err)}
 	var expected experimentpolicy.SemanticManifest;if err:=readJSON(expectedPath,&expected);err!=nil{return Report{},err}
 	var build experimentpolicy.BuildManifest;if err:=readJSON(buildPath,&build);err!=nil{return Report{},err}
-	if err:=experimentpolicy.ValidateBuild(req.Candidate,build);err!=nil{return Report{},fmt.Errorf("build validation: %w",err)}
-	parity:=experimentpolicy.CheckParity(req.Candidate,expected,build.VisibleSemantics)
-	report:=Report{Schema:ReportSchemaR1,CandidateID:req.Candidate.ID,EligibleForVLM:parity.Pass,ParentSHA256:parentSHA,CandidatePNG:pngPath,OrigamiSpec:specPath,ExpectedSemantics:expectedPath,BuildManifest:buildPath,Parity:parity}
+
+	report:=Report{Schema:ReportSchemaR1,CandidateID:req.Candidate.ID,ParentSHA256:parentSHA,CandidatePNG:pngPath,OrigamiSpec:specPath,ExpectedSemantics:expectedPath,BuildManifest:buildPath,VisibleTextManifest:visibleTextPath}
+	if err:=experimentpolicy.ValidateBuild(req.Candidate,build);err!=nil{
+		report.BuildValid=false
+		_ = writeJSON(filepath.Join(req.OutputDir,"preparation-report.json"),report)
+		return report,fmt.Errorf("build validation: %w",err)
+	}
+	report.BuildValid=true
+	if err:=writeJSON(visibleTextPath,build.VisibleText);err!=nil{return Report{},err}
+	report.Parity=experimentpolicy.CheckParity(req.Candidate,expected,build.VisibleSemantics)
+	report.VisibleTextFidelity=experimentpolicy.CheckVisibleTextFidelity(req.Candidate,build.VisibleSemantics,build.VisibleText)
+	report.RegressionPrecheck=experimentpolicy.CheckRegressionPreconditions(req.Candidate,expected,build)
+	report.EligibleForVLM=report.BuildValid&&report.Parity.Pass&&report.VisibleTextFidelity.Pass&&report.RegressionPrecheck.Pass
 	if err:=writeJSON(filepath.Join(req.OutputDir,"preparation-report.json"),report);err!=nil{return Report{},err}
-	if !parity.Pass{return report,fmt.Errorf("semantic parity failed: %s",parity.FailureCode)}
+	if !report.Parity.Pass{return report,fmt.Errorf("semantic parity failed: %s",report.Parity.FailureCode)}
+	if !report.VisibleTextFidelity.Pass{return report,fmt.Errorf("visible text fidelity failed: %s",report.VisibleTextFidelity.FailureCode)}
+	if !report.RegressionPrecheck.Pass{return report,fmt.Errorf("regression precheck failed")}
 	return report,nil
 }
 
