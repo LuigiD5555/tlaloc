@@ -76,6 +76,13 @@ func (c OpenAICompat) CompletePerception(ctx context.Context, input PerceptionIn
 	if c.Observer == nil {
 		c.Observer = ModelTraceObserverFromContext(ctx)
 	}
+	policy := GenerationPolicyFromContext(ctx)
+	if c.MaxTokens <= 0 {
+		c.MaxTokens = policy.MaxTokens
+	}
+	if c.Guard == nil {
+		c.Guard = policy.Guard
+	}
 	base := strings.TrimRight(c.BaseURL, "/")
 	if base == "" {
 		base = "http://127.0.0.1:1234/v1"
