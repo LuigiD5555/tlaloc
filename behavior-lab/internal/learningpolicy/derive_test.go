@@ -16,10 +16,12 @@ func TestDeriveProtectsPositiveOutcomeAndRequiresParity(t *testing.T){
 		{Schema:learningmemory.EventSchema,EventID:"invalid-1",EventType:learningmemory.EventChange,EvidenceClass:learningmemory.EvidenceManual,CandidateID:"bad-render",ParentEventIDs:[]string{"fail-1"},ChangeSummary:"invalid specimen",Tags:[]string{"invalid-specimen","semantic-drift"}},
 	}
 	p:=Derive(events)
-	if p.Target!="EXECUTION_POLICY"{t.Fatalf("target=%q",p.Target)}
+	if p.Target!="EXECUTION_POLICY_COMPLIANCE"{t.Fatalf("target=%q",p.Target)}
 	if len(p.Invariants)==0{t.Fatal("expected positive outcome invariant")}
 	foundParity:=false
-	for _,r:=range p.Rules{if r.Kind==RuleRequire&&r.Target=="SEMANTIC_PARITY_GATE"{foundParity=true}}
+	foundCrossModel:=false
+	for _,r:=range p.Rules{if r.Kind==RuleRequire&&r.Target=="SEMANTIC_PARITY_GATE"{foundParity=true};if r.Kind==RuleRequire&&r.Target=="CROSS_MODEL_COMPATIBILITY_GATE"{foundCrossModel=true}}
 	if !foundParity{t.Fatal("expected semantic parity requirement")}
+	if !foundCrossModel{t.Fatal("expected cross-model compatibility requirement")}
 	if len(p.AntiPatterns)==0||p.AntiPatterns[0].ID!="GENERATIVE_REWRITE_OF_EXACT_SEMANTICS"{t.Fatalf("anti-pattern missing: %#v",p.AntiPatterns)}
 }
