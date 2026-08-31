@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"tlaloc.local/behaviorlab/internal/candidateprepare"
 	"tlaloc.local/behaviorlab/internal/experimentpolicy"
 	"tlaloc.local/behaviorlab/internal/learningcycle"
 	"tlaloc.local/behaviorlab/internal/learningmemory"
@@ -20,6 +21,7 @@ func main(){
 	case "status":status(os.Args[2:])
 	case "plan":plan(os.Args[2:])
 	case "export-origami-spec":exportOrigamiSpec(os.Args[2:])
+	case "prepare-candidate":prepareCandidate(os.Args[2:])
 	case "validate-parity":validateParity(os.Args[2:])
 	case "assess-outcome":assessOutcome(os.Args[2:])
 	default:usage();os.Exit(2)
@@ -54,6 +56,14 @@ func exportOrigamiSpec(args []string){
 	writeJSON(spec)
 }
 
+func prepareCandidate(args []string){
+	fs:=flag.NewFlagSet("prepare-candidate",flag.ExitOnError);candidatePath:=fs.String("candidate","","tlaloc candidate manifest json");parent:=fs.String("parent","","validated parent PNG");builder:=fs.String("builder","origami-candidate-build","Origami candidate builder executable");inheritedPath:=fs.String("inherited-mutations","","optional JSON array of mutations already represented by parent");outDir:=fs.String("out-dir","","candidate preparation output directory");fs.Parse(args)
+	if *candidatePath==""||*parent==""{die(fmt.Errorf("-candidate and -parent are required"))}
+	var c experimentpolicy.CandidateManifest;readJSON(*candidatePath,&c)
+	inherited:=[]experimentpolicy.OrigamiMutation{};if *inheritedPath!=""{readJSON(*inheritedPath,&inherited)}
+	r,err:=candidateprepare.Prepare(candidateprepare.Request{Builder:*builder,ParentPNG:*parent,InheritedMutations:inherited,Candidate:c,OutputDir:*outDir});if err!=nil{writeJSON(r);die(err)};writeJSON(r)
+}
+
 func validateParity(args []string){
 	fs:=flag.NewFlagSet("validate-parity",flag.ExitOnError);candidatePath:=fs.String("candidate","","candidate manifest json");expectedPath:=fs.String("expected","","expected semantic manifest json");buildPath:=fs.String("build","","Origami build manifest json");fs.Parse(args)
 	if *candidatePath==""||*expectedPath==""||*buildPath==""{die(fmt.Errorf("-candidate, -expected and -build are required"))}
@@ -80,4 +90,4 @@ func splitCSV(s string)[]string{out:=[]string{};for _,v:=range strings.Split(s,"
 func readJSON(path string,v any){b,err:=os.ReadFile(path);die(err);die(json.Unmarshal(b,v))}
 func writeJSON(v any){b,err:=json.MarshalIndent(v,"","  ");die(err);fmt.Println(string(b))}
 func die(err error){if err!=nil{fmt.Fprintln(os.Stderr,"error:",err);os.Exit(1)}}
-func usage(){fmt.Fprintln(os.Stderr,"usage: tlaloc-learn <status|plan|export-origami-spec|validate-parity|assess-outcome> [flags]")}
+func usage(){fmt.Fprintln(os.Stderr,"usage: tlaloc-learn <status|plan|export-origami-spec|prepare-candidate|validate-parity|assess-outcome> [flags]")}
