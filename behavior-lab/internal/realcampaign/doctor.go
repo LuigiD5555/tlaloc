@@ -89,6 +89,9 @@ func Doctor(ctx context.Context, raw Spec) (DoctorResult, error) {
 		APIKey:        apiKey(spec.APIKeyEnv),
 		Compatibility: compatibility,
 	}
+	if spec.TraceStream {
+		client.Observer = target.NewWriterTraceObserver(os.Stderr)
+	}
 	probeCtx, cancel := context.WithTimeout(ctx, time.Duration(spec.TimeoutSeconds)*time.Second)
 	defer cancel()
 	probe, err := client.CompletePerception(probeCtx, target.PerceptionInput{Question: questions[0].Text, Image: image, MediaType: "image/png"})
@@ -116,6 +119,7 @@ func Doctor(ctx context.Context, raw Spec) (DoctorResult, error) {
 		Schema:                   SpecSchema + ".doctor",
 		Endpoint:                 spec.Endpoint,
 		CompatibilityStrategy:    compatibility.Name(),
+		TraceStream:              spec.TraceStream,
 		ModelInterop:             modelInterop,
 		WorkingConfigurationPath: workingPath,
 		DiscoveredModels:         models,
