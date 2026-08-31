@@ -15,7 +15,7 @@ func Derive(events []learningmemory.Event) Policy {
 		Rules:           []Rule{},
 		Invariants:      []LearnedInvariant{},
 		AntiPatterns:    []AntiPattern{},
-		Guardrails:      []string{"ONE_PRIMARY_MUTATION", "FALSE_EXACT_ZERO", "INVALID_SPECIMEN_DOES_NOT_PENALIZE_MODEL", "TLALOC_RECOMMENDS_ORIGAMI_DECIDES"},
+		Guardrails:      []string{"ONE_PRIMARY_MUTATION", "FALSE_EXACT_ZERO", "INVALID_SPECIMEN_DOES_NOT_PENALIZE_MODEL", "SEMANTIC_PARITY_BEFORE_REAL_MODEL", "TLALOC_RECOMMENDS_ORIGAMI_DECIDES"},
 		Authority:       "EXPERIMENT_PLANNING_ONLY",
 	}
 	if len(summary.TopRealFailurePatterns) > 0 {
@@ -60,10 +60,11 @@ func Derive(events []learningmemory.Event) Policy {
 			Policy: "exact semantic elements must be authored from structured IR and pass semantic parity before VLM testing",
 			EvidenceIDs: invalidIDs,
 		})
-		p.Rules = append(p.Rules, Rule{Kind: RuleRequire, Target: "SEMANTIC_PARITY_GATE", Reason: "invalid specimen history", EvidenceIDs: invalidIDs})
 	}
 
-	for _, target := range []string{"PROGRAM_SHA", "PAYLOAD_SHA", "PROVENANCE", "RAW_RESPONSE_IMMUTABILITY"} {
+	// Integrity gates are permanent system requirements. Memory explains why they
+	// exist, but a fresh/rotated memory store must never silently disable them.
+	for _, target := range []string{"SEMANTIC_PARITY_GATE", "PROGRAM_SHA", "PAYLOAD_SHA", "PROVENANCE", "RAW_RESPONSE_IMMUTABILITY"} {
 		p.Rules = append(p.Rules, Rule{Kind: RuleRequire, Target: target, Reason: "experimental integrity"})
 	}
 	return dedupe(p)
