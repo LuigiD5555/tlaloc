@@ -170,7 +170,7 @@ func detectTlalocVersion() string {
 	}
 	for _, path := range candidates {
 		if body, err := os.ReadFile(path); err == nil && strings.TrimSpace(string(body)) != "" {
-			return strings.TrimSpace(string(body)), nil
+			return strings.TrimSpace(string(body))
 		}
 	}
 	return "UNKNOWN"
