@@ -1,4 +1,4 @@
-# Tlaloc 6.0.0-alpha.20
+# Tlaloc 6.0.0-alpha.21
 
 **TLALOC — Transformative Latent Adaptive Logic Orchestration Core**
 
@@ -127,6 +127,10 @@ AUTO CANDIDATE GENERATION
 current failure plan -> SuggestedMutations -> builder capability negotiation
   -> deterministic one-mutation CandidateConfigs -> target-owned PNG builder
   -> held-out candidate trials -> evidence
+
+REAL VLM CAMPAIGN
+real OpenAI-compatible VLM -> doctor -> canonical baseline -> smoke
+  -> repeated single-model evidence -> later cross-model confirmation
 ```
 
 These tracks are development machinery. They do not make Tlaloc an Origami runtime dependency.
@@ -324,23 +328,124 @@ tlaloc-closed-loop run -config closed-loop.json
 
 `run` executes the configured experiment generations. When `auto_candidates=false`, the alpha.19 manual candidate path remains unchanged.
 
-### Local LM Studio
+## Real VLM Campaign R0 — alpha.21
 
-R0 uses OpenAI-compatible multimodal endpoints. A local LM Studio entry can be:
+Alpha.21 packages the already verified alpha.20 closed loop for reproducible execution against a **real OpenAI-compatible multimodal model** without hand-authoring experiment JSON.
 
-```json
-{
-  "name": "lmstudio-vlm",
-  "provider": "OPENAI_COMPAT",
-  "base_url": "http://127.0.0.1:1234/v1",
-  "model": "REPLACE_WITH_LOADED_VISION_MODEL",
-  "temperature": 0,
-  "timeout_seconds": 180,
-  "transport_retries": 1
-}
+The managed CLI is:
+
+```text
+tlaloc-real-vlm-campaign
 ```
 
-Remote API keys are referenced by environment-variable name through `api_key_env`; secrets are not embedded in the experiment config.
+It has four surfaces:
+
+```text
+doctor
+prepare
+run
+example
+```
+
+### Doctor
+
+The default endpoint is local OpenAI-compatible:
+
+```text
+http://127.0.0.1:1234/v1
+```
+
+When exactly one model is reported by `/v1/models`, Tlaloc selects it automatically. When multiple models are reported, a model ID must be selected explicitly.
+
+Doctor rejects `SYNTHETIC_*` and placeholder model IDs, validates the canonical `signal-chain-r0` benchmark ground truth, resolves `origami-temporal-carrier` and `origami-candidate-build`, hashes both binaries, negotiates builder capabilities, builds an actual 640x640 / 8192-byte PNG and sends Q0 + image through the real multimodal endpoint.
+
+```bash
+tlaloc-real-vlm-campaign doctor \
+  --program /path/to/origami/experiments/temporal-automaton-r0/signal-chain.json
+```
+
+The probe proves transport/vision acceptance only:
+
+```text
+VISION TRANSPORT PASS != SEMANTIC BENCHMARK PASS
+```
+
+### Smoke
+
+```bash
+tlaloc-real-vlm-campaign run \
+  --phase SMOKE \
+  --program /path/to/origami/experiments/temporal-automaton-r0/signal-chain.json \
+  --out runs/real-vlm/origami-temporal-r0
+```
+
+Defaults:
+
+```text
+1 real model
+1 clean trial/model
+1 candidate/generation
+1 generation
+NATIVE_PNG_ONLY
+isolated smoke learning memory
+```
+
+Smoke can reveal a genuine model failure and can exercise the real candidate loop, but it is explicitly not promotion evidence.
+
+### Repeated evidence
+
+```bash
+tlaloc-real-vlm-campaign run \
+  --phase EVIDENCE \
+  --program /path/to/origami/experiments/temporal-automaton-r0/signal-chain.json \
+  --out runs/real-vlm/origami-temporal-r0
+```
+
+EVIDENCE enforces at least 3 trials per model. Defaults are 2 candidates/generation and up to 3 generations. When `--master-prompt` is supplied, R4_ASSISTED is added alongside NATIVE_PNG_ONLY.
+
+R0 still records:
+
+```text
+promotion_eligible = false
+cross_model_evidence = false
+```
+
+Repeated trials from one model are real evidence, but they are not yet broad cross-model evidence. Cross-model confirmation is a later phase.
+
+### Provenance
+
+Each phase writes a manifest with:
+
+```text
+model ID + endpoint
+Tlaloc version
+expected Origami contract version
+program path + SHA-256
+baseline PNG path + SHA-256 + bytes
+origami-temporal-carrier path + SHA-256
+origami-candidate-build path + SHA-256
+builder capabilities
+closed-loop config path + SHA-256
+learning-memory root
+evidence policy
+promotion/cross-model flags
+```
+
+Smoke and evidence use separate output and memory roots.
+
+See `docs/REAL_VLM_CAMPAIGN_R0.md` and `behavior-lab/spec/REAL_VLM_CAMPAIGN_R0.json`.
+
+### Local LM Studio / compatible server
+
+The endpoint remains standard OpenAI-compatible. If more than one model is exposed:
+
+```bash
+tlaloc-real-vlm-campaign doctor \
+  --model MODEL_ID \
+  --program /path/to/signal-chain.json
+```
+
+Remote API keys are referenced by environment-variable name through `--api-key-env`; secrets are not written into the campaign config.
 
 ### Clean conditions
 
@@ -408,7 +513,7 @@ Tlaloc accepts:
 
 1. pre-rendered experimental Origami PNG candidates;
 2. an explicit per-candidate `build_command`; or
-3. alpha.20 automatic CandidateConfig generation using an explicit target-owned builder.
+3. alpha.20+ automatic CandidateConfig generation using an explicit target-owned builder.
 
 The builder hook receives:
 
@@ -426,30 +531,29 @@ A candidate tested in an older run is not permanently banned. Persistent history
 
 ### Run output
 
-A closed-loop run writes:
+A Real VLM campaign writes phase-separated artifacts:
 
 ```text
-closed-loop-report.json
-
-generation-001/
-  plan-before.json
-  candidate-queue.json
-  plan-after.json
-  auto-candidates/
-    <candidate>.png
-  <incumbent>/
-    campaign.json
-    result.json
-  <candidate>/
-    campaign.json
-    result.json
+<out>/
+  smoke/
+    baseline.png
+    manifest.json
+    closed-loop.json
+    learning-memory/
+    closed-loop/...
+  evidence/
+    baseline.png
+    manifest.json
+    closed-loop.json
+    learning-memory/
+    closed-loop/...
 ```
 
-Campaign files preserve model responses verbatim. Result files contain deterministic scoring and diagnostic summaries. The top-level report records the incumbent before/after each generation and why advancement did or did not occur.
+Campaign files preserve model responses verbatim. Result files contain deterministic scoring and diagnostic summaries. The top-level closed-loop report records the incumbent before/after each generation and why advancement did or did not occur.
 
 ### Stopping
 
-A run stops when:
+A closed-loop run stops when:
 
 ```text
 current incumbent execution is unavailable
@@ -458,11 +562,7 @@ OR no supported eligible candidate remains for the current incumbent
 OR configured generation budget is exhausted
 ```
 
-`continue_exploration_when_stable=true` can explicitly continue experimentation after a failure-free incumbent, but still grants no canonical authority.
-
 Stopping never means promotion.
-
-See `behavior-lab/CLOSED_EXPERIMENTAL_LOOP_R0.md`, `behavior-lab/spec/CLOSED_EXPERIMENTAL_LOOP_R0.json`, `docs/AUTO_CANDIDATE_GENERATION_R0.md` and `behavior-lab/spec/AUTO_CANDIDATE_GENERATION_R0.json`.
 
 ## Current managed CLIs
 
@@ -479,6 +579,7 @@ tlaloc-temporal-bench
 tlaloc-learning-memory
 tlaloc-adaptive-search
 tlaloc-closed-loop
+tlaloc-real-vlm-campaign
 tlaloc-uninstall
 ```
 
@@ -507,6 +608,9 @@ A clean L0 candidate cannot inherit private swarm traces, development sandbox st
 SYNTHETIC FIXTURE != REAL MODEL EVIDENCE
 DIAGNOSTIC RETRY != SELF-BOOTSTRAP EVIDENCE
 TRANSPORT FAILURE != MODEL SEMANTIC FAILURE
+VISION TRANSPORT PASS != SEMANTIC PASS
+SMOKE != PROMOTION EVIDENCE
+SINGLE-MODEL REPEATED EVIDENCE != CROSS-MODEL EVIDENCE
 MEMORY != CANONICAL ORIGAMI TRUTH
 ADAPTIVE PRIORITY != PROMOTION SCORE
 AUTO CANDIDATE GENERATION != PIXEL AUTHORITY
@@ -541,6 +645,7 @@ See `docs/NOMENCLATURE.md`.
 - `docs/ORIGAMI_VISUAL_EVOLUTION_R0.md`
 - `docs/TEMPORAL_NATIVE_DEBUG_R0.md`
 - `docs/AUTO_CANDIDATE_GENERATION_R0.md`
+- `docs/REAL_VLM_CAMPAIGN_R0.md`
 - `behavior-lab/LEARNING_MEMORY_R0.md`
 - `behavior-lab/ADAPTIVE_SEARCH_R0.md`
 - `behavior-lab/CLOSED_EXPERIMENTAL_LOOP_R0.md`
@@ -583,6 +688,12 @@ UNKNOWN > INVENTION
 SYNTHETIC EVIDENCE != EMPIRICAL PROMOTION EVIDENCE
 DIAGNOSTIC RETRY != PRIMARY SCORE
 TRANSPORT FAILURE != MODEL SEMANTIC FAILURE
+VISION TRANSPORT PASS != SEMANTIC PASS
+SMOKE MEMORY ISOLATED FROM EVIDENCE MEMORY
+SMOKE != PROMOTION EVIDENCE
+EVIDENCE REQUIRES >= 3 TRIALS PER MODEL
+SINGLE-MODEL REPEATED EVIDENCE != CROSS-MODEL EVIDENCE
+REAL VLM CAMPAIGN R0 PROMOTION_ELIGIBLE = FALSE
 MEMORY != CANONICAL ORIGAMI TRUTH
 MEMORY != AUTOMATIC PROMOTION
 MEMORY GUIDES EXPERIMENT BUDGET, NOT PROMOTION SCORE
@@ -601,4 +712,4 @@ ORIGAMI IS A TARGET, NOT TLALOC'S IDENTITY
 
 ## Version
 
-`6.0.0-alpha.20`
+`6.0.0-alpha.21`
