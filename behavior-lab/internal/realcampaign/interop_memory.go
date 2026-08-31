@@ -14,11 +14,21 @@ import (
 
 const WorkingConfigurationSchema = "tlaloc.model-working-configuration.r0"
 
+type WorkingEvidence struct {
+	RecordedAt          string `json:"recorded_at"`
+	Stage               string `json:"stage"`
+	Outcome             string `json:"outcome"`
+	ProgramSHA256       string `json:"program_sha256,omitempty"`
+	CarrierSHA256       string `json:"carrier_sha256,omitempty"`
+	ProbeResponseSHA256 string `json:"probe_response_sha256,omitempty"`
+}
+
 type WorkingConfiguration struct {
 	Schema              string              `json:"schema"`
-	RecordedAt          string              `json:"recorded_at"`
-	Stage               string              `json:"stage"`
-	Outcome             string              `json:"outcome"`
+	Fingerprint         string              `json:"fingerprint"`
+	FirstSeen           string              `json:"first_seen"`
+	LastSeen            string              `json:"last_seen"`
+	SuccessCount        int                 `json:"success_count"`
 	ModelInterop        ModelInteropProfile `json:"model_interop"`
 	Endpoint            string              `json:"endpoint"`
 	MediaType           string              `json:"media_type"`
@@ -27,9 +37,7 @@ type WorkingConfiguration struct {
 	TransportRetries    int                 `json:"transport_retries"`
 	Conditions          []string            `json:"conditions,omitempty"`
 	MasterPromptSHA256  string              `json:"master_prompt_sha256,omitempty"`
-	ProgramSHA256       string              `json:"program_sha256,omitempty"`
-	CarrierSHA256       string              `json:"carrier_sha256,omitempty"`
-	ProbeResponseSHA256 string              `json:"probe_response_sha256,omitempty"`
+	Evidence            []WorkingEvidence   `json:"evidence"`
 }
 
 type WorkingConfigurationRegistry struct {
@@ -53,11 +61,12 @@ func DefaultInteropMemoryRoot() string {
 }
 
 func BuildWorkingConfiguration(spec Spec, profile ModelInteropProfile, stage, programSHA, carrierSHA, probeResponse string) WorkingConfiguration {
-	return WorkingConfiguration{
+	now := time.Now().UTC().Format(time.RFC3339)
+	cfg := WorkingConfiguration{
 		Schema: WorkingConfigurationSchema,
-		RecordedAt: time.Now().UTC().Format(time.RFC3339),
-		Stage: strings.ToUpper(strings.TrimSpace(stage)),
-		Outcome: "PASS",
+		FirstSeen: now,
+		LastSeen: now,
+		SuccessCount: 1,
 		ModelInterop: profile,
 		Endpoint: spec.Endpoint,
 		MediaType: "image/png",
@@ -66,10 +75,17 @@ func BuildWorkingConfiguration(spec Spec, profile ModelInteropProfile, stage, pr
 		TransportRetries: spec.TransportRetries,
 		Conditions: append([]string(nil), spec.Conditions...),
 		MasterPromptSHA256: hashText(spec.MasterPrompt),
-		ProgramSHA256: programSHA,
-		CarrierSHA256: carrierSHA,
-		ProbeResponseSHA256: hashText(probeResponse),
+		Evidence: []WorkingEvidence{{
+			RecordedAt: now,
+			Stage: strings.ToUpper(strings.TrimSpace(stage)),
+			Outcome: "PASS",
+			ProgramSHA256: programSHA,
+			CarrierSHA256: carrierSHA,
+			ProbeResponseSHA256: hashText(probeResponse),
+		}},
 	}
+	cfg.Fingerprint = workingConfigurationFingerprint(cfg)
+	return cfg
 }
 
 func RecordWorkingConfiguration(root string, cfg WorkingConfiguration) (string, error) {
@@ -93,30 +109,33 @@ func RecordWorkingConfiguration(root string, cfg WorkingConfiguration) (string, 
 	} else if !os.IsNotExist(err) {
 		return "", err
 	}
-	fingerprint := workingConfigurationFingerprint(cfg)
-	for _, existing := range reg.Configurations {
-		if workingConfigurationFingerprint(existing) == fingerprint {
-			return path, nil
+	for i := range reg.Configurations {
+		if reg.Configurations[i].Fingerprint != cfg.Fingerprint {
+			continue
 		}
+		reg.Configurations[i].SuccessCount++
+		reg.Configurations[i].LastSeen = cfg.LastSeen
+		reg.Configurations[i].Evidence = append(reg.Configurations[i].Evidence, cfg.Evidence...)
+		return path, writeWorkingRegistry(path, reg)
 	}
 	reg.Configurations = append(reg.Configurations, cfg)
 	sort.SliceStable(reg.Configurations, func(i, j int) bool {
-		return reg.Configurations[i].RecordedAt < reg.Configurations[j].RecordedAt
+		return reg.Configurations[i].FirstSeen < reg.Configurations[j].FirstSeen
 	})
+	return path, writeWorkingRegistry(path, reg)
+}
+
+func writeWorkingRegistry(path string, reg WorkingConfigurationRegistry) error {
 	body, err := json.MarshalIndent(reg, "", "  ")
 	if err != nil {
-		return "", err
+		return err
 	}
 	body = append(body, '\n')
-	if err := os.WriteFile(path, body, 0o644); err != nil {
-		return "", err
-	}
-	return path, nil
+	return os.WriteFile(path, body, 0o644)
 }
 
 func workingConfigurationFingerprint(cfg WorkingConfiguration) string {
 	stable := struct {
-		Stage string `json:"stage"`
 		ModelInterop ModelInteropProfile `json:"model_interop"`
 		Endpoint string `json:"endpoint"`
 		MediaType string `json:"media_type"`
@@ -126,7 +145,6 @@ func workingConfigurationFingerprint(cfg WorkingConfiguration) string {
 		Conditions []string `json:"conditions"`
 		MasterPromptSHA256 string `json:"master_prompt_sha256"`
 	}{
-		Stage: cfg.Stage,
 		ModelInterop: cfg.ModelInterop,
 		Endpoint: cfg.Endpoint,
 		MediaType: cfg.MediaType,
@@ -174,6 +192,13 @@ func hashText(s string) string {
 	if s == "" {
 		return ""
 	}
-	sum := sha256.Sum256([]byte(s))
+	return hashBytes([]byte(s))
+}
+
+func hashBytes(b []byte) string {
+	if len(b) == 0 {
+		return ""
+	}
+	sum := sha256.Sum256(b)
 	return hex.EncodeToString(sum[:])
 }
