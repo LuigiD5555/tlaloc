@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestCompletePerceptionUsesSupportedImageDetail(t *testing.T) {
+func TestCompletePerceptionUsesLMStudioImageDetailStrategy(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 		var body map[string]any
@@ -28,7 +28,7 @@ func TestCompletePerceptionUsesSupportedImageDetail(t *testing.T) {
 		}
 		imageURL := content[1].(map[string]any)["image_url"].(map[string]any)
 		if detail := imageURL["detail"]; detail != "high" {
-			t.Fatalf("unsupported image detail: %#v", detail)
+			t.Fatalf("LM Studio strategy detail=%#v, want high", detail)
 		}
 		url, _ := imageURL["url"].(string)
 		if !strings.HasPrefix(url, "data:image/png;base64,") {
@@ -39,7 +39,11 @@ func TestCompletePerceptionUsesSupportedImageDetail(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := OpenAICompat{BaseURL: server.URL + "/v1", Model: "fixture-vlm", Temperature: 0}
+	compatibility, err := ResolveMultimodalCompatibility(CompatibilityLMStudio)
+	if err != nil {
+		t.Fatal(err)
+	}
+	client := OpenAICompat{BaseURL: server.URL + "/v1", Model: "fixture-vlm", Temperature: 0, Compatibility: compatibility}
 	result, err := client.CompletePerception(context.Background(), PerceptionInput{
 		SystemPrompt: "",
 		Question:     "Inspect the image.",
