@@ -1,0 +1,47 @@
+{
+  "schema": "tlaloc.adaptive-search.r0.request",
+  "candidates": [
+    {
+      "schema": "tlaloc.origami-visual-search.r0.candidate",
+      "id": "candidate-layout-t2-anchor",
+      "base_profile_id": "origami.fixed-carrier.r2.profile-3",
+      "mutations": [
+        {
+          "kind": "LAYOUT",
+          "target": "T1_TO_T2_ENTRY_ROUTE",
+          "value": "EXPLICIT_DIRECTIONAL_ANCHOR",
+          "rationale": "Make the route from ROSETTA to T2 visually explicit.",
+          "experimental": true
+        }
+      ]
+    },
+    {
+      "schema": "tlaloc.origami-visual-search.r0.candidate",
+      "id": "candidate-prompt-s2-route",
+      "base_profile_id": "origami.fixed-carrier.r2.profile-3",
+      "mutations": [
+        {
+          "kind": "PROMPT",
+          "target": "ROSETTA.S2.READ_SUPERINDEX",
+          "value": "DECLARE_T2_LOCATION_BEFORE_DECODE",
+          "rationale": "Make S2 routing explicit before semantic decoding.",
+          "experimental": true
+        }
+      ]
+    },
+    {
+      "schema": "tlaloc.origami-visual-search.r0.candidate",
+      "id": "candidate-temporal-unrelated",
+      "base_profile_id": "origami.fixed-carrier.r2.profile-3",
+      "mutations": [
+        {
+          "kind": "TEMPORAL_STRUCTURE",
+          "target": "TIMELINE",
+          "value": "EXTRA_CHECKPOINT_MARKERS",
+          "rationale": "Control candidate that should not outrank T2-focused mutations for a T2 failure frontier.",
+          "experimental": true
+        }
+      ]
+    }
+  ]
+}
