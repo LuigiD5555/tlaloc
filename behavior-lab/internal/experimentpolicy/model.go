@@ -12,18 +12,19 @@ const (
 )
 
 type ExperimentIntent struct {
-	Schema              string   `json:"schema"`
-	ID                  string   `json:"id"`
-	Objective           string   `json:"objective"`
-	BaselineCandidateID string   `json:"baseline_candidate_id"`
-	FailureFrontier     string   `json:"failure_frontier"`
-	MutableModule       string   `json:"mutable_module"`
-	Preserve            []string `json:"preserve"`
-	Avoid               []string `json:"avoid,omitempty"`
-	Require             []string `json:"require"`
-	CandidateBudget     int      `json:"candidate_budget"`
-	TrialsPerModel      int      `json:"trials_per_model"`
-	Models              []string `json:"models,omitempty"`
+	Schema              string                          `json:"schema"`
+	ID                  string                          `json:"id"`
+	Objective           string                          `json:"objective"`
+	BaselineCandidateID string                          `json:"baseline_candidate_id"`
+	FailureFrontier     string                          `json:"failure_frontier"`
+	MutableModule       string                          `json:"mutable_module"`
+	Preserve            []string                        `json:"preserve"`
+	Avoid               []string                        `json:"avoid,omitempty"`
+	Require             []string                        `json:"require"`
+	CandidateBudget     int                             `json:"candidate_budget"`
+	TrialsPerModel      int                             `json:"trials_per_model"`
+	Models              []string                        `json:"models,omitempty"`
+	CompatibilityPanel  []ModelCompatibilityRequirement `json:"compatibility_panel,omitempty"`
 }
 
 type Mutation struct { Kind string `json:"kind"`; Target string `json:"target"`; Value string `json:"value"` }
@@ -31,7 +32,7 @@ type SemanticFact struct { Key string `json:"key"`; Value string `json:"value"` 
 
 type CandidateManifest struct {
 	Schema string `json:"schema"`; ID string `json:"id"`; ParentID string `json:"parent_id"`; ProgramSHA256 string `json:"program_sha256"`; PayloadSHA256 string `json:"payload_sha256,omitempty"`; GenomeID string `json:"genome_id,omitempty"`; GenomeVersion int `json:"genome_version,omitempty"`
-	Mutations []Mutation `json:"mutations"`; ChangedModules []string `json:"changed_modules"`; PreservedModules []string `json:"preserved_modules"`; ForbiddenChanges []string `json:"forbidden_changes"`; ExpectedSemanticChanges []SemanticFact `json:"expected_semantic_changes"`; ExpectedEffect string `json:"expected_effect"`; ParentEvidenceIDs []string `json:"parent_evidence_ids,omitempty"`
+	Mutations []Mutation `json:"mutations"`; ChangedModules []string `json:"changed_modules"`; PreservedModules []string `json:"preserved_modules"`; ForbiddenChanges []string `json:"forbidden_changes"`; ExpectedSemanticChanges []SemanticFact `json:"expected_semantic_changes"`; ExpectedEffect string `json:"expected_effect"`; ParentEvidenceIDs []string `json:"parent_evidence_ids,omitempty"`; CompatibilityPanel []ModelCompatibilityRequirement `json:"compatibility_panel,omitempty"`
 }
 
 type SemanticManifest struct { Schema string `json:"schema"`; ProgramSHA256 string `json:"program_sha256"`; PayloadSHA256 string `json:"payload_sha256,omitempty"`; Facts []SemanticFact `json:"facts"` }
