@@ -67,6 +67,8 @@ func Prepare(ctx context.Context, raw Spec) (Prepared, error) {
 			Model:            doc.SelectedModel,
 			Compatibility:    spec.Compatibility,
 			TraceStream:      spec.TraceStream,
+			MaxOutputTokens:  spec.MaxOutputTokens,
+			GenerationGuard:  spec.GenerationGuard,
 			APIKeyEnv:        spec.APIKeyEnv,
 			Temperature:      spec.Temperature,
 			TimeoutSeconds:   spec.TimeoutSeconds,
@@ -104,6 +106,8 @@ func Prepare(ctx context.Context, raw Spec) (Prepared, error) {
 		Endpoint:                 spec.Endpoint,
 		CompatibilityStrategy:    spec.Compatibility,
 		TraceStream:              spec.TraceStream,
+		MaxOutputTokens:          spec.MaxOutputTokens,
+		GenerationGuard:          spec.GenerationGuard,
 		ModelID:                  doc.SelectedModel,
 		ModelInterop:             doc.ModelInterop,
 		WorkingConfigurationPath: doc.WorkingConfigurationPath,
@@ -145,6 +149,11 @@ func Run(ctx context.Context, raw Spec) (Prepared, closedloop.Report, error) {
 	if err := closedloop.ValidateAutoReady(ctx, cfg); err != nil {
 		return prepared, closedloop.Report{}, err
 	}
+	guard, err := target.ResolveGenerationGuard(prepared.Spec.GenerationGuard)
+	if err != nil {
+		return prepared, closedloop.Report{}, err
+	}
+	ctx = target.WithGenerationPolicy(ctx, target.GenerationPolicy{MaxTokens: prepared.Spec.MaxOutputTokens, Guard: guard})
 	if prepared.Spec.TraceStream {
 		ctx = target.WithModelTraceObserver(ctx, target.NewWriterTraceObserver(os.Stderr))
 	}
