@@ -30,25 +30,26 @@ type Mutation struct {
 	Value  string `json:"value"`
 }
 
-type CandidateManifest struct {
-	Schema              string     `json:"schema"`
-	ID                  string     `json:"id"`
-	ParentID            string     `json:"parent_id"`
-	ProgramSHA256       string     `json:"program_sha256"`
-	PayloadSHA256       string     `json:"payload_sha256,omitempty"`
-	GenomeID            string     `json:"genome_id,omitempty"`
-	GenomeVersion       int        `json:"genome_version,omitempty"`
-	Mutations           []Mutation `json:"mutations"`
-	ChangedModules      []string   `json:"changed_modules"`
-	PreservedModules    []string   `json:"preserved_modules"`
-	ForbiddenChanges    []string   `json:"forbidden_changes"`
-	ExpectedEffect      string     `json:"expected_effect"`
-	ParentEvidenceIDs   []string   `json:"parent_evidence_ids,omitempty"`
-}
-
 type SemanticFact struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
+}
+
+type CandidateManifest struct {
+	Schema                  string         `json:"schema"`
+	ID                      string         `json:"id"`
+	ParentID                string         `json:"parent_id"`
+	ProgramSHA256           string         `json:"program_sha256"`
+	PayloadSHA256           string         `json:"payload_sha256,omitempty"`
+	GenomeID                string         `json:"genome_id,omitempty"`
+	GenomeVersion           int            `json:"genome_version,omitempty"`
+	Mutations               []Mutation     `json:"mutations"`
+	ChangedModules          []string       `json:"changed_modules"`
+	PreservedModules        []string       `json:"preserved_modules"`
+	ForbiddenChanges        []string       `json:"forbidden_changes"`
+	ExpectedSemanticChanges []SemanticFact `json:"expected_semantic_changes"`
+	ExpectedEffect          string         `json:"expected_effect"`
+	ParentEvidenceIDs       []string       `json:"parent_evidence_ids,omitempty"`
 }
 
 type SemanticManifest struct {
