@@ -59,7 +59,7 @@ func (c OpenAICompat) CompletePerception(ctx context.Context, input PerceptionIn
 	if base == "" {
 		base = "http://127.0.0.1:1234/v1"
 	}
-	client := c.httpClient()
+	client := c.httpClient(ctx)
 
 	imageURL := "data:" + input.MediaType + ";base64," + base64.StdEncoding.EncodeToString(input.Image)
 	imagePart := c.multimodalCompatibility().ImageURLPart(imageURL)
