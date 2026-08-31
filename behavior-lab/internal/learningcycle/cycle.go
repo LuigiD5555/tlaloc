@@ -53,19 +53,16 @@ func BuildPlanWithGenome(root string, events []learningmemory.Event, genome prom
 // advertises/implements them; they are not silently converted into specimens.
 func synthesize(intent experimentpolicy.ExperimentIntent, parents []string, programSHA, payloadSHA string) []experimentpolicy.CandidateManifest {
 	target := strings.ToUpper(strings.TrimSpace(intent.MutableModule))
-	type h struct{ id, kind, mutTarget, value, effect string }
+	type h struct{ id, kind, mutTarget, value, semanticKey, semanticValue, effect string }
 	hs := []h{}
 	switch target {
 	case "EXECUTION_POLICY":
-		hs = []h{{"execute-to-stable-text-r1","PROMPT","EXECUTION_POLICY","EXECUTE_VISIBLE_RULES_TO_STABLE_R1","receiver executes visible rules until no state changes"}}
+		hs = []h{{"execute-to-stable-text-r1","PROMPT","EXECUTION_POLICY","EXECUTE_VISIBLE_RULES_TO_STABLE_R1","EXECUTION_POLICY","EXECUTE_VISIBLE_RULES_TO_STABLE_R1","receiver executes visible rules until no state changes"}}
 	case "TEMPORAL_GRAMMAR":
-		hs = []h{{"temporal-grammar-visible-r1","TEMPORAL_STRUCTURE","T2_SEMANTIC_TEMPORAL_SUPERGRAPH","VISIBLE_RULE_MICROGRAMMAR_R1","make causal rule semantics recoverable"}}
+		hs = []h{{"temporal-grammar-visible-r1","TEMPORAL_STRUCTURE","T2_SEMANTIC_TEMPORAL_SUPERGRAPH","VISIBLE_RULE_MICROGRAMMAR_R1","TEMPORAL_GRAMMAR","VISIBLE_RULE_MICROGRAMMAR_R1","make causal rule semantics recoverable"}}
 	case "SEMANTIC_PARITY_GATE":
-		// Validation-only target: no visual specimen should be synthesized.
 		return nil
 	default:
-		// Generic Adaptive Search can rank ideas, but guarded synthesis refuses to
-		// invent an Origami renderer contract that has not been negotiated.
 		return nil
 	}
 	out := make([]experimentpolicy.CandidateManifest,0,len(hs))
@@ -76,6 +73,7 @@ func synthesize(intent experimentpolicy.ExperimentIntent, parents []string, prog
 			Mutations:[]experimentpolicy.Mutation{{Kind:x.kind,Target:x.mutTarget,Value:x.value}},
 			ChangedModules:[]string{intent.MutableModule}, PreservedModules:append([]string(nil),intent.Preserve...),
 			ForbiddenChanges:append([]string{"PROGRAM_SEMANTICS","PAYLOAD","UNRELATED_PROMPT_MODULES"},intent.Avoid...),
+			ExpectedSemanticChanges:[]experimentpolicy.SemanticFact{{Key:x.semanticKey,Value:x.semanticValue}},
 			ExpectedEffect:x.effect, ParentEvidenceIDs:append([]string(nil),parents...),
 		})
 	}
@@ -94,6 +92,10 @@ func normalize(s string)string{r:=strings.NewReplacer(" ","-","_","-","/","-");s
 func ValidatePlan(p Plan) error {
 	if p.Schema!=PlanSchemaR1{return fmt.Errorf("unexpected plan schema %q",p.Schema)}
 	if p.Intent.MutableModule==""{return fmt.Errorf("mutable module is required")}
-	for _,c:=range p.Candidates{if len(c.ChangedModules)!=1{return fmt.Errorf("candidate %s violates one-primary-mutation policy",c.ID)};if c.ChangedModules[0]!=p.Intent.MutableModule{return fmt.Errorf("candidate %s mutates %s outside intent %s",c.ID,c.ChangedModules[0],p.Intent.MutableModule)}}
+	for _,c:=range p.Candidates{
+		if len(c.ChangedModules)!=1{return fmt.Errorf("candidate %s violates one-primary-mutation policy",c.ID)}
+		if c.ChangedModules[0]!=p.Intent.MutableModule{return fmt.Errorf("candidate %s mutates %s outside intent %s",c.ID,c.ChangedModules[0],p.Intent.MutableModule)}
+		if len(c.ExpectedSemanticChanges)==0{return fmt.Errorf("candidate %s lacks exact expected semantic changes",c.ID)}
+	}
 	return nil
 }
