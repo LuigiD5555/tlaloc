@@ -27,6 +27,8 @@ func main() {
 		prepare(ctx, os.Args[2:])
 	case "run":
 		run(ctx, os.Args[2:])
+	case "record-observation":
+		recordObservation(os.Args[2:])
 	case "example":
 		example()
 	default:
@@ -82,6 +84,33 @@ func run(ctx context.Context, args []string) {
 	write(map[string]any{"prepared": prepared, "report": report})
 }
 
+func recordObservation(args []string) {
+	fs := flag.NewFlagSet("record-observation", flag.ExitOnError)
+	var model, compatibility, transport, endpoint, stage, outcome, responseFile, notes, memory string
+	var temperature float64
+	fs.StringVar(&model, "model", "", "exact model id")
+	fs.StringVar(&compatibility, "compatibility", "platform", "observed compatibility/provider strategy label")
+	fs.StringVar(&transport, "transport-condition", realcampaign.TransportPlatformMediated, "PLATFORM_MEDIATED|DIRECT_IMAGE_API|custom")
+	fs.StringVar(&endpoint, "endpoint", "platform://manual", "observed endpoint/platform identity")
+	fs.StringVar(&stage, "stage", "MANUAL_PLATFORM_OBSERVATION", "observation stage")
+	fs.StringVar(&outcome, "outcome", "OBSERVED", "observed outcome; does not imply benchmark PASS")
+	fs.StringVar(&responseFile, "response-file", "", "file containing the model response")
+	fs.StringVar(&notes, "notes", "", "optional provenance notes")
+	fs.StringVar(&memory, "interop-memory", "", "persistent per-model interoperability memory root")
+	fs.Float64Var(&temperature, "temperature", 0, "observed temperature when known")
+	fs.Parse(args)
+	if responseFile == "" {
+		die(fmt.Errorf("--response-file is required"))
+	}
+	body, err := os.ReadFile(responseFile)
+	die(err)
+	obs, err := realcampaign.BuildExternalObservation(model, compatibility, transport, endpoint, stage, outcome, string(body), notes, temperature)
+	die(err)
+	path, err := realcampaign.RecordExternalObservation(memory, obs)
+	die(err)
+	write(map[string]any{"path": path, "observation": obs})
+}
+
 func example() {
 	write(realcampaign.Spec{
 		Schema:             realcampaign.SpecSchema,
@@ -113,5 +142,5 @@ func die(err error) {
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, "usage: tlaloc-real-vlm-campaign <doctor|prepare|run|example> [flags]")
+	fmt.Fprintln(os.Stderr, "usage: tlaloc-real-vlm-campaign <doctor|prepare|run|record-observation|example> [flags]")
 }
