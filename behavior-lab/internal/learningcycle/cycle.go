@@ -90,6 +90,15 @@ func synthesize(intent experimentpolicy.ExperimentIntent, parents []string, prog
 			ExpectedSemanticChanges:[]experimentpolicy.SemanticFact{{Key:"EXECUTION_POLICY_COMPLIANCE",Value:"EXECUTE_DONT_SUMMARIZE_TO_STABLE_R1"}}, ExpectedEffect:"make execution mandatory rather than descriptive while preserving every passing model-panel baseline and improving failing panel members to PASS", ParentEvidenceIDs:append([]string(nil),parents...),
 		}, intent.CompatibilityPanel)}
 	}
+	if target == "SYNCHRONOUS_EXECUTION_FIDELITY" {
+		preserved := appendUnique(append([]string(nil), intent.Preserve...), "CELL_IDENTITY_ENCODING", "FROM_STATE_PRECONDITION_VISIBILITY", "RULE_ROLE_BINDING", "TEMPORAL_GRAMMAR", "EXECUTION_POLICY", "EXECUTION_POLICY_COMPLIANCE", "PROGRAM_SEMANTICS", "PAYLOAD", "INITIAL_STATES")
+		forbidden := appendUnique(append([]string(nil), intent.Avoid...), "CELL_IDENTITY_MUTATION", "RULE_ROLE_BINDING_MUTATION", "FROM_STATE_PRECONDITION_MUTATION", "RULE_MUTATION", "STATE_MUTATION", "CHECKPOINT_MUTATION", "PAYLOAD_MUTATION", "PROGRAM_SEMANTICS_MUTATION", "GENERATIVE_SEMANTIC_REWRITE", "MULTI_MODULE_MUTATION")
+		return []experimentpolicy.CandidateManifest{attachPanel(experimentpolicy.CandidateManifest{
+			Schema:experimentpolicy.CandidateSchemaR1, ID:"synchronous-execution-fidelity-cross-model-r1", ParentID:intent.BaselineCandidateID, ProgramSHA256:programSHA, PayloadSHA256:payloadSHA,
+			Mutations:[]experimentpolicy.Mutation{{Kind:"PROMPT",Target:"SYNCHRONOUS_EXECUTION_FIDELITY",Value:"FREEZE_SELECT_APPLY_TOGETHER_R1"}}, ChangedModules:[]string{"SYNCHRONOUS_EXECUTION_FIDELITY"}, PreservedModules:preserved, ForbiddenChanges:forbidden,
+			ExpectedSemanticChanges:[]experimentpolicy.SemanticFact{{Key:"SYNCHRONOUS_EXECUTION_FIDELITY",Value:"FREEZE_SELECT_APPLY_TOGETHER_R1"}}, ExpectedEffect:"make every step use one frozen snapshot, select all fireable rules, apply all selected SETs together, forbid rule order and forbid within-step cascading across the model panel", ParentEvidenceIDs:append([]string(nil),parents...),
+		}, intent.CompatibilityPanel)}
+	}
 
 	type h struct{id,kind,mutTarget,value,semanticKey,semanticValue,effect string}
 	hs := []h{}
@@ -138,4 +147,4 @@ func uniqueStrings(in []string)[]string{set:=map[string]bool{};for _,v:=range in
 func rulesByKind(p learningpolicy.Policy)(preserve,avoid,require []string){for _,r:=range p.Rules{switch r.Kind{case learningpolicy.RulePreserve:preserve=append(preserve,r.Target);case learningpolicy.RuleAvoid:avoid=append(avoid,r.Target);case learningpolicy.RuleRequire:require=append(require,r.Target)}};return}
 func appendUnique(in []string,values ...string)[]string{seen:=map[string]bool{};out:=make([]string,0,len(in)+len(values));for _,v:=range append(in,values...){if v==""||seen[v]{continue};seen[v]=true;out=append(out,v)};return out}
 func normalize(s string)string{r:=strings.NewReplacer(" ","-","_","-","/","-");s=strings.ToLower(strings.TrimSpace(s));if s==""{return "general"};return r.Replace(s)}
-func ValidatePlan(p Plan)error{if p.Schema!=PlanSchemaR1{return fmt.Errorf("unexpected plan schema %q",p.Schema)};if p.Intent.MutableModule==""{return fmt.Errorf("mutable module is required")};for _,c:=range p.Candidates{if len(c.ChangedModules)!=1{return fmt.Errorf("candidate %s violates one-primary-mutation policy",c.ID)};if c.ChangedModules[0]!=p.Intent.MutableModule{return fmt.Errorf("candidate %s mutates %s outside intent %s",c.ID,c.ChangedModules[0],p.Intent.MutableModule)};if len(c.ExpectedSemanticChanges)==0{return fmt.Errorf("candidate %s lacks exact expected semantic changes",c.ID)}};return nil}
+func ValidatePlan(p Plan)error{if p.Schema!=PlanSchemaR1{return fmt.Errorf("unexpected plan schema %q",p.Schema)};if p.Intent.MutableModule==""{return fmt.Errorf("mutable module is required")};for _,c:=range p.Candidates{if len(c.ChangedModules)!=1{return fmt.Errorf("candidate %s violates one-primary-mutation policy",c.ID)};if c.ChangedModules[0]!=p.Intent.MutableModule{return fmt.Errorf("candidate %s mutates %s outside intent %s",c.ID,p.Intent.MutableModule,c.ChangedModules[0])};if len(c.ExpectedSemanticChanges)==0{return fmt.Errorf("candidate %s lacks exact expected semantic changes",c.ID)}};return nil}
