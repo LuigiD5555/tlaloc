@@ -26,7 +26,7 @@ Usage: ./install.sh [options]
 
 Installs Tlaloc only, entirely under XDG user directories; sudo is not required.
 Origami is independent and optional. BPFW/PipeCraft are external and never modified.
-Learning memory is runtime state under XDG_STATE_HOME and is preserved across version upgrades.
+Learning memory and blackboard runtime evidence are under XDG_STATE_HOME and are preserved across version upgrades.
 USAGE
 }
 while (($#)); do
@@ -44,7 +44,7 @@ if [[ "$CLEAN_LEGACY" -eq 1 && "$YES" -ne 1 ]]; then
   exit 2
 fi
 
-for req in cp mkdir ln sha256sum readlink go tar; do command -v "$req" >/dev/null || { echo "Missing required command: $req" >&2; exit 1; }; done
+for req in cp mkdir ln sha256sum readlink go tar; do command -v "$req" >/dev/null 2>&1 || { echo "Missing required command: $req" >&2; exit 1; }; done
 [[ -d "$HERE/behavior-lab" ]] || { echo "Missing behavior-lab source" >&2; exit 1; }
 [[ -x "$HERE/tools/tlaloc" && -x "$HERE/tools/doctor.sh" && -x "$HERE/tools/legacy-cleanup.sh" ]] || { echo "Missing Tlaloc tools" >&2; exit 1; }
 
@@ -76,6 +76,8 @@ mkdir -p "$TLALOC_DST.tmp/bin" "$TLALOC_DST.tmp/tools"
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-tlaloque-swarm" ./cmd/tlaloc-tlaloque-swarm
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-learn" ./cmd/tlaloc-learn
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-prompt" ./cmd/tlaloc-prompt
+  CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-lfm2-worker" ./cmd/tlaloc-lfm2-worker
+  CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-lfm2-boundary" ./cmd/tlaloc-lfm2-boundary
 )
 cp -a "$HERE/tools/tlaloc" "$TLALOC_DST.tmp/bin/tlaloc"
 cp -a "$HERE/tools/doctor.sh" "$TLALOC_DST.tmp/tools/doctor.sh"
@@ -90,7 +92,7 @@ printf 'Tlaloc\t%s\n' "$TLALOC_VERSION" > "$TLALOC_DST.tmp/.tlaloc-managed-versi
 rm -rf -- "$TLALOC_DST"
 mv "$TLALOC_DST.tmp" "$TLALOC_DST"
 ln -sfn "$TLALOC_DST" "$TLALOC_ROOT/current"
-for b in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench tlaloc-learning-memory tlaloc-adaptive-search tlaloc-closed-loop tlaloc-real-vlm-campaign tlaloc-learn tlaloc-prompt; do
+for b in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench tlaloc-learning-memory tlaloc-adaptive-search tlaloc-closed-loop tlaloc-real-vlm-campaign tlaloc-learn tlaloc-prompt tlaloc-lfm2-worker tlaloc-lfm2-boundary; do
   ln -sfn "$TLALOC_DST/bin/$b" "$BIN_HOME/$b"
 done
 ln -sfn "$TLALOC_DST/tools/uninstall.sh" "$BIN_HOME/tlaloc-uninstall"
