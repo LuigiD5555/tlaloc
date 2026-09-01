@@ -80,6 +80,34 @@ skills_cmd() {
   esac
 }
 
+real_vlm_cmd() {
+  local action="${1:-help}"
+  if (($#)); then shift; fi
+  case "$action" in
+    smoke)
+      exec "$TLALOC_CURRENT/tools/local-real-vlm-smoke.sh" "$@"
+      ;;
+    doctor|prepare|run|record-observation|replay-record|example)
+      exec "$TLALOC_CURRENT/bin/tlaloc-real-vlm-campaign" "$action" "$@"
+      ;;
+    help|-h|--help)
+      cat <<'USAGE'
+Usage:
+  tlaloc real-vlm smoke [--model ID] [--endpoint URL] [--program PATH]
+  tlaloc real-vlm <doctor|prepare|run|record-observation|replay-record|example> [flags]
+
+`smoke` discovers the canonical Origami temporal program from the Origami
+installer/source checkout, performs doctor + real SMOKE, writes a Run Record,
+and verifies its replay deterministically.
+USAGE
+      ;;
+    *)
+      echo "Unknown real-vlm action: $action" >&2
+      return 2
+      ;;
+  esac
+}
+
 case "${1:-help}" in
   version)
     printf 'Tlaloc %s\n' "$(cat "$TLALOC_CURRENT/VERSION")"
@@ -91,6 +119,7 @@ case "${1:-help}" in
   swarm) shift; exec "$TLALOC_CURRENT/bin/tlaloc-tlaloque-swarm" "$@" ;;
   lfm2-boundary) shift; exec "$TLALOC_CURRENT/bin/tlaloc-lfm2-boundary" "$@" ;;
   origami) shift; exec "$TLALOC_CURRENT/bin/tlaloc-origami" "$@" ;;
+  real-vlm) shift; real_vlm_cmd "$@" ;;
   skills) shift; skills_cmd "$@" ;;
   skills-path) printf '%s\n' "$TLALOC_CURRENT/.claude/skills" ;;
   doctor) shift; exec "$TLALOC_CURRENT/tools/doctor.sh" "$@" ;;
@@ -107,6 +136,8 @@ Usage:
   tlaloc swarm <validate|catalog|plan|run|example> ...
   tlaloc lfm2-boundary run --carrier BASE.png --candidate CANDIDATE.png [options]
   tlaloc origami <compile|boot|query|expand|verify|chat|tools> ...
+  tlaloc real-vlm smoke [options]
+  tlaloc real-vlm <doctor|prepare|run|record-observation|replay-record|example> [flags]
   tlaloc skills <list|path|install> ...
   tlaloc skills-path
   tlaloc doctor
