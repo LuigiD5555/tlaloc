@@ -1,0 +1,247 @@
+[
+  {
+    "id": "TLALOC.COMPILER.BEHAVIOR_PIPELINE",
+    "statement": "Compile a valid BehaviorSpec into PromptIR and render a deterministic prompt without embedding target-specific laws in the compiler.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/compiler:TestCompileUsesBehaviorSpecWithoutHardcodedProfileLaw"
+    ],
+    "version_introduced": "6.0.0-alpha.6",
+    "last_checked": "2026-09-01",
+    "notes": "The test exercises BehaviorSpec validation, PromptIR construction, and prompt rendering as one observable compilation contract."
+  },
+  {
+    "id": "TLALOC.REPAIR.BOUNDED_PROPOSALS",
+    "statement": "Use bounded Tlaloque findings to propose and apply prompt repairs across a finite number of generations.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/tlaloque:TestTrainerCanRepairPrematureCollapse"
+    ],
+    "version_introduced": "6.0.0-alpha.6",
+    "last_checked": "2026-09-01",
+    "notes": "The trainer has an explicit generation bound and repairs a demonstrated premature-collapse failure."
+  },
+  {
+    "id": "TLALOC.PROMOTION.CENTRAL_AUTHORITY",
+    "statement": "Keep promotion decisions outside proposal workers and reject promotion based only on mock evidence or an experimental mutation.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/adaptivesearch:TestPrioritizeQueueDoesNotClaimPromotion",
+      "test:behavior-lab/internal/visualsearch:TestMutationMustRemainExperimentalBeforePromotion",
+      "test:behavior-lab/internal/promotion:TestMockCannotSatisfyCrossModelPromotion"
+    ],
+    "version_introduced": "6.0.0-alpha.12",
+    "last_checked": "2026-09-01",
+    "notes": "Tlaloc may evaluate and recommend; target and stack promotion remain external authority boundaries."
+  },
+  {
+    "id": "TLALOC.REFERENCE.DETERMINISTIC_SEMANTICS",
+    "statement": "Evaluate coherent-state operations against deterministic reference semantics that preserve alternatives, cancellation, and coupled state.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/reference:TestInterferenceCancellation",
+      "test:behavior-lab/internal/reference:TestTransformPreservesAlternatives",
+      "test:behavior-lab/internal/reference:TestCoupledIsJointState"
+    ],
+    "version_introduced": "6.0.0-alpha.6",
+    "last_checked": "2026-09-01",
+    "notes": "This claim covers deterministic reference behavior, not empirical model capability."
+  },
+  {
+    "id": "TLALOC.TRANSPORT.OPENAI_TEXT",
+    "statement": "Execute text requests through an OpenAI-compatible endpoint while preserving the declared behavior input and output boundary.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/target:TestCompleteHybridTextBridge"
+    ],
+    "version_introduced": "6.0.0-alpha.6",
+    "last_checked": "2026-09-01",
+    "notes": "Transport compatibility is implementation evidence, not evidence that a remote model satisfies a behavior."
+  },
+  {
+    "id": "TLALOC.TRANSPORT.OPENAI_MULTIMODAL",
+    "statement": "Execute declared image and tool-loop requests through OpenAI-compatible multimodal transports.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/target:TestCompletePerceptionUsesLMStudioImageDetailStrategy",
+      "test:behavior-lab/internal/target:TestCompleteHybridUsesLMStudioStrategyExecutesToolAndReturnsAnswer",
+      "test:behavior-lab/internal/target:TestMultimodalCompatibilityStrategies"
+    ],
+    "version_introduced": "6.0.0-alpha.12",
+    "last_checked": "2026-09-01",
+    "notes": "A successful transport exchange is not a semantic benchmark pass."
+  },
+  {
+    "id": "TLALOC.PROFILE.ORIGAMI_QUANTUM_INSPIRED_R0",
+    "statement": "Provide the origami.quantum-inspired.r0 behavior profile and execute its deterministic coherent-state reference semantics.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/reference:TestInterferenceCancellation",
+      "test:behavior-lab/internal/reference:TestTransformPreservesAlternatives",
+      "test:behavior-lab/internal/reference:TestCoupledIsJointState"
+    ],
+    "version_introduced": "6.0.0-alpha.6",
+    "last_checked": "2026-09-01",
+    "notes": "The profile exists at behavior-lab/profiles/origami/quantum-inspired-r0.json; the tests cover its core reference invariants."
+  },
+  {
+    "id": "TLALOC.PERCEPTION.TRANSPORT_AND_EVALUATION",
+    "statement": "Run perceptual transport variants and apply deterministic, evidence-gated campaign evaluation without exposing evaluator ground truth to the model.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/promotion:TestBuildTransportVariants",
+      "test:behavior-lab/internal/promotion:TestObservationQuestionDoesNotContainExpectedProbeOrCarrierTruth",
+      "test:behavior-lab/internal/promotion:TestNativeRequiresThreeModelsThreeOriginalTrials",
+      "test:behavior-lab/internal/nativeeval:TestFailedIndexTrialIsRejected"
+    ],
+    "version_introduced": "6.0.0-alpha.12",
+    "last_checked": "2026-09-01",
+    "notes": "The machinery is implemented; this claim does not assert empirical support for any perceptual channel."
+  },
+  {
+    "id": "TLALOC.PERCEPTION.NATIVE_CHANNEL_EXECUTION",
+    "statement": "Execute all seven Origami perceptual-channel operations as native Tlaloc runtime capabilities.",
+    "status": "designed",
+    "evidence": [],
+    "version_introduced": "6.0.0-alpha.7",
+    "last_checked": "2026-09-01",
+    "notes": "Main contains transport, evaluators, and partial runtime support, but no test demonstrates native execution of all seven declared channel operations."
+  },
+  {
+    "id": "TLALOC.RUNTIME.BLACKBOARD",
+    "statement": "Persist immutable run-scoped worker observations, preserve conflicts, and consolidate only when the declared evidence threshold is met.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/blackboard:TestContentIDStableAndAppendIdempotent",
+      "test:behavior-lab/internal/blackboard:TestAppendPublishesOneAtomicEntryUnderConcurrency",
+      "test:behavior-lab/internal/blackboard:TestConsolidateRequiresTwoThirdsAndPreservesConflicts",
+      "test:behavior-lab/internal/blackboard:TestConsolidateTieOrContractViolationIsUnknown"
+    ],
+    "version_introduced": "6.0.0-alpha.21",
+    "last_checked": "2026-09-01",
+    "notes": "Implemented on published main after the original evidence plan described this area as historical design."
+  },
+  {
+    "id": "TLALOC.RUNTIME.CANONICAL_STATE_FUSION",
+    "statement": "Reduce evidence-bearing candidates into canonical state using explicit cardinality and replaceable deterministic fusion policies while retaining conflicts.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/canonicalstate:TestReducerRejectsEvidenceFreeCandidates",
+      "test:behavior-lab/internal/canonicalstate:TestCardinalityOneConflictsDistinctPositiveValues",
+      "test:behavior-lab/internal/canonicalstate:TestPolicyFusionIsCandidateOrderIndependent",
+      "test:behavior-lab/internal/canonicalstate:TestReducerAllowsFusionStrategyReplacement"
+    ],
+    "version_introduced": "6.0.0-alpha.21",
+    "last_checked": "2026-09-01",
+    "notes": "Candidate observations remain distinct from canonical facts."
+  },
+  {
+    "id": "TLALOC.RUNTIME.TYPED_DATAFLOW",
+    "statement": "Resolve Requires and Produces contracts into a typed dependency DAG and expose products by contract rather than producer identity.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/tlaloque:TestResolveGoalMaterializesTypedProductDAG",
+      "test:behavior-lab/internal/tlaloque:TestResolveGoalFailsWhenRequiredProductHasNoProducer",
+      "test:behavior-lab/internal/tlaloque:TestRunnerExposesTypedProductInsteadOfProducerIdentity",
+      "test:behavior-lab/internal/tlaloque:TestSwarmPlanRejectsBindingOutsideDependencies"
+    ],
+    "version_introduced": "6.0.0-alpha.21",
+    "last_checked": "2026-09-01",
+    "notes": "Published main contains executable typed dataflow despite the historical plan classifying Causal Dataflow as designed."
+  },
+  {
+    "id": "TLALOC.RUNTIME.JOIN_AND_FAILURE_POLICIES",
+    "statement": "Execute ALL, ANY, and QUORUM dependency joins with explicit node state transitions and tolerated-failure policies.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/tlaloque:TestNodeStateMachineRejectsIllegalTransition",
+      "test:behavior-lab/internal/tlaloque:TestSwarmAnyJoinStartsOnFirstSuccessfulDependency",
+      "test:behavior-lab/internal/tlaloque:TestSwarmQuorumJoinStartsAfterThreshold",
+      "test:behavior-lab/internal/tlaloque:TestSwarmPlanRejectsInvalidQuorum"
+    ],
+    "version_introduced": "6.0.0-alpha.21",
+    "last_checked": "2026-09-01",
+    "notes": "Join semantics are recorded separately from typed product resolution because either contract can regress independently."
+  },
+  {
+    "id": "TLALOC.RUNTIME.ENSEMBLE_COMPOSITION",
+    "statement": "Build and execute pinned multi-worker ensemble plans with an explicit fusion boundary and declared quorum or all-member behavior.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/tlaloque:TestResolveEnsembleBuildsPinnedQuorumPlan",
+      "test:behavior-lab/internal/tlaloque:TestQuorumEnsembleSucceedsWhenOptionalMemberFails",
+      "test:behavior-lab/internal/tlaloque:TestAllEnsembleFailsAtFusionBoundaryWhenMemberFails"
+    ],
+    "version_introduced": "6.0.0-alpha.21",
+    "last_checked": "2026-09-01",
+    "notes": "This claim covers executable composition, not empirical superiority over a single worker."
+  },
+  {
+    "id": "TLALOC.RUNTIME.EMPIRICAL_COMPLEMENTARITY_SELECTION",
+    "statement": "Build condition-specific empirical failure profiles and use sufficient shared evidence to select complementary ensemble members deterministically.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/learningmemory:TestBuildEmpiricalProfilesMeasuresFailureComplementarity",
+      "test:behavior-lab/internal/learningmemory:TestEmpiricalProfilesIgnoreSyntheticAndUnaddressableCases",
+      "test:behavior-lab/internal/tlaloque:TestEmpiricalStrategyPrefersComplementaryWeakerMember",
+      "test:behavior-lab/internal/tlaloque:TestEmpiricalStrategyRequiresEnoughSharedEvidence"
+    ],
+    "version_introduced": "6.0.0-alpha.21",
+    "last_checked": "2026-09-01",
+    "notes": "Selection falls back to the baseline strategy when empirical evidence is insufficient."
+  },
+  {
+    "id": "TLALOC.TRANSPORT.ANTHROPIC_NATIVE",
+    "statement": "Execute behavior requests through a native Anthropic transport backend.",
+    "status": "designed",
+    "evidence": [],
+    "version_introduced": "unknown",
+    "last_checked": "2026-09-01",
+    "notes": "No native Anthropic implementation or associated test exists on published main."
+  },
+  {
+    "id": "TLALOC.IR.SKILL",
+    "statement": "Compile behavior into SkillIR and generate portable agent skills from that intermediate representation.",
+    "status": "designed",
+    "evidence": [],
+    "version_introduced": "unknown",
+    "last_checked": "2026-09-01",
+    "notes": "docs/CAPABILITY_STATUS.md explicitly marks SkillIR and generated skills as not implemented."
+  },
+  {
+    "id": "TLALOC.BACKEND.MODEL_FAMILY",
+    "statement": "Select and execute specialized runtime backends by model family under a common behavior contract.",
+    "status": "designed",
+    "evidence": [],
+    "version_introduced": "unknown",
+    "last_checked": "2026-09-01",
+    "notes": "Main can detect model families and vary compatibility metadata, but no tested family-specific backend contract exists."
+  },
+  {
+    "id": "TLALOC.BEHAVIOR_LAB.THREE_LEVEL",
+    "statement": "Operate distinct Model Lab, Composition Lab, and Design Lab levels with promotion gates between them.",
+    "status": "designed",
+    "evidence": [],
+    "version_introduced": "unknown",
+    "last_checked": "2026-09-01",
+    "notes": "The repository contains behavior-lab machinery, but no test demonstrates the complete three-level contract described in the historical architecture."
+  },
+  {
+    "id": "TLALOC.DESIGN.MDP",
+    "statement": "Use a Markov decision process with explicit actions and rewards to select runtime or design policies.",
+    "status": "designed",
+    "evidence": [],
+    "version_introduced": "unknown",
+    "last_checked": "2026-09-01",
+    "notes": "Published main has deterministic and empirical selection policies, not a tested MDP implementation."
+  },
+  {
+    "id": "TLALOC.TLALOQUE.AUTO_CREATION",
+    "statement": "Automatically design, train, benchmark, and promote a new Tlaloque specialist from an unmet capability goal.",
+    "status": "designed",
+    "evidence": [],
+    "version_introduced": "unknown",
+    "last_checked": "2026-09-01",
+    "notes": "Main resolves and composes registered workers but does not test the complete auto-creation and promotion lifecycle."
+  }
+]
