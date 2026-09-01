@@ -56,7 +56,14 @@ func emitPrepareRunRecord(prepared Prepared, requestedModel string, startedAt, c
 		},
 		Repetitions: runrecord.Repetitions{N: 1, VerdictDistribution: map[string]int{"verify_pass": 1}},
 		Replay:      replay,
-		Trace:       []runrecord.TransitionEvent{},
+		Trace: []runrecord.TransitionEvent{{
+			Sequence: 0,
+			From: "PENDING",
+			To: "PROMPT_COMPILED",
+			At: completedAt.Format(time.RFC3339Nano),
+			LatencyMS: completedAt.Sub(startedAt).Milliseconds(),
+			Actor: "realcampaign:prepare",
+		}},
 	}
 	finalized, err := runrecord.Finalize(record, startedAt)
 	if err != nil {

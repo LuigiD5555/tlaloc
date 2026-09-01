@@ -12,7 +12,12 @@ for name in "${skills[@]}"; do
   grep -q '^description: .\+' "$f"
   grep -q '^version: [0-9]' "$f"
 done
-grep -q 'Project-local Claude Code skills.*R0 implemented' "$ROOT/docs/CAPABILITY_STATUS.md"
-grep -q 'Tonal-owned `repo-flow` distribution.*external / not Tlaloc-owned' "$ROOT/docs/CAPABILITY_STATUS.md"
-grep -q 'SkillIR / generated Claude Skills.*not implemented' "$ROOT/docs/CAPABILITY_STATUS.md"
+python3 - "$ROOT/state/CLAIMS.json" <<'PY'
+import json, sys
+claims = {claim['id']: claim for claim in json.load(open(sys.argv[1]))}
+skill_ir = claims['TLALOC.IR.SKILL']
+assert skill_ir['status'] == 'designed'
+assert not skill_ir.get('evidence')
+PY
+grep -q 'TLALOC.IR.SKILL' "$ROOT/docs/CAPABILITY_STATUS.md"
 echo PASS
