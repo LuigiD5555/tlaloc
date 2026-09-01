@@ -7,6 +7,8 @@ import (
 	"sort"
 	"strings"
 	"sync"
+
+	"tlaloc.local/behaviorlab/internal/blackboard"
 )
 
 const (
@@ -57,20 +59,25 @@ func (d CapabilityDescriptor) Normalize() (CapabilityDescriptor, error) {
 }
 
 // CapabilityRequest is deliberately generic. Every node receives the original
-// task payload and the outputs of its declared dependencies as named context.
+// task payload, outputs of declared dependencies, and (when enabled) a
+// deterministic snapshot of the current run's blackboard.
 type CapabilityRequest struct {
-	TaskID  string                     `json:"task_id"`
-	NodeID  string                     `json:"node_id"`
-	Input   json.RawMessage            `json:"input"`
-	Context map[string]json.RawMessage `json:"context,omitempty"`
+	TaskID     string                     `json:"task_id"`
+	NodeID     string                     `json:"node_id"`
+	Input      json.RawMessage            `json:"input"`
+	Context    map[string]json.RawMessage `json:"context,omitempty"`
+	Blackboard *blackboard.Snapshot       `json:"blackboard,omitempty"`
 }
 
-// CapabilityResponse is the only output a runtime worker may return to Tlaloc.
+// CapabilityResponse remains backward-compatible with workers that only emit
+// output. New workers may additionally return structured observations; only
+// SwarmRunner is allowed to persist them.
 type CapabilityResponse struct {
-	WorkerID   string          `json:"worker_id"`
-	Output     json.RawMessage `json:"output"`
-	Confidence float64         `json:"confidence,omitempty"`
-	Notes      string          `json:"notes,omitempty"`
+	WorkerID     string                   `json:"worker_id"`
+	Output       json.RawMessage          `json:"output"`
+	Confidence   float64                  `json:"confidence,omitempty"`
+	Notes        string                   `json:"notes,omitempty"`
+	Observations []blackboard.Observation `json:"observations,omitempty"`
 }
 
 // CapabilityWorker is the runtime counterpart of the historical prompt-repair
@@ -171,7 +178,7 @@ func (r *Registry) Select(req SelectionRequest) (CapabilityWorker, error) {
 			if pj == 0 { return false }
 			return pi < pj
 		}
-		return candidates[i].desc.ID < candidates[j].desc.ID
+		return candidates[0].desc.ID < candidates[j].desc.ID
 	})
 	return candidates[0].worker, nil
 }
