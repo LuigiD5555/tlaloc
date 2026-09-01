@@ -2,13 +2,19 @@ package tlaloque
 
 import "testing"
 
-type lastCandidateStrategy struct{}
+type lexicographicallyHighestStrategy struct{}
 
-func (lastCandidateStrategy) Select(candidates []SelectionCandidate, _ SelectionRequest) Result[CapabilityWorker] {
+func (lexicographicallyHighestStrategy) Select(candidates []SelectionCandidate, _ SelectionRequest) Result[CapabilityWorker] {
 	if len(candidates) == 0 {
 		return DomainResult[CapabilityWorker](ResultNoCandidate, nil)
 	}
-	return Success(candidates[len(candidates)-1].Worker)
+	best := candidates[0]
+	for _, candidate := range candidates[1:] {
+		if candidate.Desc.ID > best.Desc.ID {
+			best = candidate
+		}
+	}
+	return Success(best.Worker)
 }
 
 func TestRegistrySelectionStrategyCanBeReplaced(t *testing.T) {
@@ -18,7 +24,7 @@ func TestRegistrySelectionStrategyCanBeReplaced(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	r.SetSelectionStrategy(lastCandidateStrategy{})
+	r.SetSelectionStrategy(lexicographicallyHighestStrategy{})
 	worker, err := r.Select(SelectionRequest{Capability: "CLASSIFY"})
 	if err != nil {
 		t.Fatal(err)
