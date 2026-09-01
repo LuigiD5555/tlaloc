@@ -10,7 +10,7 @@ cleanup(){
 }
 trap cleanup EXIT
 
-[[ "$(tr -d '\r\n' < "$ROOT/VERSION")" == "6.0.0-alpha.20" ]]
+[[ "$(tr -d '\r\n' < "$ROOT/VERSION")" == "6.0.0-alpha.21" ]]
 [[ "$(tr -d '\r\n' < "$ORIGAMI_ROOT/VERSION")" == "6.0.0-alpha.15" ]]
 
 mkdir -p "$TMP/bin" "$TMP/run" "$TMP/memory"
@@ -55,7 +55,7 @@ cat > "$TMP/config.json" <<JSON
   "output_dir": "$TMP/run",
   "memory_root": "$TMP/memory",
   "origami_version": "6.0.0-alpha.15",
-  "tlaloc_version": "6.0.0-alpha.20",
+  "tlaloc_version": "6.0.0-alpha.21",
   "trials_per_model": 1,
   "candidates_per_generation": 1,
   "max_generations": 1,
@@ -141,7 +141,7 @@ PY
 
 printf 'ORIGAMI_TLALOC_CROSS_REPO_R0=PASS\n'
 printf 'ORIGAMI_VERSION=6.0.0-alpha.15\n'
-printf 'TLALOC_VERSION=6.0.0-alpha.20\n'
+printf 'TLALOC_VERSION=6.0.0-alpha.21\n'
 printf 'PARENT_BYTES=8192\n'
 printf 'CANDIDATE_BYTES=8192\n'
 printf 'EXACT_TEMPORAL_PROGRAM_PRESERVED=YES\n'
