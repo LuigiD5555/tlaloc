@@ -163,3 +163,16 @@ func TestClaimPolicyRegistryRejectsUnsupportedPolicy(t *testing.T) {
 		t.Fatal("expected unsupported fusion mode to fail")
 	}
 }
+
+func TestClaimPolicyRegistryNormalizesPredicateKeys(t *testing.T) {
+	policies, err := NewClaimPolicyRegistry("normalized-r1", map[string]ClaimPolicy{
+		"  Document   Type ": {Cardinality: CardinalityOne},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	policy := policies.PolicyFor("document type")
+	if policy.Cardinality != CardinalityOne || policy.Fusion != FusionSingleValue {
+		t.Fatalf("normalized policy=%+v", policy)
+	}
+}
