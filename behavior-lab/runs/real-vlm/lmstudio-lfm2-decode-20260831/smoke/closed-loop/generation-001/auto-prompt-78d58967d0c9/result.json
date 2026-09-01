@@ -1,0 +1,6 @@
+{
+  "schema": "tlaloc.temporal-native-benchmark.r0.result",
+  "benchmark_id": "origami-temporal-native-r0",
+  "trials": null,
+  "real_evidence": true
+}

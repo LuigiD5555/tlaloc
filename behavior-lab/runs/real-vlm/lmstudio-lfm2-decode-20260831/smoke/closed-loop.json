@@ -1,0 +1,41 @@
+{
+  "schema": "tlaloc.closed-experimental-loop.r0.config",
+  "run_id": "lmstudio-lfm2-decode-20260831-smoke",
+  "benchmark_id": "origami-temporal-native-r0",
+  "output_dir": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/closed-loop",
+  "memory_root": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/learning-memory",
+  "origami_version": "6.0.0-alpha.15",
+  "tlaloc_version": "6.0.0-alpha.21",
+  "trials_per_model": 1,
+  "candidates_per_generation": 1,
+  "max_generations": 1,
+  "min_incumbent_improvement": 0.01,
+  "diagnostic_retries": true,
+  "conditions": [
+    "NATIVE_PNG_ONLY"
+  ],
+  "outcome_metric": "NATIVE_SCORE",
+  "models": [
+    {
+      "name": "lfm2-vl-1.6b",
+      "provider": "OPENAI_COMPAT",
+      "base_url": "http://127.0.0.1:1234/v1",
+      "model": "lfm2-vl-1.6b",
+      "compatibility_strategy": "lm-studio",
+      "max_output_tokens": 512,
+      "generation_guard": "repetition-r0",
+      "timeout_seconds": 180,
+      "transport_retries": 1
+    }
+  ],
+  "baseline": {
+    "id": "signal-chain-r0",
+    "png": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/baseline.png"
+  },
+  "auto_candidates": true,
+  "candidate_builder": [
+    "../../origami/bin/origami-candidate-build"
+  ],
+  "auto_candidate_base_profile_id": "origami.temporal-carrier.r0.profile-1",
+  "auto_candidates_per_generation": 4
+}

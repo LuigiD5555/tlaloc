@@ -1,0 +1,63 @@
+{
+  "schema": "tlaloc.real-vlm-campaign.r0.manifest",
+  "campaign_id": "lmstudio-lfm2-decode-20260831",
+  "phase": "SMOKE",
+  "status": "SMOKE_TRANSPORT_AND_BEHAVIOR_CHECK",
+  "endpoint": "http://127.0.0.1:1234/v1",
+  "compatibility_strategy": "lm-studio",
+  "trace_stream": false,
+  "max_output_tokens": 512,
+  "generation_guard": "repetition-r0",
+  "model_id": "lfm2-vl-1.6b",
+  "model_interop": {
+    "schema": "tlaloc.model-interop-profile.r0",
+    "model_id": "lfm2-vl-1.6b",
+    "family": "LIQUIDAI",
+    "transport_condition": "DIRECT_IMAGE_API",
+    "compatibility_strategy": "lm-studio",
+    "specimen_key": "LIQUIDAI::lfm2-vl-1.6b::DIRECT_IMAGE_API::lm-studio",
+    "evidence_rule": "OBSERVE_BEHAVIOR_DO_NOT_ASSUME_INTERNALS",
+    "comparison_rule": "COMPARE_EXACT_MODEL_AND_TRANSPORT_FIRST"
+  },
+  "working_configuration_path": "~/.local/state/tlaloc/model-interop/liquidai/lfm2-vl-1-6b-bb2679682457/working-configurations.json",
+  "tlaloc_version": "6.0.0-alpha.21",
+  "origami_expected_version": "6.0.0-alpha.15",
+  "program_path": "../../origami/experiments/temporal-automaton-r0/signal-chain.json",
+  "program_sha256": "ab6dddd4c906ed709142ef82b2631f2fc9f97cedc73339568bf54274ebbf3251",
+  "baseline_png": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/baseline.png",
+  "baseline_sha256": "0f926f0d4fdd31a87a46c6f1305cc4937fc270b20da83991918b6f50b440e5df",
+  "baseline_bytes": 8192,
+  "temporal_carrier": "../../origami/bin/origami-temporal-carrier",
+  "temporal_carrier_sha256": "b9cb4ef4534b69e9b5c7220b7adba55b1a6af1b9eb32fdefaf099d69362b55c0",
+  "candidate_builder": "../../origami/bin/origami-candidate-build",
+  "candidate_builder_sha256": "5221852101b7b903687a9157b1f8a886a7b46ad8bff5620e4f97816c3ef3f20e",
+  "builder_capabilities": {
+    "schema": "origami.experimental-candidate.r0.capabilities",
+    "parent_profiles": [
+      "origami.temporal-carrier.r0.profile-1"
+    ],
+    "supported_kinds": [
+      "CHANNEL_ROLE",
+      "LAYOUT",
+      "NUMERIC_STRUCTURE",
+      "PRIMITIVE",
+      "PROMPT",
+      "REDUNDANCY",
+      "TEMPORAL_STRUCTURE"
+    ],
+    "unsupported_kinds": [
+      "COLOR_USAGE",
+      "DEPTH_STRUCTURE",
+      "EMERGENT_STRUCTURE",
+      "INTERFERENCE_STRUCTURE"
+    ],
+    "exact_plane_mutation": false,
+    "max_mutations": 8
+  },
+  "closed_loop_config": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/closed-loop.json",
+  "closed_loop_config_sha256": "cdedaf6d6818334816fe982d0386d2e935cfbc495ef1691a21e14498000ff8e8",
+  "memory_root": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/learning-memory",
+  "evidence_policy": "REAL_MODEL_SINGLE_TRIAL_ISOLATED_MEMORY_NOT_PROMOTION_ELIGIBLE",
+  "promotion_eligible": false,
+  "cross_model_evidence": false
+}

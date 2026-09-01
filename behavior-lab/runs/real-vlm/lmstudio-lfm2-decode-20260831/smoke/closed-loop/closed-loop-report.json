@@ -1,0 +1,90 @@
+{
+  "schema": "tlaloc.closed-experimental-loop.r0.report",
+  "run_id": "lmstudio-lfm2-decode-20260831-smoke",
+  "output_dir": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/closed-loop",
+  "memory_root": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/learning-memory",
+  "initial_baseline_id": "signal-chain-r0",
+  "final_incumbent_id": "signal-chain-r0",
+  "generations": [
+    {
+      "generation": 1,
+      "plan_before_path": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/closed-loop/generation-001/plan-before.json",
+      "queue_path": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/closed-loop/generation-001/candidate-queue.json",
+      "baseline": {
+        "specimen_id": "signal-chain-r0",
+        "png": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/baseline.png",
+        "sha256": "0f926f0d4fdd31a87a46c6f1305cc4937fc270b20da83991918b6f50b440e5df",
+        "scores": {
+          "clean_trials": 1,
+          "mean_overall_score": 0.3333333333333333,
+          "mean_native_score": 0.3333333333333333,
+          "mean_assisted_score": 0
+        },
+        "campaign_path": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/closed-loop/generation-001/signal-chain-r0/campaign.json",
+        "result_path": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/closed-loop/generation-001/signal-chain-r0/result.json",
+        "memory_events": 15,
+        "memory_event_ids": [
+          "1f27c4a28aea379a4227147c2db99fbdd6c1c1e05438df42d2113671185f0506",
+          "37f99524b3fefe355a934f2ad578c4cdd1a1152c8679a578cc96e46fcedd06f4",
+          "32830db7b31f928cdd2cd47236c89caab8d50acefa0eb508a15e2e6e998d793d",
+          "8f2b3aa41ca8eb177be62915a26ff9db67d878648fbe0ac9268660f9d65c3506",
+          "85dbff67e25baf1d17124428faa17fe4cb0560f4c794f2f2709786ca09391431",
+          "82be1214a85a1e09f063710379bfd68144618f2fee623f404b8596a3fee7ddaa",
+          "9caaceebbb55c890be860a5f7bc99c5b62d22b0f96e8bd074befcc21d242d05b",
+          "a74523c7089ec32b0b5de6785733e6b0615721548652d3c5d1909fa3035c96a0",
+          "ade025f44f6d51812e062038744b825bf707b8bb66f5dfa581c2ebd55bc9b4ec",
+          "e4b0fce16dfe093a6e45a6938f1862432c374dc4bef7df997fcb7f1644833442",
+          "72a95a9c8b6ab2baddb770aebf0e0c299b9cfcea6178ab10ccf4ae2db99f995c",
+          "8ef8779b23898a51096fdbcfb3ba3f33f511b5a8750d667d940df2ca515b9c2e",
+          "6968196e73ab264addbc763f0ee059e9fc6ec2003f9df59ce5d1cb51240cc203",
+          "19343cb99dd67a579487c73fbacc8f9e9f914a925057ae99dc7ef913031730ce",
+          "79c64b696d2d6e95ac803e22b99f50241ed82dcc0729bc135b9f623e113adf5f"
+        ],
+        "execution_errors": 0
+      },
+      "incumbent_before_id": "signal-chain-r0",
+      "incumbent_after_id": "signal-chain-r0",
+      "incumbent_advanced": false,
+      "incumbent_reason": "no tested candidate satisfied minimum improvement plus non-regression gates",
+      "active_failure_count": 6,
+      "candidates": [
+        {
+          "specimen_id": "auto-prompt-78d58967d0c9",
+          "candidate_id": "auto-prompt-78d58967d0c9",
+          "png": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/closed-loop/generation-001/auto-candidates/auto-prompt-78d58967d0c9.png",
+          "sha256": "f6716709468ca0f725d7b443a194547dba8ce23f620b1e5546dd58d211452fc2",
+          "scores": {
+            "clean_trials": 0,
+            "mean_overall_score": 0,
+            "mean_native_score": 0,
+            "mean_assisted_score": 0
+          },
+          "campaign_path": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/closed-loop/generation-001/auto-prompt-78d58967d0c9/campaign.json",
+          "result_path": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/closed-loop/generation-001/auto-prompt-78d58967d0c9/result.json",
+          "memory_events": 0,
+          "execution_errors": 1
+        }
+      ],
+      "plan_after_path": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/closed-loop/generation-001/plan-after.json",
+      "selected_candidate_ids": [
+        "auto-prompt-78d58967d0c9"
+      ],
+      "remaining_candidate_bank": 3
+    }
+  ],
+  "execution_errors": [
+    {
+      "generation": 1,
+      "specimen_id": "auto-prompt-78d58967d0c9",
+      "candidate_id": "auto-prompt-78d58967d0c9",
+      "model_id": "lfm2-vl-1.6b",
+      "condition": "NATIVE_PNG_ONLY",
+      "question_id": "Q4",
+      "diagnostic": false,
+      "error": "MODEL_OUTPUT_DEGENERATION guard=repetition-r0: 16 consecutive near-identical lines differ only by numeric progression"
+    }
+  ],
+  "final_plan_path": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/closed-loop/generation-001/plan-after.json",
+  "stop_reason": "MAX_GENERATIONS_REACHED",
+  "authority": "EXPERIMENTAL_INCUMBENT_ONLY_ORIGAMI_CANONICAL_PROMOTION_REMAINS_EXTERNAL_AND_EVIDENCE_GATED"
+}

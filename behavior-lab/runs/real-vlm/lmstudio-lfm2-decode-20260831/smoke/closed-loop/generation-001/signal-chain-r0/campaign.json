@@ -1,0 +1,122 @@
+{
+  "schema": "tlaloc.temporal-native-benchmark.r0.campaign",
+  "benchmark_id": "origami-temporal-native-r0",
+  "trials": [
+    {
+      "id": "g001-signal-chain-r0-lfm2-vl-1-6b-native_png_only-01",
+      "model_id": "lfm2-vl-1.6b",
+      "provider": "OPENAI_COMPAT",
+      "condition": "NATIVE_PNG_ONLY",
+      "specimen": {
+        "id": "signal-chain-r0",
+        "sha256": "0f926f0d4fdd31a87a46c6f1305cc4937fc270b20da83991918b6f50b440e5df",
+        "variant": "original",
+        "png_bytes": 8192,
+        "width": 640,
+        "height": 640
+      },
+      "responses": [
+        {
+          "question_id": "Q0",
+          "text": "The acronym \"BOX\" stands for \"BINARY ONLY EXACT MATCHING.\" It is a method used to verify that the data being transmitted matches the expected data. In this context, it is likely being used to ensure that the data sent by the ORIGAMI TEMPORAL CARRIER is accurate and complete.\n\nThe \"ARROW\" symbol represents a sequence of events or actions in the timeline. It indicates the direction of movement or progression from one point to another. In this case, it likely represents the movement of cells along the checkpoint route.\n\nThe \"RINGROLL\" symbol indicates a rotation or circular motion of the cells around the checkpoint. This could represent the cells moving in a circular pattern as they pass through the checkpoint.\n\nThe \"X/TIME\" symbol represents the timing aspect of the ORIGAMI TEMPORAL CARRIER. It indicates that the data being transmitted is time-stamped, meaning that it has a specific time stamp associated with it. This could be important for ensuring that the data is transmitted at the correct time and in the correct order.",
+          "latency_ms": 18369
+        },
+        {
+          "question_id": "Q1",
+          "text": "The image appears to be a screenshot of a computer program interface, specifically for an origami temporal carrier. The interface includes various elements such as:\n\n1. **Header Information**:\n   - \"ORIGAMI TEMPORAL CARRIER_0\"\n   - \"T1 ROSETTA: BOXCELL ARROWTRANSMISSION RINGFREQENT XTIME\"\n   - \"READ: 2 DRAW 2 STUDY 1 WRITE 1 EXAMPLES OF PROGRAM BELOW: FALSE EXACT 8\"\n\n2. **Graphical Elements**:\n   - A timeline with labeled points (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z).\n   - Arrows indicating the flow or sequence of events.\n   - A \"T2 SEMANTIC-TEMPORAL SUPERGRAPH\" with boxes labeled \"CELL A\", \"CELL B\", and \"CELL C\".\n\n3. **Program Details**:\n   - \"TIMELINE / CHECKPOINT ROUTE\"\n   - \"T9 EXACT PROGRAM PAYLOAD: ZLIB JSON + SHARP256 + ORC\"\n\n4. **QR Code**:\n   - A QR code is present at the bottom of the interface.\n\n5. **Text Boxes and Labels**:\n   - \"CELL A ACTIVE\"\n   - \"CELL B TULL\"\n   - \"CELL C TULL\"\n   - \"T9 EXACT PROGRAM PAYLOAD: ZLIB JSON + SHARP256 + ORC\"\n\n6. **Other Elements**:\n   - \"ORIGAMI TEMPORAL CARRIER_0\"\n   - \"READ: 2 DRAW 2 STUDY 1 WRITE 1 EXAMPLES OF PROGRAM BELOW: FALSE EXACT 8\"\n   - \"T2 SEMANTIC-TEMPORAL SUPERGRAPH\"\n\nThe interface seems to be part of a simulation or modeling tool for origami, possibly used in the field of robotics or engineering. The QR code might be used for quick access to the program",
+          "latency_ms": 36116
+        },
+        {
+          "question_id": "Q2",
+          "text": "The initial state of A, as shown in the diagram, is \"T2 SEMANTIC-TEMPORAL SUPERGRAPH\". This is indicated at the top of the image, just below the title \"ORIGAMI TEMPORAL CARRIER_RO\".",
+          "latency_ms": 7601
+        },
+        {
+          "question_id": "Q3",
+          "text": "The declared transition that causes B to become ACTIVE is the \"T2 Semantic-Temporal Supergraph\" transition. This transition involves a change in the state of cell A, which is marked as \"ACTIVE\" and then becomes \"TULL\" (till) before becoming \"ACTIVE\" again.",
+          "latency_ms": 7689
+        },
+        {
+          "question_id": "Q4",
+          "text": "After B becomes ACTIVE, the following actions occur:\n\n1. Cell A transitions from \"ACTIVE\" to \"TULL\" (till time).\n2. Cell B transitions from \"TULL\" to \"ACTIVE\".\n3. Cell C transitions from \"TULL\" to \"ACTIVE\".\n\nThis sequence represents a series of events in the ORIGAMI TEMPORAL CARRIER, where each cell's state changes over time according to the specified rules.",
+          "latency_ms": 10043
+        },
+        {
+          "question_id": "Q5",
+          "text": "The declared checkpoint times are:\n\n- T2: Semantic-Temporal Supergraph\n- T1: Cell A Active\n- T0: Cell B -\u003e Cell C (Toll)\n- T9: Toll -\u003e Toll (TN)\n\nThese times represent the sequence of events or states in a semantic-temporal supergraph, which is likely used to model and analyze complex systems over time.",
+          "latency_ms": 8901
+        },
+        {
+          "question_id": "Q6",
+          "text": "No, the temporal representation is not a literal video frame sequence. It is a graphical representation of a program's execution over time, showing the flow of control between different cells in a program. The timeline at the bottom indicates the progression of time, and the checkpoints along the timeline represent specific points in the program's execution.",
+          "latency_ms": 8042
+        },
+        {
+          "question_id": "Q7",
+          "text": "The final states for cells A, B, and C are:\n\nCell A: TULL\nCell B: TULL\nCell C: TULL\n\nThis is because the program follows the path defined in the \"T2 SEMANTIC-TEMPORAL SUPERGRAPH\" rule, which specifies that the state of cell A is TULL, and then both cells B and C are also set to TULL.",
+          "latency_ms": 9594
+        },
+        {
+          "question_id": "Q8",
+          "text": "To derive the SHA-256 hash of the given payload without using a mechanical exact decoder, we can use a programming language like Python to perform the hashing operation. Here's how you can do it:\n\n```python\nimport hashlib\n\n# The payload data\npayload = \"ORIGAMI_TEMPORAL_CARRIER_R0\"\n\n# Create a SHA-256 hash object\nsha256_hash = hashlib.sha256()\n\n# Update the hash object with the payload data\nsha256_hash.update(payload.encode('utf-8'))\n\n# Get the hexadecimal representation of the hash\nhash_hex = sha256_hash.hexdigest()\n\nprint(hash_hex)\n```\n\nWhen you run this code, it will output the SHA-256 hash of the payload. Please note that the exact hash value may vary slightly due to the nature of cryptographic hashing functions, which are designed to be one-way and produce a fixed-size hash from an input of any size.",
+          "latency_ms": 17555
+        }
+      ]
+    },
+    {
+      "id": "g001-signal-chain-r0-lfm2-vl-1-6b-native_png_only-01-diag",
+      "model_id": "lfm2-vl-1.6b",
+      "provider": "OPENAI_COMPAT",
+      "condition": "NATIVE_PNG_ONLY",
+      "diagnostic_mode": true,
+      "diagnostic_question_ids": [
+        "Q0",
+        "Q2",
+        "Q4",
+        "Q5",
+        "Q7",
+        "Q8"
+      ],
+      "specimen": {
+        "id": "signal-chain-r0",
+        "sha256": "0f926f0d4fdd31a87a46c6f1305cc4937fc270b20da83991918b6f50b440e5df",
+        "variant": "original",
+        "png_bytes": 8192,
+        "width": 640,
+        "height": 640
+      },
+      "responses": [
+        {
+          "question_id": "Q0",
+          "text": "BOX: Cell A active\nARROW: Cell B -\u003e Cell C\nRING: Cell C -\u003e Cell A\nTIMELINE: T2 Navigation\nEXACT_BOUNDARY: NONE\nANSWER: PASS",
+          "latency_ms": 8580
+        },
+        {
+          "question_id": "Q2",
+          "text": "ORIGAMI_DEBUG_R0={}\n\n{\n    status: PASS,\n    last_completed_stage: NONE,\n    selected_codec: NONE,\n    last_instruction: \"\",\n    next_instruction: \"\",\n    failure_code: NONE,\n    evidence_refs: [],\n    confidence: 100,\n    optional_note: \"\"\n}",
+          "latency_ms": 10370
+        },
+        {
+          "question_id": "Q4",
+          "text": "ORIGAMI_DEBUG_R0={\n    \"status\": \"PASS\",\n    \"last_completed_stage\": \"T2_NAVIGATION\",\n    \"selected_codec\": \"TEMPORAL_ROUTE\",\n    \"last_instruction\": \"TEMPORAL_STEP\",\n    \"next_instruction\": \"EXACT_BOUNDARY\",\n    \"failure_code\": \"\",\n    \"evidence_refs\": \"\",\n    \"confidence\": \"\",\n    \"optional_note\": \"\"\n}",
+          "latency_ms": 12378
+        },
+        {
+          "question_id": "Q5",
+          "text": "T2 Semantic-Temporal Supergraph\n\nCell A: ACTIVE\nCell B: TULL\nCell C: TULL\n\nTimeline / Checkpoint Route:\nT9\n\nExact Program Payload:\nZLIB JSON + SHARES + ORC\n\nStatus: PASS\n\nEvidence Ref(s):\nNone\n\nConfidence: NONE\n\nNote: No failure detected.",
+          "latency_ms": 10410
+        },
+        {
+          "question_id": "Q7",
+          "text": "A: Cell A is active.\nB: Cell B is active.\nC: Cell C is active.\n\nORIGAMI_DEBUG_R0={\n    \"status\": \"PASS\",\n    \"last_completed_stage\": \"T2_SEMANTIC_DECODE\",\n    \"selected_codec\": \"T2_NAVIGATION\",\n    \"last_instruction\": \"TEMPORAL_ROUTE\",\n    \"next_instruction\": \"TEMPORAL_STEP\",\n    \"failure_code\": \"\",\n    \"evidence_refs\": \"\",\n    \"confidence\": \"\",\n    \"optional_note\": \"\"\n}",
+          "latency_ms": 13881
+        },
+        {
+          "question_id": "Q8",
+          "text": "ORIGAMI_DEBUG_R0={\n    \"timeline\": [\n        {\"stage\": \"BOOT\", \"instruction\": \"ROSETTA\"},\n        {\"stage\": \"CODEC_DISCOVERY\", \"instruction\": \"T2_NAVIGATION\"},\n        {\"stage\": \"SEMANTIC_DECODE\", \"instruction\": \"TEMPORAL_ROUTE\"},\n        {\"stage\": \"TEMPORAL_STEP\", \"instruction\": \"EXACT_BOUNDARY\"},\n        {\"stage\": \"ANSWER\", \"instruction\": \"ANSWER\"}\n    ],\n    \"status\": \"PASS\",\n    \"last_completed_stage\": \"BOOT\",\n    \"selected_codec\": \"T2_NAVIGATION\",\n    \"last_instruction\": \"TEMPORAL_ROUTE\",\n    \"next_instruction\": \"TEMPORAL_STEP\",\n    \"failure_code\": \"\",\n    \"evidence_refs\": \"\",\n    \"confidence\": \"\",\n    \"optional_note\": \"\"\n}",
+          "latency_ms": 19283
+        }
+      ]
+    }
+  ]
+}

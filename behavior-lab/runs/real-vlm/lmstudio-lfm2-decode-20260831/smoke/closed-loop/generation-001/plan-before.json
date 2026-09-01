@@ -1,0 +1,233 @@
+{
+  "schema": "tlaloc.adaptive-search.r0.plan",
+  "memory_root": "runs/real-vlm/lmstudio-lfm2-decode-20260831/smoke/learning-memory",
+  "adaptive": true,
+  "real_failure_events": 12,
+  "next_debug_target": "BENCHMARK_FAILURE_ANALYSIS",
+  "primary_pattern": {
+    "key": "UNKNOWN_STAGE|BENCHMARK_ASSERTION_FAILED|T_TEMPORAL",
+    "stage": "UNKNOWN_STAGE",
+    "failure_code": "BENCHMARK_ASSERTION_FAILED",
+    "score_layer": "T_TEMPORAL",
+    "count": 6,
+    "models": [
+      "lfm2-vl-1.6b"
+    ],
+    "specimens": [
+      "signal-chain-r0"
+    ],
+    "questions": [
+      "Q4",
+      "Q5",
+      "Q7"
+    ],
+    "suggested_target": "BENCHMARK_FAILURE_ANALYSIS"
+  },
+  "failure_patterns": [
+    {
+      "key": "UNKNOWN_STAGE|BENCHMARK_ASSERTION_FAILED|T_TEMPORAL",
+      "stage": "UNKNOWN_STAGE",
+      "failure_code": "BENCHMARK_ASSERTION_FAILED",
+      "score_layer": "T_TEMPORAL",
+      "count": 6,
+      "models": [
+        "lfm2-vl-1.6b"
+      ],
+      "specimens": [
+        "signal-chain-r0"
+      ],
+      "questions": [
+        "Q4",
+        "Q5",
+        "Q7"
+      ],
+      "suggested_target": "BENCHMARK_FAILURE_ANALYSIS"
+    },
+    {
+      "key": "UNKNOWN_STAGE|BENCHMARK_ASSERTION_FAILED|P_PERCEPTION",
+      "stage": "UNKNOWN_STAGE",
+      "failure_code": "BENCHMARK_ASSERTION_FAILED",
+      "score_layer": "P_PERCEPTION",
+      "count": 2,
+      "models": [
+        "lfm2-vl-1.6b"
+      ],
+      "specimens": [
+        "signal-chain-r0"
+      ],
+      "questions": [
+        "Q2"
+      ],
+      "suggested_target": "BENCHMARK_FAILURE_ANALYSIS"
+    },
+    {
+      "key": "UNKNOWN_STAGE|BENCHMARK_ASSERTION_FAILED|R_PROTOCOL",
+      "stage": "UNKNOWN_STAGE",
+      "failure_code": "BENCHMARK_ASSERTION_FAILED",
+      "score_layer": "R_PROTOCOL",
+      "count": 2,
+      "models": [
+        "lfm2-vl-1.6b"
+      ],
+      "specimens": [
+        "signal-chain-r0"
+      ],
+      "questions": [
+        "Q0"
+      ],
+      "suggested_target": "BENCHMARK_FAILURE_ANALYSIS"
+    },
+    {
+      "key": "UNKNOWN_STAGE|BENCHMARK_ASSERTION_FAILED|X_EXACTNESS",
+      "stage": "UNKNOWN_STAGE",
+      "failure_code": "BENCHMARK_ASSERTION_FAILED",
+      "score_layer": "X_EXACTNESS",
+      "count": 2,
+      "models": [
+        "lfm2-vl-1.6b"
+      ],
+      "specimens": [
+        "signal-chain-r0"
+      ],
+      "questions": [
+        "Q8"
+      ],
+      "suggested_target": "BENCHMARK_FAILURE_ANALYSIS"
+    }
+  ],
+  "parent_evidence_ids": [
+    "19343cb99dd67a579487c73fbacc8f9e9f914a925057ae99dc7ef913031730ce",
+    "6968196e73ab264addbc763f0ee059e9fc6ec2003f9df59ce5d1cb51240cc203",
+    "82be1214a85a1e09f063710379bfd68144618f2fee623f404b8596a3fee7ddaa",
+    "85dbff67e25baf1d17124428faa17fe4cb0560f4c794f2f2709786ca09391431",
+    "8ef8779b23898a51096fdbcfb3ba3f33f511b5a8750d667d940df2ca515b9c2e",
+    "a74523c7089ec32b0b5de6785733e6b0615721548652d3c5d1909fa3035c96a0"
+  ],
+  "mutation_priorities": [
+    {
+      "rank": 1,
+      "kind": "PROMPT",
+      "weight": 0.31720779220779216,
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "reason": "targets observed real-model failure frontier BENCHMARK_FAILURE_ANALYSIS",
+      "exploration_floor": true
+    },
+    {
+      "rank": 2,
+      "kind": "LAYOUT",
+      "weight": 0.25649350649350644,
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "reason": "targets observed real-model failure frontier BENCHMARK_FAILURE_ANALYSIS",
+      "exploration_floor": true
+    },
+    {
+      "rank": 3,
+      "kind": "REDUNDANCY",
+      "weight": 0.19577922077922078,
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "reason": "targets observed real-model failure frontier BENCHMARK_FAILURE_ANALYSIS",
+      "exploration_floor": true
+    },
+    {
+      "rank": 4,
+      "kind": "PRIMITIVE",
+      "weight": 0.13506493506493505,
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "reason": "targets observed real-model failure frontier BENCHMARK_FAILURE_ANALYSIS",
+      "exploration_floor": true
+    },
+    {
+      "rank": 5,
+      "kind": "CHANNEL_ROLE",
+      "weight": 0.013636363636363636,
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "reason": "exploration floor keeps this mutation family testable",
+      "exploration_floor": true
+    },
+    {
+      "rank": 6,
+      "kind": "COLOR_USAGE",
+      "weight": 0.013636363636363636,
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "reason": "exploration floor keeps this mutation family testable",
+      "exploration_floor": true
+    },
+    {
+      "rank": 7,
+      "kind": "DEPTH_STRUCTURE",
+      "weight": 0.013636363636363636,
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "reason": "exploration floor keeps this mutation family testable",
+      "exploration_floor": true
+    },
+    {
+      "rank": 8,
+      "kind": "EMERGENT_STRUCTURE",
+      "weight": 0.013636363636363636,
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "reason": "exploration floor keeps this mutation family testable",
+      "exploration_floor": true
+    },
+    {
+      "rank": 9,
+      "kind": "INTERFERENCE_STRUCTURE",
+      "weight": 0.013636363636363636,
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "reason": "exploration floor keeps this mutation family testable",
+      "exploration_floor": true
+    },
+    {
+      "rank": 10,
+      "kind": "NUMERIC_STRUCTURE",
+      "weight": 0.013636363636363636,
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "reason": "exploration floor keeps this mutation family testable",
+      "exploration_floor": true
+    },
+    {
+      "rank": 11,
+      "kind": "TEMPORAL_STRUCTURE",
+      "weight": 0.013636363636363636,
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "reason": "exploration floor keeps this mutation family testable",
+      "exploration_floor": true
+    }
+  ],
+  "suggested_mutations": [
+    {
+      "kind": "PROMPT",
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "value": "SHORT_EXPLICIT_PROTOCOL_INSTRUCTION",
+      "rationale": "generated from persistent real-model failure memory; must be tested as an isolated candidate before any recommendation",
+      "experimental": true
+    },
+    {
+      "kind": "LAYOUT",
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "value": "LOCALIZE_FAILURE_TARGET_REGION",
+      "rationale": "generated from persistent real-model failure memory; must be tested as an isolated candidate before any recommendation",
+      "experimental": true
+    },
+    {
+      "kind": "REDUNDANCY",
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "value": "BOUNDED_REDUNDANT_ANCHOR",
+      "rationale": "generated from persistent real-model failure memory; must be tested as an isolated candidate before any recommendation",
+      "experimental": true
+    },
+    {
+      "kind": "PRIMITIVE",
+      "target": "BENCHMARK_FAILURE_ANALYSIS",
+      "value": "DISTINCT_FAILURE_TARGET_PRIMITIVE",
+      "rationale": "generated from persistent real-model failure memory; must be tested as an isolated candidate before any recommendation",
+      "experimental": true
+    }
+  ],
+  "guardrails": [
+    "MEMORY_GUIDES_EXPERIMENT_BUDGET_NOT_PROMOTION_SCORE",
+    "FINAL_TOURNAMENT_REMAINS_EVIDENCE_GATED",
+    "SYNTHETIC_EVIDENCE_NE_EMPIRICAL_SEARCH_TARGET",
+    "EXPLORATION_FLOOR_GT_0",
+    "TLALOC_RECOMMENDS_ORIGAMI_DECIDES"
+  ]
+}

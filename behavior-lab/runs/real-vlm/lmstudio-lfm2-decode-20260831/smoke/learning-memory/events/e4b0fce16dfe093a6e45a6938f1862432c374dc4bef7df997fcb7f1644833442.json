@@ -1,0 +1,23 @@
+{
+  "schema": "tlaloc.learning-memory.r0.event",
+  "event_id": "e4b0fce16dfe093a6e45a6938f1862432c374dc4bef7df997fcb7f1644833442",
+  "event_type": "OBSERVATION",
+  "evidence_class": "REAL_MODEL",
+  "recorded_at": "2026-09-01T00:57:01.309270995Z",
+  "source_campaign_sha256": "e9115f5b94d88ad4299247a3580c6742effe6648b26684f85009eaf5aa6b0c86",
+  "source_result_sha256": "98dcae3f2315a2bbb5848ba1845ab9773682f3746532de70dd64efa4be59cc79",
+  "benchmark_id": "origami-temporal-native-r0",
+  "trial_id": "g001-signal-chain-r0-lfm2-vl-1-6b-native_png_only-01-diag",
+  "model_id": "lfm2-vl-1.6b",
+  "provider": "OPENAI_COMPAT",
+  "condition": "NATIVE_PNG_ONLY",
+  "specimen_id": "signal-chain-r0",
+  "specimen_sha256": "0f926f0d4fdd31a87a46c6f1305cc4937fc270b20da83991918b6f50b440e5df",
+  "question_id": "Q0",
+  "score_layer": "R_PROTOCOL",
+  "pass": false,
+  "failure_code": "BENCHMARK_ASSERTION_FAILED",
+  "overall_score": 0,
+  "origami_version": "6.0.0-alpha.15",
+  "tlaloc_version": "6.0.0-alpha.21"
+}

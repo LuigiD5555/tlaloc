@@ -1,0 +1,299 @@
+{
+  "schema": "tlaloc.temporal-native-benchmark.r0.result",
+  "benchmark_id": "origami-temporal-native-r0",
+  "trials": [
+    {
+      "trial_id": "g001-signal-chain-r0-lfm2-vl-1-6b-native_png_only-01",
+      "model_id": "lfm2-vl-1.6b",
+      "condition": "NATIVE_PNG_ONLY",
+      "specimen_id": "signal-chain-r0",
+      "questions": [
+        {
+          "question_id": "Q0",
+          "layer": "R_PROTOCOL",
+          "pass": false,
+          "score": 0,
+          "missing": [
+            "TRANSITION"
+          ]
+        },
+        {
+          "question_id": "Q1",
+          "layer": "P_PERCEPTION",
+          "pass": true,
+          "score": 1
+        },
+        {
+          "question_id": "Q2",
+          "layer": "P_PERCEPTION",
+          "pass": false,
+          "score": 0,
+          "missing": [
+            "ACTIVE"
+          ]
+        },
+        {
+          "question_id": "Q3",
+          "layer": "S_SEMANTIC",
+          "pass": true,
+          "score": 1
+        },
+        {
+          "question_id": "Q4",
+          "layer": "T_TEMPORAL",
+          "pass": false,
+          "score": 0,
+          "missing": [
+            "DONE"
+          ]
+        },
+        {
+          "question_id": "Q5",
+          "layer": "T_TEMPORAL",
+          "pass": false,
+          "score": 0,
+          "missing": [
+            "T4"
+          ]
+        },
+        {
+          "question_id": "Q6",
+          "layer": "R_PROTOCOL",
+          "pass": true,
+          "score": 1
+        },
+        {
+          "question_id": "Q7",
+          "layer": "T_TEMPORAL",
+          "pass": false,
+          "score": 0,
+          "missing": [
+            "DONE",
+            "DONE",
+            "ACTIVE"
+          ]
+        },
+        {
+          "question_id": "Q8",
+          "layer": "X_EXACTNESS",
+          "pass": false,
+          "score": 0,
+          "missing": [
+            "UNKNOWN_OR_NOT_VERIFIED"
+          ]
+        }
+      ],
+      "layers": [
+        {
+          "layer": "P_PERCEPTION",
+          "passed": 1,
+          "total": 2,
+          "score": 0.5
+        },
+        {
+          "layer": "R_PROTOCOL",
+          "passed": 1,
+          "total": 2,
+          "score": 0.5
+        },
+        {
+          "layer": "S_SEMANTIC",
+          "passed": 1,
+          "total": 1,
+          "score": 1
+        },
+        {
+          "layer": "T_TEMPORAL",
+          "passed": 0,
+          "total": 3,
+          "score": 0
+        },
+        {
+          "layer": "X_EXACTNESS",
+          "passed": 0,
+          "total": 1,
+          "score": 0
+        }
+      ],
+      "overall_score": 0.3333333333333333,
+      "self_bootstrap_score": 0.6666666666666666,
+      "temporal_reasoning_score": 0,
+      "exact_honesty_score": 0,
+      "invented_exact_claims": 0,
+      "missing_question_count": 0
+    },
+    {
+      "trial_id": "g001-signal-chain-r0-lfm2-vl-1-6b-native_png_only-01-diag",
+      "model_id": "lfm2-vl-1.6b",
+      "condition": "NATIVE_PNG_ONLY",
+      "diagnostic_mode": true,
+      "specimen_id": "signal-chain-r0",
+      "questions": [
+        {
+          "question_id": "Q0",
+          "layer": "R_PROTOCOL",
+          "pass": false,
+          "score": 0,
+          "missing": [
+            "TRANSITION",
+            "CHECKPOINT"
+          ]
+        },
+        {
+          "question_id": "Q2",
+          "layer": "P_PERCEPTION",
+          "pass": false,
+          "score": 0,
+          "missing": [
+            "A",
+            "ACTIVE"
+          ]
+        },
+        {
+          "question_id": "Q4",
+          "layer": "T_TEMPORAL",
+          "pass": false,
+          "score": 0,
+          "missing": [
+            "A",
+            "DONE",
+            "C",
+            "ACTIVE"
+          ]
+        },
+        {
+          "question_id": "Q5",
+          "layer": "T_TEMPORAL",
+          "pass": false,
+          "score": 0,
+          "missing": [
+            "T0",
+            "T4"
+          ]
+        },
+        {
+          "question_id": "Q7",
+          "layer": "T_TEMPORAL",
+          "pass": false,
+          "score": 0,
+          "missing": [
+            "DONE",
+            "DONE"
+          ]
+        },
+        {
+          "question_id": "Q8",
+          "layer": "X_EXACTNESS",
+          "pass": false,
+          "score": 0,
+          "missing": [
+            "UNKNOWN_OR_NOT_VERIFIED"
+          ]
+        }
+      ],
+      "debug_reports": [
+        {
+          "question_id": "Q0",
+          "present": false,
+          "valid": false,
+          "violations": [
+            "DEBUG_TRACE_MISSING"
+          ]
+        },
+        {
+          "question_id": "Q2",
+          "present": false,
+          "valid": false,
+          "violations": [
+            "DEBUG_TRACE_INVALID_JSON"
+          ]
+        },
+        {
+          "question_id": "Q4",
+          "present": false,
+          "valid": false,
+          "violations": [
+            "DEBUG_TRACE_INVALID_JSON"
+          ]
+        },
+        {
+          "question_id": "Q5",
+          "present": false,
+          "valid": false,
+          "violations": [
+            "DEBUG_TRACE_MISSING"
+          ]
+        },
+        {
+          "question_id": "Q7",
+          "present": false,
+          "valid": false,
+          "violations": [
+            "DEBUG_TRACE_INVALID_JSON"
+          ]
+        },
+        {
+          "question_id": "Q8",
+          "present": false,
+          "valid": false,
+          "violations": [
+            "DEBUG_TRACE_INVALID_JSON"
+          ]
+        }
+      ],
+      "debug_summary": {
+        "diagnostic_mode": true,
+        "trace_coverage": 0,
+        "trace_consistency_score": 0,
+        "missing_trace_count": 6,
+        "invalid_trace_count": 0,
+        "answer_trace_mismatch_count": 0
+      },
+      "layers": [
+        {
+          "layer": "P_PERCEPTION",
+          "passed": 0,
+          "total": 1,
+          "score": 0
+        },
+        {
+          "layer": "R_PROTOCOL",
+          "passed": 0,
+          "total": 1,
+          "score": 0
+        },
+        {
+          "layer": "T_TEMPORAL",
+          "passed": 0,
+          "total": 3,
+          "score": 0
+        },
+        {
+          "layer": "X_EXACTNESS",
+          "passed": 0,
+          "total": 1,
+          "score": 0
+        }
+      ],
+      "overall_score": 0,
+      "self_bootstrap_score": 0,
+      "temporal_reasoning_score": 0,
+      "exact_honesty_score": 0,
+      "invented_exact_claims": 0,
+      "missing_question_count": 0
+    }
+  ],
+  "comparisons": [
+    {
+      "model_id": "lfm2-vl-1.6b",
+      "specimen_id": "signal-chain-r0",
+      "native_score": 0.3333333333333333,
+      "assisted_score": 0,
+      "assistance_gain": 0,
+      "pristine_score": 0.3333333333333333,
+      "degraded_score": 0,
+      "degradation_delta": 0
+    }
+  ],
+  "real_evidence": true
+}

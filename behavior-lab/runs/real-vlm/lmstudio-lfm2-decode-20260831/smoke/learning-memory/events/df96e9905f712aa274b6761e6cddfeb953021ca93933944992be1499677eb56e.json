@@ -1,0 +1,22 @@
+{
+  "schema": "tlaloc.learning-memory.r0.event",
+  "event_id": "df96e9905f712aa274b6761e6cddfeb953021ca93933944992be1499677eb56e",
+  "event_type": "CHANGE_ATTEMPT",
+  "evidence_class": "MANUAL",
+  "recorded_at": "2026-09-01T00:57:01.690517574Z",
+  "candidate_id": "auto-prompt-78d58967d0c9",
+  "parent_event_ids": [
+    "19343cb99dd67a579487c73fbacc8f9e9f914a925057ae99dc7ef913031730ce",
+    "6968196e73ab264addbc763f0ee059e9fc6ec2003f9df59ce5d1cb51240cc203",
+    "82be1214a85a1e09f063710379bfd68144618f2fee623f404b8596a3fee7ddaa",
+    "85dbff67e25baf1d17124428faa17fe4cb0560f4c794f2f2709786ca09391431",
+    "8ef8779b23898a51096fdbcfb3ba3f33f511b5a8750d667d940df2ca515b9c2e",
+    "a74523c7089ec32b0b5de6785733e6b0615721548652d3c5d1909fa3035c96a0"
+  ],
+  "change_summary": "Adaptive-search candidate auto-prompt-78d58967d0c9 selected for target BENCHMARK_FAILURE_ANALYSIS before evidence scoring",
+  "tags": [
+    "adaptive-search",
+    "mutation:PROMPT",
+    "target:BENCHMARK_FAILURE_ANALYSIS"
+  ]
+}
