@@ -5,13 +5,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os/exec"
 	"time"
+
+	"tlaloc.local/behaviorlab/internal/blackboard"
 )
 
 // ProcessWorker turns any local executable into a Tlaloque. The child receives
-// one CapabilityRequest JSON document on stdin and must return one
-// CapabilityResponse JSON document on stdout. This keeps Python/BERT/BART,
+// exactly one CapabilityRequest JSON document on stdin and must return exactly
+// one CapabilityResponse JSON document on stdout. This keeps Python/BERT/BART,
 // Rust, Go and shell-backed specialists behind the same contract.
 type ProcessWorker struct {
 	Desc    CapabilityDescriptor
@@ -51,6 +54,13 @@ func (w ProcessWorker) Execute(ctx context.Context, req CapabilityRequest) (Capa
 	if err := dec.Decode(&out); err != nil {
 		return CapabilityResponse{}, fmt.Errorf("worker %s invalid response: %w", w.Desc.ID, err)
 	}
+	var extra any
+	if err := dec.Decode(&extra); err != io.EOF {
+		if err == nil {
+			return CapabilityResponse{}, fmt.Errorf("worker %s returned more than one JSON document", w.Desc.ID)
+		}
+		return CapabilityResponse{}, fmt.Errorf("worker %s invalid trailing output: %w", w.Desc.ID, err)
+	}
 	if out.WorkerID == "" {
 		out.WorkerID = w.Desc.ID
 	}
@@ -59,6 +69,13 @@ func (w ProcessWorker) Execute(ctx context.Context, req CapabilityRequest) (Capa
 	}
 	if len(out.Output) == 0 || !json.Valid(out.Output) {
 		return CapabilityResponse{}, fmt.Errorf("worker %s returned invalid JSON output", w.Desc.ID)
+	}
+	for i := range out.Observations {
+		o, err := blackboard.NormalizeObservation(out.Observations[i])
+		if err != nil {
+			return CapabilityResponse{}, fmt.Errorf("worker %s invalid observation: %w", w.Desc.ID, err)
+		}
+		out.Observations[i] = o
 	}
 	return out, nil
 }
