@@ -2,6 +2,7 @@ package lfm2boundary
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	"tlaloc.local/behaviorlab/internal/blackboard"
@@ -36,7 +37,7 @@ func TestSynthesizeBlackboardResponsesUsesTwoThirdsQuorumAndPassesTemporalBenchm
 		RoleTransitions:`{"rules":[{"requires":[{"cell_id":"A","state":"ACTIVE"}],"target_cell":"B","from_state":"IDLE","to_state":"ACTIVE"},{"requires":[{"cell_id":"B","state":"ACTIVE"}],"target_cell":"A","from_state":"ACTIVE","to_state":"DONE"},{"requires":[{"cell_id":"B","state":"ACTIVE"}],"target_cell":"C","from_state":"IDLE","to_state":"ACTIVE"},{"requires":[{"cell_id":"C","state":"ACTIVE"}],"target_cell":"B","from_state":"ACTIVE","to_state":"DONE"}]}`,
 		RoleTimeline:`{"checkpoints":["T0","T2","T4"]}`,
 	}
-	for role,value:=range values{for i:=0;i<3;i++{v:=value;if i==2&&role==RoleCells{v=`{"cells":[{"id":"A","initial_state":"IDLE"}]}`};_,_,err:=root.Append(blackboard.Entry{Type:blackboard.EntryObservation,RunID:run,TaskID:"t",NodeID:role,WorkerID:"w",Key:role,Value:json.RawMessage(v)});if err!=nil{t.Fatal(err)}}}
+	for role,value:=range values{for i:=0;i<3;i++{v:=value;if i==2&&role==RoleCells{v=`{"cells":[{"id":"A","initial_state":"IDLE"}]}`};_,_,err:=root.Append(blackboard.Entry{Type:blackboard.EntryObservation,RunID:run,TaskID:"t",NodeID:fmt.Sprintf("%s-r%02d",role,i+1),WorkerID:fmt.Sprintf("w-%02d",i+1),Key:role,Value:json.RawMessage(v)});if err!=nil{t.Fatal(err)}}}
 	snap,err:=root.Snapshot(run);if err!=nil{t.Fatal(err)}
 	out,err:=SynthesizeBlackboardResponses(snap);if err!=nil{t.Fatal(err)}
 	responses:=[]temporalbench.Response{};for _,q:=range temporalbench.CanonicalQuestions(){responses=append(responses,temporalbench.Response{QuestionID:q.ID,Text:out.Responses[q.ID]})}
