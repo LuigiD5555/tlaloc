@@ -11,7 +11,11 @@ import (
 
 const ReducerVersion = "go-reducer.r0"
 
-type Reducer struct{ Verifier EvidenceVerifier }
+type Reducer struct {
+	Verifier EvidenceVerifier
+	Policies *ClaimPolicyRegistry
+	Fusion   map[FusionMode]FusionStrategy
+}
 
 type verifiedCandidate struct {
 	C        Candidate
@@ -23,7 +27,11 @@ func (r Reducer) Reduce(candidates []Candidate) (State, error) {
 	sort.Slice(ordered, func(i, j int) bool { return ordered[i].ID < ordered[j].ID })
 	inputHash := hashJSON(ordered)
 	state := State{Schema: StateSchema, ReducerVersion: ReducerVersion, InputHash: inputHash}
+	if r.Policies != nil {
+		state.PolicyVersion = r.Policies.ID
+	}
 	groups := map[string][]verifiedCandidate{}
+	groupPolicies := map[string]ClaimPolicy{}
 	// Evidence verification is deterministic for one reducer invocation. Cache by
 	// address+CID so thousands of Tlaloque candidates sharing the same source do
 	// not repeatedly reopen and hash identical exact objects.
@@ -64,64 +72,41 @@ func (r Reducer) Reduce(candidates []Candidate) (State, error) {
 			continue
 		}
 		c.Evidence = dedupEvidence(good)
-		key := claimBaseKey(c.Claim)
+		policy := r.Policies.PolicyFor(c.Claim.Predicate)
+		key := claimGroupKey(c.Claim, policy)
 		groups[key] = append(groups[key], verifiedCandidate{C: c, Evidence: c.Evidence})
+		groupPolicies[key] = policy
 	}
+
 	keys := make([]string, 0, len(groups))
-	for k := range groups {
-		keys = append(keys, k)
+	for key := range groups {
+		keys = append(keys, key)
 	}
 	sort.Strings(keys)
 	for _, key := range keys {
-		rows := groups[key]
-		var pos, neg []verifiedCandidate
-		for _, v := range rows {
-			if v.C.Claim.Polarity {
-				pos = append(pos, v)
-			} else {
-				neg = append(neg, v)
-			}
+		strategy, err := r.fusionStrategy(groupPolicies[key].Fusion)
+		if err != nil {
+			return State{}, err
 		}
-		if len(pos) > 0 && len(neg) > 0 {
-			conf := Conflict{ID: "conflict:" + shortHash(key), ClaimKey: key, Status: "UNRESOLVED"}
-			for _, v := range pos {
-				conf.PositiveIDs = append(conf.PositiveIDs, v.C.ID)
-			}
-			for _, v := range neg {
-				conf.NegativeIDs = append(conf.NegativeIDs, v.C.ID)
-			}
-			sort.Strings(conf.PositiveIDs)
-			sort.Strings(conf.NegativeIDs)
-			state.Conflicts = append(state.Conflicts, conf)
+		outcome, err := strategy.Fuse(key, groups[key])
+		if err != nil {
+			return State{}, err
+		}
+		state.Claims = append(state.Claims, outcome.Claim)
+		state.Decisions = append(state.Decisions, outcome.Decisions...)
+		state.Metrics.Accepted += outcome.Accepted
+		state.Metrics.Unresolved += outcome.Unresolved
+		if outcome.Conflict != nil {
+			state.Conflicts = append(state.Conflicts, *outcome.Conflict)
 			state.Metrics.Conflicts++
-			claim := canonicalFromConflict(conf, pos, neg)
-			state.Claims = append(state.Claims, claim)
-			state.Metrics.Unresolved++
-			for _, v := range rows {
-				state.Decisions = append(state.Decisions, CandidateDecision{CandidateID: v.C.ID, Status: "CONFLICT", Reasons: []string{conf.ID}})
-			}
-			continue
-		}
-		active := pos
-		if len(active) == 0 {
-			active = neg
-		}
-		claim := canonicalFromGroup(active)
-		state.Claims = append(state.Claims, claim)
-		state.Metrics.Accepted += len(active)
-		for i, v := range active {
-			status := "MERGED"
-			if i == 0 {
-				status = "ACCEPTED"
-			}
-			state.Decisions = append(state.Decisions, CandidateDecision{CandidateID: v.C.ID, Status: status})
 		}
 	}
+
 	state.Metrics.CandidateCount = len(candidates)
 	if len(state.Claims) > 0 {
 		verified := 0
-		for _, c := range state.Claims {
-			if c.Status == "VERIFIED" && len(c.Evidence) > 0 {
+		for _, claim := range state.Claims {
+			if claim.Status == "VERIFIED" && len(claim.Evidence) > 0 {
 				verified++
 			}
 		}
@@ -133,6 +118,19 @@ func (r Reducer) Reduce(candidates []Candidate) (State, error) {
 	sort.Slice(state.Decisions, func(i, j int) bool { return state.Decisions[i].CandidateID < state.Decisions[j].CandidateID })
 	state.StateHash = stateHash(state)
 	return state, nil
+}
+
+func (r Reducer) fusionStrategy(mode FusionMode) (FusionStrategy, error) {
+	if r.Fusion != nil {
+		if strategy, ok := r.Fusion[mode]; ok && strategy != nil {
+			return strategy, nil
+		}
+	}
+	strategy, ok := defaultFusionStrategies[mode]
+	if !ok || strategy == nil {
+		return nil, fmt.Errorf("unsupported fusion mode %q", mode)
+	}
+	return strategy, nil
 }
 
 func validateCandidate(c Candidate) error {
@@ -150,12 +148,15 @@ func validateCandidate(c Candidate) error {
 	}
 	return nil
 }
+
 func claimBaseKey(c Claim) string {
 	return norm(c.Subject) + "\x00" + norm(c.Predicate) + "\x00" + norm(c.Object)
 }
+
 func norm(s string) string {
 	return strings.Join(strings.Fields(strings.ToLower(strings.TrimSpace(s))), " ")
 }
+
 func canonicalFromGroup(rows []verifiedCandidate) CanonicalClaim {
 	first := rows[0].C
 	ev := []EvidenceRef{}
@@ -166,12 +167,17 @@ func canonicalFromGroup(rows []verifiedCandidate) CanonicalClaim {
 	}
 	ev = dedupEvidence(ev)
 	sort.Strings(ids)
-	c := CanonicalClaim{ID: "claim:" + shortHash(claimBaseKey(first.Claim)+fmt.Sprint(first.Claim.Polarity)), Claim: first.Claim, Status: "VERIFIED", Evidence: ev, CandidateIDs: ids}
-	c.Hash = hashJSON(c)
-	return c
+	claim := CanonicalClaim{ID: "claim:" + shortHash(claimBaseKey(first.Claim)+fmt.Sprint(first.Claim.Polarity)), Claim: first.Claim, Status: "VERIFIED", Evidence: ev, CandidateIDs: ids}
+	claim.Hash = hashJSON(claim)
+	return claim
 }
+
 func canonicalFromConflict(conf Conflict, pos, neg []verifiedCandidate) CanonicalClaim {
 	rows := append(append([]verifiedCandidate{}, pos...), neg...)
+	return canonicalFromConflictRows(conf, rows)
+}
+
+func canonicalFromConflictRows(conf Conflict, rows []verifiedCandidate) CanonicalClaim {
 	ev := []EvidenceRef{}
 	ids := []string{}
 	for _, v := range rows {
@@ -182,41 +188,56 @@ func canonicalFromConflict(conf Conflict, pos, neg []verifiedCandidate) Canonica
 	sort.Strings(ids)
 	base := rows[0].C.Claim
 	base.Polarity = true
-	c := CanonicalClaim{ID: "claim:" + shortHash(conf.ClaimKey), Claim: base, Status: "UNRESOLVED", Evidence: ev, CandidateIDs: ids, ConflictIDs: []string{conf.ID}}
-	c.Hash = hashJSON(c)
-	return c
+	if len(conf.Values) > 0 {
+		base.Object = ""
+	}
+	claim := CanonicalClaim{ID: "claim:" + shortHash(conf.ClaimKey), Claim: base, Status: "UNRESOLVED", Evidence: ev, CandidateIDs: ids, ConflictIDs: []string{conf.ID}}
+	claim.Hash = hashJSON(claim)
+	return claim
 }
+
 func dedupEvidence(in []EvidenceRef) []EvidenceRef {
 	m := map[string]EvidenceRef{}
 	for _, e := range in {
-		k := e.Address + "\x00" + e.CID
-		m[k] = e
+		key := e.Address + "\x00" + e.CID
+		m[key] = e
 	}
 	keys := make([]string, 0, len(m))
-	for k := range m {
-		keys = append(keys, k)
+	for key := range m {
+		keys = append(keys, key)
 	}
 	sort.Strings(keys)
 	out := make([]EvidenceRef, 0, len(keys))
-	for _, k := range keys {
-		out = append(out, m[k])
+	for _, key := range keys {
+		out = append(out, m[key])
 	}
 	return out
 }
+
 func uncertainty(m Metrics) float64 {
 	if m.CandidateCount == 0 {
 		return 1
 	}
-	v := (float64(m.Conflicts)*2 + float64(m.Unresolved) + float64(m.Rejected)*0.5) / float64(m.CandidateCount)
-	if v > 1 {
+	value := (float64(m.Conflicts)*2 + float64(m.Unresolved) + float64(m.Rejected)*0.5) / float64(m.CandidateCount)
+	if value > 1 {
 		return 1
 	}
-	return v
+	return value
 }
-func stateHash(s State) string { copy := s; copy.StateHash = ""; return hashJSON(copy) }
+
+func stateHash(s State) string {
+	copy := s
+	copy.StateHash = ""
+	return hashJSON(copy)
+}
+
 func hashJSON(v any) string {
-	b, _ := json.Marshal(v)
-	h := sha256.Sum256(b)
-	return hex.EncodeToString(h[:])
+	body, _ := json.Marshal(v)
+	hash := sha256.Sum256(body)
+	return hex.EncodeToString(hash[:])
 }
-func shortHash(s string) string { h := sha256.Sum256([]byte(s)); return hex.EncodeToString(h[:8]) }
+
+func shortHash(s string) string {
+	hash := sha256.Sum256([]byte(s))
+	return hex.EncodeToString(hash[:8])
+}
