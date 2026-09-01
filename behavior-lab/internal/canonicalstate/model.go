@@ -49,11 +49,13 @@ type CanonicalClaim struct {
 }
 
 type Conflict struct {
-	ID          string   `json:"id"`
-	ClaimKey    string   `json:"claim_key"`
-	PositiveIDs []string `json:"positive_candidate_ids,omitempty"`
-	NegativeIDs []string `json:"negative_candidate_ids,omitempty"`
-	Status      string   `json:"status"` // RESOLVED|UNRESOLVED
+	ID           string   `json:"id"`
+	ClaimKey     string   `json:"claim_key"`
+	PositiveIDs  []string `json:"positive_candidate_ids,omitempty"`
+	NegativeIDs  []string `json:"negative_candidate_ids,omitempty"`
+	CandidateIDs []string `json:"candidate_ids,omitempty"`
+	Values       []string `json:"values,omitempty"`
+	Status       string   `json:"status"` // RESOLVED|UNRESOLVED
 }
 
 type Metrics struct {
@@ -69,6 +71,7 @@ type Metrics struct {
 type State struct {
 	Schema         string              `json:"schema"`
 	ReducerVersion string              `json:"reducer_version"`
+	PolicyVersion  string              `json:"policy_version,omitempty"`
 	InputHash      string              `json:"input_hash_sha256"`
 	StateHash      string              `json:"state_hash_sha256"`
 	Claims         []CanonicalClaim    `json:"claims"`
