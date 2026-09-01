@@ -36,6 +36,14 @@ type SelectionStrategy interface {
 	Select([]SelectionCandidate, SelectionRequest) Result[CapabilityWorker]
 }
 
+// MultiSelectionStrategy is optional. Strategies that implement it can choose
+// a set directly (for example using complementarity learned by Behavior Lab).
+// Strategies that only implement SelectionStrategy are still usable through
+// Registry.SelectMany, which repeatedly invokes Select on the remaining set.
+type MultiSelectionStrategy interface {
+	SelectMany([]SelectionCandidate, SelectionRequest, int) Result[[]CapabilityWorker]
+}
+
 type DefaultScoringStrategy struct{}
 
 func (DefaultScoringStrategy) Score(d CapabilityDescriptor, req SelectionRequest) int {
@@ -64,23 +72,42 @@ type RankedSelectionStrategy struct {
 }
 
 func (s RankedSelectionStrategy) Select(candidates []SelectionCandidate, req SelectionRequest) Result[CapabilityWorker] {
-	if len(candidates) == 0 {
-		return DomainResult[CapabilityWorker](ResultNoCandidate, nil, Diagnostic{
-			Code:    "NO_ELIGIBLE_WORKER",
-			Message: fmt.Sprintf("no worker satisfies capability=%s scope=%s domain=%s", strings.ToUpper(strings.TrimSpace(req.Capability)), strings.ToUpper(strings.TrimSpace(req.ScopeHint)), strings.ToUpper(strings.TrimSpace(req.DomainHint))),
-		})
+	rows := rankSelectionCandidates(candidates, req, s.Scoring)
+	if len(rows) == 0 {
+		return noEligibleWorkerResult(req)
 	}
-	if s.Scoring == nil {
-		s.Scoring = DefaultScoringStrategy{}
-	}
+	return Success(rows[0].Worker)
+}
 
+func (s RankedSelectionStrategy) SelectMany(candidates []SelectionCandidate, req SelectionRequest, limit int) Result[[]CapabilityWorker] {
+	if limit <= 0 {
+		return DomainResult[[]CapabilityWorker](ResultInvalidRequest, nil, Diagnostic{Code: "INVALID_SELECTION_LIMIT", Message: "selection limit must be greater than zero"})
+	}
+	rows := rankSelectionCandidates(candidates, req, s.Scoring)
+	if len(rows) == 0 {
+		return DomainResult[[]CapabilityWorker](ResultNoCandidate, nil, noEligibleWorkerDiagnostic(req))
+	}
+	if limit > len(rows) {
+		limit = len(rows)
+	}
+	workers := make([]CapabilityWorker, 0, limit)
+	for _, row := range rows[:limit] {
+		workers = append(workers, row.Worker)
+	}
+	return Success(workers)
+}
+
+func rankSelectionCandidates(candidates []SelectionCandidate, req SelectionRequest, scoring ScoringStrategy) []SelectionCandidate {
+	if scoring == nil {
+		scoring = DefaultScoringStrategy{}
+	}
 	type ranked struct {
 		candidate SelectionCandidate
 		score     int
 	}
 	rows := make([]ranked, 0, len(candidates))
 	for _, candidate := range candidates {
-		rows = append(rows, ranked{candidate: candidate, score: s.Scoring.Score(candidate.Desc, req)})
+		rows = append(rows, ranked{candidate: candidate, score: scoring.Score(candidate.Desc, req)})
 	}
 	sort.Slice(rows, func(i, j int) bool {
 		if rows[i].score != rows[j].score {
@@ -98,7 +125,22 @@ func (s RankedSelectionStrategy) Select(candidates []SelectionCandidate, req Sel
 		}
 		return rows[i].candidate.Desc.ID < rows[j].candidate.Desc.ID
 	})
-	return Success(rows[0].candidate.Worker)
+	out := make([]SelectionCandidate, 0, len(rows))
+	for _, row := range rows {
+		out = append(out, row.candidate)
+	}
+	return out
+}
+
+func noEligibleWorkerDiagnostic(req SelectionRequest) Diagnostic {
+	return Diagnostic{
+		Code:    "NO_ELIGIBLE_WORKER",
+		Message: fmt.Sprintf("no worker satisfies capability=%s scope=%s domain=%s", strings.ToUpper(strings.TrimSpace(req.Capability)), strings.ToUpper(strings.TrimSpace(req.ScopeHint)), strings.ToUpper(strings.TrimSpace(req.DomainHint))),
+	}
+}
+
+func noEligibleWorkerResult(req SelectionRequest) Result[CapabilityWorker] {
+	return DomainResult[CapabilityWorker](ResultNoCandidate, nil, noEligibleWorkerDiagnostic(req))
 }
 
 func defaultCandidateSpecifications() []CandidateSpecification {
