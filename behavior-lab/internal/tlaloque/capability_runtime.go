@@ -20,20 +20,47 @@ const (
 	EngineModel         = "MODEL"
 )
 
+// EmpiricalProfileRef identifies the exact model behavior/configuration whose
+// Behavior Lab evidence should be used for this Tlaloque. Condition is the
+// model-specific protocol/prompt/configuration label and is intentionally not
+// assumed to be portable between model families.
+type EmpiricalProfileRef struct {
+	ModelID   string `json:"model_id"`
+	Condition string `json:"condition,omitempty"`
+}
+
+func (r EmpiricalProfileRef) Normalize() (EmpiricalProfileRef, error) {
+	r.ModelID = strings.TrimSpace(r.ModelID)
+	r.Condition = strings.TrimSpace(r.Condition)
+	if r.ModelID == "" {
+		return EmpiricalProfileRef{}, fmt.Errorf("empirical profile requires model_id")
+	}
+	return r, nil
+}
+
+func (r EmpiricalProfileRef) Key() string {
+	normalized, err := r.Normalize()
+	if err != nil {
+		return ""
+	}
+	return normalized.ModelID + "\x00" + normalized.Condition
+}
+
 type CapabilityDescriptor struct {
-	Schema         string   `json:"schema"`
-	ID             string   `json:"id"`
-	Capability     string   `json:"capability"`
-	Scope          string   `json:"scope"`
-	Domain         string   `json:"domain,omitempty"`
-	Engine         string   `json:"engine"`
-	InputSchema    string   `json:"input_schema"`
-	OutputSchema   string   `json:"output_schema"`
-	Deterministic  bool     `json:"deterministic"`
-	ParameterCount int64    `json:"parameter_count,omitempty"`
-	MaxConcurrency int      `json:"max_concurrency,omitempty"`
-	Tags           []string `json:"tags,omitempty"`
-	Dependencies   []string `json:"dependencies,omitempty"`
+	Schema         string               `json:"schema"`
+	ID             string               `json:"id"`
+	Capability     string               `json:"capability"`
+	Scope          string               `json:"scope"`
+	Domain         string               `json:"domain,omitempty"`
+	Engine         string               `json:"engine"`
+	InputSchema    string               `json:"input_schema"`
+	OutputSchema   string               `json:"output_schema"`
+	Deterministic  bool                 `json:"deterministic"`
+	ParameterCount int64                `json:"parameter_count,omitempty"`
+	MaxConcurrency int                  `json:"max_concurrency,omitempty"`
+	Tags           []string             `json:"tags,omitempty"`
+	Dependencies   []string             `json:"dependencies,omitempty"`
+	EmpiricalProfile *EmpiricalProfileRef `json:"empirical_profile,omitempty"`
 
 	// Requires and Produces are typed dataflow contracts. Dependencies remains
 	// the R0 capability-to-capability compatibility field; the R1 planner can
@@ -71,6 +98,13 @@ func (d CapabilityDescriptor) Normalize() (CapabilityDescriptor, error) {
 	}
 	if d.MaxConcurrency <= 0 {
 		d.MaxConcurrency = 1
+	}
+	if d.EmpiricalProfile != nil {
+		profile, err := d.EmpiricalProfile.Normalize()
+		if err != nil {
+			return CapabilityDescriptor{}, fmt.Errorf("worker %q: %w", d.ID, err)
+		}
+		d.EmpiricalProfile = &profile
 	}
 	// R0 Dependencies intentionally retain their original ordering and spelling;
 	// existing planners and generated artifacts may depend on that representation.
