@@ -9,3 +9,23 @@ func TestControllerQueuesConflicts(t *testing.T) {
 		t.Fatalf("unexpected plan %+v", p)
 	}
 }
+
+func TestControllerExpandsEvidenceWhenUncertainWithoutConflict(t *testing.T) {
+	p := BuildVerificationPlan(State{StateHash: "x", Metrics: Metrics{Uncertainty: .7}}, 4000)
+	if p.Action != "EXPAND_EVIDENCE" {
+		t.Fatalf("action=%s", p.Action)
+	}
+}
+
+func TestControllerCompletesWhenSatisfied(t *testing.T) {
+	p := BuildVerificationPlan(State{StateHash: "x", Metrics: Metrics{Uncertainty: .1}}, 4000)
+	if p.Action != "REDUCE_COMPLETE" {
+		t.Fatalf("action=%s", p.Action)
+	}
+}
+
+func TestControllerTransitionTableRejectsImplicitUnknownTransition(t *testing.T) {
+	if got := nextControllerState(ControllerComplete, State{Metrics: Metrics{Uncertainty: 1}}); got != ControllerComplete {
+		t.Fatalf("complete state moved to %s", got)
+	}
+}
