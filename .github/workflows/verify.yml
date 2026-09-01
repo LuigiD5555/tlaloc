@@ -22,6 +22,7 @@ jobs:
       - name: Verify release, skills, contracts and gatekeeper coherence
         run: |
           bash tests/test-version-coherence.sh
+          bash tests/test-claims.sh
           bash tests/test-current-terminology.sh
           bash tests/test-skills.sh
           bash tests/test-project-skill-install.sh
