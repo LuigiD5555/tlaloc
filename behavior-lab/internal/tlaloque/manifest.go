@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -59,13 +58,7 @@ func LoadSwarmManifest(path string) (SwarmManifest, error) {
 			return SwarmManifest{}, fmt.Errorf("worker[%d]: %w", i, err)
 		}
 		spec.Descriptor = desc
-		spec.Transport = strings.ToUpper(strings.TrimSpace(spec.Transport))
-		if spec.Transport == "" {
-			spec.Transport = TransportProcess
-			if strings.TrimSpace(spec.Endpoint) != "" {
-				spec.Transport = TransportHTTPJSON
-			}
-		}
+		spec.Transport = normalizedTransport(*spec)
 		strategy, err := resolveTransportStrategy(spec.Transport)
 		if err != nil {
 			return SwarmManifest{}, fmt.Errorf("worker %q: %w", desc.ID, err)
@@ -87,7 +80,9 @@ func LoadSwarmManifest(path string) (SwarmManifest, error) {
 
 func (m SwarmManifest) Registry() (*Registry, error) {
 	registry := NewRegistry()
-	for _, spec := range m.Workers {
+	for _, rawSpec := range m.Workers {
+		spec := rawSpec
+		spec.Transport = normalizedTransport(spec)
 		var timeout time.Duration
 		if spec.TimeoutMS > 0 {
 			timeout = time.Duration(spec.TimeoutMS) * time.Millisecond
@@ -95,6 +90,9 @@ func (m SwarmManifest) Registry() (*Registry, error) {
 		strategy, err := resolveTransportStrategy(spec.Transport)
 		if err != nil {
 			return nil, fmt.Errorf("worker %q: %w", spec.Descriptor.ID, err)
+		}
+		if err := strategy.Validate(spec, spec.Descriptor); err != nil {
+			return nil, err
 		}
 		worker := strategy.Build(spec, timeout)
 		if err := registry.Register(worker); err != nil {
