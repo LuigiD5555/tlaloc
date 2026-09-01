@@ -49,6 +49,17 @@ var workerTransportStrategies = map[string]WorkerTransportStrategy{
 	},
 }
 
+func normalizedTransport(spec WorkerSpec) string {
+	name := strings.ToUpper(strings.TrimSpace(spec.Transport))
+	if name != "" {
+		return name
+	}
+	if strings.TrimSpace(spec.Endpoint) != "" {
+		return TransportHTTPJSON
+	}
+	return TransportProcess
+}
+
 func resolveTransportStrategy(name string) (WorkerTransportStrategy, error) {
 	strategy, ok := workerTransportStrategies[name]
 	if !ok {
