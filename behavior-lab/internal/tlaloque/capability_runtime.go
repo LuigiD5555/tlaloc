@@ -72,20 +72,18 @@ func (d CapabilityDescriptor) Normalize() (CapabilityDescriptor, error) {
 	if d.MaxConcurrency <= 0 {
 		d.MaxConcurrency = 1
 	}
-	d.Dependencies = normalizeContractList(d.Dependencies, true)
-	d.Requires = normalizeContractList(d.Requires, false)
-	d.Produces = normalizeContractList(d.Produces, false)
+	// R0 Dependencies intentionally retain their original ordering and spelling;
+	// existing planners and generated artifacts may depend on that representation.
+	d.Requires = normalizeDataContractList(d.Requires)
+	d.Produces = normalizeDataContractList(d.Produces)
 	return d, nil
 }
 
-func normalizeContractList(values []string, upper bool) []string {
+func normalizeDataContractList(values []string) []string {
 	seen := map[string]struct{}{}
 	out := make([]string, 0, len(values))
 	for _, value := range values {
 		value = strings.TrimSpace(value)
-		if upper {
-			value = strings.ToUpper(value)
-		}
 		if value == "" {
 			continue
 		}
