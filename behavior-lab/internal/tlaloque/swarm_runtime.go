@@ -24,6 +24,7 @@ type SwarmNode struct {
 	MaxParameters       int64             `json:"max_parameters,omitempty"`
 	JoinMode            string            `json:"join_mode,omitempty"`
 	MinDependencies     int               `json:"min_dependencies,omitempty"`
+	FailurePolicy       string            `json:"failure_policy,omitempty"`
 }
 
 type SwarmPlan struct {
@@ -80,6 +81,16 @@ func (p SwarmPlan) Normalize() (SwarmPlan, error) {
 				normalized[product] = provider
 			}
 			n.InputBindings = normalized
+		}
+
+		rawFailurePolicy := strings.TrimSpace(n.FailurePolicy)
+		failurePolicy, err := normalizeNodeFailurePolicy(rawFailurePolicy)
+		if err != nil {
+			return SwarmPlan{}, fmt.Errorf("node %q: %w", n.ID, err)
+		}
+		// Preserve R0 serialization: omitted means STRICT but stays omitted.
+		if rawFailurePolicy != "" {
+			n.FailurePolicy = string(failurePolicy)
 		}
 
 		rawJoinMode := strings.TrimSpace(n.JoinMode)
@@ -170,15 +181,16 @@ func validateAcyclic(nodes []SwarmNode) error {
 }
 
 type NodeExecution struct {
-	NodeID     string          `json:"node_id"`
-	Capability string          `json:"capability"`
-	WorkerID   string          `json:"worker_id"`
-	State      NodeState       `json:"state,omitempty"`
-	StartedAt  time.Time       `json:"started_at"`
-	DurationMS int64           `json:"duration_ms"`
-	Confidence float64         `json:"confidence,omitempty"`
-	Output     json.RawMessage `json:"output,omitempty"`
-	Error      string          `json:"error,omitempty"`
+	NodeID           string          `json:"node_id"`
+	Capability       string          `json:"capability"`
+	WorkerID         string          `json:"worker_id"`
+	State            NodeState       `json:"state,omitempty"`
+	StartedAt        time.Time       `json:"started_at"`
+	DurationMS       int64           `json:"duration_ms"`
+	Confidence       float64         `json:"confidence,omitempty"`
+	Output           json.RawMessage `json:"output,omitempty"`
+	Error            string          `json:"error,omitempty"`
+	FailureTolerated bool            `json:"failure_tolerated,omitempty"`
 }
 
 type SwarmReport struct {
@@ -302,6 +314,9 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 			event = NodeSucceeded
 		}
 		if transitionErr := transitionLocked(nodeID, event); transitionErr != nil {
+			if firstErr == nil {
+				firstErr = transitionErr
+			}
 			if runErr == nil {
 				runErr = transitionErr
 				succeeded = false
@@ -310,8 +325,11 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 		execReport.State = states[nodeID]
 		if succeeded {
 			outputs[nodeID] = append(json.RawMessage(nil), resp.Output...)
-		} else if execReport.Error == "" && runErr != nil {
-			execReport.Error = runErr.Error()
+		} else {
+			if execReport.Error == "" && runErr != nil {
+				execReport.Error = runErr.Error()
+			}
+			execReport.FailureTolerated = toleratesNodeFailure(nodes[nodeID])
 		}
 		executions[nodeID] = execReport
 
@@ -335,19 +353,24 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 				ready = append(ready, child)
 			} else if decision.Impossible {
 				if transitionErr := transitionLocked(child, NodeDependenciesImpossible); transitionErr == nil {
+					tolerated := toleratesNodeFailure(nodes[child])
 					executions[child] = NodeExecution{
-						NodeID:     child,
-						Capability: nodes[child].Capability,
-						WorkerID:   "BLOCKED",
-						State:      NodeBlocked,
-						Error:      "dependency join cannot be satisfied",
+						NodeID:           child,
+						Capability:       nodes[child].Capability,
+						WorkerID:         "BLOCKED",
+						State:            NodeBlocked,
+						Error:            "dependency join cannot be satisfied",
+						FailureTolerated: tolerated,
+					}
+					if !tolerated && firstErr == nil {
+						firstErr = fmt.Errorf("node %s: dependency join cannot be satisfied", child)
 					}
 				}
 			}
 		}
 		stateMu.Unlock()
 
-		if runErr != nil {
+		if runErr != nil && !toleratesNodeFailure(nodes[nodeID]) {
 			setFirstErr(fmt.Errorf("node %s: %w", nodeID, runErr))
 		}
 		sort.Strings(ready)
@@ -507,12 +530,17 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 			continue
 		}
 		if transitionErr := transitionLocked(id, NodeDependenciesImpossible); transitionErr == nil {
+			tolerated := toleratesNodeFailure(nodes[id])
 			executions[id] = NodeExecution{
-				NodeID:     id,
-				Capability: nodes[id].Capability,
-				WorkerID:   "BLOCKED",
-				State:      NodeBlocked,
-				Error:      "upstream dependencies did not complete",
+				NodeID:           id,
+				Capability:       nodes[id].Capability,
+				WorkerID:         "BLOCKED",
+				State:            NodeBlocked,
+				Error:            "upstream dependencies did not complete",
+				FailureTolerated: tolerated,
+			}
+			if !tolerated && firstErr == nil {
+				firstErr = fmt.Errorf("node %s: upstream dependencies did not complete", id)
 			}
 		}
 	}
@@ -527,7 +555,7 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 	}
 	sort.Strings(ids)
 
-	allCompleted := true
+	allSatisfied := true
 	for _, id := range ids {
 		if ex, ok := executions[id]; ok {
 			report.Nodes = append(report.Nodes, ex)
@@ -535,8 +563,8 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 				report.ExecutedNodes++
 			}
 		}
-		if states[id] != NodeCompleted {
-			allCompleted = false
+		if !nodeStateSatisfiesRun(nodes[id], states[id]) {
+			allSatisfied = false
 		}
 		if terminal[id] {
 			if out, ok := outputs[id]; ok {
@@ -544,6 +572,6 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 			}
 		}
 	}
-	report.Succeeded = firstErr == nil && allCompleted
+	report.Succeeded = firstErr == nil && allSatisfied
 	return report, firstErr
 }
