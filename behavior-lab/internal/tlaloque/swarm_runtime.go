@@ -47,6 +47,11 @@ func (p SwarmPlan) Normalize() (SwarmPlan, error) {
 	if len(p.Nodes) == 0 {
 		return SwarmPlan{}, fmt.Errorf("swarm requires at least one node")
 	}
+	// A value receiver still shares its Nodes backing array with the
+	// caller's slice; mutating elements in place here would race whenever
+	// the same SwarmPlan value is normalized concurrently (e.g. one plan
+	// driving several replica goroutines). Normalize must own its own copy.
+	p.Nodes = append([]SwarmNode(nil), p.Nodes...)
 	ids := map[string]bool{}
 	for i := range p.Nodes {
 		n := &p.Nodes[i]
@@ -89,7 +94,9 @@ func validateAcyclic(nodes []SwarmNode) error {
 	}
 	queue := []string{}
 	for id, degree := range indegree {
-		if degree == 0 { queue = append(queue, id) }
+		if degree == 0 {
+			queue = append(queue, id)
+		}
 	}
 	visited := 0
 	for len(queue) > 0 {
@@ -98,7 +105,9 @@ func validateAcyclic(nodes []SwarmNode) error {
 		visited++
 		for _, child := range children[id] {
 			indegree[child]--
-			if indegree[child] == 0 { queue = append(queue, child) }
+			if indegree[child] == 0 {
+				queue = append(queue, child)
+			}
 		}
 	}
 	if visited != len(nodes) {
@@ -108,40 +117,79 @@ func validateAcyclic(nodes []SwarmNode) error {
 }
 
 type NodeExecution struct {
-	NodeID       string             `json:"node_id"`
-	Capability   string             `json:"capability"`
-	WorkerID     string             `json:"worker_id"`
-	StartedAt    time.Time          `json:"started_at"`
-	DurationMS   int64              `json:"duration_ms"`
-	Confidence   float64            `json:"confidence,omitempty"`
-	Output       json.RawMessage    `json:"output,omitempty"`
-	Error        string             `json:"error,omitempty"`
+	NodeID     string          `json:"node_id"`
+	Capability string          `json:"capability"`
+	WorkerID   string          `json:"worker_id"`
+	StartedAt  time.Time       `json:"started_at"`
+	DurationMS int64           `json:"duration_ms"`
+	Confidence float64         `json:"confidence,omitempty"`
+	Output     json.RawMessage `json:"output,omitempty"`
+	Error      string          `json:"error,omitempty"`
+	// Skipped marks a node that was launched but never got to run — cancelled
+	// while queued behind a semaphore. It carries an Error and a WorkerID so
+	// the outcome is attributable, but it never counted as executed.
+	Skipped bool `json:"skipped,omitempty"`
 }
 
 type SwarmReport struct {
-	Schema             string                   `json:"schema"`
-	PlanID             string                   `json:"plan_id"`
-	TaskID             string                   `json:"task_id"`
-	MaxParallel        int                      `json:"max_parallel"`
-	RegisteredWorkers  int                      `json:"registered_workers"`
-	ExecutedNodes      int                      `json:"executed_nodes"`
-	PeakParallel       int                      `json:"peak_parallel"`
-	DurationMS         int64                    `json:"duration_ms"`
-	Succeeded          bool                     `json:"succeeded"`
-	Nodes              []NodeExecution          `json:"nodes"`
-	TerminalOutputs    map[string]json.RawMessage `json:"terminal_outputs,omitempty"`
+	Schema            string `json:"schema"`
+	PlanID            string `json:"plan_id"`
+	TaskID            string `json:"task_id"`
+	MaxParallel       int    `json:"max_parallel"`
+	RegisteredWorkers int    `json:"registered_workers"`
+	ExecutedNodes     int    `json:"executed_nodes"`
+	// SkippedNodes counts nodes recorded with Skipped: true — launched, then
+	// abandoned by cancellation before they ever reached their worker.
+	SkippedNodes    int                        `json:"skipped_nodes,omitempty"`
+	PeakParallel    int                        `json:"peak_parallel"`
+	DurationMS      int64                      `json:"duration_ms"`
+	Succeeded       bool                       `json:"succeeded"`
+	Nodes           []NodeExecution            `json:"nodes"`
+	TerminalOutputs map[string]json.RawMessage `json:"terminal_outputs,omitempty"`
+}
+
+type ExecutionMetric struct {
+	TaskID     string
+	NodeID     string
+	Capability string
+	WorkerID   string
+	Duration   time.Duration
+	Confidence float64
+	Succeeded  bool
+	Error      string
+}
+
+type ExecutionObserver interface {
+	ObserveExecution(context.Context, ExecutionMetric)
+}
+
+// WorkerProvisioner is the runtime boundary for on-demand specialist
+// creation. The implementation lives outside tlaloque so the DAG runtime
+// does not gain training or promotion responsibilities.
+type WorkerProvisioner interface {
+	Provision(context.Context, SelectionRequest) error
 }
 
 type SwarmRunner struct {
-	Registry *Registry
+	Registry    *Registry
+	Observer    ExecutionObserver
+	Provisioner WorkerProvisioner
 }
 
 func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, input json.RawMessage) (SwarmReport, error) {
 	plan, err := plan.Normalize()
-	if err != nil { return SwarmReport{}, err }
-	if r.Registry == nil { return SwarmReport{}, fmt.Errorf("registry is required") }
-	if len(input) == 0 || !json.Valid(input) { return SwarmReport{}, fmt.Errorf("task input must be valid JSON") }
-	if strings.TrimSpace(taskID) == "" { taskID = plan.ID + "-task" }
+	if err != nil {
+		return SwarmReport{}, err
+	}
+	if r.Registry == nil {
+		return SwarmReport{}, fmt.Errorf("registry is required")
+	}
+	if len(input) == 0 || !json.Valid(input) {
+		return SwarmReport{}, fmt.Errorf("task input must be valid JSON")
+	}
+	if strings.TrimSpace(taskID) == "" {
+		taskID = plan.ID + "-task"
+	}
 
 	start := time.Now()
 	report := SwarmReport{Schema: SwarmSchemaR0 + ".report", PlanID: plan.ID, TaskID: taskID, MaxParallel: plan.MaxParallel, RegisteredWorkers: len(r.Registry.Descriptors())}
@@ -171,12 +219,33 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 	active, peak := 0, 0
 
 	getWorkerSem := func(id string, max int) chan struct{} {
-		semMu.Lock(); defer semMu.Unlock()
-		if s, ok := workerSems[id]; ok { return s }
-		if max <= 0 { max = 1 }
+		semMu.Lock()
+		defer semMu.Unlock()
+		if s, ok := workerSems[id]; ok {
+			return s
+		}
+		if max <= 0 {
+			max = 1
+		}
 		s := make(chan struct{}, max)
 		workerSems[id] = s
 		return s
+	}
+
+	// recordAbandoned gives a node that was launched but never got to run —
+	// cancelled while queued behind a semaphore — a visible, attributable
+	// entry instead of silently vanishing from the report. It never counts
+	// toward report.ExecutedNodes (see the final report assembly below),
+	// which is what a node that legitimately never started should mean.
+	recordAbandoned := func(n SwarmNode, workerID string, attemptedAt time.Time) {
+		stateMu.Lock()
+		defer stateMu.Unlock()
+		if firstErr == nil {
+			firstErr = fmt.Errorf("node %s: %w", n.ID, ctx.Err())
+		}
+		if _, already := executions[n.ID]; !already {
+			executions[n.ID] = NodeExecution{NodeID: n.ID, Capability: n.Capability, WorkerID: workerID, StartedAt: attemptedAt.UTC(), Error: ctx.Err().Error(), Skipped: true}
+		}
 	}
 
 	var launch func(string)
@@ -185,10 +254,21 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			worker, selectErr := r.Registry.Select(SelectionRequest{Capability: n.Capability, WorkerID: n.WorkerID, ScopeHint: n.ScopeHint, DomainHint: n.DomainHint, PreferDeterministic: n.PreferDeterministic, MaxParameters: n.MaxParameters})
+			attemptedAt := time.Now()
+			selection := SelectionRequest{Capability: n.Capability, WorkerID: n.WorkerID, ScopeHint: n.ScopeHint, DomainHint: n.DomainHint, PreferDeterministic: n.PreferDeterministic, MaxParameters: n.MaxParameters}
+			worker, selectErr := r.Registry.Select(selection)
+			if selectErr != nil && r.Provisioner != nil {
+				if provisionErr := r.Provisioner.Provision(ctx, selection); provisionErr == nil {
+					worker, selectErr = r.Registry.Select(selection)
+				} else {
+					selectErr = fmt.Errorf("%w; provision specialist: %v", selectErr, provisionErr)
+				}
+			}
 			if selectErr != nil {
 				stateMu.Lock()
-				if firstErr == nil { firstErr = fmt.Errorf("node %s: %w", n.ID, selectErr) }
+				if firstErr == nil {
+					firstErr = fmt.Errorf("node %s: %w", n.ID, selectErr)
+				}
 				executions[n.ID] = NodeExecution{NodeID: n.ID, Capability: n.Capability, Error: selectErr.Error()}
 				stateMu.Unlock()
 				return
@@ -196,17 +276,31 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 			desc, _ := worker.Descriptor().Normalize()
 			wsem := getWorkerSem(desc.ID, desc.MaxConcurrency)
 
-			select { case globalSem <- struct{}{}: case <-ctx.Done(): return }
-			defer func(){ <-globalSem }()
-			select { case wsem <- struct{}{}: case <-ctx.Done(): return }
-			defer func(){ <-wsem }()
+			select {
+			case globalSem <- struct{}{}:
+			case <-ctx.Done():
+				recordAbandoned(n, desc.ID, attemptedAt)
+				return
+			}
+			defer func() { <-globalSem }()
+			select {
+			case wsem <- struct{}{}:
+			case <-ctx.Done():
+				recordAbandoned(n, desc.ID, attemptedAt)
+				return
+			}
+			defer func() { <-wsem }()
 
 			stateMu.Lock()
 			active++
-			if active > peak { peak = active }
+			if active > peak {
+				peak = active
+			}
 			depContext := map[string]json.RawMessage{}
 			for _, dep := range n.DependsOn {
-				if out, ok := outputs[dep]; ok { depContext[dep] = append(json.RawMessage(nil), out...) }
+				if out, ok := outputs[dep]; ok {
+					depContext[dep] = append(json.RawMessage(nil), out...)
+				}
 			}
 			stateMu.Unlock()
 
@@ -219,7 +313,9 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 			execReport := NodeExecution{NodeID: n.ID, Capability: n.Capability, WorkerID: desc.ID, StartedAt: nodeStart.UTC(), DurationMS: duration.Milliseconds()}
 			if runErr != nil {
 				execReport.Error = runErr.Error()
-				if firstErr == nil { firstErr = fmt.Errorf("node %s worker %s: %w", n.ID, desc.ID, runErr) }
+				if firstErr == nil {
+					firstErr = fmt.Errorf("node %s worker %s: %w", n.ID, desc.ID, runErr)
+				}
 			} else {
 				execReport.Output = append(json.RawMessage(nil), resp.Output...)
 				execReport.Confidence = resp.Confidence
@@ -227,39 +323,73 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 			}
 			executions[n.ID] = execReport
 			if runErr == nil {
-				for _, child := range children[n.ID] { remaining[child]-- }
+				for _, child := range children[n.ID] {
+					remaining[child]--
+				}
 			}
 			ready := []string{}
 			if runErr == nil {
 				for _, child := range children[n.ID] {
-					if remaining[child] == 0 { ready = append(ready, child) }
+					if remaining[child] == 0 {
+						ready = append(ready, child)
+					}
 				}
 			}
 			stateMu.Unlock()
+			if r.Observer != nil {
+				metric := ExecutionMetric{
+					TaskID: taskID, NodeID: n.ID, Capability: n.Capability, WorkerID: desc.ID,
+					Duration: duration, Confidence: resp.Confidence, Succeeded: runErr == nil,
+				}
+				if runErr != nil {
+					metric.Error = runErr.Error()
+				}
+				r.Observer.ObserveExecution(ctx, metric)
+			}
 			sort.Strings(ready)
-			for _, child := range ready { launch(child) }
+			for _, child := range ready {
+				launch(child)
+			}
 		}()
 	}
 
 	roots := []string{}
-	for id, degree := range remaining { if degree == 0 { roots = append(roots, id) } }
+	for id, degree := range remaining {
+		if degree == 0 {
+			roots = append(roots, id)
+		}
+	}
 	sort.Strings(roots)
-	for _, root := range roots { launch(root) }
+	for _, root := range roots {
+		launch(root)
+	}
 	wg.Wait()
 
 	report.PeakParallel = peak
 	report.DurationMS = time.Since(start).Milliseconds()
 	report.TerminalOutputs = map[string]json.RawMessage{}
 	ids := make([]string, 0, len(plan.Nodes))
-	for _, n := range plan.Nodes { ids = append(ids, n.ID) }
+	for _, n := range plan.Nodes {
+		ids = append(ids, n.ID)
+	}
 	sort.Strings(ids)
 	for _, id := range ids {
-		if ex, ok := executions[id]; ok { report.Nodes = append(report.Nodes, ex) }
+		if ex, ok := executions[id]; ok {
+			report.Nodes = append(report.Nodes, ex)
+		}
 		if terminal[id] {
-			if out, ok := outputs[id]; ok { report.TerminalOutputs[id] = out }
+			if out, ok := outputs[id]; ok {
+				report.TerminalOutputs[id] = out
+			}
 		}
 	}
-	report.ExecutedNodes = len(report.Nodes)
+	for _, ex := range report.Nodes {
+		if ex.Skipped {
+			report.SkippedNodes++
+		} else {
+			report.ExecutedNodes++
+		}
+	}
 	report.Succeeded = firstErr == nil && report.ExecutedNodes == len(plan.Nodes)
 	return report, firstErr
 }
