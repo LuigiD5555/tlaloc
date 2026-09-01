@@ -47,15 +47,15 @@ type Event struct {
 }
 
 type FailurePattern struct {
-	Key              string   `json:"key"`
-	Stage            string   `json:"stage,omitempty"`
-	FailureCode      string   `json:"failure_code,omitempty"`
-	ScoreLayer       string   `json:"score_layer,omitempty"`
-	Count            int      `json:"count"`
-	Models           []string `json:"models,omitempty"`
-	Specimens        []string `json:"specimens,omitempty"`
-	Questions        []string `json:"questions,omitempty"`
-	SuggestedTarget  string   `json:"suggested_target,omitempty"`
+	Key             string   `json:"key"`
+	Stage           string   `json:"stage,omitempty"`
+	FailureCode     string   `json:"failure_code,omitempty"`
+	ScoreLayer      string   `json:"score_layer,omitempty"`
+	Count           int      `json:"count"`
+	Models          []string `json:"models,omitempty"`
+	Specimens       []string `json:"specimens,omitempty"`
+	Questions       []string `json:"questions,omitempty"`
+	SuggestedTarget string   `json:"suggested_target,omitempty"`
 }
 
 type CandidateOutcome struct {
@@ -66,18 +66,51 @@ type CandidateOutcome struct {
 	WorstDelta  float64 `json:"worst_delta"`
 }
 
+// ModelPerformanceProfile treats a model+condition pair as an empirical
+// configuration profile. This preserves the fact that DeepSeek, Qwen, LFM2 or
+// the same model under different prompts/protocols can behave differently.
+type ModelPerformanceProfile struct {
+	ModelID   string  `json:"model_id"`
+	Condition string  `json:"condition,omitempty"`
+	Cases     int     `json:"cases"`
+	Passes    int     `json:"passes"`
+	Failures  int     `json:"failures"`
+	Accuracy  float64 `json:"accuracy"`
+}
+
+// PairwiseModelProfile measures whether two empirical configurations make the
+// same mistakes. FailureOverlap is Jaccard overlap of their failure sets;
+// Complementarity is 1-overlap when at least one shared failure exists.
+type PairwiseModelProfile struct {
+	ModelA          string  `json:"model_a"`
+	ConditionA      string  `json:"condition_a,omitempty"`
+	ModelB          string  `json:"model_b"`
+	ConditionB      string  `json:"condition_b,omitempty"`
+	SharedCases     int     `json:"shared_cases"`
+	BothPass        int     `json:"both_pass"`
+	BothFail        int     `json:"both_fail"`
+	ARecoversB      int     `json:"a_recovers_b"`
+	BRecoversA      int     `json:"b_recovers_a"`
+	FailureUnion    int     `json:"failure_union"`
+	FailureOverlap  float64 `json:"failure_overlap"`
+	Complementarity float64 `json:"complementarity"`
+	OracleSuccess   float64 `json:"oracle_success"`
+}
+
 type Summary struct {
-	Schema                 string             `json:"schema"`
-	StoreRoot              string             `json:"store_root"`
-	TotalEvents            int                `json:"total_events"`
-	ObservationEvents      int                `json:"observation_events"`
-	RealModelObservations  int                `json:"real_model_observations"`
-	SyntheticObservations  int                `json:"synthetic_observations"`
-	PassedObservations     int                `json:"passed_observations"`
-	FailedObservations     int                `json:"failed_observations"`
-	ChangeAttempts         int                `json:"change_attempts"`
-	OutcomeLinks           int                `json:"outcome_links"`
-	TopRealFailurePatterns []FailurePattern   `json:"top_real_failure_patterns,omitempty"`
-	CandidateOutcomes      []CandidateOutcome `json:"candidate_outcomes,omitempty"`
-	NextDebugTarget        string             `json:"next_debug_target,omitempty"`
+	Schema                 string                    `json:"schema"`
+	StoreRoot              string                    `json:"store_root"`
+	TotalEvents            int                       `json:"total_events"`
+	ObservationEvents      int                       `json:"observation_events"`
+	RealModelObservations  int                       `json:"real_model_observations"`
+	SyntheticObservations  int                       `json:"synthetic_observations"`
+	PassedObservations     int                       `json:"passed_observations"`
+	FailedObservations     int                       `json:"failed_observations"`
+	ChangeAttempts         int                       `json:"change_attempts"`
+	OutcomeLinks           int                       `json:"outcome_links"`
+	TopRealFailurePatterns []FailurePattern          `json:"top_real_failure_patterns,omitempty"`
+	CandidateOutcomes      []CandidateOutcome        `json:"candidate_outcomes,omitempty"`
+	ModelProfiles          []ModelPerformanceProfile `json:"model_profiles,omitempty"`
+	PairwiseProfiles       []PairwiseModelProfile    `json:"pairwise_profiles,omitempty"`
+	NextDebugTarget        string                    `json:"next_debug_target,omitempty"`
 }
