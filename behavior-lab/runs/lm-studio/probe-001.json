@@ -1,0 +1,25 @@
+{
+  "id": "chatcmpl-ratyokf87bgdeee3fo2w4m",
+  "object": "chat.completion",
+  "created": 1788213771,
+  "model": "lfm2-vl-1.6b",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "CONSULTAR",
+        "tool_calls": []
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 76,
+    "completion_tokens": 5,
+    "total_tokens": 81
+  },
+  "stats": {},
+  "system_fingerprint": "lfm2-vl-1.6b"
+}

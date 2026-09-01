@@ -1,0 +1,5040 @@
+{
+  "schema": "tlaloc.swarm-bench-lmstudio-compare.r0",
+  "model": "lfm2-vl-1.6b",
+  "endpoint": "http://127.0.0.1:1234/v1",
+  "item_count": 40,
+  "decomposed": {
+    "schema": "tlaloc.swarm-bench-run.r0",
+    "run_id": "compare-decomposed/lmstudio-compare",
+    "dataset_id": "lmstudio-compare",
+    "plan_id": "compare-decomposed",
+    "topology": {
+      "nodes": 5,
+      "edges": 4,
+      "depth": 3,
+      "max_width": 3,
+      "max_parallel": 1
+    },
+    "score": {
+      "schema": "tlaloc.swarm-bench-score.r0",
+      "item_count": 40,
+      "exact_match_count": 10,
+      "exact_match_rate": 0.25,
+      "route_accuracy": 0.55,
+      "field_accuracies": [
+        {
+          "field": "intent",
+          "correct": 10,
+          "total": 40,
+          "accuracy": 0.25
+        },
+        {
+          "field": "organization",
+          "correct": 31,
+          "total": 40,
+          "accuracy": 0.775
+        },
+        {
+          "field": "amount",
+          "correct": 40,
+          "total": 40,
+          "accuracy": 1
+        },
+        {
+          "field": "date",
+          "correct": 40,
+          "total": 40,
+          "accuracy": 1
+        },
+        {
+          "field": "route",
+          "correct": 22,
+          "total": 40,
+          "accuracy": 0.55
+        }
+      ],
+      "items": [
+        {
+          "item_id": "lmstudio-compare-0000",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Transportes Union",
+              "got": "Transportes Union",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-19",
+              "got": "2026-06-19",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0001",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-10-01",
+              "got": "2026-10-01",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0002",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "ACME Servicios",
+              "got": "ACME Servicios",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$890.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "2026-06-09",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0003",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "Grupo Textil del Norte",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$4,999.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-05",
+              "got": "2026-06-05",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0004",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "ACME Servicios",
+              "got": "ACME Servicios",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "2026-06-09",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0005",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "Consultoria Zapopan",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-10",
+              "got": "2026-03-10",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "TESORERIA",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0006",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "Comercializadora Bajio",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$1,560.75",
+              "got": "$1,560.75",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-16",
+              "got": "2026-06-16",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0007",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$890.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-22",
+              "got": "2026-08-22",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0008",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Servicios Integrales Anahuac",
+              "got": "CFDI",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "2026-06-09",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0009",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "PAGAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Transportes Union",
+              "got": "Transportes Union",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-31",
+              "got": "2026-03-31",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "TESORERIA",
+              "got": "TESORERIA",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0010",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "Comercializadora Bajio",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$4,999.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "2026-06-09",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0011",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "CFDI",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-22",
+              "got": "2026-08-22",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0012",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "Consultoría Zapopan",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$4,999.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-08",
+              "got": "2026-06-08",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0013",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "Grupo Textil del Norte",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-09-01",
+              "got": "2026-09-01",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0014",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$45,000.00",
+              "got": "$45,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "2026-06-09",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0015",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$890.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-31",
+              "got": "2026-08-31",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0016",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "Consultoria Zapopan",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$3,200.50",
+              "got": "$3,200.50",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-14",
+              "got": "2026-06-14",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0017",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Servicios Integrales Anahuac",
+              "got": "Servicios Integrales Anahuac",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$890.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-31",
+              "got": "2026-08-31",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0018",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Transportes Union",
+              "got": "CFDI",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-31",
+              "got": "2026-03-31",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0019",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "ACME Servicios",
+              "got": "ACME Servicios",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-25",
+              "got": "2026-08-25",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0020",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Transportes Union",
+              "got": "Transportes Union",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$45,000.00",
+              "got": "$45,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-07-15",
+              "got": "2026-07-15",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0021",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$1,560.75",
+              "got": "$1,560.75",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-07-15",
+              "got": "2026-07-15",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0022",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "CFDI",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-13",
+              "got": "2026-03-13",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0023",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "Comercializadora Bajio",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-15",
+              "got": "2026-06-15",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0024",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "Comercializadora Bajio",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$45,000.00",
+              "got": "$45,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2025-11-13",
+              "got": "2025-11-13",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0025",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "Grupo Textil del Norte",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$890.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2025-11-19",
+              "got": "2025-11-19",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0026",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Distribuidora Peninsular",
+              "got": "Distribuidora Peninsular",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$4,999.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2025-12-20",
+              "got": "2025-12-20",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0027",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "Grupo Textil del Norte",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$3,200.50",
+              "got": "$3,200.50",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-05",
+              "got": "2026-06-05",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0028",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "Grupo Textil del Norte",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2025-12-20",
+              "got": "2025-12-20",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0029",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Servicios Integrales Anahuac",
+              "got": "Servicios Integrales Anahuac",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-19",
+              "got": "2026-06-19",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0030",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-09-01",
+              "got": "2026-09-01",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0031",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "CFDI",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-11",
+              "got": "2026-03-11",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0032",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Servicios Integrales Anahuac",
+              "got": "Servicios Integrales Anahuac",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-15",
+              "got": "2026-06-15",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0033",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Distribuidora Peninsular",
+              "got": "Distribuidora Peninsular",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-08",
+              "got": "2026-06-08",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0034",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "Comercializadora Bajio",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$4,999.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-16",
+              "got": "2026-06-16",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0035",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "Consultoría Zapopan",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-14",
+              "got": "2026-06-14",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0036",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Distribuidora Peninsular",
+              "got": "Distribuidora Peninsular",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-30",
+              "got": "2026-06-30",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0037",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Lerma",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-30",
+              "got": "2026-06-30",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0038",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "CFDI",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$45,000.00",
+              "got": "$45,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-15",
+              "got": "2026-06-15",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0039",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CONSULTAR",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "ACME Servicios",
+              "got": "ACME Servicios",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-19",
+              "got": "2026-06-19",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "ARCHIVO",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        }
+      ]
+    }
+  },
+  "single_shot": {
+    "schema": "tlaloc.swarm-bench-lmstudio-baseline.r0",
+    "endpoint": "http://127.0.0.1:1234/v1",
+    "model": "lfm2-vl-1.6b",
+    "model_interop": {
+      "schema": "tlaloc.model-interop-profile.r0",
+      "model_id": "lfm2-vl-1.6b",
+      "family": "LIQUIDAI",
+      "transport_condition": "DIRECT_IMAGE_API",
+      "compatibility_strategy": "openai-chat-completions",
+      "specimen_key": "LIQUIDAI::lfm2-vl-1.6b::DIRECT_IMAGE_API::openai-chat-completions",
+      "evidence_rule": "OBSERVE_BEHAVIOR_DO_NOT_ASSUME_INTERNALS",
+      "comparison_rule": "COMPARE_EXACT_MODEL_AND_TRANSPORT_FIRST"
+    },
+    "started_at": "2026-08-31T22:39:59.473778379Z",
+    "finished_at": "2026-08-31T22:42:00.993261901Z",
+    "cases": [
+      {
+        "item_id": "lmstudio-compare-0000",
+        "raw_output": "{\"intent\":\"CANCELAR\",\"organization\":\"Transportes Union\", \"amount\": \"$12,450.00\", \"date_expression\":\"el proximo viernes\"}",
+        "got": {
+          "intent": "CANCELAR",
+          "organization": "Transportes Union",
+          "amount_cents": 1245000,
+          "date_iso": "2026-06-19",
+          "route": "CUMPLIMIENTO"
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0000",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Transportes Union",
+              "got": "Transportes Union",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-19",
+              "got": "2026-06-19",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        "latency_ms": 2998
+      },
+      {
+        "item_id": "lmstudio-compare-0001",
+        "raw_output": "{\"intent\":\"CANCELAR\",\"organization\":\"Refacciones Industriales Lerma\", \"amount\": \"$7,800.25\", \"date_expression\":\"30 días\"}",
+        "got": {
+          "intent": "CANCELAR",
+          "organization": "Refacciones Industriales Lerma",
+          "amount_cents": 780025,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0001",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-10-01",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 3115
+      },
+      {
+        "item_id": "lmstudio-compare-0002",
+        "raw_output": "{\"intent\":\"CONSULTAR\",\"organization\":\"ACME Servicios\", \"amount\": \"$890.00\", \"date_expression\":\"el corte del martes pasado\"}",
+        "got": {
+          "intent": "CONSULTAR",
+          "organization": "ACME Servicios",
+          "amount_cents": 89000,
+          "date_iso": "2026-06-09",
+          "route": "ARCHIVO"
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0002",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "ACME Servicios",
+              "got": "ACME Servicios",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$890.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "2026-06-09",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        "latency_ms": 3050
+      },
+      {
+        "item_id": "lmstudio-compare-0003",
+        "raw_output": "{\"intent\":\"PAGAR|CANCELAR|CONSULTAR|BUSCAR\",\"organization\":\"Grupo Textil del Norte\", \"amount\":\"$4,999.00\", \"date_expression\":\"hace 10 días\"}",
+        "got": {
+          "intent": "",
+          "organization": "Grupo Textil del Norte",
+          "amount_cents": 499900,
+          "date_iso": "2026-06-05",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0003",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "Grupo Textil del Norte",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$4,999.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-05",
+              "got": "2026-06-05",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 3598
+      },
+      {
+        "item_id": "lmstudio-compare-0004",
+        "raw_output": "{\"intent\":\"CONSULTAR\",\"organization\":\"ACME Servicios\",\"amount\":\"$5,000.00\",\"date_expression\":\"el martes pasado\"}",
+        "got": {
+          "intent": "CONSULTAR",
+          "organization": "ACME Servicios",
+          "amount_cents": 500000,
+          "date_iso": "2026-06-09",
+          "route": "ARCHIVO"
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0004",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "ACME Servicios",
+              "got": "ACME Servicios",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "2026-06-09",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        "latency_ms": 2963
+      },
+      {
+        "item_id": "lmstudio-compare-0005",
+        "raw_output": "{\"intent\":\"PAGAR\",\"organization\":\"Consultoria Zapopan\", \"amount\":\"$12,450.00\", \"date_expression\":\"hoy\"}",
+        "got": {
+          "intent": "PAGAR",
+          "organization": "Consultoria Zapopan",
+          "amount_cents": 1245000,
+          "date_iso": "2026-03-10",
+          "route": "TESORERIA"
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0005",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "PAGAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "Consultoria Zapopan",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-10",
+              "got": "2026-03-10",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "TESORERIA",
+              "got": "TESORERIA",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        "latency_ms": 3011
+      },
+      {
+        "item_id": "lmstudio-compare-0006",
+        "raw_output": "{\"comercializadora\": \"Bajio\", \"monto\": \"$1,560.75\", \"fecha_expression\": \"manana\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0006",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$1,560.75",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-16",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2896
+      },
+      {
+        "item_id": "lmstudio-compare-0007",
+        "raw_output": "{\"intent\":\"CANCELAR\",\"organization\":\"Refacciones Industriales Lerma\", \"amount\": \"$890.00\", \"date_expression\":\"hace 10 días\"}",
+        "got": {
+          "intent": "CANCELAR",
+          "organization": "Refacciones Industriales Lerma",
+          "amount_cents": 89000,
+          "date_iso": "2026-08-22",
+          "route": "CUMPLIMIENTO"
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0007",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$890.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-22",
+              "got": "2026-08-22",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        "latency_ms": 3139
+      },
+      {
+        "item_id": "lmstudio-compare-0008",
+        "raw_output": "{\"intent\":\"CANCELAR\",\"organization\":\"CFDI de Servicios Integrales Anahuac\", \"amount\": \"$7,800.25\", \"date_expression\":\"martes pasado\"}",
+        "got": {
+          "intent": "CANCELAR",
+          "organization": "CFDI de Servicios Integrales Anahuac",
+          "amount_cents": 780025,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0008",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Servicios Integrales Anahuac",
+              "got": "CFDI de Servicios Integrales Anahuac",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 3230
+      },
+      {
+        "item_id": "lmstudio-compare-0009",
+        "raw_output": "{\"intent\":\"PAGAR|CANCELAR|CONSULTAR|BUSCAR\",\"organization\":\"Transportes Union\",\"amount\":\"$12,450.00\",\"date_expression\":\"fin de mes\"}",
+        "got": {
+          "intent": "",
+          "organization": "Transportes Union",
+          "amount_cents": 1245000,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0009",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Transportes Union",
+              "got": "Transportes Union",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-31",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "TESORERIA",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 3357
+      },
+      {
+        "item_id": "lmstudio-compare-0010",
+        "raw_output": "{\"saldo\": \"$4,999.00\", \"fecha_expiration\": \"el martes pasado\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0010",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2537
+      },
+      {
+        "item_id": "lmstudio-compare-0011",
+        "raw_output": "{\"intent\":\"CANCELAR\",\"organization\":\"Refacciones Industriales Lerma\", \"amount\": \"$7,800.25\", \"date_expression\":\"10 días antes de la fecha de expiración\"}",
+        "got": {
+          "intent": "CANCELAR",
+          "organization": "Refacciones Industriales Lerma",
+          "amount_cents": 780025,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0011",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-22",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 3428
+      },
+      {
+        "item_id": "lmstudio-compare-0012",
+        "raw_output": "{\"documentation\": \"Consultoria Zapopan\", \"amount\": \"$4,999.00\", \"date_expression\": \"la expresion de fecha tal como aparece en el texto, ej. 'el próximo viernes'\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 499900,
+          "date_iso": "2026-06-19",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0012",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$4,999.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-08",
+              "got": "2026-06-19",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 3425
+      },
+      {
+        "item_id": "lmstudio-compare-0013",
+        "raw_output": "{\"saldo\": \"$7,800.25\", \"fecha_expression\": \"hoy\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0013",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-09-01",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2462
+      },
+      {
+        "item_id": "lmstudio-compare-0014",
+        "raw_output": "{\"intent\":\"PAGAR\",\"organization\":\"Refacciones Industriales Lerma\", \"amount\":\"$45,000.00\", \"date_expression\":\"el martes pasado\"}",
+        "got": {
+          "intent": "PAGAR",
+          "organization": "Refacciones Industriales Lerma",
+          "amount_cents": 4500000,
+          "date_iso": "2026-06-09",
+          "route": "CUMPLIMIENTO"
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0014",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "PAGAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$45,000.00",
+              "got": "$45,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "2026-06-09",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        "latency_ms": 3195
+      },
+      {
+        "item_id": "lmstudio-compare-0015",
+        "raw_output": "{\"intent\":\"CANCELAR\",\"organization\":\"Refacciones Industriales Lerma\", \"amount\": \"$890.00\", \"date_expression\":\"ayer\"}",
+        "got": {
+          "intent": "CANCELAR",
+          "organization": "Refacciones Industriales Lerma",
+          "amount_cents": 89000,
+          "date_iso": "2026-08-31",
+          "route": "CUMPLIMIENTO"
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0015",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$890.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-31",
+              "got": "2026-08-31",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        "latency_ms": 3023
+      },
+      {
+        "item_id": "lmstudio-compare-0016",
+        "raw_output": "{\"amount\": \"$3,200.50\", \"date_expression\": \"ayer\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 320050,
+          "date_iso": "2026-06-14",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0016",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$3,200.50",
+              "got": "$3,200.50",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-14",
+              "got": "2026-06-14",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2360
+      },
+      {
+        "item_id": "lmstudio-compare-0017",
+        "raw_output": "{\"intent\":\"PAGAR\",\"organization\":\"Servicios Integrales Anahuac\", \"amount\":\"$890.00\", \"date_expression\":\"ayer\"}",
+        "got": {
+          "intent": "PAGAR",
+          "organization": "Servicios Integrales Anahuac",
+          "amount_cents": 89000,
+          "date_iso": "2026-08-31",
+          "route": "CUMPLIMIENTO"
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0017",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "PAGAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Servicios Integrales Anahuac",
+              "got": "Servicios Integrales Anahuac",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$890.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-31",
+              "got": "2026-08-31",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        "latency_ms": 2943
+      },
+      {
+        "item_id": "lmstudio-compare-0018",
+        "raw_output": "{\n  \"intent\": \"CANCELAR\",\n  \"organization\": \"CFDI de Transportes Union\",\n  \"amount\": \"$7,800.25\",\n  \"date_expression\": \"fin de mes\"\n}",
+        "got": {
+          "intent": "CANCELAR",
+          "organization": "CFDI de Transportes Union",
+          "amount_cents": 780025,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0018",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Transportes Union",
+              "got": "CFDI de Transportes Union",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-31",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 3404
+      },
+      {
+        "item_id": "lmstudio-compare-0019",
+        "raw_output": "{\"intent\":\"CONSULTAR\",\"organization\":\"ACME Servicios\",\"amount\":\"$5,000.00\",\"date_expression\":\"el martes pasado\"}",
+        "got": {
+          "intent": "CONSULTAR",
+          "organization": "ACME Servicios",
+          "amount_cents": 500000,
+          "date_iso": "2026-08-25",
+          "route": "ARCHIVO"
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0019",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "ACME Servicios",
+              "got": "ACME Servicios",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-25",
+              "got": "2026-08-25",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        "latency_ms": 2975
+      },
+      {
+        "item_id": "lmstudio-compare-0020",
+        "raw_output": "{\"comprobante\": \"nombre exacto\", \"monto\": \"$45,000.00\", \"fecha_expression\": \"la expresión de fecha tal como aparece en el texto, ej. 'el próximo viernes'\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0020",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Transportes Union",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$45,000.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-07-15",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 3447
+      },
+      {
+        "item_id": "lmstudio-compare-0021",
+        "raw_output": "{\"document\": \"Refacciones Industriales Lerma\", \"expression\":\"$1,560.75\", \"date_expression\":\"30 dias\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0021",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$1,560.75",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-07-15",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2854
+      },
+      {
+        "item_id": "lmstudio-compare-0022",
+        "raw_output": "{\"intent\":\"CANCELAR\",\"organization\":\"Refacciones Industriales Lerma\", \"amount\": \"$5,000.00\", \"date_expression\":\"proximo viernes\"}",
+        "got": {
+          "intent": "CANCELAR",
+          "organization": "Refacciones Industriales Lerma",
+          "amount_cents": 500000,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0022",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-13",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 3183
+      },
+      {
+        "item_id": "lmstudio-compare-0023",
+        "raw_output": "{\"documentation\": \"Comercializadora Bajio de $12,450.00 emitida hoy\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0023",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-15",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2522
+      },
+      {
+        "item_id": "lmstudio-compare-0024",
+        "raw_output": "{\"comercializadora\": \"Bajio\", \"monto\": \"$45,000.00\", \"fecha\": \"la semana pasada\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0024",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$45,000.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2025-11-13",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2922
+      },
+      {
+        "item_id": "lmstudio-compare-0025",
+        "raw_output": "{\"comprobante\": \"nombre exacto\", \"monto\": \"$890.00\", \"fecha_expression\": \"la expresión de fecha tal como aparece en el texto, ej. 'el próximo viernes'\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0025",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2025-11-19",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 3396
+      },
+      {
+        "item_id": "lmstudio-compare-0026",
+        "raw_output": "{\"comprobante\": \"nombre exacto\", \"monto\": \"$4,999.00\", \"fecha_expression\": \"la expresión de fecha tal como aparece en el texto, ej. 'el próximo viernes'\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0026",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Distribuidora Peninsular",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2025-12-20",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 3457
+      },
+      {
+        "item_id": "lmstudio-compare-0027",
+        "raw_output": "{\"comprobante\": \"nombre exacto\", \"monto\": \"$3,200.50\", \"fecha_expression\": \"la expresión de fecha tal como aparece en el texto, ej. 'el próximo viernes'\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0027",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$3,200.50",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-05",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 3475
+      },
+      {
+        "item_id": "lmstudio-compare-0028",
+        "raw_output": "{\"saldo\": \"$7,800.25\", \"fecha_expiration\": \"30 días\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0028",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2025-12-20",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2463
+      },
+      {
+        "item_id": "lmstudio-compare-0029",
+        "raw_output": "{\"saldo\": \"$12,450.00\", \"fecha_expiration\": \"el próximo viernes\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0029",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Servicios Integrales Anahuac",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-19",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2521
+      },
+      {
+        "item_id": "lmstudio-compare-0030",
+        "raw_output": "{\"saldo\": \"7800.25\", \"fecha_expression\": \"hoy\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0030",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-09-01",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2432
+      },
+      {
+        "item_id": "lmstudio-compare-0031",
+        "raw_output": "{\n  \"intent\": \"CANCELAR\",\n  \"organization\": \"Consultoria Zapopan\",\n  \"amount\": \"$7,800.25\",\n  \"date_expression\": \"manana\"\n}",
+        "got": {
+          "intent": "CANCELAR",
+          "organization": "Consultoria Zapopan",
+          "amount_cents": 780025,
+          "date_iso": "2026-03-11",
+          "route": "CUMPLIMIENTO"
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0031",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "Consultoria Zapopan",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-11",
+              "got": "2026-03-11",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        "latency_ms": 3374
+      },
+      {
+        "item_id": "lmstudio-compare-0032",
+        "raw_output": "{\"amount\": \"$7,800.25\", \"date_expression\": \"al corte hoy\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 780025,
+          "date_iso": "2026-06-15",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0032",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Servicios Integrales Anahuac",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-15",
+              "got": "2026-06-15",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2432
+      },
+      {
+        "item_id": "lmstudio-compare-0033",
+        "raw_output": "{\"intent\":\"CANCELAR\",\"organization\":\"Distribuidora Peninsular\", \"amount\": \"$7,800.25\", \"date_expression\":\"la expresion de fecha tal como aparece en el texto, ej. 'el próximo viernes'\"}",
+        "got": {
+          "intent": "CANCELAR",
+          "organization": "Distribuidora Peninsular",
+          "amount_cents": 780025,
+          "date_iso": "2026-06-19",
+          "route": "CUMPLIMIENTO"
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0033",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Distribuidora Peninsular",
+              "got": "Distribuidora Peninsular",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-08",
+              "got": "2026-06-19",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        "latency_ms": 3657
+      },
+      {
+        "item_id": "lmstudio-compare-0034",
+        "raw_output": "{\"documentation\": \"Comercializadora Bajio de $4,999.00 emitida manana\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 0,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0034",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-16",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2574
+      },
+      {
+        "item_id": "lmstudio-compare-0035",
+        "raw_output": "{\"intent\":\"PAGAR|CANCELAR|CONSULTAR|BUSCAR\",\"organization\":\"Zapopan\", \"amount\": \"$7,800.25\", \"date_expression\":\"ayer\"}",
+        "got": {
+          "intent": "",
+          "organization": "Zapopan",
+          "amount_cents": 780025,
+          "date_iso": "2026-06-14",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0035",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "Zapopan",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-14",
+              "got": "2026-06-14",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 3384
+      },
+      {
+        "item_id": "lmstudio-compare-0036",
+        "raw_output": "{\"amount\": \"$5,000.00\", \"date_expression\": \"fin de mes\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 500000,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0036",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Distribuidora Peninsular",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-30",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2428
+      },
+      {
+        "item_id": "lmstudio-compare-0037",
+        "raw_output": "{\"document_type\":\"REFACIONES_INDUSTRIAL\",\"amount\":\"$5,000.00\",\"date_expression\":\"fin de mes\"}",
+        "got": {
+          "intent": "",
+          "organization": "",
+          "amount_cents": 500000,
+          "date_iso": "",
+          "route": ""
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0037",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-30",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        "latency_ms": 2831
+      },
+      {
+        "item_id": "lmstudio-compare-0038",
+        "raw_output": "{\"intent\":\"CANCELAR\",\"organization\":\"Grupo Textil del Norte\",\"amount\":\"$45,000.00\",\"date_expression\":\"hoy\"}",
+        "got": {
+          "intent": "CANCELAR",
+          "organization": "Grupo Textil del Norte",
+          "amount_cents": 4500000,
+          "date_iso": "2026-06-15",
+          "route": "CUMPLIMIENTO"
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0038",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "Grupo Textil del Norte",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$45,000.00",
+              "got": "$45,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-15",
+              "got": "2026-06-15",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        "latency_ms": 2991
+      },
+      {
+        "item_id": "lmstudio-compare-0039",
+        "raw_output": "{\"intent\":\"CANCELAR\",\"organization\":\"ACME Servicios\", \"amount\": \"$12,450.00\", \"date_expression\":\"el próximo viernes\"}",
+        "got": {
+          "intent": "CANCELAR",
+          "organization": "ACME Servicios",
+          "amount_cents": 1245000,
+          "date_iso": "2026-06-19",
+          "route": "CUMPLIMIENTO"
+        },
+        "item_score": {
+          "item_id": "lmstudio-compare-0039",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "ACME Servicios",
+              "got": "ACME Servicios",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-19",
+              "got": "2026-06-19",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        "latency_ms": 4049
+      }
+    ],
+    "score": {
+      "schema": "tlaloc.swarm-bench-score.r0",
+      "item_count": 40,
+      "exact_match_count": 12,
+      "exact_match_rate": 0.3,
+      "route_accuracy": 0.325,
+      "field_accuracies": [
+        {
+          "field": "intent",
+          "correct": 18,
+          "total": 40,
+          "accuracy": 0.45
+        },
+        {
+          "field": "organization",
+          "correct": 18,
+          "total": 40,
+          "accuracy": 0.45
+        },
+        {
+          "field": "amount",
+          "correct": 26,
+          "total": 40,
+          "accuracy": 0.65
+        },
+        {
+          "field": "date",
+          "correct": 16,
+          "total": 40,
+          "accuracy": 0.4
+        },
+        {
+          "field": "route",
+          "correct": 13,
+          "total": 40,
+          "accuracy": 0.325
+        }
+      ],
+      "items": [
+        {
+          "item_id": "lmstudio-compare-0000",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Transportes Union",
+              "got": "Transportes Union",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-19",
+              "got": "2026-06-19",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0001",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-10-01",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0002",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "ACME Servicios",
+              "got": "ACME Servicios",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$890.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "2026-06-09",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0003",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "Grupo Textil del Norte",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$4,999.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-05",
+              "got": "2026-06-05",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0004",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "ACME Servicios",
+              "got": "ACME Servicios",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "2026-06-09",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0005",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "PAGAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "Consultoria Zapopan",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-10",
+              "got": "2026-03-10",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "TESORERIA",
+              "got": "TESORERIA",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0006",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$1,560.75",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-16",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0007",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$890.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-22",
+              "got": "2026-08-22",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0008",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Servicios Integrales Anahuac",
+              "got": "CFDI de Servicios Integrales Anahuac",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0009",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Transportes Union",
+              "got": "Transportes Union",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-31",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "TESORERIA",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0010",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0011",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-22",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0012",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$4,999.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-08",
+              "got": "2026-06-19",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0013",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-09-01",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0014",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "PAGAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$45,000.00",
+              "got": "$45,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-09",
+              "got": "2026-06-09",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0015",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$890.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-31",
+              "got": "2026-08-31",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0016",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$3,200.50",
+              "got": "$3,200.50",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-14",
+              "got": "2026-06-14",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0017",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "PAGAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Servicios Integrales Anahuac",
+              "got": "Servicios Integrales Anahuac",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$890.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-31",
+              "got": "2026-08-31",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0018",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Transportes Union",
+              "got": "CFDI de Transportes Union",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-31",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0019",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "CONSULTAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "ACME Servicios",
+              "got": "ACME Servicios",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-08-25",
+              "got": "2026-08-25",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "ARCHIVO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0020",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Transportes Union",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$45,000.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-07-15",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0021",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$1,560.75",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-07-15",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0022",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "Refacciones Industriales Lerma",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-13",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0023",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-15",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0024",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$45,000.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2025-11-13",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0025",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$890.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2025-11-19",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0026",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Distribuidora Peninsular",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2025-12-20",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0027",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$3,200.50",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-05",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0028",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2025-12-20",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0029",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Servicios Integrales Anahuac",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-19",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0030",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-09-01",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0031",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "Consultoria Zapopan",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-03-11",
+              "got": "2026-03-11",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0032",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CONSULTAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Servicios Integrales Anahuac",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-15",
+              "got": "2026-06-15",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0033",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Distribuidora Peninsular",
+              "got": "Distribuidora Peninsular",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-08",
+              "got": "2026-06-19",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": false,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0034",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Comercializadora Bajio",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$4,999.00",
+              "got": "$0.00",
+              "correct": false
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-16",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0035",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "PAGAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Consultoria Zapopan",
+              "got": "Zapopan",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$7,800.25",
+              "got": "$7,800.25",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-14",
+              "got": "2026-06-14",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0036",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Distribuidora Peninsular",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-30",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0037",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "BUSCAR",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "organization",
+              "expected": "Refacciones Industriales Lerma",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "amount",
+              "expected": "$5,000.00",
+              "got": "$5,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-30",
+              "got": "",
+              "correct": false
+            },
+            {
+              "field": "route",
+              "expected": "ARCHIVO",
+              "got": "",
+              "correct": false
+            }
+          ],
+          "exact_match": false,
+          "route_correct": false
+        },
+        {
+          "item_id": "lmstudio-compare-0038",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "Grupo Textil del Norte",
+              "got": "Grupo Textil del Norte",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$45,000.00",
+              "got": "$45,000.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-15",
+              "got": "2026-06-15",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        },
+        {
+          "item_id": "lmstudio-compare-0039",
+          "fields": [
+            {
+              "field": "intent",
+              "expected": "CANCELAR",
+              "got": "CANCELAR",
+              "correct": true
+            },
+            {
+              "field": "organization",
+              "expected": "ACME Servicios",
+              "got": "ACME Servicios",
+              "correct": true
+            },
+            {
+              "field": "amount",
+              "expected": "$12,450.00",
+              "got": "$12,450.00",
+              "correct": true
+            },
+            {
+              "field": "date",
+              "expected": "2026-06-19",
+              "got": "2026-06-19",
+              "correct": true
+            },
+            {
+              "field": "route",
+              "expected": "CUMPLIMIENTO",
+              "got": "CUMPLIMIENTO",
+              "correct": true
+            }
+          ],
+          "exact_match": true,
+          "route_correct": true
+        }
+      ]
+    }
+  }
+}

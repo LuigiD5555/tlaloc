@@ -74,6 +74,10 @@ mkdir -p "$TLALOC_DST.tmp/bin" "$TLALOC_DST.tmp/tools"
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-closed-loop" ./cmd/tlaloc-closed-loop
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-real-vlm-campaign" ./cmd/tlaloc-real-vlm-campaign
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-tlaloque-swarm" ./cmd/tlaloc-tlaloque-swarm
+  CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-swarm-bench" ./cmd/tlaloc-swarm-bench
+  CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-swarm-worker" ./cmd/tlaloc-swarm-worker
+  CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-swarm-model-server" ./cmd/tlaloc-swarm-model-server
+  CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-swarm-lmstudio-probe" ./cmd/tlaloc-swarm-lmstudio-probe
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-learn" ./cmd/tlaloc-learn
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-prompt" ./cmd/tlaloc-prompt
 )
@@ -90,7 +94,7 @@ printf 'Tlaloc\t%s\n' "$TLALOC_VERSION" > "$TLALOC_DST.tmp/.tlaloc-managed-versi
 rm -rf -- "$TLALOC_DST"
 mv "$TLALOC_DST.tmp" "$TLALOC_DST"
 ln -sfn "$TLALOC_DST" "$TLALOC_ROOT/current"
-for b in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench tlaloc-learning-memory tlaloc-adaptive-search tlaloc-closed-loop tlaloc-real-vlm-campaign tlaloc-learn tlaloc-prompt; do
+for b in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench tlaloc-learning-memory tlaloc-adaptive-search tlaloc-closed-loop tlaloc-real-vlm-campaign tlaloc-swarm-bench tlaloc-swarm-lmstudio-probe tlaloc-learn tlaloc-prompt; do
   ln -sfn "$TLALOC_DST/bin/$b" "$BIN_HOME/$b"
 done
 ln -sfn "$TLALOC_DST/tools/uninstall.sh" "$BIN_HOME/tlaloc-uninstall"

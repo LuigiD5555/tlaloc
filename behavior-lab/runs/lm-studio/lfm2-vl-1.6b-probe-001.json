@@ -1,0 +1,821 @@
+{
+  "schema": "tlaloc.swarm-bench-lmstudio-probe.r0",
+  "endpoint": "http://127.0.0.1:1234/v1",
+  "model": "lfm2-vl-1.6b",
+  "model_interop": {
+    "schema": "tlaloc.model-interop-profile.r0",
+    "model_id": "lfm2-vl-1.6b",
+    "family": "LIQUIDAI",
+    "transport_condition": "DIRECT_IMAGE_API",
+    "compatibility_strategy": "openai-chat-completions",
+    "specimen_key": "LIQUIDAI::lfm2-vl-1.6b::DIRECT_IMAGE_API::openai-chat-completions",
+    "evidence_rule": "OBSERVE_BEHAVIOR_DO_NOT_ASSUME_INTERNALS",
+    "comparison_rule": "COMPARE_EXACT_MODEL_AND_TRANSPORT_FIRST"
+  },
+  "started_at": "2026-08-31T22:04:35.23447856Z",
+  "finished_at": "2026-08-31T22:06:15.210286906Z",
+  "cases": [
+    {
+      "item_id": "lmstudio-probe-0000",
+      "capability": "DETECT_INTENT",
+      "text": "Hay que cancelar el comprobante de Transportes Union de $12,450.00 con fecha el proximo viernes",
+      "expected": "CANCELAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1459
+    },
+    {
+      "item_id": "lmstudio-probe-0000",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Hay que cancelar el comprobante de Transportes Union de $12,450.00 con fecha el proximo viernes",
+      "expected": "Transportes Union",
+      "got": "Transportes Union",
+      "raw_output": "Transportes Union",
+      "correct": true,
+      "latency_ms": 1199
+    },
+    {
+      "item_id": "lmstudio-probe-0001",
+      "capability": "DETECT_INTENT",
+      "text": "Hay que cancelar el comprobante de Refacciones Industriales Lerma de $7,800.25 con fecha en 30 dias",
+      "expected": "CANCELAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1224
+    },
+    {
+      "item_id": "lmstudio-probe-0001",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Hay que cancelar el comprobante de Refacciones Industriales Lerma de $7,800.25 con fecha en 30 dias",
+      "expected": "Refacciones Industriales Lerma",
+      "got": "Refacciones Industriales Lerma",
+      "raw_output": "Refacciones Industriales Lerma",
+      "correct": true,
+      "latency_ms": 1376
+    },
+    {
+      "item_id": "lmstudio-probe-0002",
+      "capability": "DETECT_INTENT",
+      "text": "Consulta el estado de cuenta de ACME Servicios por $890.00 al corte el martes pasado",
+      "expected": "CONSULTAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": true,
+      "latency_ms": 1205
+    },
+    {
+      "item_id": "lmstudio-probe-0002",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Consulta el estado de cuenta de ACME Servicios por $890.00 al corte el martes pasado",
+      "expected": "ACME Servicios",
+      "got": "ACME Servicios",
+      "raw_output": "ACME Servicios",
+      "correct": true,
+      "latency_ms": 1224
+    },
+    {
+      "item_id": "lmstudio-probe-0003",
+      "capability": "DETECT_INTENT",
+      "text": "Favor de programar el pago a Grupo Textil del Norte de $4,999.00 para hace 10 dias",
+      "expected": "PAGAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1206
+    },
+    {
+      "item_id": "lmstudio-probe-0003",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Favor de programar el pago a Grupo Textil del Norte de $4,999.00 para hace 10 dias",
+      "expected": "Grupo Textil del Norte",
+      "got": "Grupo Textil del Norte",
+      "raw_output": "Grupo Textil del Norte",
+      "correct": true,
+      "latency_ms": 1296
+    },
+    {
+      "item_id": "lmstudio-probe-0004",
+      "capability": "DETECT_INTENT",
+      "text": "Pueden consultar el saldo de ACME Servicios, son $5,000.00 con vencimiento el martes pasado",
+      "expected": "CONSULTAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": true,
+      "latency_ms": 1212
+    },
+    {
+      "item_id": "lmstudio-probe-0004",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Pueden consultar el saldo de ACME Servicios, son $5,000.00 con vencimiento el martes pasado",
+      "expected": "ACME Servicios",
+      "got": "ACME Servicios",
+      "raw_output": "ACME Servicios",
+      "correct": true,
+      "latency_ms": 1218
+    },
+    {
+      "item_id": "lmstudio-probe-0005",
+      "capability": "DETECT_INTENT",
+      "text": "Favor de programar el pago a Consultoria Zapopan de $12,450.00 para hoy",
+      "expected": "PAGAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1221
+    },
+    {
+      "item_id": "lmstudio-probe-0005",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Favor de programar el pago a Consultoria Zapopan de $12,450.00 para hoy",
+      "expected": "Consultoria Zapopan",
+      "got": "Consultoria Zapopan",
+      "raw_output": "Consultoria Zapopan",
+      "correct": true,
+      "latency_ms": 1291
+    },
+    {
+      "item_id": "lmstudio-probe-0006",
+      "capability": "DETECT_INTENT",
+      "text": "Busca los comprobantes de Comercializadora Bajio por $1,560.75 de manana",
+      "expected": "BUSCAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1209
+    },
+    {
+      "item_id": "lmstudio-probe-0006",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Busca los comprobantes de Comercializadora Bajio por $1,560.75 de manana",
+      "expected": "Comercializadora Bajio",
+      "got": "Comercializadora Bajio",
+      "raw_output": "Comercializadora Bajio",
+      "correct": true,
+      "latency_ms": 1327
+    },
+    {
+      "item_id": "lmstudio-probe-0007",
+      "capability": "DETECT_INTENT",
+      "text": "Hay que cancelar el comprobante de Refacciones Industriales Lerma de $890.00 con fecha hace 10 dias",
+      "expected": "CANCELAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1213
+    },
+    {
+      "item_id": "lmstudio-probe-0007",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Hay que cancelar el comprobante de Refacciones Industriales Lerma de $890.00 con fecha hace 10 dias",
+      "expected": "Refacciones Industriales Lerma",
+      "got": "Refacciones Industriales Lerma",
+      "raw_output": "Refacciones Industriales Lerma",
+      "correct": true,
+      "latency_ms": 1362
+    },
+    {
+      "item_id": "lmstudio-probe-0008",
+      "capability": "DETECT_INTENT",
+      "text": "Solicito cancelar el CFDI de Servicios Integrales Anahuac por $7,800.25 emitido el martes pasado",
+      "expected": "CANCELAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1205
+    },
+    {
+      "item_id": "lmstudio-probe-0008",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Solicito cancelar el CFDI de Servicios Integrales Anahuac por $7,800.25 emitido el martes pasado",
+      "expected": "Servicios Integrales Anahuac",
+      "got": "CFDI",
+      "raw_output": "CFDI",
+      "correct": false,
+      "latency_ms": 1153
+    },
+    {
+      "item_id": "lmstudio-probe-0009",
+      "capability": "DETECT_INTENT",
+      "text": "Necesito pagar la factura de Transportes Union por $12,450.00 a fin de mes",
+      "expected": "PAGAR",
+      "got": "PAGAR",
+      "raw_output": "PAGAR",
+      "correct": true,
+      "latency_ms": 1183
+    },
+    {
+      "item_id": "lmstudio-probe-0009",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Necesito pagar la factura de Transportes Union por $12,450.00 a fin de mes",
+      "expected": "Transportes Union",
+      "got": "Transportes Union",
+      "raw_output": "Transportes Union",
+      "correct": true,
+      "latency_ms": 1184
+    },
+    {
+      "item_id": "lmstudio-probe-0010",
+      "capability": "DETECT_INTENT",
+      "text": "Pueden consultar el saldo de Comercializadora Bajio, son $4,999.00 con vencimiento el martes pasado",
+      "expected": "CONSULTAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": true,
+      "latency_ms": 1219
+    },
+    {
+      "item_id": "lmstudio-probe-0010",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Pueden consultar el saldo de Comercializadora Bajio, son $4,999.00 con vencimiento el martes pasado",
+      "expected": "Comercializadora Bajio",
+      "got": "Comercializadora Bajio",
+      "raw_output": "Comercializadora Bajio",
+      "correct": true,
+      "latency_ms": 1336
+    },
+    {
+      "item_id": "lmstudio-probe-0011",
+      "capability": "DETECT_INTENT",
+      "text": "Solicito cancelar el CFDI de Refacciones Industriales Lerma por $7,800.25 emitido hace 10 dias",
+      "expected": "CANCELAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1206
+    },
+    {
+      "item_id": "lmstudio-probe-0011",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Solicito cancelar el CFDI de Refacciones Industriales Lerma por $7,800.25 emitido hace 10 dias",
+      "expected": "Refacciones Industriales Lerma",
+      "got": "CFDI",
+      "raw_output": "CFDI",
+      "correct": false,
+      "latency_ms": 1190
+    },
+    {
+      "item_id": "lmstudio-probe-0012",
+      "capability": "DETECT_INTENT",
+      "text": "Localiza la documentacion de Consultoria Zapopan de $4,999.00 emitida la semana pasada",
+      "expected": "BUSCAR",
+      "got": "CONSULTAR",
+      "raw_output": "Consultar",
+      "correct": false,
+      "latency_ms": 1182
+    },
+    {
+      "item_id": "lmstudio-probe-0012",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Localiza la documentacion de Consultoria Zapopan de $4,999.00 emitida la semana pasada",
+      "expected": "Consultoria Zapopan",
+      "got": "Consultoría Zapopan",
+      "raw_output": "Consultoría Zapopan",
+      "correct": false,
+      "latency_ms": 1416
+    },
+    {
+      "item_id": "lmstudio-probe-0013",
+      "capability": "DETECT_INTENT",
+      "text": "Pueden consultar el saldo de Grupo Textil del Norte, son $7,800.25 con vencimiento hoy",
+      "expected": "CONSULTAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": true,
+      "latency_ms": 1226
+    },
+    {
+      "item_id": "lmstudio-probe-0013",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Pueden consultar el saldo de Grupo Textil del Norte, son $7,800.25 con vencimiento hoy",
+      "expected": "Grupo Textil del Norte",
+      "got": "Grupo Textil del Norte",
+      "raw_output": "Grupo Textil del Norte",
+      "correct": true,
+      "latency_ms": 1328
+    },
+    {
+      "item_id": "lmstudio-probe-0014",
+      "capability": "DETECT_INTENT",
+      "text": "Necesito pagar la factura de Refacciones Industriales Lerma por $45,000.00 el martes pasado",
+      "expected": "PAGAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1225
+    },
+    {
+      "item_id": "lmstudio-probe-0014",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Necesito pagar la factura de Refacciones Industriales Lerma por $45,000.00 el martes pasado",
+      "expected": "Refacciones Industriales Lerma",
+      "got": "Refacciones Industriales Lerma",
+      "raw_output": "Refacciones Industriales Lerma",
+      "correct": true,
+      "latency_ms": 1376
+    },
+    {
+      "item_id": "lmstudio-probe-0015",
+      "capability": "DETECT_INTENT",
+      "text": "Hay que cancelar el comprobante de Refacciones Industriales Lerma de $890.00 con fecha ayer",
+      "expected": "CANCELAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1204
+    },
+    {
+      "item_id": "lmstudio-probe-0015",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Hay que cancelar el comprobante de Refacciones Industriales Lerma de $890.00 con fecha ayer",
+      "expected": "Refacciones Industriales Lerma",
+      "got": "Refacciones Industriales Lerma",
+      "raw_output": "Refacciones Industriales Lerma",
+      "correct": true,
+      "latency_ms": 1370
+    },
+    {
+      "item_id": "lmstudio-probe-0016",
+      "capability": "DETECT_INTENT",
+      "text": "Favor de programar el pago a Consultoria Zapopan de $3,200.50 para ayer",
+      "expected": "PAGAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1216
+    },
+    {
+      "item_id": "lmstudio-probe-0016",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Favor de programar el pago a Consultoria Zapopan de $3,200.50 para ayer",
+      "expected": "Consultoria Zapopan",
+      "got": "Consultoria Zapopan",
+      "raw_output": "Consultoria Zapopan",
+      "correct": true,
+      "latency_ms": 1305
+    },
+    {
+      "item_id": "lmstudio-probe-0017",
+      "capability": "DETECT_INTENT",
+      "text": "Favor de programar el pago a Servicios Integrales Anahuac de $890.00 para ayer",
+      "expected": "PAGAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1211
+    },
+    {
+      "item_id": "lmstudio-probe-0017",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Favor de programar el pago a Servicios Integrales Anahuac de $890.00 para ayer",
+      "expected": "Servicios Integrales Anahuac",
+      "got": "Servicios Integrales Anahuac",
+      "raw_output": "Servicios Integrales Anahuac",
+      "correct": true,
+      "latency_ms": 1336
+    },
+    {
+      "item_id": "lmstudio-probe-0018",
+      "capability": "DETECT_INTENT",
+      "text": "Solicito cancelar el CFDI de Transportes Union por $7,800.25 emitido a fin de mes",
+      "expected": "CANCELAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1218
+    },
+    {
+      "item_id": "lmstudio-probe-0018",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Solicito cancelar el CFDI de Transportes Union por $7,800.25 emitido a fin de mes",
+      "expected": "Transportes Union",
+      "got": "CFDI",
+      "raw_output": "CFDI",
+      "correct": false,
+      "latency_ms": 1165
+    },
+    {
+      "item_id": "lmstudio-probe-0019",
+      "capability": "DETECT_INTENT",
+      "text": "Pueden consultar el saldo de ACME Servicios, son $5,000.00 con vencimiento el martes pasado",
+      "expected": "CONSULTAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": true,
+      "latency_ms": 1215
+    },
+    {
+      "item_id": "lmstudio-probe-0019",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Pueden consultar el saldo de ACME Servicios, son $5,000.00 con vencimiento el martes pasado",
+      "expected": "ACME Servicios",
+      "got": "ACME Servicios",
+      "raw_output": "ACME Servicios",
+      "correct": true,
+      "latency_ms": 1231
+    },
+    {
+      "item_id": "lmstudio-probe-0020",
+      "capability": "DETECT_INTENT",
+      "text": "Busca los comprobantes de Transportes Union por $45,000.00 de en 30 dias",
+      "expected": "BUSCAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1231
+    },
+    {
+      "item_id": "lmstudio-probe-0020",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Busca los comprobantes de Transportes Union por $45,000.00 de en 30 dias",
+      "expected": "Transportes Union",
+      "got": "Transportes Union",
+      "raw_output": "Transportes Union",
+      "correct": true,
+      "latency_ms": 1192
+    },
+    {
+      "item_id": "lmstudio-probe-0021",
+      "capability": "DETECT_INTENT",
+      "text": "Localiza la documentacion de Refacciones Industriales Lerma de $1,560.75 emitida en 30 dias",
+      "expected": "BUSCAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1215
+    },
+    {
+      "item_id": "lmstudio-probe-0021",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Localiza la documentacion de Refacciones Industriales Lerma de $1,560.75 emitida en 30 dias",
+      "expected": "Refacciones Industriales Lerma",
+      "got": "Refacciones Industriales Lerma",
+      "raw_output": "Refacciones Industriales Lerma",
+      "correct": true,
+      "latency_ms": 1371
+    },
+    {
+      "item_id": "lmstudio-probe-0022",
+      "capability": "DETECT_INTENT",
+      "text": "Solicito cancelar el CFDI de Refacciones Industriales Lerma por $5,000.00 emitido el proximo viernes",
+      "expected": "CANCELAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1216
+    },
+    {
+      "item_id": "lmstudio-probe-0022",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Solicito cancelar el CFDI de Refacciones Industriales Lerma por $5,000.00 emitido el proximo viernes",
+      "expected": "Refacciones Industriales Lerma",
+      "got": "CFDI",
+      "raw_output": "CFDI",
+      "correct": false,
+      "latency_ms": 1158
+    },
+    {
+      "item_id": "lmstudio-probe-0023",
+      "capability": "DETECT_INTENT",
+      "text": "Localiza la documentacion de Comercializadora Bajio de $12,450.00 emitida hoy",
+      "expected": "BUSCAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1227
+    },
+    {
+      "item_id": "lmstudio-probe-0023",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Localiza la documentacion de Comercializadora Bajio de $12,450.00 emitida hoy",
+      "expected": "Comercializadora Bajio",
+      "got": "Comercializadora Bajio",
+      "raw_output": "Comercializadora Bajio",
+      "correct": true,
+      "latency_ms": 1335
+    },
+    {
+      "item_id": "lmstudio-probe-0024",
+      "capability": "DETECT_INTENT",
+      "text": "Busca los comprobantes de Comercializadora Bajio por $45,000.00 de la semana pasada",
+      "expected": "BUSCAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1221
+    },
+    {
+      "item_id": "lmstudio-probe-0024",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Busca los comprobantes de Comercializadora Bajio por $45,000.00 de la semana pasada",
+      "expected": "Comercializadora Bajio",
+      "got": "Comercializadora Bajio",
+      "raw_output": "Comercializadora Bajio",
+      "correct": true,
+      "latency_ms": 1336
+    },
+    {
+      "item_id": "lmstudio-probe-0025",
+      "capability": "DETECT_INTENT",
+      "text": "Busca los comprobantes de Grupo Textil del Norte por $890.00 de ayer",
+      "expected": "BUSCAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1232
+    },
+    {
+      "item_id": "lmstudio-probe-0025",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Busca los comprobantes de Grupo Textil del Norte por $890.00 de ayer",
+      "expected": "Grupo Textil del Norte",
+      "got": "Grupo Textil del Norte",
+      "raw_output": "Grupo Textil del Norte",
+      "correct": true,
+      "latency_ms": 1289
+    },
+    {
+      "item_id": "lmstudio-probe-0026",
+      "capability": "DETECT_INTENT",
+      "text": "Busca los comprobantes de Distribuidora Peninsular por $4,999.00 de en 30 dias",
+      "expected": "BUSCAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1204
+    },
+    {
+      "item_id": "lmstudio-probe-0026",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Busca los comprobantes de Distribuidora Peninsular por $4,999.00 de en 30 dias",
+      "expected": "Distribuidora Peninsular",
+      "got": "Distribuidora Peninsular",
+      "raw_output": "Distribuidora Peninsular",
+      "correct": true,
+      "latency_ms": 1329
+    },
+    {
+      "item_id": "lmstudio-probe-0027",
+      "capability": "DETECT_INTENT",
+      "text": "Busca los comprobantes de Grupo Textil del Norte por $3,200.50 de hace 10 dias",
+      "expected": "BUSCAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1206
+    },
+    {
+      "item_id": "lmstudio-probe-0027",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Busca los comprobantes de Grupo Textil del Norte por $3,200.50 de hace 10 dias",
+      "expected": "Grupo Textil del Norte",
+      "got": "Grupo Textil del Norte",
+      "raw_output": "Grupo Textil del Norte",
+      "correct": true,
+      "latency_ms": 1289
+    },
+    {
+      "item_id": "lmstudio-probe-0028",
+      "capability": "DETECT_INTENT",
+      "text": "Pueden consultar el saldo de Grupo Textil del Norte, son $7,800.25 con vencimiento en 30 dias",
+      "expected": "CONSULTAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": true,
+      "latency_ms": 1211
+    },
+    {
+      "item_id": "lmstudio-probe-0028",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Pueden consultar el saldo de Grupo Textil del Norte, son $7,800.25 con vencimiento en 30 dias",
+      "expected": "Grupo Textil del Norte",
+      "got": "Grupo Textil del Norte",
+      "raw_output": "Grupo Textil del Norte",
+      "correct": true,
+      "latency_ms": 1291
+    },
+    {
+      "item_id": "lmstudio-probe-0029",
+      "capability": "DETECT_INTENT",
+      "text": "Pueden consultar el saldo de Servicios Integrales Anahuac, son $12,450.00 con vencimiento el proximo viernes",
+      "expected": "CONSULTAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": true,
+      "latency_ms": 1206
+    },
+    {
+      "item_id": "lmstudio-probe-0029",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Pueden consultar el saldo de Servicios Integrales Anahuac, son $12,450.00 con vencimiento el proximo viernes",
+      "expected": "Servicios Integrales Anahuac",
+      "got": "Servicios Integrales Anahuac",
+      "raw_output": "Servicios Integrales Anahuac",
+      "correct": true,
+      "latency_ms": 1325
+    },
+    {
+      "item_id": "lmstudio-probe-0030",
+      "capability": "DETECT_INTENT",
+      "text": "Pueden consultar el saldo de Refacciones Industriales Lerma, son $7,800.25 con vencimiento hoy",
+      "expected": "CONSULTAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": true,
+      "latency_ms": 1206
+    },
+    {
+      "item_id": "lmstudio-probe-0030",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Pueden consultar el saldo de Refacciones Industriales Lerma, son $7,800.25 con vencimiento hoy",
+      "expected": "Refacciones Industriales Lerma",
+      "got": "Refacciones Industriales Lerma",
+      "raw_output": "Refacciones Industriales Lerma",
+      "correct": true,
+      "latency_ms": 1364
+    },
+    {
+      "item_id": "lmstudio-probe-0031",
+      "capability": "DETECT_INTENT",
+      "text": "Solicito cancelar el CFDI de Consultoria Zapopan por $7,800.25 emitido manana",
+      "expected": "CANCELAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1203
+    },
+    {
+      "item_id": "lmstudio-probe-0031",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Solicito cancelar el CFDI de Consultoria Zapopan por $7,800.25 emitido manana",
+      "expected": "Consultoria Zapopan",
+      "got": "CFDI",
+      "raw_output": "CFDI",
+      "correct": false,
+      "latency_ms": 1149
+    },
+    {
+      "item_id": "lmstudio-probe-0032",
+      "capability": "DETECT_INTENT",
+      "text": "Consulta el estado de cuenta de Servicios Integrales Anahuac por $7,800.25 al corte hoy",
+      "expected": "CONSULTAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": true,
+      "latency_ms": 1204
+    },
+    {
+      "item_id": "lmstudio-probe-0032",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Consulta el estado de cuenta de Servicios Integrales Anahuac por $7,800.25 al corte hoy",
+      "expected": "Servicios Integrales Anahuac",
+      "got": "Servicios Integrales Anahuac",
+      "raw_output": "Servicios Integrales Anahuac",
+      "correct": true,
+      "latency_ms": 1328
+    },
+    {
+      "item_id": "lmstudio-probe-0033",
+      "capability": "DETECT_INTENT",
+      "text": "Hay que cancelar el comprobante de Distribuidora Peninsular de $7,800.25 con fecha la semana pasada",
+      "expected": "CANCELAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1201
+    },
+    {
+      "item_id": "lmstudio-probe-0033",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Hay que cancelar el comprobante de Distribuidora Peninsular de $7,800.25 con fecha la semana pasada",
+      "expected": "Distribuidora Peninsular",
+      "got": "Distribuidora Peninsular",
+      "raw_output": "Distribuidora Peninsular",
+      "correct": true,
+      "latency_ms": 1324
+    },
+    {
+      "item_id": "lmstudio-probe-0034",
+      "capability": "DETECT_INTENT",
+      "text": "Localiza la documentacion de Comercializadora Bajio de $4,999.00 emitida manana",
+      "expected": "BUSCAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1208
+    },
+    {
+      "item_id": "lmstudio-probe-0034",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Localiza la documentacion de Comercializadora Bajio de $4,999.00 emitida manana",
+      "expected": "Comercializadora Bajio",
+      "got": "Comercializadora Bajio",
+      "raw_output": "Comercializadora Bajio",
+      "correct": true,
+      "latency_ms": 1327
+    },
+    {
+      "item_id": "lmstudio-probe-0035",
+      "capability": "DETECT_INTENT",
+      "text": "Necesito pagar la factura de Consultoria Zapopan por $7,800.25 ayer",
+      "expected": "PAGAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1215
+    },
+    {
+      "item_id": "lmstudio-probe-0035",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Necesito pagar la factura de Consultoria Zapopan por $7,800.25 ayer",
+      "expected": "Consultoria Zapopan",
+      "got": "Consultoría Zapopan",
+      "raw_output": "Consultoría Zapopan",
+      "correct": false,
+      "latency_ms": 1324
+    },
+    {
+      "item_id": "lmstudio-probe-0036",
+      "capability": "DETECT_INTENT",
+      "text": "Busca los comprobantes de Distribuidora Peninsular por $5,000.00 de a fin de mes",
+      "expected": "BUSCAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1208
+    },
+    {
+      "item_id": "lmstudio-probe-0036",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Busca los comprobantes de Distribuidora Peninsular por $5,000.00 de a fin de mes",
+      "expected": "Distribuidora Peninsular",
+      "got": "Distribuidora Peninsular",
+      "raw_output": "Distribuidora Peninsular",
+      "correct": true,
+      "latency_ms": 1328
+    },
+    {
+      "item_id": "lmstudio-probe-0037",
+      "capability": "DETECT_INTENT",
+      "text": "Localiza la documentacion de Refacciones Industriales Lerma de $5,000.00 emitida a fin de mes",
+      "expected": "BUSCAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1199
+    },
+    {
+      "item_id": "lmstudio-probe-0037",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Localiza la documentacion de Refacciones Industriales Lerma de $5,000.00 emitida a fin de mes",
+      "expected": "Refacciones Industriales Lerma",
+      "got": "Lerma",
+      "raw_output": "Lerma",
+      "correct": false,
+      "latency_ms": 1148
+    },
+    {
+      "item_id": "lmstudio-probe-0038",
+      "capability": "DETECT_INTENT",
+      "text": "Solicito cancelar el CFDI de Grupo Textil del Norte por $45,000.00 emitido hoy",
+      "expected": "CANCELAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1211
+    },
+    {
+      "item_id": "lmstudio-probe-0038",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Solicito cancelar el CFDI de Grupo Textil del Norte por $45,000.00 emitido hoy",
+      "expected": "Grupo Textil del Norte",
+      "got": "CFDI",
+      "raw_output": "CFDI",
+      "correct": false,
+      "latency_ms": 1149
+    },
+    {
+      "item_id": "lmstudio-probe-0039",
+      "capability": "DETECT_INTENT",
+      "text": "Hay que cancelar el comprobante de ACME Servicios de $12,450.00 con fecha el proximo viernes",
+      "expected": "CANCELAR",
+      "got": "CONSULTAR",
+      "raw_output": "CONSULTAR",
+      "correct": false,
+      "latency_ms": 1198
+    },
+    {
+      "item_id": "lmstudio-probe-0039",
+      "capability": "EXTRACT_ENTITY",
+      "text": "Hay que cancelar el comprobante de ACME Servicios de $12,450.00 con fecha el proximo viernes",
+      "expected": "ACME Servicios",
+      "got": "ACME Servicios",
+      "raw_output": "ACME Servicios",
+      "correct": true,
+      "latency_ms": 1218
+    }
+  ],
+  "intent_accuracy": 0.25,
+  "entity_accuracy": 0.775
+}
