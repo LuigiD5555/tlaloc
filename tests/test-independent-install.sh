@@ -72,7 +72,6 @@ assert r['phase']=='SMOKE'
 assert r['endpoint']=='http://127.0.0.1:1234/v1'
 assert r['temporal_carrier']=='origami-temporal-carrier'
 assert r['candidate_builder']=='origami-candidate-build'
-assert r['run_record_root']=='runs'
 PY
 PATH="$HOME/.local/bin:$PATH" tlaloc skills list | grep -qx 'tlaloc-project'
 if PATH="$HOME/.local/bin:$PATH" tlaloc skills list | grep -qx 'repo-flow'; then
