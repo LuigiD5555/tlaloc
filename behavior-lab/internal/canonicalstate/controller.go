@@ -47,7 +47,7 @@ func BuildVerificationPlan(s State, maxBudget int) VerificationPlan {
 	for _, conf := range s.Conflicts {
 		seen := map[string]struct{}{}
 		var ev []string
-		ids := append(append([]string{}, conf.PositiveIDs...), conf.NegativeIDs...)
+		ids := append(append(append([]string{}, conf.PositiveIDs...), conf.NegativeIDs...), conf.CandidateIDs...)
 		for _, id := range ids {
 			for _, address := range evidenceByCandidate[id] {
 				if _, ok := seen[address]; ok {
