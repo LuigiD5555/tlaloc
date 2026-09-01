@@ -243,5 +243,19 @@
     "version_introduced": "unknown",
     "last_checked": "2026-09-01",
     "notes": "Main resolves and composes registered workers but does not test the complete auto-creation and promotion lifecycle."
+  },
+  {
+    "id": "TLALOC.EVIDENCE.RUN_RECORD",
+    "statement": "Emit immutable model-run records with a canonical environment hash, monthly index, and executable replay that reproduces deterministic output.",
+    "status": "implemented",
+    "evidence": [
+      "test:behavior-lab/internal/runrecord:TestEnvHashExcludesOnlyIdentityOutcomeAndVariableAxis",
+      "test:behavior-lab/internal/runrecord:TestStoreIsImmutableAndIndexesRun",
+      "test:behavior-lab/internal/runrecord:TestReplayFromRecordReproducesEnvAndOutputHashes",
+      "test:behavior-lab/internal/realcampaign:TestDoctorAndPrepareDiscoverOneRealModel"
+    ],
+    "version_introduced": "unreleased",
+    "last_checked": "2026-09-01",
+    "notes": "The first active integration records the deterministic realcampaign prepare path; trace remains empty until the trajectory phase."
   }
 ]
