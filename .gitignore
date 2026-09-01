@@ -2,6 +2,7 @@
 behavior-lab/tlaloc-behavior-lab
 *.test
 *.out
+.aoa_cache/
 
 # Editor/OS
 .DS_Store
