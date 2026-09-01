@@ -13,16 +13,17 @@ import (
 const SwarmSchemaR0 = "tlaloc.tlaloque-swarm.r0"
 
 type SwarmNode struct {
-	ID                  string   `json:"id"`
-	Capability          string   `json:"capability"`
-	WorkerID            string   `json:"worker_id,omitempty"`
-	ScopeHint           string   `json:"scope_hint,omitempty"`
-	DomainHint          string   `json:"domain_hint,omitempty"`
-	DependsOn           []string `json:"depends_on,omitempty"`
-	PreferDeterministic bool     `json:"prefer_deterministic,omitempty"`
-	MaxParameters       int64    `json:"max_parameters,omitempty"`
-	JoinMode            string   `json:"join_mode,omitempty"`
-	MinDependencies     int      `json:"min_dependencies,omitempty"`
+	ID                  string            `json:"id"`
+	Capability          string            `json:"capability"`
+	WorkerID            string            `json:"worker_id,omitempty"`
+	ScopeHint           string            `json:"scope_hint,omitempty"`
+	DomainHint          string            `json:"domain_hint,omitempty"`
+	DependsOn           []string          `json:"depends_on,omitempty"`
+	InputBindings       map[string]string `json:"input_bindings,omitempty"`
+	PreferDeterministic bool              `json:"prefer_deterministic,omitempty"`
+	MaxParameters       int64             `json:"max_parameters,omitempty"`
+	JoinMode            string            `json:"join_mode,omitempty"`
+	MinDependencies     int               `json:"min_dependencies,omitempty"`
 }
 
 type SwarmPlan struct {
@@ -65,6 +66,22 @@ func (p SwarmPlan) Normalize() (SwarmPlan, error) {
 		}
 		ids[n.ID] = true
 
+		if len(n.InputBindings) > 0 {
+			normalized := make(map[string]string, len(n.InputBindings))
+			for rawProduct, rawProvider := range n.InputBindings {
+				product := strings.TrimSpace(rawProduct)
+				provider := strings.TrimSpace(rawProvider)
+				if product == "" || provider == "" {
+					return SwarmPlan{}, fmt.Errorf("node %q input bindings require non-empty product and provider", n.ID)
+				}
+				if previous, exists := normalized[product]; exists && previous != provider {
+					return SwarmPlan{}, fmt.Errorf("node %q product %q has conflicting providers %q and %q", n.ID, product, previous, provider)
+				}
+				normalized[product] = provider
+			}
+			n.InputBindings = normalized
+		}
+
 		rawJoinMode := strings.TrimSpace(n.JoinMode)
 		joinMode, err := normalizeJoinMode(rawJoinMode)
 		if err != nil {
@@ -91,12 +108,25 @@ func (p SwarmPlan) Normalize() (SwarmPlan, error) {
 	}
 
 	for _, n := range p.Nodes {
+		dependencySet := map[string]struct{}{}
 		for _, dep := range n.DependsOn {
 			if !ids[dep] {
 				return SwarmPlan{}, fmt.Errorf("node %q depends on unknown node %q", n.ID, dep)
 			}
 			if dep == n.ID {
 				return SwarmPlan{}, fmt.Errorf("node %q depends on itself", n.ID)
+			}
+			dependencySet[dep] = struct{}{}
+		}
+		for product, provider := range n.InputBindings {
+			if !ids[provider] {
+				return SwarmPlan{}, fmt.Errorf("node %q product %q binds unknown provider %q", n.ID, product, provider)
+			}
+			if provider == n.ID {
+				return SwarmPlan{}, fmt.Errorf("node %q product %q binds itself", n.ID, product)
+			}
+			if _, ok := dependencySet[provider]; !ok {
+				return SwarmPlan{}, fmt.Errorf("node %q product %q provider %q is not a dependency", n.ID, product, provider)
 			}
 		}
 	}
@@ -389,7 +419,17 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 				peak = active
 			}
 			depContext := map[string]json.RawMessage{}
+			boundProviders := map[string]struct{}{}
+			for product, provider := range n.InputBindings {
+				if out, ok := outputs[provider]; ok {
+					depContext[product] = append(json.RawMessage(nil), out...)
+					boundProviders[provider] = struct{}{}
+				}
+			}
 			for _, dep := range n.DependsOn {
+				if _, bound := boundProviders[dep]; bound {
+					continue
+				}
 				if out, ok := outputs[dep]; ok {
 					depContext[dep] = append(json.RawMessage(nil), out...)
 				}
