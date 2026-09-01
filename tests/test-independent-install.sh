@@ -20,6 +20,8 @@ for cli in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign 
   [[ -L "$HOME/.local/bin/$cli" ]] || { echo "missing managed CLI: $cli" >&2; exit 1; }
   [[ -x "$(readlink -f "$HOME/.local/bin/$cli")" ]] || { echo "managed CLI is not executable: $cli" >&2; exit 1; }
 done
+[[ -x "$CURRENT_TARGET/tools/local-real-vlm-smoke.sh" ]]
+PATH="$HOME/.local/bin:$PATH" tlaloc real-vlm --help | grep -q 'tlaloc real-vlm smoke'
 PATH="$HOME/.local/bin:$PATH" tlaloc-learning-memory summary > "$TMP/memory-summary.json"
 python3 - <<'PY' "$TMP/memory-summary.json"
 import json,sys
@@ -70,6 +72,7 @@ assert r['phase']=='SMOKE'
 assert r['endpoint']=='http://127.0.0.1:1234/v1'
 assert r['temporal_carrier']=='origami-temporal-carrier'
 assert r['candidate_builder']=='origami-candidate-build'
+assert r['run_record_root']=='runs'
 PY
 PATH="$HOME/.local/bin:$PATH" tlaloc skills list | grep -qx 'tlaloc-project'
 if PATH="$HOME/.local/bin:$PATH" tlaloc skills list | grep -qx 'repo-flow'; then
@@ -104,6 +107,7 @@ for name in origami-fixed-carrier origami-temporal-carrier origami-candidate-bui
 done
 {
   printf 'META\tformat\t1\t-\t-\t-\n'
+  printf 'META\tprefix\t%s\t-\t-\t-\n' "$HOME/.local"
   printf 'META\tproject\t%s\t-\t-\t-\n' "$ORIGAMI_PROJECT"
   for name in origami-fixed-carrier origami-temporal-carrier origami-candidate-build ohf-lab; do
     printf 'BIN\t%s\t%s\tdeadbeef\t0\t-\n' "$name" "$HOME/.local/bin/$name"
