@@ -3,10 +3,32 @@ package tlaloque
 import (
 	"context"
 	"encoding/json"
-	"sync/atomic"
 	"testing"
 	"time"
 )
+
+type blockingTestWorker struct {
+	desc    CapabilityDescriptor
+	blockOn <-chan struct{}
+	fn      func(CapabilityRequest) json.RawMessage
+}
+
+func (w blockingTestWorker) Descriptor() CapabilityDescriptor { return w.desc }
+
+func (w blockingTestWorker) Execute(ctx context.Context, req CapabilityRequest) (CapabilityResponse, error) {
+	if w.blockOn != nil {
+		select {
+		case <-w.blockOn:
+		case <-ctx.Done():
+			return CapabilityResponse{}, ctx.Err()
+		}
+	}
+	out := json.RawMessage(`{"ok":true}`)
+	if w.fn != nil {
+		out = w.fn(req)
+	}
+	return CapabilityResponse{WorkerID: w.desc.ID, Output: out, Confidence: .9}, nil
+}
 
 func TestNodeStateMachineRejectsIllegalTransition(t *testing.T) {
 	state, err := transitionNode(NodePending, NodeDependenciesSatisfied)
@@ -19,30 +41,27 @@ func TestNodeStateMachineRejectsIllegalTransition(t *testing.T) {
 }
 
 func TestSwarmAnyJoinStartsOnFirstSuccessfulDependency(t *testing.T) {
-	var slowDone atomic.Bool
+	releaseSlow := make(chan struct{})
 	r := NewRegistry()
 	fast := testWorker{
 		desc: CapabilityDescriptor{ID: "fast", Capability: "FAST", Scope: ScopeGeneral, Engine: EngineDeterministic, InputSchema: "json", OutputSchema: "json", Deterministic: true},
-		delay: 10 * time.Millisecond,
-		fn: func(CapabilityRequest) json.RawMessage { return json.RawMessage(`{"fast":true}`) },
+		fn:   func(CapabilityRequest) json.RawMessage { return json.RawMessage(`{"fast":true}`) },
 	}
-	slow := testWorker{
-		desc: CapabilityDescriptor{ID: "slow", Capability: "SLOW", Scope: ScopeGeneral, Engine: EngineDeterministic, InputSchema: "json", OutputSchema: "json", Deterministic: true},
-		delay: 120 * time.Millisecond,
-		fn: func(CapabilityRequest) json.RawMessage {
-			slowDone.Store(true)
-			return json.RawMessage(`{"slow":true}`)
-		},
+	slow := blockingTestWorker{
+		desc:    CapabilityDescriptor{ID: "slow", Capability: "SLOW", Scope: ScopeGeneral, Engine: EngineDeterministic, InputSchema: "json", OutputSchema: "json", Deterministic: true},
+		blockOn: releaseSlow,
+		fn:      func(CapabilityRequest) json.RawMessage { return json.RawMessage(`{"slow":true}`) },
 	}
 	join := testWorker{
 		desc: CapabilityDescriptor{ID: "join", Capability: "JOIN", Scope: ScopeGeneral, Engine: EngineDeterministic, InputSchema: "json", OutputSchema: "json", Deterministic: true},
 		fn: func(req CapabilityRequest) json.RawMessage {
-			if slowDone.Load() {
-				panic("ANY join waited for the slow sibling")
-			}
 			if len(req.Context["fast"]) == 0 {
 				panic("ANY join missing first successful dependency")
 			}
+			if len(req.Context["slow"]) != 0 {
+				panic("ANY join waited for the blocked sibling")
+			}
+			close(releaseSlow)
 			return json.RawMessage(`{"joined":true}`)
 		},
 	}
@@ -56,7 +75,9 @@ func TestSwarmAnyJoinStartsOnFirstSuccessfulDependency(t *testing.T) {
 		{ID: "slow", Capability: "SLOW"},
 		{ID: "join", Capability: "JOIN", DependsOn: []string{"fast", "slow"}, JoinMode: string(JoinAny)},
 	}}
-	report, err := (SwarmRunner{Registry: r}).Run(context.Background(), plan, "any-task", json.RawMessage(`{"x":1}`))
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	report, err := (SwarmRunner{Registry: r}).Run(ctx, plan, "any-task", json.RawMessage(`{"x":1}`))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -71,37 +92,32 @@ func TestSwarmAnyJoinStartsOnFirstSuccessfulDependency(t *testing.T) {
 }
 
 func TestSwarmQuorumJoinStartsAfterThreshold(t *testing.T) {
-	var slowDone atomic.Bool
+	releaseThird := make(chan struct{})
 	r := NewRegistry()
-	mk := func(id string, delay time.Duration, done *atomic.Bool) testWorker {
+	mk := func(id string) testWorker {
 		return testWorker{
 			desc: CapabilityDescriptor{ID: id, Capability: id, Scope: ScopeGeneral, Engine: EngineDeterministic, InputSchema: "json", OutputSchema: "json", Deterministic: true},
-			delay: delay,
-			fn: func(CapabilityRequest) json.RawMessage {
-				if done != nil {
-					done.Store(true)
-				}
-				return json.RawMessage(`{"ok":true}`)
-			},
+			fn:   func(CapabilityRequest) json.RawMessage { return json.RawMessage(`{"ok":true}`) },
 		}
 	}
-	for _, worker := range []CapabilityWorker{
-		mk("A", 10*time.Millisecond, nil),
-		mk("B", 20*time.Millisecond, nil),
-		mk("C", 150*time.Millisecond, &slowDone),
-		testWorker{
-			desc: CapabilityDescriptor{ID: "FUSE", Capability: "FUSE", Scope: ScopeGeneral, Engine: EngineDeterministic, InputSchema: "json", OutputSchema: "json", Deterministic: true},
-			fn: func(req CapabilityRequest) json.RawMessage {
-				if slowDone.Load() {
-					panic("QUORUM join waited for all dependencies")
-				}
-				if len(req.Context) != 2 {
-					panic("QUORUM join should receive exactly the two completed dependencies")
-				}
-				return json.RawMessage(`{"fused":true}`)
-			},
+	third := blockingTestWorker{
+		desc:    CapabilityDescriptor{ID: "C", Capability: "C", Scope: ScopeGeneral, Engine: EngineDeterministic, InputSchema: "json", OutputSchema: "json", Deterministic: true},
+		blockOn: releaseThird,
+	}
+	fuse := testWorker{
+		desc: CapabilityDescriptor{ID: "FUSE", Capability: "FUSE", Scope: ScopeGeneral, Engine: EngineDeterministic, InputSchema: "json", OutputSchema: "json", Deterministic: true},
+		fn: func(req CapabilityRequest) json.RawMessage {
+			if len(req.Context) != 2 {
+				panic("QUORUM join should receive exactly the two completed dependencies")
+			}
+			if len(req.Context["c"]) != 0 {
+				panic("QUORUM join waited for the blocked third dependency")
+			}
+			close(releaseThird)
+			return json.RawMessage(`{"fused":true}`)
 		},
-	} {
+	}
+	for _, worker := range []CapabilityWorker{mk("A"), mk("B"), third, fuse} {
 		if err := r.Register(worker); err != nil {
 			t.Fatal(err)
 		}
@@ -112,7 +128,9 @@ func TestSwarmQuorumJoinStartsAfterThreshold(t *testing.T) {
 		{ID: "c", Capability: "C"},
 		{ID: "fuse", Capability: "FUSE", DependsOn: []string{"a", "b", "c"}, JoinMode: string(JoinQuorum), MinDependencies: 2},
 	}}
-	report, err := (SwarmRunner{Registry: r}).Run(context.Background(), plan, "quorum-task", json.RawMessage(`{"x":1}`))
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	report, err := (SwarmRunner{Registry: r}).Run(ctx, plan, "quorum-task", json.RawMessage(`{"x":1}`))
 	if err != nil {
 		t.Fatal(err)
 	}
