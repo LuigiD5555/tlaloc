@@ -47,6 +47,7 @@ fi
 for req in cp mkdir ln sha256sum readlink go tar; do command -v "$req" >/dev/null 2>&1 || { echo "Missing required command: $req" >&2; exit 1; }; done
 [[ -d "$HERE/behavior-lab" ]] || { echo "Missing behavior-lab source" >&2; exit 1; }
 [[ -x "$HERE/tools/tlaloc" && -x "$HERE/tools/doctor.sh" && -x "$HERE/tools/legacy-cleanup.sh" ]] || { echo "Missing Tlaloc tools" >&2; exit 1; }
+[[ -f "$HERE/tools/local-real-vlm-smoke.sh" ]] || { echo "Missing local Real VLM smoke helper" >&2; exit 1; }
 
 mkdir -p "$BIN_HOME" "$TLALOC_ROOT/versions"
 printf 'managed-by=tlaloc-installer-v1\n' > "$TLALOC_ROOT/.tlaloc-managed-v1"
@@ -82,6 +83,7 @@ mkdir -p "$TLALOC_DST.tmp/bin" "$TLALOC_DST.tmp/tools"
 cp -a "$HERE/tools/tlaloc" "$TLALOC_DST.tmp/bin/tlaloc"
 cp -a "$HERE/tools/doctor.sh" "$TLALOC_DST.tmp/tools/doctor.sh"
 cp -a "$HERE/tools/legacy-cleanup.sh" "$TLALOC_DST.tmp/tools/legacy-cleanup.sh"
+cp -a "$HERE/tools/local-real-vlm-smoke.sh" "$TLALOC_DST.tmp/tools/local-real-vlm-smoke.sh"
 cp -a "$HERE/uninstall.sh" "$TLALOC_DST.tmp/tools/uninstall.sh"
 chmod +x "$TLALOC_DST.tmp/bin/"* "$TLALOC_DST.tmp/tools/"*
 printf 'Tlaloc\t%s\n' "$TLALOC_VERSION" > "$TLALOC_DST.tmp/.tlaloc-managed-version"
