@@ -14,6 +14,7 @@ import (
 	"testing"
 
 	"tlaloc.local/behaviorlab/internal/closedloop"
+	"tlaloc.local/behaviorlab/internal/runrecord"
 )
 
 func TestNormalizeRejectsSyntheticAndWeakEvidence(t *testing.T){
@@ -58,7 +59,7 @@ exit 9
 		}
 	}));defer server.Close()
 	t.Setenv("TLALOC_VERSION","6.0.0-alpha.21-test")
-	spec:=Spec{CampaignID:"doctor-test",Phase:PhaseSmoke,Endpoint:server.URL+"/v1",Program:program,TemporalCarrier:carrier,CandidateBuilder:builder,OutputDir:filepath.Join(dir,"campaign")}
+	spec:=Spec{CampaignID:"doctor-test",Phase:PhaseSmoke,Endpoint:server.URL+"/v1",Program:program,TemporalCarrier:carrier,CandidateBuilder:builder,OutputDir:filepath.Join(dir,"campaign"),RunRecordRoot:filepath.Join(dir,"runs")}
 	doc,err:=Doctor(context.Background(),spec);if err!=nil{t.Fatal(err)}
 	if !doc.Ready||!doc.VisionTransport||doc.SelectedModel!="local-vision-model"{t.Fatalf("bad doctor: %#v",doc)}
 	prepared,err:=Prepare(context.Background(),spec);if err!=nil{t.Fatal(err)}
@@ -67,6 +68,9 @@ exit 9
 	var cfg closedloop.Config;if err:=readJSON(prepared.ConfigPath,&cfg);err!=nil{t.Fatal(err)}
 	if !cfg.AutoCandidates||cfg.TrialsPerModel!=1||cfg.MaxGenerations!=1{t.Fatalf("bad smoke config: %#v",cfg)}
 	if cfg.Models[0].Name!="local-vision-model"{t.Fatalf("wrong model: %#v",cfg.Models)}
+	recordPaths,err:=filepath.Glob(filepath.Join(spec.RunRecordRoot,"*","*.json"));if err!=nil||len(recordPaths)!=1{t.Fatalf("run records=%v err=%v",recordPaths,err)}
+	record,err:=runrecord.Load(recordPaths[0]);if err!=nil{t.Fatal(err)}
+	if record.Model.IDReported!="local-vision-model"||record.Outcome.Verdict!="verify_pass"{t.Fatalf("bad run record: %#v",record)}
 }
 
 func TestSelectModelRequiresChoiceWhenMultiple(t *testing.T){

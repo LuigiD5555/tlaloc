@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"tlaloc.local/behaviorlab/internal/realcampaign"
+	"tlaloc.local/behaviorlab/internal/runrecord"
 	"tlaloc.local/behaviorlab/internal/target"
 )
 
@@ -29,12 +30,25 @@ func main() {
 		run(ctx, os.Args[2:])
 	case "record-observation":
 		recordObservation(os.Args[2:])
+	case "replay-record":
+		replayRecord(ctx, os.Args[2:])
 	case "example":
 		example()
 	default:
 		usage()
 		os.Exit(2)
 	}
+}
+
+func replayRecord(ctx context.Context, args []string) {
+	flagSet := flag.NewFlagSet("replay-record", flag.ExitOnError)
+	recordPath := flagSet.String("record", "", "immutable Run Record JSON path")
+	flagSet.Parse(args)
+	if *recordPath == "" {
+		die(fmt.Errorf("--record is required"))
+	}
+	die(runrecord.ReplayAndVerify(ctx, *recordPath))
+	write(map[string]any{"record": *recordPath, "verified": true})
 }
 
 func flags(name string, args []string) (realcampaign.Spec, *flag.FlagSet) {
@@ -55,6 +69,7 @@ func flags(name string, args []string) (realcampaign.Spec, *flag.FlagSet) {
 	fs.StringVar(&s.TemporalCarrier, "carrier", "origami-temporal-carrier", "Origami temporal carrier executable")
 	fs.StringVar(&s.CandidateBuilder, "builder", "origami-candidate-build", "Origami candidate builder executable")
 	fs.StringVar(&s.OutputDir, "out", "runs/real-vlm/origami-temporal-r0", "campaign output directory")
+	fs.StringVar(&s.RunRecordRoot, "run-record-root", "runs", "immutable Run Record root; empty disables emission")
 	fs.StringVar(&s.MasterPrompt, "master-prompt", "", "optional Origami Master Prompt for R4_ASSISTED evidence phase")
 	fs.Float64Var(&s.Temperature, "temperature", 0, "target model temperature")
 	fs.IntVar(&s.TimeoutSeconds, "timeout", 180, "per-call timeout seconds")
@@ -128,6 +143,7 @@ func example() {
 		TemporalCarrier:    "origami-temporal-carrier",
 		CandidateBuilder:   "origami-candidate-build",
 		OutputDir:          "runs/real-vlm/origami-temporal-r0",
+		RunRecordRoot:      "runs",
 		TimeoutSeconds:     180,
 		TransportRetries:   1,
 	})
@@ -147,5 +163,5 @@ func die(err error) {
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, "usage: tlaloc-real-vlm-campaign <doctor|prepare|run|record-observation|example> [flags]")
+	fmt.Fprintln(os.Stderr, "usage: tlaloc-real-vlm-campaign <doctor|prepare|run|record-observation|replay-record|example> [flags]")
 }

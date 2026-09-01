@@ -24,6 +24,7 @@ type Spec struct {
 	TemporalCarrier    string   `json:"temporal_carrier"`
 	CandidateBuilder   string   `json:"candidate_builder"`
 	OutputDir          string   `json:"output_dir"`
+	RunRecordRoot      string   `json:"-"`
 	MasterPrompt       string   `json:"master_prompt,omitempty"`
 	Temperature        float64  `json:"temperature,omitempty"`
 	TimeoutSeconds     int      `json:"timeout_seconds,omitempty"`

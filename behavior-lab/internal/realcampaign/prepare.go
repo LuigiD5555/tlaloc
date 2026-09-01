@@ -11,12 +11,14 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"tlaloc.local/behaviorlab/internal/closedloop"
 	"tlaloc.local/behaviorlab/internal/target"
 )
 
 func Prepare(ctx context.Context, raw Spec) (Prepared, error) {
+	startedAt := time.Now().UTC()
 	spec, err := Normalize(raw)
 	if err != nil {
 		return Prepared{}, err
@@ -25,6 +27,7 @@ func Prepare(ctx context.Context, raw Spec) (Prepared, error) {
 	if err != nil {
 		return Prepared{}, err
 	}
+	requestedModel := spec.Model
 	spec.Model = doc.SelectedModel
 	phaseDir := filepath.Join(spec.OutputDir, strings.ToLower(spec.Phase))
 	if err := os.MkdirAll(phaseDir, 0o755); err != nil {
@@ -134,7 +137,13 @@ func Prepare(ctx context.Context, raw Spec) (Prepared, error) {
 	if err := writeJSON(manifestPath, manifest); err != nil {
 		return Prepared{}, err
 	}
-	return Prepared{Spec: spec, Doctor: doc, Manifest: manifest, ManifestPath: manifestPath, ConfigPath: configPath}, nil
+	prepared := Prepared{Spec: spec, Doctor: doc, Manifest: manifest, ManifestPath: manifestPath, ConfigPath: configPath}
+	if spec.RunRecordRoot != "" {
+		if _, err := emitPrepareRunRecord(prepared, requestedModel, startedAt, time.Now().UTC()); err != nil {
+			return Prepared{}, err
+		}
+	}
+	return prepared, nil
 }
 
 func Run(ctx context.Context, raw Spec) (Prepared, closedloop.Report, error) {
