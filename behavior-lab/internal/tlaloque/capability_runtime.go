@@ -38,8 +38,12 @@ type CapabilityDescriptor struct {
 }
 
 func (d CapabilityDescriptor) Normalize() (CapabilityDescriptor, error) {
-	if d.Schema == "" { d.Schema = CapabilitySchemaR0 }
-	if d.Schema != CapabilitySchemaR0 { return CapabilityDescriptor{}, fmt.Errorf("unexpected capability schema %q", d.Schema) }
+	if d.Schema == "" {
+		d.Schema = CapabilitySchemaR0
+	}
+	if d.Schema != CapabilitySchemaR0 {
+		return CapabilityDescriptor{}, fmt.Errorf("unexpected capability schema %q", d.Schema)
+	}
 	d.ID = strings.TrimSpace(d.ID)
 	d.Capability = strings.ToUpper(strings.TrimSpace(d.Capability))
 	d.Scope = strings.ToUpper(strings.TrimSpace(d.Scope))
@@ -48,11 +52,21 @@ func (d CapabilityDescriptor) Normalize() (CapabilityDescriptor, error) {
 	if d.ID == "" || d.Capability == "" || d.InputSchema == "" || d.OutputSchema == "" {
 		return CapabilityDescriptor{}, fmt.Errorf("id, capability, input_schema and output_schema are required")
 	}
-	if d.Scope == "" { d.Scope = ScopeGeneral }
-	if d.Scope != ScopeGeneral && d.Scope != ScopeSpecific { return CapabilityDescriptor{}, fmt.Errorf("unsupported scope %q", d.Scope) }
-	if d.Scope == ScopeSpecific && d.Domain == "" { return CapabilityDescriptor{}, fmt.Errorf("specific worker %q requires domain", d.ID) }
-	if d.Engine == "" { d.Engine = EngineModel }
-	if d.MaxConcurrency <= 0 { d.MaxConcurrency = 1 }
+	if d.Scope == "" {
+		d.Scope = ScopeGeneral
+	}
+	if d.Scope != ScopeGeneral && d.Scope != ScopeSpecific {
+		return CapabilityDescriptor{}, fmt.Errorf("unsupported scope %q", d.Scope)
+	}
+	if d.Scope == ScopeSpecific && d.Domain == "" {
+		return CapabilityDescriptor{}, fmt.Errorf("specific worker %q requires domain", d.ID)
+	}
+	if d.Engine == "" {
+		d.Engine = EngineModel
+	}
+	if d.MaxConcurrency <= 0 {
+		d.MaxConcurrency = 1
+	}
 	return d, nil
 }
 
@@ -93,34 +107,128 @@ type SelectionRequest struct {
 }
 
 type Registry struct {
-	mu      sync.RWMutex
-	workers map[string]CapabilityWorker
+	mu            sync.RWMutex
+	workers       map[string]CapabilityWorker
+	active        map[string]string
+	activeHistory map[string][]string
 }
 
-func NewRegistry() *Registry { return &Registry{workers: map[string]CapabilityWorker{}} }
+func NewRegistry() *Registry {
+	return &Registry{
+		workers:       map[string]CapabilityWorker{},
+		active:        map[string]string{},
+		activeHistory: map[string][]string{},
+	}
+}
 
 func (r *Registry) Register(worker CapabilityWorker) error {
-	if worker == nil { return fmt.Errorf("worker is nil") }
+	if worker == nil {
+		return fmt.Errorf("worker is nil")
+	}
 	d, err := worker.Descriptor().Normalize()
-	if err != nil { return err }
-	r.mu.Lock(); defer r.mu.Unlock()
-	if _, exists := r.workers[d.ID]; exists { return fmt.Errorf("worker %q already registered", d.ID) }
+	if err != nil {
+		return err
+	}
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if _, exists := r.workers[d.ID]; exists {
+		return fmt.Errorf("worker %q already registered", d.ID)
+	}
 	r.workers[d.ID] = worker
 	return nil
 }
 
 func (r *Registry) Get(id string) (CapabilityWorker, bool) {
-	r.mu.RLock(); defer r.mu.RUnlock()
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 	w, ok := r.workers[id]
 	return w, ok
 }
 
+// Unregister removes an inactive worker. Active workers must first be replaced
+// or rolled back so a lifecycle operation can never leave a capability alias
+// pointing at a missing implementation.
+func (r *Registry) Unregister(id string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if _, exists := r.workers[id]; !exists {
+		return fmt.Errorf("worker %q not registered", id)
+	}
+	for capability, activeID := range r.active {
+		if activeID == id {
+			return fmt.Errorf("worker %q is active for capability %s", id, capability)
+		}
+	}
+	for capability, history := range r.activeHistory {
+		for _, rollbackID := range history {
+			if rollbackID == id {
+				return fmt.Errorf("worker %q is retained for capability %s rollback", id, capability)
+			}
+		}
+	}
+	delete(r.workers, id)
+	return nil
+}
+
+// Activate makes one registered version the sole active default for its
+// capability. Pinned plans can still address retained older versions by ID.
+func (r *Registry) Activate(id string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	worker, exists := r.workers[id]
+	if !exists {
+		return fmt.Errorf("worker %q not registered", id)
+	}
+	descriptor, err := worker.Descriptor().Normalize()
+	if err != nil {
+		return err
+	}
+	currentID := r.active[descriptor.Capability]
+	if currentID == id {
+		return nil
+	}
+	if currentID != "" {
+		r.activeHistory[descriptor.Capability] = append(r.activeHistory[descriptor.Capability], currentID)
+	}
+	r.active[descriptor.Capability] = id
+	return nil
+}
+
+func (r *Registry) ActiveWorkerID(capability string) (string, bool) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	id, exists := r.active[strings.ToUpper(strings.TrimSpace(capability))]
+	return id, exists
+}
+
+// Rollback reactivates the previously promoted version while retaining the
+// underperforming version as an addressable, inactive artifact.
+func (r *Registry) Rollback(capability string) (string, error) {
+	capability = strings.ToUpper(strings.TrimSpace(capability))
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	history := r.activeHistory[capability]
+	if len(history) == 0 {
+		return "", fmt.Errorf("capability %s has no active version to roll back to", capability)
+	}
+	previousID := history[len(history)-1]
+	if _, exists := r.workers[previousID]; !exists {
+		return "", fmt.Errorf("rollback worker %q not registered", previousID)
+	}
+	r.activeHistory[capability] = history[:len(history)-1]
+	r.active[capability] = previousID
+	return previousID, nil
+}
+
 func (r *Registry) Descriptors() []CapabilityDescriptor {
-	r.mu.RLock(); defer r.mu.RUnlock()
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 	out := make([]CapabilityDescriptor, 0, len(r.workers))
 	for _, w := range r.workers {
 		d, err := w.Descriptor().Normalize()
-		if err == nil { out = append(out, d) }
+		if err == nil {
+			out = append(out, d)
+		}
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].ID < out[j].ID })
 	return out
@@ -130,45 +238,92 @@ func (r *Registry) Select(req SelectionRequest) (CapabilityWorker, error) {
 	capability := strings.ToUpper(strings.TrimSpace(req.Capability))
 	if req.WorkerID != "" {
 		w, ok := r.Get(req.WorkerID)
-		if !ok { return nil, fmt.Errorf("pinned worker %q not registered", req.WorkerID) }
+		if !ok {
+			return nil, fmt.Errorf("pinned worker %q not registered", req.WorkerID)
+		}
 		d, err := w.Descriptor().Normalize()
-		if err != nil { return nil, err }
-		if capability != "" && d.Capability != capability { return nil, fmt.Errorf("worker %q capability=%s, want %s", d.ID, d.Capability, capability) }
+		if err != nil {
+			return nil, err
+		}
+		if capability != "" && d.Capability != capability {
+			return nil, fmt.Errorf("worker %q capability=%s, want %s", d.ID, d.Capability, capability)
+		}
 		return w, nil
 	}
 
 	scopeHint := strings.ToUpper(strings.TrimSpace(req.ScopeHint))
 	domainHint := strings.ToUpper(strings.TrimSpace(req.DomainHint))
-	if scopeHint != "" && scopeHint != ScopeGeneral && scopeHint != ScopeSpecific { return nil, fmt.Errorf("unsupported scope hint %q", scopeHint) }
-	if scopeHint == ScopeSpecific && domainHint == "" { return nil, fmt.Errorf("SPECIFIC scope requires domain hint") }
-	type candidate struct { worker CapabilityWorker; desc CapabilityDescriptor; score int }
+	if scopeHint != "" && scopeHint != ScopeGeneral && scopeHint != ScopeSpecific {
+		return nil, fmt.Errorf("unsupported scope hint %q", scopeHint)
+	}
+	if scopeHint == ScopeSpecific && domainHint == "" {
+		return nil, fmt.Errorf("SPECIFIC scope requires domain hint")
+	}
+	type candidate struct {
+		worker CapabilityWorker
+		desc   CapabilityDescriptor
+		score  int
+	}
 	var candidates []candidate
-	r.mu.RLock(); defer r.mu.RUnlock()
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	activeID := r.active[capability]
 	for _, w := range r.workers {
 		d, err := w.Descriptor().Normalize()
-		if err != nil || d.Capability != capability { continue }
-		if req.MaxParameters > 0 && d.ParameterCount > req.MaxParameters { continue }
+		if err != nil || d.Capability != capability {
+			continue
+		}
+		if activeID != "" && d.ID != activeID {
+			continue
+		}
+		if req.MaxParameters > 0 && d.ParameterCount > req.MaxParameters {
+			continue
+		}
 
 		// Routing safety: absent domain evidence, specialists are not candidates.
-		if domainHint == "" && d.Scope == ScopeSpecific { continue }
-		if scopeHint == ScopeGeneral && d.Scope != ScopeGeneral { continue }
-		if scopeHint == ScopeSpecific && (d.Scope != ScopeSpecific || d.Domain != domainHint) { continue }
-		if domainHint != "" && d.Scope == ScopeSpecific && d.Domain != domainHint { continue }
+		if domainHint == "" && d.Scope == ScopeSpecific {
+			continue
+		}
+		if scopeHint == ScopeGeneral && d.Scope != ScopeGeneral {
+			continue
+		}
+		if scopeHint == ScopeSpecific && (d.Scope != ScopeSpecific || d.Domain != domainHint) {
+			continue
+		}
+		if domainHint != "" && d.Scope == ScopeSpecific && d.Domain != domainHint {
+			continue
+		}
 
 		score := 0
-		if req.PreferDeterministic && d.Deterministic { score += 100 }
-		if domainHint != "" && d.Scope == ScopeSpecific && d.Domain == domainHint { score += 50 }
-		if d.Scope == ScopeGeneral { score += 25 }
-		if d.ParameterCount == 0 { score += 10 }
-		candidates = append(candidates, candidate{worker:w, desc:d, score:score})
+		if req.PreferDeterministic && d.Deterministic {
+			score += 100
+		}
+		if domainHint != "" && d.Scope == ScopeSpecific && d.Domain == domainHint {
+			score += 50
+		}
+		if d.Scope == ScopeGeneral {
+			score += 25
+		}
+		if d.ParameterCount == 0 {
+			score += 10
+		}
+		candidates = append(candidates, candidate{worker: w, desc: d, score: score})
 	}
-	if len(candidates) == 0 { return nil, fmt.Errorf("no worker satisfies capability=%s scope=%s domain=%s", capability, scopeHint, domainHint) }
+	if len(candidates) == 0 {
+		return nil, fmt.Errorf("no worker satisfies capability=%s scope=%s domain=%s", capability, scopeHint, domainHint)
+	}
 	sort.Slice(candidates, func(i, j int) bool {
-		if candidates[i].score != candidates[j].score { return candidates[i].score > candidates[j].score }
+		if candidates[i].score != candidates[j].score {
+			return candidates[i].score > candidates[j].score
+		}
 		pi, pj := candidates[i].desc.ParameterCount, candidates[j].desc.ParameterCount
 		if pi != pj {
-			if pi == 0 { return true }
-			if pj == 0 { return false }
+			if pi == 0 {
+				return true
+			}
+			if pj == 0 {
+				return false
+			}
 			return pi < pj
 		}
 		return candidates[i].desc.ID < candidates[j].desc.ID
