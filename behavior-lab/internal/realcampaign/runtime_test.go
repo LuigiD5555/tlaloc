@@ -71,6 +71,12 @@ exit 9
 	recordPaths,err:=filepath.Glob(filepath.Join(spec.RunRecordRoot,"*","*.json"));if err!=nil||len(recordPaths)!=1{t.Fatalf("run records=%v err=%v",recordPaths,err)}
 	record,err:=runrecord.Load(recordPaths[0]);if err!=nil{t.Fatal(err)}
 	if record.Model.IDReported!="local-vision-model"||record.Outcome.Verdict!="verify_pass"{t.Fatalf("bad run record: %#v",record)}
+	if len(record.Trace)!=1{t.Fatalf("prepare trace=%#v, want one observed transition",record.Trace)}
+	event:=record.Trace[0]
+	if event.Sequence!=0||event.From!="PENDING"||event.To!="PROMPT_COMPILED"||event.Actor!="realcampaign:prepare"{
+		t.Fatalf("unexpected prepare transition: %#v",event)
+	}
+	if event.At==""||event.LatencyMS<0{t.Fatalf("invalid prepare transition timing: %#v",event)}
 }
 
 func TestSelectModelRequiresChoiceWhenMultiple(t *testing.T){
