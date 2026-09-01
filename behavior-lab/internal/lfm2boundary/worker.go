@@ -29,13 +29,14 @@ type VisualTask struct {
 }
 
 type VisualOutput struct {
-	QuestionID       string `json:"question_id"`
-	Responsibility   string `json:"responsibility"`
-	ImagePath        string `json:"image_path"`
-	Text             string `json:"text"`
-	Normalized       string `json:"normalized"`
-	PromptTokens     int    `json:"prompt_tokens"`
-	CompletionTokens int    `json:"completion_tokens"`
+	QuestionID       string          `json:"question_id,omitempty"`
+	Responsibility   string          `json:"responsibility"`
+	ImagePath        string          `json:"image_path"`
+	Text             string          `json:"text"`
+	Normalized       string          `json:"normalized,omitempty"`
+	Structured       json.RawMessage `json:"structured,omitempty"`
+	PromptTokens     int             `json:"prompt_tokens"`
+	CompletionTokens int             `json:"completion_tokens"`
 }
 
 type ConsolidatedOutput struct {
@@ -51,10 +52,10 @@ func QuestionIDFromNode(nodeID string) string {
 
 func ResponsibilityForQuestion(qid string) (string, bool) {
 	switch strings.ToUpper(strings.TrimSpace(qid)) {
-	case "Q0", "Q6", "Q8": return "rosetta", true
-	case "Q1", "Q2": return "cells", true
-	case "Q3", "Q4": return "transitions", true
-	case "Q5", "Q7": return "timeline", true
+	case "Q0", "Q6", "Q8": return RoleRosetta, true
+	case "Q1", "Q2": return RoleCells, true
+	case "Q3", "Q4": return RoleTransitions, true
+	case "Q5", "Q7": return RoleTimeline, true
 	default: return "", false
 	}
 }
@@ -92,60 +93,90 @@ func NormalizeEvidence(s string) string {
 	return strings.Join(terms, " ")
 }
 
-func roleAllows(role, qid string) bool {
-	want, ok := ResponsibilityForQuestion(qid)
-	return ok && strings.EqualFold(strings.TrimSpace(role), want)
-}
-
 func RunVisualSpecialist(ctx context.Context, role string, req tlaloque.CapabilityRequest) (tlaloque.CapabilityResponse, error) {
 	var task VisualTask
 	if err := json.Unmarshal(req.Input, &task); err != nil { return tlaloque.CapabilityResponse{}, fmt.Errorf("decode visual task: %w", err) }
-	qid := QuestionIDFromNode(req.NodeID)
-	if !roleAllows(role, qid) { return tlaloque.CapabilityResponse{}, fmt.Errorf("responsibility %s cannot answer %s", role, qid) }
-	q, ok := question(qid); if !ok { return tlaloque.CapabilityResponse{}, fmt.Errorf("unknown benchmark question %q", qid) }
+	condition := strings.ToUpper(strings.TrimSpace(task.Condition))
+	resolvedRole, ok := RoleFromNodeID(req.NodeID)
+	if !ok || !strings.EqualFold(resolvedRole, role) { return tlaloque.CapabilityResponse{}, fmt.Errorf("responsibility %s cannot serve node %s", role, req.NodeID) }
+
 	imagePath := task.ImagePath
-	if strings.EqualFold(task.Condition, "BLACKBOARD_CROPPED") {
-		cropID := cropForQuestion(qid)
-		imagePath = task.Crops[cropID]
-		if strings.TrimSpace(imagePath) == "" { return tlaloque.CapabilityResponse{}, fmt.Errorf("missing declared crop %s for %s", cropID, qid) }
-	}
-	img, err := os.ReadFile(imagePath); if err != nil { return tlaloque.CapabilityResponse{}, err }
+	prompt := ""
 	system := ""
-	switch strings.ToUpper(strings.TrimSpace(task.Condition)) {
-	case "NATIVE_PNG_ONLY":
-		system = ""
-	case "R4_ASSISTED":
-		system = task.R4Prompt
-		if strings.TrimSpace(system) == "" { return tlaloque.CapabilityResponse{}, fmt.Errorf("R4_ASSISTED requires Master Prompt R4") }
-	case "BLACKBOARD_CROPPED":
-		system = "Inspect only the supplied Origami visual crop for your assigned responsibility. Report only visually supported evidence. Do not use OCR, source code, ground truth, a payload decoder, or an exact decoder. If an exact hidden value cannot be verified from the permitted semantic view, answer UNKNOWN."
-	default:
-		return tlaloque.CapabilityResponse{}, fmt.Errorf("unsupported condition %q", task.Condition)
+	qid := ""
+	observationKey := ""
+	if condition == "BLACKBOARD_CROPPED" {
+		cropID := RoleCrop(role)
+		imagePath = task.Crops[cropID]
+		if strings.TrimSpace(imagePath) == "" { return tlaloque.CapabilityResponse{}, fmt.Errorf("missing declared crop %s for %s", cropID, role) }
+		var err error
+		prompt, err = RolePrompt(role); if err != nil { return tlaloque.CapabilityResponse{}, err }
+		system = "You are one bounded visual specialist in Tlaloc. Follow the requested JSON schema exactly and do not infer hidden exact payload values."
+		observationKey = strings.ToLower(role)
+	} else {
+		qid = QuestionIDFromNode(req.NodeID)
+		wantRole, ok := ResponsibilityForQuestion(qid)
+		if !ok || !strings.EqualFold(wantRole, role) { return tlaloque.CapabilityResponse{}, fmt.Errorf("responsibility %s cannot answer %s", role, qid) }
+		var found bool
+		prompt, found = question(qid); if !found { return tlaloque.CapabilityResponse{}, fmt.Errorf("unknown benchmark question %q", qid) }
+		observationKey = qid
+		switch condition {
+		case "NATIVE_PNG_ONLY":
+			system = ""
+		case "R4_ASSISTED":
+			system = task.R4Prompt
+			if strings.TrimSpace(system) == "" { return tlaloque.CapabilityResponse{}, fmt.Errorf("R4_ASSISTED requires Master Prompt R4") }
+		default:
+			return tlaloque.CapabilityResponse{}, fmt.Errorf("unsupported condition %q", task.Condition)
+		}
 	}
+
+	img, err := os.ReadFile(imagePath); if err != nil { return tlaloque.CapabilityResponse{}, err }
 	client := target.OpenAICompat{BaseURL:task.Endpoint, Model:task.Model, Temperature:0, MaxTokens:task.MaxTokens}
-	result, err := client.CompletePerception(ctx, target.PerceptionInput{SystemPrompt:system, Question:q, Image:img, MediaType:"image/png"})
+	result, err := client.CompletePerception(ctx, target.PerceptionInput{SystemPrompt:system, Question:prompt, Image:img, MediaType:"image/png"})
 	if err != nil { return tlaloque.CapabilityResponse{}, err }
-	norm := NormalizeEvidence(result.Content)
-	out := VisualOutput{QuestionID:qid, Responsibility:role, ImagePath:imagePath, Text:result.Content, Normalized:norm, PromptTokens:result.PromptTokensReported, CompletionTokens:result.CompletionTokensReported}
+	out := VisualOutput{QuestionID:qid, Responsibility:role, ImagePath:imagePath, Text:result.Content, PromptTokens:result.PromptTokensReported, CompletionTokens:result.CompletionTokensReported}
+	var observationValue json.RawMessage
+	if condition == "BLACKBOARD_CROPPED" {
+		out.Structured = StructuredObservation(role, result.Content)
+		observationValue = out.Structured
+	} else {
+		out.Normalized = NormalizeEvidence(result.Content)
+		observationValue, _ = json.Marshal(out.Normalized)
+	}
 	body, _ := json.Marshal(out)
-	value, _ := json.Marshal(norm)
-	return tlaloque.CapabilityResponse{Output:body, Confidence:1, Observations:[]blackboard.Observation{{Key:qid, Value:value, Confidence:1, References:[]string{imagePath}, Provenance:map[string]string{"condition":task.Condition,"responsibility":role,"source":"lfm2-vl-1.6b-visual"}}}}, nil
+	return tlaloque.CapabilityResponse{Output:body, Confidence:1, Observations:[]blackboard.Observation{{Key:observationKey, Value:observationValue, Confidence:1, References:[]string{imagePath}, Provenance:map[string]string{"condition":task.Condition,"responsibility":role,"source":"lfm2-vl-1.6b-visual"}}}}, nil
 }
 
 func RunConsolidator(_ context.Context, req tlaloque.CapabilityRequest) (tlaloque.CapabilityResponse, error) {
 	if req.Blackboard == nil { return tlaloque.CapabilityResponse{}, fmt.Errorf("consolidator requires blackboard snapshot") }
-	out := ConsolidatedOutput{Responses:map[string]string{}, Consensus:map[string]string{}}
-	observations := []blackboard.Observation{}
-	for _, q := range temporalbench.CanonicalQuestions() {
-		c, err := blackboard.Consolidate(*req.Blackboard, q.ID, nil); if err != nil { return tlaloque.CapabilityResponse{}, err }
-		out.Consensus[q.ID] = c.Status
-		answer := "UNKNOWN"
-		if c.Status == blackboard.ConsensusConfirmed && len(c.Value) > 0 {
-			if err := json.Unmarshal(c.Value, &answer); err != nil { return tlaloque.CapabilityResponse{}, err }
+	var task VisualTask
+	if err := json.Unmarshal(req.Input, &task); err != nil { return tlaloque.CapabilityResponse{}, fmt.Errorf("decode consolidator task: %w", err) }
+	var out ConsolidatedOutput
+	var err error
+	if strings.EqualFold(task.Condition, "BLACKBOARD_CROPPED") {
+		out, err = SynthesizeBlackboardResponses(*req.Blackboard)
+	} else {
+		out = ConsolidatedOutput{Responses:map[string]string{}, Consensus:map[string]string{}}
+		for _, q := range temporalbench.CanonicalQuestions() {
+			c, conErr := blackboard.Consolidate(*req.Blackboard, q.ID, nil); if conErr != nil { return tlaloque.CapabilityResponse{}, conErr }
+			out.Consensus[q.ID] = c.Status
+			answer := "UNKNOWN"
+			if c.Status == blackboard.ConsensusConfirmed && len(c.Value) > 0 { if unmarshalErr := json.Unmarshal(c.Value, &answer); unmarshalErr != nil { return tlaloque.CapabilityResponse{}, unmarshalErr } }
+			out.Responses[q.ID] = answer
 		}
-		out.Responses[q.ID] = answer
-		value, _ := json.Marshal(map[string]any{"status":c.Status,"answer":answer,"votes":c.Votes,"required_votes":c.RequiredVotes,"observation_ids":c.ObservationIDs})
-		observations = append(observations, blackboard.Observation{Key:"decision."+q.ID, Value:value, Confidence:1, References:c.ObservationIDs, Provenance:map[string]string{"source":"deterministic-quorum"}})
+	}
+	if err != nil { return tlaloque.CapabilityResponse{}, err }
+	observations := make([]blackboard.Observation,0,9)
+	for _, q := range temporalbench.CanonicalQuestions() {
+		answer := out.Responses[q.ID]; if answer == "" { answer = "UNKNOWN" }
+		status := out.Consensus[q.ID]
+		if status == "" {
+			status = blackboard.ConsensusUnknown
+			if answer != "UNKNOWN" { status = blackboard.ConsensusConfirmed }
+		}
+		value, _ := json.Marshal(map[string]any{"status":status,"answer":answer})
+		observations = append(observations, blackboard.Observation{Key:"decision."+q.ID, Value:value, Confidence:1, Provenance:map[string]string{"source":"deterministic-quorum-and-simulator"}})
 	}
 	body, _ := json.Marshal(out)
 	return tlaloque.CapabilityResponse{Output:body, Confidence:1, Observations:observations}, nil
