@@ -191,6 +191,19 @@ type NodeExecution struct {
 	Output           json.RawMessage `json:"output,omitempty"`
 	Error            string          `json:"error,omitempty"`
 	FailureTolerated bool            `json:"failure_tolerated,omitempty"`
+
+	// Cost accounting (all optional; zero when not measured/reported).
+	// QueueMS is the wait between this node becoming runnable and actually
+	// starting (concurrency-limited). Bytes are payload bytes, not wire
+	// bytes. Token/upstream fields come from the worker's WorkerUsage.
+	QueueMS       int64 `json:"queue_ms,omitempty"`
+	BytesIn       int64 `json:"bytes_in,omitempty"`
+	BytesOut      int64 `json:"bytes_out,omitempty"`
+	TokensIn      int   `json:"tokens_in,omitempty"`
+	TokensOut     int   `json:"tokens_out,omitempty"`
+	UpstreamCalls int   `json:"upstream_calls,omitempty"`
+	ModelLoadMS   int64 `json:"model_load_ms,omitempty"`
+	Retries       int   `json:"retries,omitempty"`
 }
 
 type SwarmReport struct {
@@ -206,6 +219,7 @@ type SwarmReport struct {
 	Succeeded         bool                       `json:"succeeded"`
 	Nodes             []NodeExecution            `json:"nodes"`
 	TerminalOutputs   map[string]json.RawMessage `json:"terminal_outputs,omitempty"`
+	Accounting        *SwarmAccounting           `json:"accounting,omitempty"`
 }
 
 type SwarmRunner struct {
@@ -234,6 +248,7 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 	}
 
 	start := time.Now()
+	rssBefore := peakRSSBytes()
 	report := SwarmReport{
 		Schema:            SwarmSchemaR0 + ".report",
 		PlanID:            plan.ID,
@@ -384,6 +399,7 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
+			runnableAt := time.Now()
 
 			worker, selectErr := r.Registry.Select(SelectionRequest{
 				Capability:          n.Capability,
@@ -480,18 +496,31 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 			active--
 			stateMu.Unlock()
 
+			var bytesIn int64 = int64(len(input))
+			for _, part := range depContext {
+				bytesIn += int64(len(part))
+			}
 			execReport := NodeExecution{
 				NodeID:     n.ID,
 				Capability: n.Capability,
 				WorkerID:   desc.ID,
 				StartedAt:  nodeStart.UTC(),
 				DurationMS: duration.Milliseconds(),
+				QueueMS:    nodeStart.Sub(runnableAt).Milliseconds(),
+				BytesIn:    bytesIn,
 			}
 			if runErr != nil {
 				execReport.Error = runErr.Error()
 			} else {
 				execReport.Output = append(json.RawMessage(nil), resp.Output...)
 				execReport.Confidence = resp.Confidence
+				execReport.BytesOut = int64(len(resp.Output))
+				if resp.Usage != nil {
+					execReport.TokensIn = resp.Usage.TokensIn
+					execReport.TokensOut = resp.Usage.TokensOut
+					execReport.UpstreamCalls = resp.Usage.UpstreamCalls
+					execReport.ModelLoadMS = resp.Usage.ModelLoadMS
+				}
 			}
 			if bbErr := bb.RecordNode(execReport, resp.Observations); bbErr != nil {
 				if runErr == nil {
@@ -573,5 +602,13 @@ func (r SwarmRunner) Run(ctx context.Context, plan SwarmPlan, taskID string, inp
 		}
 	}
 	report.Succeeded = firstErr == nil && allSatisfied
+
+	rssDelta := peakRSSBytes() - rssBefore
+	if rssDelta < 0 {
+		rssDelta = 0
+	}
+	accounting := computeAccounting(plan, nodes, executions, report.DurationMS, rssDelta, peak)
+	report.Accounting = &accounting
+
 	return report, firstErr
 }

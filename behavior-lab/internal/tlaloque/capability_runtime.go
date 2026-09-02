@@ -111,6 +111,10 @@ type CapabilityResponse struct {
 	Confidence   float64                  `json:"confidence,omitempty"`
 	Notes        string                   `json:"notes,omitempty"`
 	Observations []blackboard.Observation `json:"observations,omitempty"`
+	// Usage is optional cost self-report: a deterministic worker leaves it
+	// nil, a worker that called an LLM fills in what the provider reported.
+	// The runner folds it into the node's NodeExecution and SwarmAccounting.
+	Usage *WorkerUsage `json:"usage,omitempty"`
 }
 
 type CapabilityWorker interface {
