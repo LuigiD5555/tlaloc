@@ -53,6 +53,13 @@ func TestVerifyExtraEvidenceNumberDoesNotCreateFalseContradiction(t *testing.T) 
 	}
 }
 
+func TestVerifyShortUnitMismatchDoesNotBecomeSupported(t *testing.T) {
+	out := Verify(VerifyInput{ModelAnswer: "The memory limit is 3 MB.", PageContent: "The memory limit is 3 GB."})
+	if out.Verdict == VerdictSupported {
+		t.Fatalf("different short units must not be accepted as supported: %+v", out)
+	}
+}
+
 func TestVerifyExplicitQuantifierContradiction(t *testing.T) {
 	out := Verify(VerifyInput{ModelAnswer: "All workers require network access.", PageContent: "None of the workers require network access."})
 	if out.Verdict != VerdictContradicted {
