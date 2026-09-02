@@ -8,7 +8,6 @@ import (
 	"unicode"
 )
 
-var sentenceSplit = regexp.MustCompile(`[.!?;\n]+`)
 var numberPattern = regexp.MustCompile(`[-+]?\d+(?:[.,]\d+)?%?`)
 
 var stopwords = map[string]struct{}{
@@ -34,23 +33,13 @@ var quantifierGroups = [][]string{
 }
 
 var antonymPairs = [][2]string{
-	{"increase", "decrease"},
-	{"increases", "decreases"},
-	{"increased", "decreased"},
-	{"aumenta", "disminuye"},
-	{"aumentar", "disminuir"},
-	{"before", "after"},
-	{"antes", "despues"},
-	{"antes", "después"},
-	{"enable", "disable"},
-	{"enabled", "disabled"},
-	{"habilitado", "deshabilitado"},
-	{"present", "absent"},
-	{"presente", "ausente"},
-	{"true", "false"},
-	{"verdadero", "falso"},
-	{"distributed", "centralized"},
-	{"distribuido", "centralizado"},
+	{"increase", "decrease"}, {"increases", "decreases"}, {"increased", "decreased"},
+	{"aumenta", "disminuye"}, {"aumentar", "disminuir"},
+	{"before", "after"}, {"antes", "despues"}, {"antes", "después"},
+	{"enable", "disable"}, {"enabled", "disabled"}, {"habilitado", "deshabilitado"},
+	{"present", "absent"}, {"presente", "ausente"},
+	{"true", "false"}, {"verdadero", "falso"},
+	{"distributed", "centralized"}, {"distribuido", "centralizado"},
 }
 
 func Verify(in VerifyInput) VerifyOutput {
@@ -61,14 +50,11 @@ func Verify(in VerifyInput) VerifyOutput {
 
 	evidenceSpans := splitClaims(in.PageContent)
 	traces := make([]ClaimTrace, 0, len(claims))
-	covered := 0
-	contradicted := 0
-	supported := 0
+	covered, contradicted, supported := 0, 0, 0
 
 	for _, claim := range claims {
 		evidence, alignment := bestEvidence(claim, evidenceSpans)
 		trace := ClaimTrace{Claim: claim, Evidence: evidence, Alignment: alignment, Verdict: VerdictUnknown}
-
 		if alignment < 0.45 || evidence == "" {
 			trace.Reasons = append(trace.Reasons, Reason{Code: ReasonLowAlignment, Claim: claim, Evidence: evidence})
 			traces = append(traces, trace)
@@ -116,48 +102,57 @@ func Verify(in VerifyInput) VerifyOutput {
 
 	coverage := float64(covered) / float64(len(claims))
 	out := VerifyOutput{Coverage: coverage, Claims: traces}
-
 	switch {
 	case contradicted > 0:
-		out.Verdict = VerdictContradicted
-		out.Confidence = 1.0
+		out.Verdict, out.Confidence = VerdictContradicted, 1.0
 	case covered == 0:
-		out.Verdict = VerdictUnknown
-		out.Confidence = 0.0
+		out.Verdict, out.Confidence = VerdictUnknown, 0.0
 	case supported == len(claims):
-		out.Verdict = VerdictSupported
-		out.Confidence = averageSupportedAlignment(traces)
+		out.Verdict, out.Confidence = VerdictSupported, averageSupportedAlignment(traces)
 	case coverage < 1.0:
-		out.Verdict = VerdictInsufficient
-		out.Confidence = coverage
+		out.Verdict, out.Confidence = VerdictInsufficient, coverage
 	default:
-		out.Verdict = VerdictUnknown
-		out.Confidence = averageAlignment(traces)
+		out.Verdict, out.Confidence = VerdictUnknown, averageAlignment(traces)
 	}
-
 	return out
 }
 
 func splitClaims(text string) []string {
-	parts := sentenceSplit.Split(strings.TrimSpace(text), -1)
-	out := make([]string, 0, len(parts))
-	for _, part := range parts {
-		part = strings.TrimSpace(part)
+	text = strings.TrimSpace(text)
+	if text == "" {
+		return nil
+	}
+	runes := []rune(text)
+	start := 0
+	out := make([]string, 0, 4)
+	flush := func(end int) {
+		part := strings.TrimSpace(string(runes[start:end]))
 		if part != "" {
 			out = append(out, part)
 		}
 	}
+	for i, r := range runes {
+		boundary := r == '!' || r == '?' || r == ';' || r == '\n'
+		if r == '.' {
+			prevDigit := i > 0 && unicode.IsDigit(runes[i-1])
+			nextDigit := i+1 < len(runes) && unicode.IsDigit(runes[i+1])
+			boundary = !(prevDigit && nextDigit)
+		}
+		if boundary {
+			flush(i)
+			start = i + 1
+		}
+	}
+	flush(len(runes))
 	return out
 }
 
 func bestEvidence(claim string, spans []string) (string, float64) {
-	best := ""
-	bestScore := 0.0
+	best, bestScore := "", 0.0
 	for _, span := range spans {
 		score := claimCoverage(claim, span)
 		if score > bestScore {
-			best = span
-			bestScore = score
+			best, bestScore = span, score
 		}
 	}
 	return best, bestScore
@@ -180,9 +175,8 @@ func claimCoverage(claim, evidence string) float64 {
 
 func contentTerms(text string) map[string]struct{} {
 	norm := normalize(text)
-	fields := strings.Fields(norm)
-	terms := make(map[string]struct{}, len(fields))
-	for _, field := range fields {
+	terms := make(map[string]struct{})
+	for _, field := range strings.Fields(norm) {
 		field = stem(field)
 		if len(field) < 3 {
 			continue
@@ -198,7 +192,6 @@ func contentTerms(text string) map[string]struct{} {
 func normalize(text string) string {
 	text = strings.ToLower(strings.TrimSpace(text))
 	var b strings.Builder
-	b.Grow(len(text))
 	for _, r := range text {
 		switch {
 		case unicode.IsLetter(r), unicode.IsDigit(r), r == '%', r == '.', r == ',', r == '-', unicode.IsSpace(r):
@@ -236,10 +229,7 @@ func hasNegation(text string) bool {
 func numericContradiction(claim, evidence string) (string, bool) {
 	claimNumbers := normalizedNumbers(claim)
 	evidenceNumbers := normalizedNumbers(evidence)
-	if len(claimNumbers) == 0 || len(evidenceNumbers) == 0 {
-		return "", false
-	}
-	if equalStrings(claimNumbers, evidenceNumbers) {
+	if len(claimNumbers) == 0 || len(evidenceNumbers) == 0 || equalStrings(claimNumbers, evidenceNumbers) {
 		return "", false
 	}
 	return "claim=" + strings.Join(claimNumbers, ",") + "; evidence=" + strings.Join(evidenceNumbers, ","), true
@@ -267,8 +257,7 @@ func normalizedNumbers(text string) []string {
 }
 
 func quantifierContradiction(claim, evidence string) (string, bool) {
-	claimGroup := quantifierGroup(claim)
-	evidenceGroup := quantifierGroup(evidence)
+	claimGroup, evidenceGroup := quantifierGroup(claim), quantifierGroup(evidence)
 	if claimGroup == -1 || evidenceGroup == -1 || claimGroup == evidenceGroup {
 		return "", false
 	}
@@ -288,8 +277,7 @@ func quantifierGroup(text string) int {
 }
 
 func antonymContradiction(claim, evidence string) (string, bool) {
-	claimNorm := " " + normalize(claim) + " "
-	evidenceNorm := " " + normalize(evidence) + " "
+	claimNorm, evidenceNorm := " "+normalize(claim)+" ", " "+normalize(evidence)+" "
 	for _, pair := range antonymPairs {
 		leftClaim := strings.Contains(claimNorm, " "+pair[0]+" ")
 		rightClaim := strings.Contains(claimNorm, " "+pair[1]+" ")
@@ -315,8 +303,7 @@ func equalStrings(a, b []string) bool {
 }
 
 func averageSupportedAlignment(traces []ClaimTrace) float64 {
-	total := 0.0
-	count := 0
+	total, count := 0.0, 0
 	for _, trace := range traces {
 		if trace.Verdict == VerdictSupported {
 			total += trace.Alignment
