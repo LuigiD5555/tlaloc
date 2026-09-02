@@ -10,20 +10,20 @@ const (
 )
 
 const (
-	MaturityHypothesis      = "HYPOTHESIS"
-	MaturityObservedWin     = "OBSERVED_WIN"
-	MaturityProvisionalWin  = "PROVISIONAL_WIN"
-	MaturityReplicatedWin   = "REPLICATED_WIN"
-	MaturityCrossModelWin   = "CROSS_MODEL_WIN"
+	MaturityHypothesis         = "HYPOTHESIS"
+	MaturityObservedWin        = "OBSERVED_WIN"
+	MaturityProvisionalWin     = "PROVISIONAL_WIN"
+	MaturityReplicatedWin      = "REPLICATED_WIN"
+	MaturityCrossModelWin      = "CROSS_MODEL_WIN"
 	MaturityCanonicalCandidate = "CANONICAL_CANDIDATE"
 )
 
 type Rule struct {
-	Kind       string   `json:"kind"`
-	Target     string   `json:"target"`
-	Reason     string   `json:"reason"`
+	Kind        string   `json:"kind"`
+	Target      string   `json:"target"`
+	Reason      string   `json:"reason"`
 	EvidenceIDs []string `json:"evidence_ids,omitempty"`
-	Confidence string   `json:"confidence,omitempty"`
+	Confidence  string   `json:"confidence,omitempty"`
 }
 
 type LearnedInvariant struct {

@@ -13,9 +13,9 @@ func BuildSummary(root string, events []Event) Summary {
 	}
 
 	type failureAccumulator struct {
-		pattern             FailurePattern
-		models, specimens   map[string]bool
-		questions           map[string]bool
+		pattern           FailurePattern
+		models, specimens map[string]bool
+		questions         map[string]bool
 	}
 	patterns := map[string]*failureAccumulator{}
 

@@ -12,17 +12,17 @@ const (
 )
 
 type Status struct {
-	Schema          string                       `json:"schema"`
-	FailureFrontier string                       `json:"failure_frontier,omitempty"`
-	NextTarget      string                       `json:"next_target,omitempty"`
-	Policy          learningpolicy.Policy        `json:"policy"`
-	AdaptiveSearch  adaptivesearch.Plan          `json:"adaptive_search"`
-	Promotion       string                       `json:"promotion"`
+	Schema          string                `json:"schema"`
+	FailureFrontier string                `json:"failure_frontier,omitempty"`
+	NextTarget      string                `json:"next_target,omitempty"`
+	Policy          learningpolicy.Policy `json:"policy"`
+	AdaptiveSearch  adaptivesearch.Plan   `json:"adaptive_search"`
+	Promotion       string                `json:"promotion"`
 }
 
 type Plan struct {
-	Schema     string                            `json:"schema"`
-	Status     Status                            `json:"status"`
-	Intent     experimentpolicy.ExperimentIntent `json:"intent"`
+	Schema     string                               `json:"schema"`
+	Status     Status                               `json:"status"`
+	Intent     experimentpolicy.ExperimentIntent    `json:"intent"`
 	Candidates []experimentpolicy.CandidateManifest `json:"candidates"`
 }

@@ -27,11 +27,11 @@ type TrialSnapshot struct {
 }
 
 type Request struct {
-	HypothesisID   string        `json:"hypothesis_id"`
-	TargetAssertion string       `json:"target_assertion"`
-	ChangedModules []string      `json:"changed_modules"`
-	Before         TrialSnapshot `json:"before"`
-	After          TrialSnapshot `json:"after"`
+	HypothesisID    string        `json:"hypothesis_id"`
+	TargetAssertion string        `json:"target_assertion"`
+	ChangedModules  []string      `json:"changed_modules"`
+	Before          TrialSnapshot `json:"before"`
+	After           TrialSnapshot `json:"after"`
 }
 
 type Assessment struct {
@@ -49,11 +49,11 @@ type Assessment struct {
 }
 
 type KnowledgeUpdate struct {
-	Schema         string   `json:"schema"`
-	HypothesisID   string   `json:"hypothesis_id"`
-	Action         string   `json:"action"`
-	Maturity       string   `json:"maturity,omitempty"`
-	Preserve       []string `json:"preserve,omitempty"`
-	Avoid          []string `json:"avoid,omitempty"`
-	Reason         string   `json:"reason"`
+	Schema       string   `json:"schema"`
+	HypothesisID string   `json:"hypothesis_id"`
+	Action       string   `json:"action"`
+	Maturity     string   `json:"maturity,omitempty"`
+	Preserve     []string `json:"preserve,omitempty"`
+	Avoid        []string `json:"avoid,omitempty"`
+	Reason       string   `json:"reason"`
 }
