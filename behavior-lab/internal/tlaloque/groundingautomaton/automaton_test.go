@@ -23,40 +23,35 @@ func TestVerifyPolarityContradiction(t *testing.T) {
 }
 
 func TestVerifyNumericContradiction(t *testing.T) {
-	out := Verify(VerifyInput{
-		ModelAnswer: "The model has 28 million parameters.",
-		PageContent: "The model has 27 million parameters.",
-	})
+	out := Verify(VerifyInput{ModelAnswer: "The model has 28 million parameters.", PageContent: "The model has 27 million parameters."})
 	if out.Verdict != VerdictContradicted {
 		t.Fatalf("expected CONTRADICTED, got %s (%+v)", out.Verdict, out)
 	}
 }
 
+func TestVerifyDecimalNumericContradiction(t *testing.T) {
+	out := Verify(VerifyInput{ModelAnswer: "The score is 27.5 percent.", PageContent: "The score is 28.5 percent."})
+	if out.Verdict != VerdictContradicted {
+		t.Fatalf("expected decimal CONTRADICTED, got %s (%+v)", out.Verdict, out)
+	}
+}
+
 func TestVerifyQuantifierContradiction(t *testing.T) {
-	out := Verify(VerifyInput{
-		ModelAnswer: "All workers require network access.",
-		PageContent: "Some workers require network access.",
-	})
+	out := Verify(VerifyInput{ModelAnswer: "All workers require network access.", PageContent: "Some workers require network access."})
 	if out.Verdict != VerdictContradicted {
 		t.Fatalf("expected CONTRADICTED, got %s (%+v)", out.Verdict, out)
 	}
 }
 
 func TestVerifyAntonymContradiction(t *testing.T) {
-	out := Verify(VerifyInput{
-		ModelAnswer: "The feature is disabled.",
-		PageContent: "The feature is enabled.",
-	})
+	out := Verify(VerifyInput{ModelAnswer: "The feature is disabled.", PageContent: "The feature is enabled."})
 	if out.Verdict != VerdictContradicted {
 		t.Fatalf("expected CONTRADICTED, got %s (%+v)", out.Verdict, out)
 	}
 }
 
 func TestVerifyUnknownWhenEvidenceDoesNotAlign(t *testing.T) {
-	out := Verify(VerifyInput{
-		ModelAnswer: "Paris is the capital of France.",
-		PageContent: "A swarm coordinates distributed agents using local interactions.",
-	})
+	out := Verify(VerifyInput{ModelAnswer: "Paris is the capital of France.", PageContent: "A swarm coordinates distributed agents using local interactions."})
 	if out.Verdict != VerdictUnknown {
 		t.Fatalf("expected UNKNOWN, got %s (%+v)", out.Verdict, out)
 	}
