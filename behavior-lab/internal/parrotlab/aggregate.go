@@ -46,6 +46,23 @@ type StageResult struct {
 	Interference []PairInterference    `json:"pair_interference,omitempty"`
 	Blackboard   *BlackboardResult     `json:"blackboard,omitempty"`
 	Capability   map[string]CapVerdict `json:"capability_class,omitempty"`
+	Variant      *VariantComparison    `json:"variant_comparison,omitempty"`
+}
+
+// VariantComparison is the end_to_end text-vs-image controlled contrast
+// (same question, same answer, only the delivery channel differs): how much
+// of Parrot's end-to-end competence comes from the visual channel.
+type VariantComparison struct {
+	Text               GroupStat        `json:"text"`
+	Image              GroupStat        `json:"image"`
+	VisionCostAccuracy float64          `json:"vision_cost_accuracy"` // text - image (contract)
+	VisionCostSemantic float64          `json:"vision_cost_semantic"`
+	Paired             PairedTransition `json:"paired_text_to_image"`
+	ByCategory         map[string]struct {
+		TextAccuracy  float64 `json:"text_accuracy"`
+		ImageAccuracy float64 `json:"image_accuracy"`
+		N             int     `json:"n"`
+	} `json:"by_category"`
 }
 
 // CliffResult is the SPEC §13 verdict. The cliff is decided by the paired
@@ -243,8 +260,89 @@ func Aggregate(exp *Experiment, stage string) (StageResult, error) {
 		result.Groups = groupBy(records, func(r RunRecord) string { return r.HintCondition })
 	case StageEndToEnd:
 		result.Groups = groupBy(records, func(r RunRecord) string { return r.TaskFamily })
+		result.Variant = buildVariantComparison(records)
 	}
 	return result, nil
+}
+
+func buildVariantComparison(records []RunRecord) *VariantComparison {
+	textRecords := filterRecords(records, func(r RunRecord) bool { return r.Variant == "text" })
+	imageRecords := filterRecords(records, func(r RunRecord) bool { return r.Variant == "image" })
+	if len(textRecords) == 0 || len(imageRecords) == 0 {
+		return nil
+	}
+	comparison := &VariantComparison{
+		Text:  computeGroup(textRecords),
+		Image: computeGroup(imageRecords),
+	}
+	comparison.VisionCostAccuracy = comparison.Text.Accuracy - comparison.Image.Accuracy
+	comparison.VisionCostSemantic = comparison.Text.SemanticAccuracy - comparison.Image.SemanticAccuracy
+
+	// Paired: for each base_id, was it a contract success under text (slot 1)
+	// and under image (slot 2)? McNemar over the shared questions.
+	pairedContract := map[string]map[int]bool{}
+	for _, record := range records {
+		if record.BaseID == "" || record.Error != "" {
+			continue
+		}
+		slot := 1
+		if record.Variant == "image" {
+			slot = 2
+		}
+		if pairedContract[record.BaseID] == nil {
+			pairedContract[record.BaseID] = map[int]bool{}
+		}
+		prior, seen := pairedContract[record.BaseID][slot]
+		value := record.Score.ContractSuccess
+		if seen {
+			value = prior && value
+		}
+		pairedContract[record.BaseID][slot] = value
+	}
+	comparison.Paired = pairedTransition(1, 2, pairedContract)
+
+	comparison.ByCategory = map[string]struct {
+		TextAccuracy  float64 `json:"text_accuracy"`
+		ImageAccuracy float64 `json:"image_accuracy"`
+		N             int     `json:"n"`
+	}{}
+	for _, category := range P0Categories {
+		text := computeGroup(filterRecords(records, func(r RunRecord) bool {
+			return r.Variant == "text" && p0CategoryOf(r.BaseID) == category
+		}))
+		image := computeGroup(filterRecords(records, func(r RunRecord) bool {
+			return r.Variant == "image" && p0CategoryOf(r.BaseID) == category
+		}))
+		if text.N == 0 && image.N == 0 {
+			continue
+		}
+		comparison.ByCategory[category] = struct {
+			TextAccuracy  float64 `json:"text_accuracy"`
+			ImageAccuracy float64 `json:"image_accuracy"`
+			N             int     `json:"n"`
+		}{TextAccuracy: text.Accuracy, ImageAccuracy: image.Accuracy, N: text.N}
+	}
+	return comparison
+}
+
+// p0CategoryOf reads the P0 category from a base id of the form
+// "e2e-<category>-NN". Returns "" for anything else.
+func p0CategoryOf(baseID string) string {
+	parts := strings.Split(baseID, "-")
+	if len(parts) >= 3 && parts[0] == "e2e" {
+		return parts[1]
+	}
+	return ""
+}
+
+func filterRecords(records []RunRecord, keep func(RunRecord) bool) []RunRecord {
+	var out []RunRecord
+	for _, record := range records {
+		if keep(record) {
+			out = append(out, record)
+		}
+	}
+	return out
 }
 
 func groupBy(records []RunRecord, key func(RunRecord) string) map[string]GroupStat {
