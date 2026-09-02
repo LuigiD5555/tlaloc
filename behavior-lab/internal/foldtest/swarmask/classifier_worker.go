@@ -7,39 +7,60 @@ import (
 
 	"tlaloc.local/behaviorlab/internal/blackboard"
 	"tlaloc.local/behaviorlab/internal/tlaloque"
+	"tlaloc.local/behaviorlab/internal/tlaloque/questionclass"
 )
 
-// QuestionClassifierWorker is a third deterministic "tiny model": it
-// classifies the question's grammatical shape (definition, comparison,
-// process, factual-detail, or general), independent of what PageScoutWorker
-// (where) and EntityScoutWorker (what concrete facts) report — this helps
-// the loro (and future consolidators) calibrate how much verification a
-// question needs. Unlike scout/entities, it always emits an observation:
-// "this looks like a general question" is itself useful information, not a
-// fabrication, since every question has *some* shape.
-type QuestionClassifierWorker struct{}
+// minModelConfidence is the floor below which the trained classifier's
+// verdict is discarded in favor of the rule-based one. Calibrated against
+// real questions: questionclass-charcnn-r0 is ~1.0 confident on phrasings
+// close to its synthetic training templates and correct there, but drifts
+// to the 0.6s on unfamiliar constructions — and is often wrong when it
+// does. Below 0.7 the deterministic prefix rules are the safer bet.
+const minModelConfidence = 0.7
 
-func (QuestionClassifierWorker) Descriptor() tlaloque.CapabilityDescriptor {
+// QuestionClassifierWorker classifies the question's rhetorical shape
+// (definition, comparison, process, factual-detail, or general),
+// independent of what PageScoutWorker (where) and EntityScoutWorker (what
+// concrete facts) report — this helps the loro (and the consolidator)
+// calibrate how much verification a question needs. Unlike scout/entities,
+// it always emits an observation: "this looks like a general question" is
+// itself useful information, not a fabrication, since every question has
+// *some* shape.
+//
+// If ModelRegistry is set (a questionclass-charcnn-r0 HTTP service), it uses
+// that trained char-CNN and falls back to the rule-based classifyQuestion
+// only when the model errors or is not confident enough — reporting which
+// path produced the verdict in the observation's provenance. With
+// ModelRegistry nil it is purely rule-based.
+type QuestionClassifierWorker struct {
+	ModelRegistry *tlaloque.Registry
+}
+
+func (w QuestionClassifierWorker) Descriptor() tlaloque.CapabilityDescriptor {
+	engine, deterministic, tags := tlaloque.EngineDeterministic, true, []string{"question-classifier", "rule-based"}
+	if w.ModelRegistry != nil {
+		engine, deterministic, tags = tlaloque.EngineModel, false, []string{"question-classifier", "char-cnn", "rule-based-fallback"}
+	}
 	return tlaloque.CapabilityDescriptor{
 		ID:             ClassifierWorkerID,
 		Capability:     ClassifierCapability,
 		Scope:          tlaloque.ScopeGeneral,
-		Engine:         tlaloque.EngineDeterministic,
+		Engine:         engine,
 		InputSchema:    inputSchema,
 		OutputSchema:   classifierOutputSchema,
-		Deterministic:  true,
+		Deterministic:  deterministic,
 		MaxConcurrency: 0, // normalized to 1
-		Tags:           []string{"question-classifier", "rule-based"},
+		Tags:           tags,
 	}
 }
 
-func (QuestionClassifierWorker) Execute(_ context.Context, req tlaloque.CapabilityRequest) (tlaloque.CapabilityResponse, error) {
+func (w QuestionClassifierWorker) Execute(ctx context.Context, req tlaloque.CapabilityRequest) (tlaloque.CapabilityResponse, error) {
 	var in AskInput
 	if err := json.Unmarshal(req.Input, &in); err != nil {
 		return tlaloque.CapabilityResponse{}, err
 	}
 
-	questionType, confidence := classifyQuestion(in.Question)
+	questionType, confidence, method := w.classify(ctx, in.Question)
 	out := QuestionTypeOutput{Type: questionType}
 
 	value, err := json.Marshal(out)
@@ -50,7 +71,7 @@ func (QuestionClassifierWorker) Execute(_ context.Context, req tlaloque.Capabili
 		Key:        questionTypeKey,
 		Value:      value,
 		Confidence: confidence,
-		Provenance: map[string]string{"source": ClassifierWorkerID, "method": "rule-based"},
+		Provenance: map[string]string{"source": ClassifierWorkerID, "method": method},
 	}}
 
 	raw, err := json.Marshal(out)
@@ -58,6 +79,20 @@ func (QuestionClassifierWorker) Execute(_ context.Context, req tlaloque.Capabili
 		return tlaloque.CapabilityResponse{}, err
 	}
 	return tlaloque.CapabilityResponse{WorkerID: ClassifierWorkerID, Output: raw, Observations: observations}, nil
+}
+
+// classify picks the trained char-CNN verdict when a model is wired and
+// confident, otherwise the rule-based one — always reporting which via the
+// returned method string ("charcnn-model" or "rule-based"), so the
+// blackboard never claims a model classified when the fallback did.
+func (w QuestionClassifierWorker) classify(ctx context.Context, question string) (questionType string, confidence float64, method string) {
+	if w.ModelRegistry != nil {
+		if out, modelConfidence, err := questionclass.Classify(ctx, w.ModelRegistry, question); err == nil && modelConfidence >= minModelConfidence {
+			return out.Type, modelConfidence, "charcnn-model"
+		}
+	}
+	ruleType, ruleConfidence := classifyQuestion(question)
+	return ruleType, ruleConfidence, "rule-based"
 }
 
 var (

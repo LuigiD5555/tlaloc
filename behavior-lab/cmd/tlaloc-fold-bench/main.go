@@ -179,13 +179,14 @@ func cmdSwarmAsk(args []string) {
 	question := fs.String("question", "", "Question to ask")
 	baseURL := fs.String("url", "http://127.0.0.1:1234/v1", "LM Studio API URL")
 	maxTurns := fs.Int("turns", 6, "Maximum turns")
+	classifierService := fs.String("classifier-service", "", "questionclass-charcnn-r0 /execute URL (empty = rule-based question classifier)")
 
 	if err := fs.Parse(args); err != nil {
 		log.Fatal(err)
 	}
 
 	if *storeDir == "" || *question == "" {
-		fmt.Fprintf(os.Stderr, "Usage: tlaloc-fold-bench swarm-ask -store <store> -model <model> -question <q> [-turns N] [-url URL]\n")
+		fmt.Fprintf(os.Stderr, "Usage: tlaloc-fold-bench swarm-ask -store <store> -model <model> -question <q> [-turns N] [-url URL] [-classifier-service URL]\n")
 		os.Exit(1)
 	}
 
@@ -211,15 +212,16 @@ func cmdSwarmAsk(args []string) {
 	defer cancel()
 
 	answer, report, err := swarmask.Ask(ctx, store, runID, swarmask.AskInput{
-		Question: *question,
-		Cover:    cover,
-		WorkDir:  workDir,
-		StoreDir: *storeDir,
-		Manifest: manifest,
-		Model:    *model,
-		BaseURL:  *baseURL,
-		MaxTurns: *maxTurns,
-		Budget:   4000,
+		Question:           *question,
+		Cover:              cover,
+		WorkDir:            workDir,
+		StoreDir:           *storeDir,
+		Manifest:           manifest,
+		Model:              *model,
+		BaseURL:            *baseURL,
+		MaxTurns:           *maxTurns,
+		Budget:             4000,
+		ClassifierEndpoint: *classifierService,
 	})
 	if err != nil {
 		log.Fatalf("swarm-ask failed: %v", err)
@@ -269,19 +271,19 @@ func cmdValidate(args []string) {
 
 	// Configure validation
 	config := foldtest.ValidationConfig{
-		WorkDir:        workDir,
-		StoreDir:       *storeDir,
-		Manifest:       manifest,
-		Cover:          cover,
-		Model:          *model,
-		BaseURL:        *baseURL,
-		MaxTurns:       *maxTurns,
-		Budget:         4000,
-		PageCount:      manifest.PageCount,
-		SampleSize:     *pages,
-		RandomSeed:     *seed,
-		FlexibilityScore: *flexibility,
-		TimeoutSecs:    30,
+		WorkDir:             workDir,
+		StoreDir:            *storeDir,
+		Manifest:            manifest,
+		Cover:               cover,
+		Model:               *model,
+		BaseURL:             *baseURL,
+		MaxTurns:            *maxTurns,
+		Budget:              4000,
+		PageCount:           manifest.PageCount,
+		SampleSize:          *pages,
+		RandomSeed:          *seed,
+		FlexibilityScore:    *flexibility,
+		TimeoutSecs:         30,
 		EmbeddingServiceURL: *embeddingService,
 	}
 

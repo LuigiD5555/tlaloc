@@ -22,7 +22,7 @@ func Ask(ctx context.Context, store blackboard.Store, runID string, in AskInput)
 	}
 
 	runner := tlaloque.SwarmRunner{
-		Registry:   NewRegistry(),
+		Registry:   NewRegistry(in.ClassifierEndpoint),
 		Blackboard: &tlaloque.BlackboardRuntime{Store: store, RunID: runID},
 	}
 

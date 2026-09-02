@@ -16,17 +16,17 @@ const (
 	AnswerCapability       = "ANSWER_QUESTION"
 	ConsolidatorCapability = "CONSOLIDATE_BLACKBOARD"
 
-	ScoutWorkerID       = "swarmask-page-scout"
-	EntityWorkerID      = "swarmask-entity-scout"
-	ClassifierWorkerID  = "swarmask-question-classifier"
-	AnswerWorkerID      = "swarmask-loro-answer"
+	ScoutWorkerID        = "swarmask-page-scout"
+	EntityWorkerID       = "swarmask-entity-scout"
+	ClassifierWorkerID   = "swarmask-question-classifier"
+	AnswerWorkerID       = "swarmask-loro-answer"
 	ConsolidatorWorkerID = "swarmask-consolidator"
 
-	inputSchema              = "tlaloc.foldtest.r0.swarmask-input"
-	scoutOutputSchema        = "tlaloc.foldtest.r0.swarmask-scout-output"
-	entityOutputSchema       = "tlaloc.foldtest.r0.swarmask-entity-output"
-	classifierOutputSchema   = "tlaloc.foldtest.r0.swarmask-classifier-output"
-	answerOutputSchema       = "tlaloc.foldtest.r0.swarmask-answer-output"
+	inputSchema               = "tlaloc.foldtest.r0.swarmask-input"
+	scoutOutputSchema         = "tlaloc.foldtest.r0.swarmask-scout-output"
+	entityOutputSchema        = "tlaloc.foldtest.r0.swarmask-entity-output"
+	classifierOutputSchema    = "tlaloc.foldtest.r0.swarmask-classifier-output"
+	answerOutputSchema        = "tlaloc.foldtest.r0.swarmask-answer-output"
 	consolidationOutputSchema = "tlaloc.foldtest.r0.swarmask-consolidation-output"
 
 	suggestedPageKey    = "suggested_page"
@@ -46,15 +46,20 @@ const (
 // the plan (per tlaloque.SwarmRunner.Run: the same task input is passed to
 // every node — each worker only reads the fields it needs).
 type AskInput struct {
-	Question string              `json:"question"`
-	Cover    string              `json:"cover"`
-	WorkDir  string              `json:"work_dir"`
-	StoreDir string              `json:"store_dir"`
-	Manifest pdfmemory.Manifest  `json:"manifest"`
-	Model    string              `json:"model"`
-	BaseURL  string              `json:"base_url"`
-	MaxTurns int                 `json:"max_turns"`
-	Budget   int                 `json:"budget"`
+	Question string             `json:"question"`
+	Cover    string             `json:"cover"`
+	WorkDir  string             `json:"work_dir"`
+	StoreDir string             `json:"store_dir"`
+	Manifest pdfmemory.Manifest `json:"manifest"`
+	Model    string             `json:"model"`
+	BaseURL  string             `json:"base_url"`
+	MaxTurns int                `json:"max_turns"`
+	Budget   int                `json:"budget"`
+
+	// ClassifierEndpoint, when set, points the question-type classifier
+	// node at a running questionclass-charcnn-r0 HTTP service; empty keeps
+	// that node on its rule-based path.
+	ClassifierEndpoint string `json:"classifier_endpoint,omitempty"`
 }
 
 // ScoutOutput is the scout worker's CapabilityResponse.Output payload.
