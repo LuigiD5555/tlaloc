@@ -8,7 +8,7 @@ import (
 const CrossModelCompatibilitySchemaR1 = "tlaloc.cross-model-compatibility-report.r1"
 
 const (
-	ModelCompatibilityPreservePass = "PRESERVE_PASS"
+	ModelCompatibilityPreservePass  = "PRESERVE_PASS"
 	ModelCompatibilityImproveToPass = "IMPROVE_TO_PASS"
 )
 
@@ -58,7 +58,9 @@ func CheckCrossModelCompatibility(candidate CandidateManifest, outcomes []ModelT
 	byModel := map[string][]bool{}
 	for _, o := range outcomes {
 		id := strings.TrimSpace(o.ModelID)
-		if id == "" { continue }
+		if id == "" {
+			continue
+		}
 		byModel[id] = append(byModel[id], o.Pass)
 	}
 
@@ -101,7 +103,11 @@ func CheckCrossModelCompatibility(candidate CandidateManifest, outcomes []ModelT
 
 		trials := byModel[id]
 		check.Trials = len(trials)
-		for _, pass := range trials { if pass { check.PassedTrials++ } }
+		for _, pass := range trials {
+			if pass {
+				check.PassedTrials++
+			}
+		}
 		if len(trials) == 0 {
 			check.Pass = false
 			check.Reason = "candidate has no real-model outcome for required panel member"
@@ -121,6 +127,8 @@ func CheckCrossModelCompatibility(candidate CandidateManifest, outcomes []ModelT
 		}
 		r.Checks = append(r.Checks, check)
 	}
-	if !r.Pass && r.FailureCode == "" { r.FailureCode = "CROSS_MODEL_COMPATIBILITY_FAILED" }
+	if !r.Pass && r.FailureCode == "" {
+		r.FailureCode = "CROSS_MODEL_COMPATIBILITY_FAILED"
+	}
 	return r
 }

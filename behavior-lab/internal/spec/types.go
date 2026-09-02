@@ -35,7 +35,28 @@ const (
 	StructuredOutputRequired   InvariantCode = "STRUCTURED_OUTPUT_REQUIRED"
 )
 
-type Invariant struct { Code InvariantCode `json:"code"`; Description string `json:"description"`; Severity int `json:"severity"` }
-type Rule struct { Code string `json:"code"`; Description string `json:"description"`; Priority int `json:"priority"` }
-type BehaviorSpec struct { Version string `json:"version"`; ID string `json:"id"`; Description string `json:"description"`; Identity string `json:"identity,omitempty"`; StateKinds []StateKind `json:"state_kinds"`; Operations []Operation `json:"operations"`; Rules []Rule `json:"rules,omitempty"`; Invariants []Invariant `json:"invariants"`; Output OutputSpec `json:"output"` }
-type OutputSpec struct { Format string `json:"format"`; Schema string `json:"schema,omitempty"` }
+type Invariant struct {
+	Code        InvariantCode `json:"code"`
+	Description string        `json:"description"`
+	Severity    int           `json:"severity"`
+}
+type Rule struct {
+	Code        string `json:"code"`
+	Description string `json:"description"`
+	Priority    int    `json:"priority"`
+}
+type BehaviorSpec struct {
+	Version     string      `json:"version"`
+	ID          string      `json:"id"`
+	Description string      `json:"description"`
+	Identity    string      `json:"identity,omitempty"`
+	StateKinds  []StateKind `json:"state_kinds"`
+	Operations  []Operation `json:"operations"`
+	Rules       []Rule      `json:"rules,omitempty"`
+	Invariants  []Invariant `json:"invariants"`
+	Output      OutputSpec  `json:"output"`
+}
+type OutputSpec struct {
+	Format string `json:"format"`
+	Schema string `json:"schema,omitempty"`
+}

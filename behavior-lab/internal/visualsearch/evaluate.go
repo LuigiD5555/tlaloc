@@ -8,15 +8,31 @@ import (
 
 func Evaluate(candidate Candidate, baseline Metrics, evidence Evidence, policy Policy) (Evaluation, error) {
 	policy = normalizePolicy(policy)
-	if candidate.Schema != "" && candidate.Schema != SchemaR0+".candidate" { return Evaluation{}, fmt.Errorf("candidate schema must be %q", SchemaR0+".candidate") }
-	if strings.TrimSpace(candidate.ID) == "" { return Evaluation{}, fmt.Errorf("candidate id is required") }
-	if strings.TrimSpace(candidate.BaseProfileID) == "" { return Evaluation{}, fmt.Errorf("base_profile_id is required") }
-	if evidence.CandidateID != candidate.ID { return Evaluation{}, fmt.Errorf("candidate/evidence id mismatch") }
-	if len(candidate.Mutations) == 0 { return Evaluation{}, fmt.Errorf("candidate must contain at least one mutation") }
+	if candidate.Schema != "" && candidate.Schema != SchemaR0+".candidate" {
+		return Evaluation{}, fmt.Errorf("candidate schema must be %q", SchemaR0+".candidate")
+	}
+	if strings.TrimSpace(candidate.ID) == "" {
+		return Evaluation{}, fmt.Errorf("candidate id is required")
+	}
+	if strings.TrimSpace(candidate.BaseProfileID) == "" {
+		return Evaluation{}, fmt.Errorf("base_profile_id is required")
+	}
+	if evidence.CandidateID != candidate.ID {
+		return Evaluation{}, fmt.Errorf("candidate/evidence id mismatch")
+	}
+	if len(candidate.Mutations) == 0 {
+		return Evaluation{}, fmt.Errorf("candidate must contain at least one mutation")
+	}
 	for i, mutation := range candidate.Mutations {
-		if !validMutationKind(mutation.Kind) { return Evaluation{}, fmt.Errorf("mutation %d has unsupported kind %q", i, mutation.Kind) }
-		if strings.TrimSpace(mutation.Target) == "" || strings.TrimSpace(mutation.Value) == "" { return Evaluation{}, fmt.Errorf("mutation %d requires target and value", i) }
-		if !mutation.Experimental { return Evaluation{}, fmt.Errorf("candidate mutation %d must remain experimental until Origami promotion", i) }
+		if !validMutationKind(mutation.Kind) {
+			return Evaluation{}, fmt.Errorf("mutation %d has unsupported kind %q", i, mutation.Kind)
+		}
+		if strings.TrimSpace(mutation.Target) == "" || strings.TrimSpace(mutation.Value) == "" {
+			return Evaluation{}, fmt.Errorf("mutation %d requires target and value", i)
+		}
+		if !mutation.Experimental {
+			return Evaluation{}, fmt.Errorf("candidate mutation %d must remain experimental until Origami promotion", i)
+		}
 	}
 
 	metrics := evidence.Metrics
@@ -57,36 +73,65 @@ func Evaluate(candidate Candidate, baseline Metrics, evidence Evidence, policy P
 		gate("MEASURABLE_IMPROVEMENT", improvement >= policy.MinImprovement, "candidate does not improve enough over baseline"),
 	}
 	pass := true
-	for _, g := range gates { if !g.Pass { pass = false; break } }
+	for _, g := range gates {
+		if !g.Pass {
+			pass = false
+			break
+		}
+	}
 	recommendation := "REJECT_OR_CONTINUE_EXPERIMENT"
-	if pass { recommendation = "RECOMMEND_TO_ORIGAMI_FOR_PROFILE_VALIDATION" }
+	if pass {
+		recommendation = "RECOMMEND_TO_ORIGAMI_FOR_PROFILE_VALIDATION"
+	}
 	mutations := append([]Mutation(nil), candidate.Mutations...)
 	sort.Slice(mutations, func(i, j int) bool {
 		if mutations[i].Kind == mutations[j].Kind {
-			if mutations[i].Target == mutations[j].Target { return mutations[i].Value < mutations[j].Value }
+			if mutations[i].Target == mutations[j].Target {
+				return mutations[i].Value < mutations[j].Value
+			}
 			return mutations[i].Target < mutations[j].Target
 		}
 		return mutations[i].Kind < mutations[j].Kind
 	})
-	return Evaluation{Schema: SchemaR0+".evaluation", CandidateID:candidate.ID, BaseProfileID:candidate.BaseProfileID, Score:candidateScore, BaselineScore:baselineScore, Improvement:improvement, Gates:gates, PromotionCandidate:pass, Recommendation:recommendation, Metrics:metrics, Mutations:mutations}, nil
+	return Evaluation{Schema: SchemaR0 + ".evaluation", CandidateID: candidate.ID, BaseProfileID: candidate.BaseProfileID, Score: candidateScore, BaselineScore: baselineScore, Improvement: improvement, Gates: gates, PromotionCandidate: pass, Recommendation: recommendation, Metrics: metrics, Mutations: mutations}, nil
 }
 
 func Rank(baseProfileID string, baseline Metrics, candidates []Candidate, evidence []Evidence, policy Policy) (Tournament, error) {
 	byEvidence := map[string]Evidence{}
-	for _, item := range evidence { if _, exists := byEvidence[item.CandidateID]; exists { return Tournament{}, fmt.Errorf("duplicate evidence for candidate %q", item.CandidateID) }; byEvidence[item.CandidateID] = item }
-	result := Tournament{Schema:SchemaR0+".tournament", BaseProfileID:baseProfileID, Baseline:baseline, Authority:"TLALOC_RECOMMENDATION_ONLY_ORIGAMI_OWNS_PROFILE_PROMOTION_TONAL_COMPOSES_TOOLCHAINS", Recommendation:"NO_CANDIDATE_READY"}
+	for _, item := range evidence {
+		if _, exists := byEvidence[item.CandidateID]; exists {
+			return Tournament{}, fmt.Errorf("duplicate evidence for candidate %q", item.CandidateID)
+		}
+		byEvidence[item.CandidateID] = item
+	}
+	result := Tournament{Schema: SchemaR0 + ".tournament", BaseProfileID: baseProfileID, Baseline: baseline, Authority: "TLALOC_RECOMMENDATION_ONLY_ORIGAMI_OWNS_PROFILE_PROMOTION_TONAL_COMPOSES_TOOLCHAINS", Recommendation: "NO_CANDIDATE_READY"}
 	for _, candidate := range candidates {
-		if candidate.BaseProfileID != baseProfileID { return Tournament{}, fmt.Errorf("candidate %q base profile mismatch", candidate.ID) }
-		item, ok := byEvidence[candidate.ID]; if !ok { return Tournament{}, fmt.Errorf("missing evidence for candidate %q", candidate.ID) }
-		evaluation, err := Evaluate(candidate, baseline, item, policy); if err != nil { return Tournament{}, err }
+		if candidate.BaseProfileID != baseProfileID {
+			return Tournament{}, fmt.Errorf("candidate %q base profile mismatch", candidate.ID)
+		}
+		item, ok := byEvidence[candidate.ID]
+		if !ok {
+			return Tournament{}, fmt.Errorf("missing evidence for candidate %q", candidate.ID)
+		}
+		evaluation, err := Evaluate(candidate, baseline, item, policy)
+		if err != nil {
+			return Tournament{}, err
+		}
 		result.Evaluations = append(result.Evaluations, evaluation)
 	}
 	sort.Slice(result.Evaluations, func(i, j int) bool {
-		if result.Evaluations[i].PromotionCandidate != result.Evaluations[j].PromotionCandidate { return result.Evaluations[i].PromotionCandidate }
-		if result.Evaluations[i].Score == result.Evaluations[j].Score { return result.Evaluations[i].CandidateID < result.Evaluations[j].CandidateID }
+		if result.Evaluations[i].PromotionCandidate != result.Evaluations[j].PromotionCandidate {
+			return result.Evaluations[i].PromotionCandidate
+		}
+		if result.Evaluations[i].Score == result.Evaluations[j].Score {
+			return result.Evaluations[i].CandidateID < result.Evaluations[j].CandidateID
+		}
 		return result.Evaluations[i].Score > result.Evaluations[j].Score
 	})
-	if len(result.Evaluations) > 0 && result.Evaluations[0].PromotionCandidate { result.WinnerID = result.Evaluations[0].CandidateID; result.Recommendation = "RECOMMEND_WINNER_TO_ORIGAMI_FOR_CANONICAL_PROFILE_VALIDATION" }
+	if len(result.Evaluations) > 0 && result.Evaluations[0].PromotionCandidate {
+		result.WinnerID = result.Evaluations[0].CandidateID
+		result.Recommendation = "RECOMMEND_WINNER_TO_ORIGAMI_FOR_CANONICAL_PROFILE_VALIDATION"
+	}
 	return result, nil
 }
 
@@ -115,17 +160,39 @@ func score(metrics Metrics, baseline Metrics, policy Policy) float64 {
 
 func normalizePolicy(policy Policy) Policy {
 	defaults := DefaultPolicy()
-	if policy.MaxCarrierBytes <= 0 { policy.MaxCarrierBytes = defaults.MaxCarrierBytes }
-	if policy.MaxMeanContextTokens <= 0 { policy.MaxMeanContextTokens = defaults.MaxMeanContextTokens }
-	if policy.MinSemanticRoundtripRate <= 0 { policy.MinSemanticRoundtripRate = defaults.MinSemanticRoundtripRate }
-	if policy.MinNativeIndexRecoveryRate <= 0 { policy.MinNativeIndexRecoveryRate = defaults.MinNativeIndexRecoveryRate }
-	if policy.MinNativeSemanticAnswerRate <= 0 { policy.MinNativeSemanticAnswerRate = defaults.MinNativeSemanticAnswerRate }
-	if policy.MinVerifiedEvidenceRate <= 0 { policy.MinVerifiedEvidenceRate = defaults.MinVerifiedEvidenceRate }
-	if policy.MinRoutingAccuracy <= 0 { policy.MinRoutingAccuracy = defaults.MinRoutingAccuracy }
-	if policy.MinPerceptualRevealRate <= 0 { policy.MinPerceptualRevealRate = defaults.MinPerceptualRevealRate }
-	if policy.MinRealModelsForPerception <= 0 { policy.MinRealModelsForPerception = defaults.MinRealModelsForPerception }
-	if policy.MinTrials <= 0 { policy.MinTrials = defaults.MinTrials }
-	if policy.MinImprovement <= 0 { policy.MinImprovement = defaults.MinImprovement }
+	if policy.MaxCarrierBytes <= 0 {
+		policy.MaxCarrierBytes = defaults.MaxCarrierBytes
+	}
+	if policy.MaxMeanContextTokens <= 0 {
+		policy.MaxMeanContextTokens = defaults.MaxMeanContextTokens
+	}
+	if policy.MinSemanticRoundtripRate <= 0 {
+		policy.MinSemanticRoundtripRate = defaults.MinSemanticRoundtripRate
+	}
+	if policy.MinNativeIndexRecoveryRate <= 0 {
+		policy.MinNativeIndexRecoveryRate = defaults.MinNativeIndexRecoveryRate
+	}
+	if policy.MinNativeSemanticAnswerRate <= 0 {
+		policy.MinNativeSemanticAnswerRate = defaults.MinNativeSemanticAnswerRate
+	}
+	if policy.MinVerifiedEvidenceRate <= 0 {
+		policy.MinVerifiedEvidenceRate = defaults.MinVerifiedEvidenceRate
+	}
+	if policy.MinRoutingAccuracy <= 0 {
+		policy.MinRoutingAccuracy = defaults.MinRoutingAccuracy
+	}
+	if policy.MinPerceptualRevealRate <= 0 {
+		policy.MinPerceptualRevealRate = defaults.MinPerceptualRevealRate
+	}
+	if policy.MinRealModelsForPerception <= 0 {
+		policy.MinRealModelsForPerception = defaults.MinRealModelsForPerception
+	}
+	if policy.MinTrials <= 0 {
+		policy.MinTrials = defaults.MinTrials
+	}
+	if policy.MinImprovement <= 0 {
+		policy.MinImprovement = defaults.MinImprovement
+	}
 	return policy
 }
 
@@ -141,19 +208,45 @@ func validMutationKind(kind MutationKind) bool {
 func usesAdvancedPerceptualMutation(candidate Candidate) bool {
 	for _, mutation := range candidate.Mutations {
 		switch mutation.Kind {
-		case MutationInterferenceStructure, MutationDepthStructure, MutationTemporalStructure, MutationEmergentStructure: return true
+		case MutationInterferenceStructure, MutationDepthStructure, MutationTemporalStructure, MutationEmergentStructure:
+			return true
 		}
 	}
 	return false
 }
 
 func relativeSemanticDensity(candidate, baseline Metrics) float64 {
-	if candidate.RecoverableSemanticUnits <= 0 || baseline.RecoverableSemanticUnits <= 0 || candidate.CarrierBytes <= 0 || baseline.CarrierBytes <= 0 { return 0.5 }
+	if candidate.RecoverableSemanticUnits <= 0 || baseline.RecoverableSemanticUnits <= 0 || candidate.CarrierBytes <= 0 || baseline.CarrierBytes <= 0 {
+		return 0.5
+	}
 	candidateDensity := float64(candidate.RecoverableSemanticUnits) / float64(candidate.CarrierBytes)
 	baselineDensity := float64(baseline.RecoverableSemanticUnits) / float64(baseline.CarrierBytes)
 	return relativeHigherIsBetter(candidateDensity, baselineDensity)
 }
-func relativeHigherIsBetter(candidate, baseline float64) float64 { if candidate <= 0 || baseline <= 0 { return 0.5 }; return candidate / (candidate + baseline) }
-func relativeLowerIsBetter(candidate, baseline float64) float64 { if candidate <= 0 || baseline <= 0 { return 0.5 }; return baseline / (candidate + baseline) }
-func gate(name string, pass bool, reason string) Gate { if pass { reason = "" }; return Gate{Name:name,Pass:pass,Reason:reason} }
-func clamp01(value float64) float64 { if value < 0 { return 0 }; if value > 1 { return 1 }; return value }
+func relativeHigherIsBetter(candidate, baseline float64) float64 {
+	if candidate <= 0 || baseline <= 0 {
+		return 0.5
+	}
+	return candidate / (candidate + baseline)
+}
+func relativeLowerIsBetter(candidate, baseline float64) float64 {
+	if candidate <= 0 || baseline <= 0 {
+		return 0.5
+	}
+	return baseline / (candidate + baseline)
+}
+func gate(name string, pass bool, reason string) Gate {
+	if pass {
+		reason = ""
+	}
+	return Gate{Name: name, Pass: pass, Reason: reason}
+}
+func clamp01(value float64) float64 {
+	if value < 0 {
+		return 0
+	}
+	if value > 1 {
+		return 1
+	}
+	return value
+}

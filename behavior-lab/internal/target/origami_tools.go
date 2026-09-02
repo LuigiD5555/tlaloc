@@ -34,15 +34,21 @@ func OrigamiHybridTools() []ToolDefinition {
 
 func (e OrigamiCLIExecutor) Execute(ctx context.Context, name string, arguments json.RawMessage) (string, error) {
 	binary := e.Binary
-	if binary == "" { binary = "origami-hybrid-tool" }
-	if e.Carrier == "" || e.Packet == "" { return "", fmt.Errorf("Origami carrier and packet paths are required") }
+	if binary == "" {
+		binary = "origami-hybrid-tool"
+	}
+	if e.Carrier == "" || e.Packet == "" {
+		return "", fmt.Errorf("Origami carrier and packet paths are required")
+	}
 	var args struct {
 		Query    string `json:"query"`
 		Relation string `json:"relation"`
 		Depth    int    `json:"depth"`
 	}
 	if len(arguments) > 0 {
-		if err := json.Unmarshal(arguments, &args); err != nil { return "", err }
+		if err := json.Unmarshal(arguments, &args); err != nil {
+			return "", err
+		}
 	}
 
 	op := ""
@@ -51,13 +57,23 @@ func (e OrigamiCLIExecutor) Execute(ctx context.Context, name string, arguments 
 	case "origami_boot":
 		op = "BOOT"
 	case "origami_lookup":
-		if args.Query == "" { return "", fmt.Errorf("origami_lookup requires query") }
+		if args.Query == "" {
+			return "", fmt.Errorf("origami_lookup requires query")
+		}
 		op = "LOOKUP"
 		cmdArgs = append(cmdArgs, "-query", args.Query)
 	case "origami_follow", "origami_trace":
-		if args.Query == "" || args.Relation == "" { return "", fmt.Errorf("%s requires query and relation", name) }
-		if args.Depth < 0 || args.Depth > 1024 { return "", fmt.Errorf("depth out of bounds: %d", args.Depth) }
-		if name == "origami_follow" { op = "FOLLOW" } else { op = "TRACE" }
+		if args.Query == "" || args.Relation == "" {
+			return "", fmt.Errorf("%s requires query and relation", name)
+		}
+		if args.Depth < 0 || args.Depth > 1024 {
+			return "", fmt.Errorf("depth out of bounds: %d", args.Depth)
+		}
+		if name == "origami_follow" {
+			op = "FOLLOW"
+		} else {
+			op = "TRACE"
+		}
 		cmdArgs = append(cmdArgs, "-query", args.Query, "-relation", args.Relation, "-depth", strconv.Itoa(args.Depth))
 	case "origami_verify":
 		op = "VERIFY"
@@ -69,6 +85,8 @@ func (e OrigamiCLIExecutor) Execute(ctx context.Context, name string, arguments 
 	cmdArgs = append(cmdArgs, "-op", op)
 	cmd := exec.CommandContext(ctx, binary, cmdArgs...)
 	out, err := cmd.CombinedOutput()
-	if err != nil { return "", fmt.Errorf("%s failed: %w: %s", binary, err, strings.TrimSpace(string(out))) }
+	if err != nil {
+		return "", fmt.Errorf("%s failed: %w: %s", binary, err, strings.TrimSpace(string(out)))
+	}
 	return strings.TrimSpace(string(out)), nil
 }

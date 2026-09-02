@@ -15,15 +15,15 @@ const (
 )
 
 type Trial struct {
-	Schema                     string     `json:"schema"`
-	ID                         string     `json:"id"`
-	QueryClass                 QueryClass `json:"query_class"`
-	Question                   string     `json:"question"`
-	ExpectedEntries            []string   `json:"expected_entries,omitempty"`
-	ModelOutput                string     `json:"model_output"`
-	DeclaredExactCapability    bool       `json:"declared_exact_capability"`
-	ExpectedSemanticDecoder    string     `json:"expected_semantic_decoder,omitempty"`
-	DeclaredSemanticDecoder    string     `json:"declared_semantic_decoder,omitempty"`
+	Schema                  string     `json:"schema"`
+	ID                      string     `json:"id"`
+	QueryClass              QueryClass `json:"query_class"`
+	Question                string     `json:"question"`
+	ExpectedEntries         []string   `json:"expected_entries,omitempty"`
+	ModelOutput             string     `json:"model_output"`
+	DeclaredExactCapability bool       `json:"declared_exact_capability"`
+	ExpectedSemanticDecoder string     `json:"expected_semantic_decoder,omitempty"`
+	DeclaredSemanticDecoder string     `json:"declared_semantic_decoder,omitempty"`
 }
 
 type Result struct {
@@ -45,7 +45,9 @@ func Evaluate(t Trial) Result {
 	if len(t.ExpectedEntries) > 0 {
 		matched := 0
 		for _, entry := range t.ExpectedEntries {
-			if strings.Contains(out, normalize(entry)) { matched++ }
+			if strings.Contains(out, normalize(entry)) {
+				matched++
+			}
 		}
 		result.IndexRecoveryRate = float64(matched) / float64(len(t.ExpectedEntries))
 	}
@@ -72,13 +74,18 @@ func Evaluate(t Trial) Result {
 	}
 
 	if !t.DeclaredExactCapability {
-		for _, marker := range []struct{label string; phrases []string}{
+		for _, marker := range []struct {
+			label   string
+			phrases []string
+		}{
 			{"BYTE_LAYOUT", []string{" BYTES", "BYTE HEADER", "BYTE PAYLOAD"}},
 			{"COMPRESSION", []string{"BZIP2", "GZIP", "ZSTD", "COMPRESSED RESIDUAL"}},
 			{"HASH", []string{"SHA256:", "SHA-256:", "HASH SHA256"}},
 			{"ARCHIVE", []string{"ARCHIVE CONTENTS", "DECOMPRESS THE RESIDUAL"}},
 		} {
-			if containsAny(out, marker.phrases) { result.UnverifiedMechanicalClaims = append(result.UnverifiedMechanicalClaims, marker.label) }
+			if containsAny(out, marker.phrases) {
+				result.UnverifiedMechanicalClaims = append(result.UnverifiedMechanicalClaims, marker.label)
+			}
 		}
 	}
 
@@ -107,7 +114,11 @@ func isSemantic(class QueryClass) bool {
 }
 
 func containsAny(text string, phrases []string) bool {
-	for _, phrase := range phrases { if strings.Contains(text, phrase) { return true } }
+	for _, phrase := range phrases {
+		if strings.Contains(text, phrase) {
+			return true
+		}
+	}
 	return false
 }
 
