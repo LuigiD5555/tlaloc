@@ -40,11 +40,22 @@ var antonymPairs = [][2]string{
 	{"present", "absent"}, {"presente", "ausente"},
 	{"true", "false"}, {"verdadero", "falso"}, {"verdadera", "falsa"},
 	{"distributed", "centralized"}, {"distribuido", "centralizado"}, {"distribuida", "centralizada"},
+	// R1 additions
+	{"centralized", "decentralized"}, {"centralised", "decentralised"},
+	{"central", "decentralized"}, {"central", "decentralised"},
+	{"required", "optional"}, {"mandatory", "optional"}, {"obligatorio", "opcional"},
+	{"up", "down"}, {"higher", "lower"}, {"more", "fewer"}, {"more", "less"},
+	{"synchronous", "asynchronous"}, {"sincrono", "asincrono"},
+	{"include", "exclude"}, {"includes", "excludes"}, {"incluye", "excluye"},
+	{"toward", "away"}, {"towards", "away"}, {"hacia", "lejos"},
 }
 
 func Verify(in VerifyInput) VerifyOutput {
 	claims := splitClaims(in.ModelAnswer)
 	if len(claims) == 0 {
+		return VerifyOutput{Verdict: VerdictInsufficient, Claims: []ClaimTrace{}}
+	}
+	if isNonAnswer(in.ModelAnswer) {
 		return VerifyOutput{Verdict: VerdictInsufficient, Claims: []ClaimTrace{}}
 	}
 
@@ -55,7 +66,18 @@ func Verify(in VerifyInput) VerifyOutput {
 	for _, claim := range claims {
 		evidence, alignment := bestEvidence(claim, evidenceSpans)
 		trace := ClaimTrace{Claim: claim, Evidence: evidence, Alignment: alignment, Verdict: VerdictUnknown}
-		if alignment < AlignmentCandidateThreshold || evidence == "" {
+
+		// A claim below the candidate threshold is still inspected for
+		// CONTRADICTION (not support) when the aligned span carries an
+		// unambiguous conflict signal AND shares a core content term — the
+		// lexical-coverage metric systematically under-scores a long claim
+		// against a short conflicting evidence sentence ("...is centralised
+		// through a leader node" vs "there is no leader node").
+		strongConflict := evidence != "" &&
+			carriesContradictionSignal(claim, evidence) &&
+			sharesCoreTerm(claim, evidence)
+
+		if (alignment < AlignmentCandidateThreshold || evidence == "") && !strongConflict {
 			trace.Reasons = append(trace.Reasons, Reason{Code: ReasonLowAlignment, Claim: claim, Evidence: evidence})
 			traces = append(traces, trace)
 			continue
@@ -64,7 +86,7 @@ func Verify(in VerifyInput) VerifyOutput {
 		covered++
 		trace.Reasons = append(trace.Reasons, Reason{Code: ReasonAligned, Claim: claim, Evidence: evidence})
 
-		if detail, ok := numericContradiction(claim, evidence); ok {
+		if detail, ok := numericContradictionR1(claim, evidence); ok {
 			trace.Verdict = VerdictContradicted
 			trace.Reasons = append(trace.Reasons, Reason{Code: ReasonNumericContradiction, Claim: claim, Evidence: evidence, Detail: detail})
 			contradicted++
@@ -93,7 +115,9 @@ func Verify(in VerifyInput) VerifyOutput {
 			continue
 		}
 
-		if alignment >= AlignmentSupportThreshold {
+		if alignment >= AlignmentSupportThreshold &&
+			len(coreTerms(claim)) >= 2 &&
+			claimNumbersConsistent(claim, evidence) {
 			trace.Verdict = VerdictSupported
 			supported++
 		}
@@ -147,19 +171,76 @@ func splitClaims(text string) []string {
 	return out
 }
 
+// tieBreakMargin: a span scoring within this of the top span is treated as
+// an equally plausible alignment for tie-breaking purposes.
+const tieBreakMargin = 0.15
+
 func bestEvidence(claim string, spans []string) (string, float64) {
 	best, bestScore := "", 0.0
-	for _, span := range spans {
-		score := claimCoverage(claim, span)
-		if score > bestScore {
-			best, bestScore = span, score
+	scores := make([]float64, len(spans))
+	for i, span := range spans {
+		scores[i] = claimCoverage(claim, span)
+		if scores[i] > bestScore {
+			best, bestScore = span, scores[i]
+		}
+	}
+	// R1 tie-break: among spans within tieBreakMargin of the top score and
+	// above the candidate threshold, prefer one that carries a contradiction
+	// signal against the claim (opposite negation parity, or an antonym of a
+	// claim term). This fixes multi-claim answers where a claim's
+	// lexically-closest span is not the one it actually conflicts with. It
+	// can only route toward CONTRADICTED — never toward a false SUPPORTED.
+	if bestScore >= AlignmentCandidateThreshold && !carriesContradictionSignal(claim, best) {
+		for i, span := range spans {
+			if span == best || scores[i] < AlignmentCandidateThreshold || scores[i] < bestScore-tieBreakMargin {
+				continue
+			}
+			if carriesContradictionSignal(claim, span) {
+				return span, scores[i]
+			}
 		}
 	}
 	return best, bestScore
 }
 
+// sharesCoreTerm reports whether the claim and span share at least one
+// lemmatised core content term — the guard that keeps the below-threshold
+// contradiction bypass from firing on unrelated sentences.
+func sharesCoreTerm(claim, span string) bool {
+	spanTerms := contentTerms(span)
+	for term := range coreTerms(claim) {
+		if _, ok := spanTerms[term]; ok {
+			return true
+		}
+	}
+	return false
+}
+
+func carriesContradictionSignal(claim, span string) bool {
+	if span == "" {
+		return false
+	}
+	if hasNegation(claim) != hasNegation(span) {
+		return true
+	}
+	if _, ok := antonymContradiction(claim, span); ok {
+		return true
+	}
+	if _, ok := quantifierContradiction(claim, span); ok {
+		return true
+	}
+	return false
+}
+
+// claimCoverage is the R1 alignment score: the fraction of the claim's
+// *core* content terms (meta-prefix and filler/degree words removed, then
+// lemmatised) that appear in the evidence span. Removing filler stops a
+// long or hedged claim from being penalised for words the evidence has no
+// reason to echo; lemmatising bridges "loss"/"losing", "requires"/"needs".
+// The evidence side is NOT trimmed — only lemmatised — so alignment can
+// only rise from a real synonym match, never from dropping evidence content.
 func claimCoverage(claim, evidence string) float64 {
-	claimTerms := contentTerms(claim)
+	claimTerms := coreTerms(claim)
 	if len(claimTerms) == 0 {
 		return 0
 	}
@@ -174,17 +255,41 @@ func claimCoverage(claim, evidence string) float64 {
 }
 
 func contentTerms(text string) map[string]struct{} {
+	return termsOf(text, false)
+}
+
+// coreTerms is contentTerms with the meta prefix stripped and filler/degree
+// words dropped.
+func coreTerms(text string) map[string]struct{} {
+	return termsOf(stripMetaPrefix(text), true)
+}
+
+func termsOf(text string, core bool) map[string]struct{} {
 	norm := normalize(text)
 	terms := make(map[string]struct{})
-	for _, field := range strings.Fields(norm) {
-		field = stem(field)
+	for _, raw := range strings.Fields(norm) {
+		field := stem(raw)
 		if len(field) < 2 {
 			continue
 		}
 		if _, stop := stopwords[field]; stop {
 			continue
 		}
-		terms[field] = struct{}{}
+		if core {
+			// The claim core also drops broad grammatical glue and
+			// filler/degree words so a long or hedged claim is not
+			// penalised on alignment for words the evidence needn't echo.
+			if _, g := grammarWords[raw]; g {
+				continue
+			}
+			if _, g := grammarWords[field]; g {
+				continue
+			}
+			if _, filler := fillerTerms[field]; filler {
+				continue
+			}
+		}
+		terms[lemma(field)] = struct{}{}
 	}
 	return terms
 }
@@ -280,16 +385,16 @@ func quantifierContradiction(claim, evidence string) (string, bool) {
 func quantifierClass(text string) int {
 	norm := " " + normalize(text) + " "
 	switch {
-	case containsAnyPhrase(norm, "all", "todos", "todas"):
+	case containsAnyPhrase(norm, "all", "every", "todos", "todas", "cada"):
 		return quantifierAll
 	case containsAnyPhrase(norm, "none", "ninguno", "ninguna"):
 		return quantifierNever
-	case containsAnyPhrase(norm, "some", "algunos", "algunas"):
-		return quantifierSome
-	case containsAnyPhrase(norm, "never", "nunca"):
+	case containsAnyPhrase(norm, "never", "nunca", "rarely", "seldom", "raramente"):
 		return quantifierNever
-	case containsAnyPhrase(norm, "always", "siempre"):
+	case containsAnyPhrase(norm, "always", "usually", "typically", "frequently", "siempre", "usualmente"):
 		return quantifierAlways
+	case containsAnyPhrase(norm, "some", "several", "algunos", "algunas", "varios"):
+		return quantifierSome
 	default:
 		return quantifierNone
 	}
