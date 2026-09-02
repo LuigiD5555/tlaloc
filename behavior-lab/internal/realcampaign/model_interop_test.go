@@ -4,11 +4,11 @@ import "testing"
 
 func TestDetectModelFamily(t *testing.T) {
 	cases := map[string]string{
-		"lfm2-vl-1.6b": ModelFamilyLiquidAI,
+		"lfm2-vl-1.6b":     ModelFamilyLiquidAI,
 		"LiquidAI/LFM2-VL": ModelFamilyLiquidAI,
-		"deepseek-vl2": ModelFamilyDeepSeek,
-		"Qwen2.5-VL-7B": ModelFamilyQwen,
-		"other-model": ModelFamilyUnknown,
+		"deepseek-vl2":     ModelFamilyDeepSeek,
+		"Qwen2.5-VL-7B":    ModelFamilyQwen,
+		"other-model":      ModelFamilyUnknown,
 	}
 	for id, want := range cases {
 		if got := DetectModelFamily(id); got != want {

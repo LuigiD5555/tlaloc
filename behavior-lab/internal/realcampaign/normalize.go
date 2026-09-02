@@ -58,10 +58,10 @@ func Normalize(spec Spec) (Spec, error) {
 		spec.InteropMemoryRoot = DefaultInteropMemoryRoot()
 	}
 	for name, value := range map[string]string{
-		"program": spec.Program,
-		"temporal_carrier": spec.TemporalCarrier,
+		"program":           spec.Program,
+		"temporal_carrier":  spec.TemporalCarrier,
 		"candidate_builder": spec.CandidateBuilder,
-		"output_dir": spec.OutputDir,
+		"output_dir":        spec.OutputDir,
 	} {
 		if strings.TrimSpace(value) == "" {
 			return Spec{}, fmt.Errorf("%s is required", name)
@@ -118,8 +118,8 @@ func Normalize(spec Spec) (Spec, error) {
 }
 
 type signalChainProgram struct {
-	Schema string `json:"schema"`
-	ID     string `json:"id"`
+	Schema    string `json:"schema"`
+	ID        string `json:"id"`
 	Automaton struct {
 		Schema string `json:"schema"`
 		ID     string `json:"id"`

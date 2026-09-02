@@ -27,20 +27,20 @@ type WorkingEvidence struct {
 }
 
 type WorkingConfiguration struct {
-	Schema              string              `json:"schema"`
-	Fingerprint         string              `json:"fingerprint"`
-	FirstSeen           string              `json:"first_seen"`
-	LastSeen            string              `json:"last_seen"`
-	SuccessCount        int                 `json:"success_count"`
-	ModelInterop        ModelInteropProfile `json:"model_interop"`
-	Endpoint            string              `json:"endpoint"`
-	MediaType           string              `json:"media_type"`
-	Temperature         float64             `json:"temperature"`
-	TimeoutSeconds      int                 `json:"timeout_seconds"`
-	TransportRetries    int                 `json:"transport_retries"`
-	Conditions          []string            `json:"conditions,omitempty"`
-	MasterPromptSHA256  string              `json:"master_prompt_sha256,omitempty"`
-	Evidence            []WorkingEvidence   `json:"evidence"`
+	Schema             string              `json:"schema"`
+	Fingerprint        string              `json:"fingerprint"`
+	FirstSeen          string              `json:"first_seen"`
+	LastSeen           string              `json:"last_seen"`
+	SuccessCount       int                 `json:"success_count"`
+	ModelInterop       ModelInteropProfile `json:"model_interop"`
+	Endpoint           string              `json:"endpoint"`
+	MediaType          string              `json:"media_type"`
+	Temperature        float64             `json:"temperature"`
+	TimeoutSeconds     int                 `json:"timeout_seconds"`
+	TransportRetries   int                 `json:"transport_retries"`
+	Conditions         []string            `json:"conditions,omitempty"`
+	MasterPromptSHA256 string              `json:"master_prompt_sha256,omitempty"`
+	Evidence           []WorkingEvidence   `json:"evidence"`
 }
 
 type WorkingConfigurationRegistry struct {
@@ -66,24 +66,24 @@ func DefaultInteropMemoryRoot() string {
 func BuildWorkingConfiguration(spec Spec, profile ModelInteropProfile, stage, programSHA, carrierSHA, probeResponse string) WorkingConfiguration {
 	now := time.Now().UTC().Format(time.RFC3339)
 	cfg := WorkingConfiguration{
-		Schema: WorkingConfigurationSchema,
-		FirstSeen: now,
-		LastSeen: now,
-		SuccessCount: 1,
-		ModelInterop: profile,
-		Endpoint: spec.Endpoint,
-		MediaType: "image/png",
-		Temperature: spec.Temperature,
-		TimeoutSeconds: spec.TimeoutSeconds,
-		TransportRetries: spec.TransportRetries,
-		Conditions: append([]string(nil), spec.Conditions...),
+		Schema:             WorkingConfigurationSchema,
+		FirstSeen:          now,
+		LastSeen:           now,
+		SuccessCount:       1,
+		ModelInterop:       profile,
+		Endpoint:           spec.Endpoint,
+		MediaType:          "image/png",
+		Temperature:        spec.Temperature,
+		TimeoutSeconds:     spec.TimeoutSeconds,
+		TransportRetries:   spec.TransportRetries,
+		Conditions:         append([]string(nil), spec.Conditions...),
 		MasterPromptSHA256: hashText(spec.MasterPrompt),
 		Evidence: []WorkingEvidence{{
-			RecordedAt: now,
-			Stage: strings.ToUpper(strings.TrimSpace(stage)),
-			Outcome: "PASS",
-			ProgramSHA256: programSHA,
-			CarrierSHA256: carrierSHA,
+			RecordedAt:          now,
+			Stage:               strings.ToUpper(strings.TrimSpace(stage)),
+			Outcome:             "PASS",
+			ProgramSHA256:       programSHA,
+			CarrierSHA256:       carrierSHA,
 			ProbeResponseSHA256: hashText(probeResponse),
 		}},
 	}
@@ -101,9 +101,9 @@ func RecordWorkingConfiguration(root string, cfg WorkingConfiguration) (string, 
 	}
 	path := filepath.Join(modelDir, "working-configurations.json")
 	reg := WorkingConfigurationRegistry{
-		Schema: "tlaloc.model-working-configuration-registry.r0",
+		Schema:  "tlaloc.model-working-configuration-registry.r0",
 		ModelID: cfg.ModelInterop.ModelID,
-		Family: cfg.ModelInterop.Family,
+		Family:  cfg.ModelInterop.Family,
 	}
 	if body, err := os.ReadFile(path); err == nil {
 		if err := json.Unmarshal(body, &reg); err != nil {
@@ -139,22 +139,22 @@ func writeWorkingRegistry(path string, reg WorkingConfigurationRegistry) error {
 
 func workingConfigurationFingerprint(cfg WorkingConfiguration) string {
 	stable := struct {
-		ModelInterop ModelInteropProfile `json:"model_interop"`
-		Endpoint string `json:"endpoint"`
-		MediaType string `json:"media_type"`
-		Temperature float64 `json:"temperature"`
-		TimeoutSeconds int `json:"timeout_seconds"`
-		TransportRetries int `json:"transport_retries"`
-		Conditions []string `json:"conditions"`
-		MasterPromptSHA256 string `json:"master_prompt_sha256"`
+		ModelInterop       ModelInteropProfile `json:"model_interop"`
+		Endpoint           string              `json:"endpoint"`
+		MediaType          string              `json:"media_type"`
+		Temperature        float64             `json:"temperature"`
+		TimeoutSeconds     int                 `json:"timeout_seconds"`
+		TransportRetries   int                 `json:"transport_retries"`
+		Conditions         []string            `json:"conditions"`
+		MasterPromptSHA256 string              `json:"master_prompt_sha256"`
 	}{
-		ModelInterop: cfg.ModelInterop,
-		Endpoint: cfg.Endpoint,
-		MediaType: cfg.MediaType,
-		Temperature: cfg.Temperature,
-		TimeoutSeconds: cfg.TimeoutSeconds,
-		TransportRetries: cfg.TransportRetries,
-		Conditions: cfg.Conditions,
+		ModelInterop:       cfg.ModelInterop,
+		Endpoint:           cfg.Endpoint,
+		MediaType:          cfg.MediaType,
+		Temperature:        cfg.Temperature,
+		TimeoutSeconds:     cfg.TimeoutSeconds,
+		TransportRetries:   cfg.TransportRetries,
+		Conditions:         cfg.Conditions,
 		MasterPromptSHA256: cfg.MasterPromptSHA256,
 	}
 	body, _ := json.Marshal(stable)

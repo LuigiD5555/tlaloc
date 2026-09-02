@@ -10,9 +10,9 @@ const (
 	ModelFamilyQwen     = "QWEN"
 	ModelFamilyUnknown  = "UNKNOWN"
 
-	TransportDirectImageAPI = "DIRECT_IMAGE_API"
+	TransportDirectImageAPI   = "DIRECT_IMAGE_API"
 	TransportPlatformMediated = "PLATFORM_MEDIATED"
-	TransportUnknown = "UNKNOWN"
+	TransportUnknown          = "UNKNOWN"
 )
 
 // ModelInteropProfile keeps model identity separate from transport identity.
@@ -68,13 +68,13 @@ func BuildModelInteropProfile(modelID, compatibility, transport string) ModelInt
 	model := strings.TrimSpace(modelID)
 	key := strings.Join([]string{family, model, condition, compat}, "::")
 	return ModelInteropProfile{
-		Schema: ModelInteropSchema,
-		ModelID: model,
-		Family: family,
-		TransportCondition: condition,
+		Schema:                ModelInteropSchema,
+		ModelID:               model,
+		Family:                family,
+		TransportCondition:    condition,
 		CompatibilityStrategy: compat,
-		SpecimenKey: key,
-		EvidenceRule: "OBSERVE_BEHAVIOR_DO_NOT_ASSUME_INTERNALS",
-		ComparisonRule: "COMPARE_EXACT_MODEL_AND_TRANSPORT_FIRST",
+		SpecimenKey:           key,
+		EvidenceRule:          "OBSERVE_BEHAVIOR_DO_NOT_ASSUME_INTERNALS",
+		ComparisonRule:        "COMPARE_EXACT_MODEL_AND_TRANSPORT_FIRST",
 	}
 }

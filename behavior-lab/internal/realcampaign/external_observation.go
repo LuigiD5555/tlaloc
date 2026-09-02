@@ -12,17 +12,17 @@ import (
 const ExternalObservationSchema = "tlaloc.model-interop-external-observation.r0"
 
 type ExternalObservation struct {
-	Schema          string              `json:"schema"`
-	RecordedAt      string              `json:"recorded_at"`
-	Stage           string              `json:"stage"`
-	Outcome         string              `json:"outcome"`
-	ModelInterop    ModelInteropProfile `json:"model_interop"`
-	Endpoint        string              `json:"endpoint,omitempty"`
-	MediaType       string              `json:"media_type,omitempty"`
-	Temperature     float64             `json:"temperature,omitempty"`
-	ResponseSHA256  string              `json:"response_sha256,omitempty"`
-	ResponseText    string              `json:"response_text,omitempty"`
-	Notes           string              `json:"notes,omitempty"`
+	Schema         string              `json:"schema"`
+	RecordedAt     string              `json:"recorded_at"`
+	Stage          string              `json:"stage"`
+	Outcome        string              `json:"outcome"`
+	ModelInterop   ModelInteropProfile `json:"model_interop"`
+	Endpoint       string              `json:"endpoint,omitempty"`
+	MediaType      string              `json:"media_type,omitempty"`
+	Temperature    float64             `json:"temperature,omitempty"`
+	ResponseSHA256 string              `json:"response_sha256,omitempty"`
+	ResponseText   string              `json:"response_text,omitempty"`
+	Notes          string              `json:"notes,omitempty"`
 }
 
 type ExternalObservationRegistry struct {
@@ -41,17 +41,17 @@ func BuildExternalObservation(modelID, compatibility, transport, endpoint, stage
 	}
 	profile := BuildModelInteropProfile(modelID, compatibility, transport)
 	return ExternalObservation{
-		Schema: ExternalObservationSchema,
-		RecordedAt: time.Now().UTC().Format(time.RFC3339),
-		Stage: strings.ToUpper(strings.TrimSpace(stage)),
-		Outcome: strings.ToUpper(strings.TrimSpace(outcome)),
-		ModelInterop: profile,
-		Endpoint: strings.TrimSpace(endpoint),
-		MediaType: "image/png",
-		Temperature: temperature,
+		Schema:         ExternalObservationSchema,
+		RecordedAt:     time.Now().UTC().Format(time.RFC3339),
+		Stage:          strings.ToUpper(strings.TrimSpace(stage)),
+		Outcome:        strings.ToUpper(strings.TrimSpace(outcome)),
+		ModelInterop:   profile,
+		Endpoint:       strings.TrimSpace(endpoint),
+		MediaType:      "image/png",
+		Temperature:    temperature,
 		ResponseSHA256: hashText(response),
-		ResponseText: response,
-		Notes: strings.TrimSpace(notes),
+		ResponseText:   response,
+		Notes:          strings.TrimSpace(notes),
 	}, nil
 }
 
@@ -65,9 +65,9 @@ func RecordExternalObservation(root string, obs ExternalObservation) (string, er
 	}
 	path := filepath.Join(modelDir, "external-observations.json")
 	reg := ExternalObservationRegistry{
-		Schema: "tlaloc.model-interop-external-observation-registry.r0",
+		Schema:  "tlaloc.model-interop-external-observation-registry.r0",
 		ModelID: obs.ModelInterop.ModelID,
-		Family: obs.ModelInterop.Family,
+		Family:  obs.ModelInterop.Family,
 	}
 	if body, err := os.ReadFile(path); err == nil {
 		if err := json.Unmarshal(body, &reg); err != nil {
