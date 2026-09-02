@@ -35,6 +35,8 @@ func main() {
 		cmdSwarmAsk(os.Args[2:])
 	case "validate":
 		cmdValidate(os.Args[2:])
+	case "dump-pages":
+		cmdDumpPages(os.Args[2:])
 	default:
 		fmt.Fprintf(os.Stderr, "Unknown subcommand: %s\n", subcommand)
 		printUsage()
@@ -49,7 +51,60 @@ func printUsage() {
   tlaloc-fold-bench ask -store <store> -model <model> -question <q> [-turns N] [-url URL]
   tlaloc-fold-bench swarm-ask -store <store> -model <model> -question <q> [-turns N] [-url URL]
   tlaloc-fold-bench validate -store <store> -model <model> [-pages N] [-seed SEED] [-flexibility F] [-url URL]
+  tlaloc-fold-bench dump-pages -store <store> [-limit N] [-stride S]
 `)
+}
+
+// cmdDumpPages writes one JSON object per line ({page, address, content}) for
+// pages in the store, resolving each page's real content via the same
+// foldtest.ExtractPageContent path the swarm consolidator uses. It exists to
+// feed offline tooling (e.g. tools/grounding_dataset.py) real page text
+// without duplicating the content-addressed store reader in Python.
+func cmdDumpPages(args []string) {
+	fs := flag.NewFlagSet("dump-pages", flag.ExitOnError)
+	storeDir := fs.String("store", "", "Store directory")
+	limit := fs.Int("limit", 0, "Maximum pages to emit (0 = all)")
+	stride := fs.Int("stride", 1, "Emit every Nth page (spacing across the book)")
+	if err := fs.Parse(args); err != nil {
+		log.Fatal(err)
+	}
+	if *storeDir == "" {
+		fmt.Fprintf(os.Stderr, "Usage: tlaloc-fold-bench dump-pages -store <store> [-limit N] [-stride S]\n")
+		os.Exit(1)
+	}
+	if *stride < 1 {
+		*stride = 1
+	}
+
+	manifest, _, err := pdfmemory.Load(*storeDir)
+	if err != nil {
+		log.Fatalf("Failed to load store: %v", err)
+	}
+
+	encoder := json.NewEncoder(os.Stdout)
+	emitted := 0
+	for index, page := range manifest.Pages {
+		if index%*stride != 0 {
+			continue
+		}
+		if *limit > 0 && emitted >= *limit {
+			break
+		}
+		content, err := foldtest.ExtractPageContent(*storeDir, manifest, page.Number)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "skip page %d: %v\n", page.Number, err)
+			continue
+		}
+		if err := encoder.Encode(map[string]any{
+			"page":    page.Number,
+			"address": page.Address,
+			"content": content,
+		}); err != nil {
+			log.Fatalf("encode page %d: %v", page.Number, err)
+		}
+		emitted++
+	}
+	fmt.Fprintf(os.Stderr, "emitted %d pages\n", emitted)
 }
 
 func cmdBuild(args []string) {
@@ -180,6 +235,9 @@ func cmdSwarmAsk(args []string) {
 	baseURL := fs.String("url", "http://127.0.0.1:1234/v1", "LM Studio API URL")
 	maxTurns := fs.Int("turns", 6, "Maximum turns")
 	classifierService := fs.String("classifier-service", "", "questionclass-charcnn-r0 /execute URL (empty = rule-based question classifier)")
+	classifierCalibration := fs.String("classifier-calibration", "", "CalibrationProfile JSON the classifier consults before trusting the model")
+	groundingService := fs.String("grounding-service", "", "groundingscore-distilled-r0 /execute URL (empty = answerscore grounding judge)")
+	groundingCalibration := fs.String("grounding-calibration", "", "CalibrationProfile JSON the consolidator consults before trusting the distilled score")
 
 	if err := fs.Parse(args); err != nil {
 		log.Fatal(err)
@@ -212,16 +270,19 @@ func cmdSwarmAsk(args []string) {
 	defer cancel()
 
 	answer, report, err := swarmask.Ask(ctx, store, runID, swarmask.AskInput{
-		Question:           *question,
-		Cover:              cover,
-		WorkDir:            workDir,
-		StoreDir:           *storeDir,
-		Manifest:           manifest,
-		Model:              *model,
-		BaseURL:            *baseURL,
-		MaxTurns:           *maxTurns,
-		Budget:             4000,
-		ClassifierEndpoint: *classifierService,
+		Question:                  *question,
+		Cover:                     cover,
+		WorkDir:                   workDir,
+		StoreDir:                  *storeDir,
+		Manifest:                  manifest,
+		Model:                     *model,
+		BaseURL:                   *baseURL,
+		MaxTurns:                  *maxTurns,
+		Budget:                    4000,
+		ClassifierEndpoint:        *classifierService,
+		ClassifierCalibrationPath: *classifierCalibration,
+		GroundingEndpoint:         *groundingService,
+		GroundingCalibrationPath:  *groundingCalibration,
 	})
 	if err != nil {
 		log.Fatalf("swarm-ask failed: %v", err)

@@ -12,7 +12,7 @@ import (
 
 // EntityScoutWorker is a second deterministic "tiny model": it scans the
 // question itself (not the cover — page content isn't available to any node
-// before the loro decides to UNFOLD, same constraint the loro itself has)
+// before the parrot decides to UNFOLD, same constraint the parrot itself has)
 // for literal factual anchors — years, other numbers, acronyms — and posts
 // them as a distinct observation from PageScoutWorker's page suggestion.
 // Silent when the question has none, same as PageScoutWorker.

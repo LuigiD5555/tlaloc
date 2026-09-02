@@ -1,9 +1,9 @@
-// Package swarmask wires a deterministic "page scout" Tlaloque and the loro
+// Package swarmask wires a deterministic "page scout" Tlaloque and the parrot
 // (lfm2-vl-1.6b, via foldtest.RunSession) into a real tlaloque.SwarmRunner
 // DAG, so they share state through the blackboard instead of the ad-hoc
 // in-process fallback chains used by answerscore/questiongen. The scout
 // runs first and, if it finds a candidate page, posts a cheap "suggested
-// page" observation; the loro node reads it from the blackboard before
+// page" observation; the parrot node reads it from the blackboard before
 // answering.
 package swarmask
 
@@ -19,7 +19,7 @@ const (
 	ScoutWorkerID        = "swarmask-page-scout"
 	EntityWorkerID       = "swarmask-entity-scout"
 	ClassifierWorkerID   = "swarmask-question-classifier"
-	AnswerWorkerID       = "swarmask-loro-answer"
+	AnswerWorkerID       = "swarmask-parrot-answer"
 	ConsolidatorWorkerID = "swarmask-consolidator"
 
 	inputSchema               = "tlaloc.foldtest.r0.swarmask-input"
@@ -60,6 +60,23 @@ type AskInput struct {
 	// node at a running questionclass-charcnn-r0 HTTP service; empty keeps
 	// that node on its rule-based path.
 	ClassifierEndpoint string `json:"classifier_endpoint,omitempty"`
+
+	// ClassifierCalibrationPath, when set, is the CalibrationProfile JSON
+	// the classifier node consults before trusting the model's prediction
+	// (tools/questionclass_calibrate.py output). Requires ClassifierEndpoint.
+	ClassifierCalibrationPath string `json:"classifier_calibration_path,omitempty"`
+
+	// GroundingEndpoint, when set, points the consolidator node at a running
+	// groundingscore-distilled-r0 HTTP service (tools/grounding_serve.py) —
+	// an independent grounding judge distinct from the parrot that produced
+	// the answer. Empty keeps the consolidator on the answerscore judge.
+	GroundingEndpoint string `json:"grounding_endpoint,omitempty"`
+
+	// GroundingCalibrationPath, when set, is the CalibrationProfile JSON the
+	// consolidator consults before trusting the distilled score instead of
+	// falling back to answerscore (tools/grounding_calibrate.py output).
+	// Requires GroundingEndpoint.
+	GroundingCalibrationPath string `json:"grounding_calibration_path,omitempty"`
 }
 
 // ScoutOutput is the scout worker's CapabilityResponse.Output payload.
@@ -68,7 +85,7 @@ type ScoutOutput struct {
 	Score         float64 `json:"score,omitempty"`
 }
 
-// AnswerOutput is the loro worker's CapabilityResponse.Output payload.
+// AnswerOutput is the parrot worker's CapabilityResponse.Output payload.
 type AnswerOutput struct {
 	Answer                string `json:"answer"`
 	Turns                 int    `json:"turns"`
@@ -100,7 +117,7 @@ type QuestionTypeOutput struct {
 }
 
 // ConsolidationOutput is the consolidator worker's CapabilityResponse.Output
-// payload, and the final terminal output of the plan: it carries the loro's
+// payload, and the final terminal output of the plan: it carries the parrot's
 // answer text through plus a grounding verdict checked against the real
 // page content.
 type ConsolidationOutput struct {
@@ -109,6 +126,11 @@ type ConsolidationOutput struct {
 	Score               float64 `json:"score"`
 	ScoredBy            string  `json:"scored_by"`
 	VerifiedAgainstPage int     `json:"verified_against_page,omitempty"`
+	// JudgeIndependent is true when the grounding score came from a judge
+	// other than the parrot model that produced the answer (the distilled
+	// groundingscore worker, or answerscore's embedding/keyword workers) —
+	// false when it fell back to the chat judge running the same model.
+	JudgeIndependent bool `json:"judge_independent"`
 }
 
 // answerGroundedObservation is the JSON shape stored in a

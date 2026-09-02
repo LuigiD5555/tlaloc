@@ -3,9 +3,13 @@ package swarmask
 import (
 	"context"
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"tlaloc.local/behaviorlab/internal/blackboard"
+	"tlaloc.local/behaviorlab/internal/tlaloque"
+	"tlaloc.local/behaviorlab/internal/tlaloque/groundingscore"
 )
 
 // evaluateGrounding is the pure scoring step (no store, no network needed:
@@ -14,7 +18,7 @@ import (
 // in the answerscore package).
 
 func TestEvaluateGrounding_PositiveCase(t *testing.T) {
-	out, err := evaluateGrounding(context.Background(), "fake-model", "http://127.0.0.1:1/unreachable",
+	out, err := ConsolidatorWorker{}.evaluateGrounding(context.Background(), "fake-model", "http://127.0.0.1:1/unreachable",
 		"What is a swarm?",
 		"A swarm is a system of distributed coordinating agents.",
 		"A swarm is a system composed of multiple distributed agents that coordinate their behavior.")
@@ -33,7 +37,7 @@ func TestEvaluateGrounding_PositiveCase(t *testing.T) {
 }
 
 func TestEvaluateGrounding_ContradictionBoundary(t *testing.T) {
-	out, err := evaluateGrounding(context.Background(), "fake-model", "http://127.0.0.1:1/unreachable",
+	out, err := ConsolidatorWorker{}.evaluateGrounding(context.Background(), "fake-model", "http://127.0.0.1:1/unreachable",
 		"What is a swarm?",
 		"The capital of France is Paris.",
 		"A swarm is a system composed of multiple distributed agents that coordinate their behavior.")
@@ -42,6 +46,54 @@ func TestEvaluateGrounding_ContradictionBoundary(t *testing.T) {
 	}
 	if out.Grounded {
 		t.Errorf("expected an unrelated answer to not be grounded, got score %f", out.Score)
+	}
+}
+
+// When a distilled groundingscore service is wired, the consolidator uses
+// it as the grounding judge and marks the verdict as independent of the
+// parrot — no LM Studio call for scoring at all.
+func TestEvaluateGrounding_PrefersDistilledJudge(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		out, _ := json.Marshal(groundingscore.Output{Score: 0.83, Confidence: 0.9})
+		_ = json.NewEncoder(w).Encode(tlaloque.CapabilityResponse{
+			WorkerID: groundingscore.WorkerID, Output: out, Confidence: 0.9,
+		})
+	}))
+	defer server.Close()
+
+	worker := ConsolidatorWorker{GroundingRegistry: groundingscore.NewRegistry(server.URL)}
+	out, err := worker.evaluateGrounding(context.Background(), "parrot-model", "http://127.0.0.1:1/unreachable",
+		"What is a swarm?", "A swarm is coordinating agents.", "A swarm is a system of distributed agents.")
+	if err != nil {
+		t.Fatalf("evaluateGrounding: %v", err)
+	}
+	if out.ScoredBy != groundingscore.WorkerID {
+		t.Errorf("expected the distilled judge, got %q", out.ScoredBy)
+	}
+	if !out.JudgeIndependent {
+		t.Error("distilled judge must be marked independent of the parrot")
+	}
+	if out.Score != 0.83 {
+		t.Errorf("got score %v, want 0.83", out.Score)
+	}
+}
+
+// An unreachable distilled service falls through to answerscore (which
+// degrades to its deterministic keyword worker with no LM Studio).
+func TestEvaluateGrounding_FallsPastUnreachableDistilledJudge(t *testing.T) {
+	worker := ConsolidatorWorker{GroundingRegistry: groundingscore.NewRegistry("http://127.0.0.1:0")}
+	out, err := worker.evaluateGrounding(context.Background(), "parrot-model", "http://127.0.0.1:1/unreachable",
+		"What is a swarm?",
+		"A swarm is a system of distributed coordinating agents.",
+		"A swarm is a system composed of multiple distributed agents that coordinate their behavior.")
+	if err != nil {
+		t.Fatalf("evaluateGrounding: %v", err)
+	}
+	if out.ScoredBy == groundingscore.WorkerID {
+		t.Error("expected fallback away from the unreachable distilled judge")
+	}
+	if out.ScoredBy == "" {
+		t.Error("expected ScoredBy to name the fallback worker")
 	}
 }
 

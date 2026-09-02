@@ -9,15 +9,15 @@ import (
 	"tlaloc.local/behaviorlab/internal/tlaloque"
 )
 
-// LoroAnswerWorker wraps foldtest.RunSession (the loro, lfm2-vl-1.6b, doing
+// ParrotAnswerWorker wraps foldtest.RunSession (the parrot, lfm2-vl-1.6b, doing
 // its own UNFOLD/GROUP-driven reading of the whole-book cover) as a
 // CapabilityWorker, so it can read whatever other specialists already
 // posted to the blackboard — today, PageScoutWorker's "suggested_page" hint
 // — before answering. It never trusts a hint blindly: it is offered as
 // context in the prompt, not injected as the answer.
-type LoroAnswerWorker struct{}
+type ParrotAnswerWorker struct{}
 
-func (LoroAnswerWorker) Descriptor() tlaloque.CapabilityDescriptor {
+func (ParrotAnswerWorker) Descriptor() tlaloque.CapabilityDescriptor {
 	return tlaloque.CapabilityDescriptor{
 		ID:             AnswerWorkerID,
 		Capability:     AnswerCapability,
@@ -27,11 +27,12 @@ func (LoroAnswerWorker) Descriptor() tlaloque.CapabilityDescriptor {
 		OutputSchema:   answerOutputSchema,
 		Deterministic:  false,
 		MaxConcurrency: 1,
-		Tags:           []string{"loro", "lfm2-vl-1.6b", "blackboard-aware"},
+		Dependencies:   []string{ScoutCapability, EntityCapability, ClassifierCapability},
+		Tags:           []string{"parrot", "lfm2-vl-1.6b", "blackboard-aware"},
 	}
 }
 
-func (LoroAnswerWorker) Execute(ctx context.Context, req tlaloque.CapabilityRequest) (tlaloque.CapabilityResponse, error) {
+func (ParrotAnswerWorker) Execute(ctx context.Context, req tlaloque.CapabilityRequest) (tlaloque.CapabilityResponse, error) {
 	var in AskInput
 	if err := json.Unmarshal(req.Input, &in); err != nil {
 		return tlaloque.CapabilityResponse{}, err
@@ -51,7 +52,7 @@ func (LoroAnswerWorker) Execute(ctx context.Context, req tlaloque.CapabilityRequ
 		ExtraContext: extraContext,
 	}, in.Question)
 	if err != nil {
-		return tlaloque.CapabilityResponse{}, fmt.Errorf("loro answer: %w", err)
+		return tlaloque.CapabilityResponse{}, fmt.Errorf("parrot answer: %w", err)
 	}
 
 	out := AnswerOutput{
@@ -64,7 +65,15 @@ func (LoroAnswerWorker) Execute(ctx context.Context, req tlaloque.CapabilityRequ
 	if err != nil {
 		return tlaloque.CapabilityResponse{}, err
 	}
-	return tlaloque.CapabilityResponse{WorkerID: AnswerWorkerID, Output: raw}, nil
+	return tlaloque.CapabilityResponse{
+		WorkerID: AnswerWorkerID,
+		Output:   raw,
+		Usage: &tlaloque.WorkerUsage{
+			TokensIn:      sessionResult.TotalTokensPrompt,
+			TokensOut:     sessionResult.TotalTokensCompletion,
+			UpstreamCalls: sessionResult.Turns,
+		},
+	}, nil
 }
 
 // blackboardHint formats every observation the specialists posted (page
@@ -111,7 +120,7 @@ func blackboardHint(req tlaloque.CapabilityRequest) string {
 }
 
 // questionTypeGuidance turns a classifier verdict into a short calibration
-// line for the loro's prompt.
+// line for the parrot's prompt.
 func questionTypeGuidance(questionType string) string {
 	switch questionType {
 	case QuestionTypeDefinition:

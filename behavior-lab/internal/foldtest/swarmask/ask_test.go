@@ -27,13 +27,13 @@ func fakeLMStudio(t *testing.T, answer string) *httptest.Server {
 }
 
 // Ask must run scout before answer, persist the scout's observation on the
-// shared blackboard Store, and extract the loro's answer from the
+// shared blackboard Store, and extract the parrot's answer from the
 // consolidate node's terminal output. The test manifest has no pages, so
 // the consolidator's ExtractPageContent lookup fails and it degrades
 // gracefully (no grounding verdict) instead of failing the whole run —
 // this exercises that degradation path for free.
-func TestAsk_SharesScoutObservationWithLoro(t *testing.T) {
-	server := fakeLMStudio(t, "The loro's answer, informed by the blackboard.")
+func TestAsk_SharesScoutObservationWithParrot(t *testing.T) {
+	server := fakeLMStudio(t, "The parrot's answer, informed by the blackboard.")
 	defer server.Close()
 
 	store := blackboard.New(filepath.Join(t.TempDir(), "blackboard"))
@@ -53,7 +53,7 @@ func TestAsk_SharesScoutObservationWithLoro(t *testing.T) {
 	if !report.Succeeded {
 		t.Fatalf("expected the swarm run to succeed, report: %+v", report)
 	}
-	if out.Answer != "The loro's answer, informed by the blackboard." {
+	if out.Answer != "The parrot's answer, informed by the blackboard." {
 		t.Errorf("unexpected answer: %q", out.Answer)
 	}
 
@@ -63,7 +63,7 @@ func TestAsk_SharesScoutObservationWithLoro(t *testing.T) {
 	}
 	found := false
 	for _, e := range entries {
-		if e.Key == suggestedPageKey && e.NodeID == "scout" {
+		if e.Key == suggestedPageKey && e.NodeID == ScoutWorkerID {
 			found = true
 		}
 	}

@@ -3,25 +3,27 @@ package swarmask
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"tlaloc.local/behaviorlab/internal/blackboard"
 	"tlaloc.local/behaviorlab/internal/tlaloque"
+	"tlaloc.local/behaviorlab/internal/tlaloque/calibration"
 	"tlaloc.local/behaviorlab/internal/tlaloque/questionclass"
 )
 
-// minModelConfidence is the floor below which the trained classifier's
-// verdict is discarded in favor of the rule-based one. Calibrated against
-// real questions: questionclass-charcnn-r0 is ~1.0 confident on phrasings
-// close to its synthetic training templates and correct there, but drifts
-// to the 0.6s on unfamiliar constructions — and is often wrong when it
-// does. Below 0.7 the deterministic prefix rules are the safer bet.
+// minModelConfidence is the raw-confidence floor used ONLY when no
+// CalibrationProfile is available for the model — a weak guard. With a
+// profile, calibration.Verdict decides instead, and for
+// questionclass-charcnn-r0 that verdict is always an abstention (its
+// out-of-distribution accuracy is ~0.51, so its measured confidence floor
+// is unreachable). See tools/QUESTIONCLASS_RESULTS.md.
 const minModelConfidence = 0.7
 
 // QuestionClassifierWorker classifies the question's rhetorical shape
 // (definition, comparison, process, factual-detail, or general),
 // independent of what PageScoutWorker (where) and EntityScoutWorker (what
-// concrete facts) report — this helps the loro (and the consolidator)
+// concrete facts) report — this helps the parrot (and the consolidator)
 // calibrate how much verification a question needs. Unlike scout/entities,
 // it always emits an observation: "this looks like a general question" is
 // itself useful information, not a fabrication, since every question has
@@ -29,11 +31,15 @@ const minModelConfidence = 0.7
 //
 // If ModelRegistry is set (a questionclass-charcnn-r0 HTTP service), it uses
 // that trained char-CNN and falls back to the rule-based classifyQuestion
-// only when the model errors or is not confident enough — reporting which
-// path produced the verdict in the observation's provenance. With
-// ModelRegistry nil it is purely rule-based.
+// when the model errors, or — when Profile is set — when
+// calibration.Verdict says the model's prediction is not trustworthy for
+// this input (LOW_EVIDENCE / UNKNOWN / UNSUPPORTED). The observation's
+// provenance always records which path produced the verdict, and the
+// model's raw verdict even when it was overruled. With ModelRegistry nil
+// it is purely rule-based.
 type QuestionClassifierWorker struct {
 	ModelRegistry *tlaloque.Registry
+	Profile       *calibration.CalibrationProfile
 }
 
 func (w QuestionClassifierWorker) Descriptor() tlaloque.CapabilityDescriptor {
@@ -60,7 +66,8 @@ func (w QuestionClassifierWorker) Execute(ctx context.Context, req tlaloque.Capa
 		return tlaloque.CapabilityResponse{}, err
 	}
 
-	questionType, confidence, method := w.classify(ctx, in.Question)
+	questionType, confidence, provenance := w.classify(ctx, in.Question)
+	provenance["source"] = ClassifierWorkerID
 	out := QuestionTypeOutput{Type: questionType}
 
 	value, err := json.Marshal(out)
@@ -71,7 +78,7 @@ func (w QuestionClassifierWorker) Execute(ctx context.Context, req tlaloque.Capa
 		Key:        questionTypeKey,
 		Value:      value,
 		Confidence: confidence,
-		Provenance: map[string]string{"source": ClassifierWorkerID, "method": method},
+		Provenance: provenance,
 	}}
 
 	raw, err := json.Marshal(out)
@@ -81,18 +88,52 @@ func (w QuestionClassifierWorker) Execute(ctx context.Context, req tlaloque.Capa
 	return tlaloque.CapabilityResponse{WorkerID: ClassifierWorkerID, Output: raw, Observations: observations}, nil
 }
 
-// classify picks the trained char-CNN verdict when a model is wired and
-// confident, otherwise the rule-based one — always reporting which via the
-// returned method string ("charcnn-model" or "rule-based"), so the
-// blackboard never claims a model classified when the fallback did.
-func (w QuestionClassifierWorker) classify(ctx context.Context, question string) (questionType string, confidence float64, method string) {
+// classify picks the trained char-CNN verdict only when a model is wired
+// AND its prediction clears the trust check for this input; otherwise the
+// deterministic rules. The returned provenance map records the path taken
+// ("charcnn-model" / "rule-based") and, when the model was consulted but
+// overruled, its raw verdict and why it was rejected — so the blackboard
+// never claims a model classified when the fallback did, but the model's
+// opinion is still auditable.
+func (w QuestionClassifierWorker) classify(ctx context.Context, question string) (questionType string, confidence float64, provenance map[string]string) {
+	provenance = map[string]string{}
+
 	if w.ModelRegistry != nil {
-		if out, modelConfidence, err := questionclass.Classify(ctx, w.ModelRegistry, question); err == nil && modelConfidence >= minModelConfidence {
-			return out.Type, modelConfidence, "charcnn-model"
+		out, modelConfidence, err := questionclass.Classify(ctx, w.ModelRegistry, question)
+		switch {
+		case err != nil:
+			provenance["model_rejected"] = "unreachable"
+		default:
+			provenance["model_verdict"] = out.Type
+			if reason := w.rejectModel(modelConfidence); reason != "" {
+				provenance["model_rejected"] = reason
+			} else {
+				provenance["method"] = "charcnn-model"
+				return out.Type, modelConfidence, provenance
+			}
 		}
 	}
+
 	ruleType, ruleConfidence := classifyQuestion(question)
-	return ruleType, ruleConfidence, "rule-based"
+	provenance["method"] = "rule-based"
+	return ruleType, ruleConfidence, provenance
+}
+
+// rejectModel returns a non-empty reason when the model's prediction should
+// not be trusted. With a CalibrationProfile it defers to
+// calibration.Verdict (measured competence); without one it falls back to
+// the weak raw-confidence floor.
+func (w QuestionClassifierWorker) rejectModel(modelConfidence float64) string {
+	if w.Profile != nil {
+		if verdict := w.Profile.Verdict(calibration.Query{Confidence: modelConfidence}); verdict != calibration.Answered {
+			return fmt.Sprintf("calibration:%s", verdict)
+		}
+		return ""
+	}
+	if modelConfidence < minModelConfidence {
+		return "uncalibrated-low-confidence"
+	}
+	return ""
 }
 
 var (

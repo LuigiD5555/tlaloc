@@ -11,7 +11,7 @@ import (
 
 // Ask runs the full swarm plan (classifier/scout/entities -> answer ->
 // consolidate) for a single question, sharing state through store under
-// runID. It returns the consolidated answer (the loro's answer text plus a
+// runID. It returns the consolidated answer (the parrot's answer text plus a
 // grounding verdict checked against the real page content) and the full
 // SwarmReport (including which nodes ran and what they observed), so a
 // caller can inspect exactly what was shared on the blackboard.
@@ -21,19 +21,33 @@ func Ask(ctx context.Context, store blackboard.Store, runID string, in AskInput)
 		return ConsolidationOutput{}, tlaloque.SwarmReport{}, err
 	}
 
+	registry, err := NewRegistry(RegistryConfig{
+		ClassifierEndpoint:        in.ClassifierEndpoint,
+		ClassifierCalibrationPath: in.ClassifierCalibrationPath,
+		GroundingEndpoint:         in.GroundingEndpoint,
+		GroundingCalibrationPath:  in.GroundingCalibrationPath,
+	})
+	if err != nil {
+		return ConsolidationOutput{}, tlaloque.SwarmReport{}, err
+	}
 	runner := tlaloque.SwarmRunner{
-		Registry:   NewRegistry(in.ClassifierEndpoint),
+		Registry:   registry,
 		Blackboard: &tlaloque.BlackboardRuntime{Store: store, RunID: runID},
 	}
 
-	report, err := runner.Run(ctx, NewPlan(), runID, inputRaw)
+	plan, err := NewPlan(registry)
+	if err != nil {
+		return ConsolidationOutput{}, tlaloque.SwarmReport{}, err
+	}
+
+	report, err := runner.Run(ctx, plan, runID, inputRaw)
 	if err != nil {
 		return ConsolidationOutput{}, report, err
 	}
 
-	terminalRaw, ok := report.TerminalOutputs["consolidate"]
+	terminalRaw, ok := report.TerminalOutputs[ConsolidatorWorkerID]
 	if !ok {
-		return ConsolidationOutput{}, report, fmt.Errorf("swarmask: no terminal output for node %q", "consolidate")
+		return ConsolidationOutput{}, report, fmt.Errorf("swarmask: no terminal output for node %q", ConsolidatorWorkerID)
 	}
 	var out ConsolidationOutput
 	if err := json.Unmarshal(terminalRaw, &out); err != nil {

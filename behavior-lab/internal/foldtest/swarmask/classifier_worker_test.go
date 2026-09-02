@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"tlaloc.local/behaviorlab/internal/tlaloque"
+	"tlaloc.local/behaviorlab/internal/tlaloque/calibration"
 	"tlaloc.local/behaviorlab/internal/tlaloque/questionclass"
 )
 
@@ -91,6 +92,43 @@ func TestQuestionClassifierWorker_UsesTrainedModel(t *testing.T) {
 	}
 	if method := resp.Observations[0].Provenance["method"]; method != "charcnn-model" {
 		t.Errorf("expected charcnn-model provenance, got %q", method)
+	}
+}
+
+// A CalibrationProfile that always abstains (unreachable confidence floor —
+// the shape of questionclass-charcnn-r0's real profile) must overrule even
+// a maximally-confident model prediction, falling back to the rules while
+// still recording the model's raw verdict for audit.
+func TestQuestionClassifierWorker_CalibrationOverrulesConfidentModel(t *testing.T) {
+	profile := calibration.CalibrationProfile{
+		Schema:            calibration.Schema,
+		ConfidenceFloor:   1.01,
+		OutOfDistribution: calibration.EvalSlice{N: 300, Accuracy: 0.51},
+	}
+	worker := QuestionClassifierWorker{
+		ModelRegistry: classifierModelRegistry(t, questionclass.WorkerID, QuestionTypeComparison, 1.0),
+		Profile:       &profile,
+	}
+	resp, err := worker.Execute(context.Background(), mustAskRequest(t, AskInput{Question: "What is a swarm?"}))
+	if err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	var out QuestionTypeOutput
+	if err := json.Unmarshal(resp.Output, &out); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if out.Type != QuestionTypeDefinition {
+		t.Errorf("expected the rule-based DEFINITION verdict, got %q", out.Type)
+	}
+	prov := resp.Observations[0].Provenance
+	if prov["method"] != "rule-based" {
+		t.Errorf("expected rule-based method, got %q", prov["method"])
+	}
+	if prov["model_verdict"] != QuestionTypeComparison {
+		t.Errorf("expected the model's raw verdict recorded, got %q", prov["model_verdict"])
+	}
+	if prov["model_rejected"] != "calibration:LOW_EVIDENCE" {
+		t.Errorf("expected calibration rejection reason, got %q", prov["model_rejected"])
 	}
 }
 
