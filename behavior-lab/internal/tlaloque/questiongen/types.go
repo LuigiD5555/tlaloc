@@ -5,8 +5,8 @@ package questiongen
 const (
 	Capability = "GENERATE_PAGE_QUESTIONS"
 
-	TemplateWorkerID       = "questiongen-template"
-	SemanticModelWorkerID  = "questiongen-semantic-model"
+	TemplateWorkerID      = "questiongen-template"
+	SemanticModelWorkerID = "questiongen-semantic-model"
 
 	inputSchema  = "tlaloc.foldtest.r0.page-questions-input"
 	outputSchema = "tlaloc.foldtest.r0.page-questions-output"

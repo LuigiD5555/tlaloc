@@ -14,12 +14,12 @@ const (
 type ValueContract func(json.RawMessage) bool
 
 type Consensus struct {
-	Key           string          `json:"key"`
-	Status        string          `json:"status"`
-	Value         json.RawMessage `json:"value,omitempty"`
-	Votes         int             `json:"votes"`
-	RequiredVotes int             `json:"required_votes"`
-	ObservationIDs []string       `json:"observation_ids,omitempty"`
+	Key            string          `json:"key"`
+	Status         string          `json:"status"`
+	Value          json.RawMessage `json:"value,omitempty"`
+	Votes          int             `json:"votes"`
+	RequiredVotes  int             `json:"required_votes"`
+	ObservationIDs []string        `json:"observation_ids,omitempty"`
 }
 
 func canonicalJSON(raw json.RawMessage) (string, error) {

@@ -14,9 +14,9 @@ type WorkerEmpiricalMetric struct {
 }
 
 type WorkerPairEmpiricalMetric struct {
-	WorkerA          string  `json:"worker_a"`
-	WorkerB          string  `json:"worker_b"`
-	SharedCases      int     `json:"shared_cases"`
+	WorkerA         string  `json:"worker_a"`
+	WorkerB         string  `json:"worker_b"`
+	SharedCases     int     `json:"shared_cases"`
 	Complementarity float64 `json:"complementarity"`
 }
 

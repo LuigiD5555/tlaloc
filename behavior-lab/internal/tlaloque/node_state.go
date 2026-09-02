@@ -13,16 +13,16 @@ const (
 	NodeFailed    NodeState = "FAILED"
 	NodeBlocked   NodeState = "BLOCKED"
 
-	NodeDependenciesSatisfied NodeEvent = "DEPENDENCIES_SATISFIED"
-	NodeDispatched            NodeEvent = "DISPATCHED"
-	NodeSucceeded             NodeEvent = "SUCCEEDED"
-	NodeExecutionFailed       NodeEvent = "FAILED"
+	NodeDependenciesSatisfied  NodeEvent = "DEPENDENCIES_SATISFIED"
+	NodeDispatched             NodeEvent = "DISPATCHED"
+	NodeSucceeded              NodeEvent = "SUCCEEDED"
+	NodeExecutionFailed        NodeEvent = "FAILED"
 	NodeDependenciesImpossible NodeEvent = "DEPENDENCIES_IMPOSSIBLE"
 )
 
 var nodeTransitions = map[NodeState]map[NodeEvent]NodeState{
 	NodePending: {
-		NodeDependenciesSatisfied: NodeReady,
+		NodeDependenciesSatisfied:  NodeReady,
 		NodeDependenciesImpossible: NodeBlocked,
 	},
 	NodeReady: {

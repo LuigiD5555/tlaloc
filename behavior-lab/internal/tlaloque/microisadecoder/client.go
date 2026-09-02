@@ -11,7 +11,7 @@ import (
 
 // DecodeCarrier is the tool-consultation entry point: given the raw bytes
 // of a SAFE_MICRO_ISA carrier.png, it asks microisa-cnn-r0 (via registry)
-// to read the glyph's four attributes. This is what a loro-facing Tlaloque
+// to read the glyph's four attributes. This is what a parrot-facing Tlaloque
 // (e.g. a future swarmask-style node) would call to consult this model as
 // a tool, rather than guessing from the image itself.
 func DecodeCarrier(ctx context.Context, registry *tlaloque.Registry, carrierPNG []byte) (GlyphOutput, error) {

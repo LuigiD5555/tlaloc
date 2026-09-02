@@ -27,13 +27,19 @@ func (w CompositeWorker) Execute(ctx context.Context, req CapabilityRequest) (Ca
 			"input":   json.RawMessage(req.Input),
 			"context": req.Context,
 		})
-		if err != nil { return CapabilityResponse{}, err }
+		if err != nil {
+			return CapabilityResponse{}, err
+		}
 		input = wrapped
 	}
 	report, err := (SwarmRunner{Registry: w.Registry}).Run(ctx, w.Plan, req.TaskID+"/"+req.NodeID, input)
-	if err != nil { return CapabilityResponse{}, err }
+	if err != nil {
+		return CapabilityResponse{}, err
+	}
 	body, err := json.Marshal(report.TerminalOutputs)
-	if err != nil { return CapabilityResponse{}, err }
+	if err != nil {
+		return CapabilityResponse{}, err
+	}
 	return CapabilityResponse{WorkerID: w.Desc.ID, Output: body, Confidence: aggregateConfidence(report.Nodes)}, nil
 }
 
@@ -46,6 +52,8 @@ func aggregateConfidence(nodes []NodeExecution) float64 {
 			count++
 		}
 	}
-	if count == 0 { return 0 }
+	if count == 0 {
+		return 0
+	}
 	return sum / float64(count)
 }

@@ -26,8 +26,8 @@ type EnsembleGoal struct {
 }
 
 type PlannedEnsemble struct {
-	Goal    EnsembleGoal          `json:"goal"`
-	Plan    SwarmPlan             `json:"plan"`
+	Goal    EnsembleGoal           `json:"goal"`
+	Plan    SwarmPlan              `json:"plan"`
 	Members []CapabilityDescriptor `json:"members"`
 	Fusion  CapabilityDescriptor   `json:"fusion"`
 }

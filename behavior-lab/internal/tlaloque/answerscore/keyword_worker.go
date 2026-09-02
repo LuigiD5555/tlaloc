@@ -16,15 +16,15 @@ type KeywordOverlapWorker struct{}
 
 func (KeywordOverlapWorker) Descriptor() tlaloque.CapabilityDescriptor {
 	return tlaloque.CapabilityDescriptor{
-		ID:            KeywordOverlapWorkerID,
-		Capability:    Capability,
-		Scope:         tlaloque.ScopeGeneral,
-		Engine:        tlaloque.EngineDeterministic,
-		InputSchema:   inputSchema,
-		OutputSchema:  outputSchema,
-		Deterministic: true,
+		ID:             KeywordOverlapWorkerID,
+		Capability:     Capability,
+		Scope:          tlaloque.ScopeGeneral,
+		Engine:         tlaloque.EngineDeterministic,
+		InputSchema:    inputSchema,
+		OutputSchema:   outputSchema,
+		Deterministic:  true,
 		MaxConcurrency: 0, // normalized to 1
-		Tags:          []string{"keyword-overlap", "fallback"},
+		Tags:           []string{"keyword-overlap", "fallback"},
 	}
 }
 
