@@ -77,10 +77,17 @@ func (ConsolidatorWorker) Execute(ctx context.Context, req tlaloque.CapabilityRe
 	if err != nil {
 		return tlaloque.CapabilityResponse{}, err
 	}
+	observationConfidence := out.Score
+	if out.ScoredBy == groundingautomaton.WorkerID && !out.Grounded {
+		// A contradiction has grounding score zero but deterministic confidence
+		// one. Blackboard confidence describes trust in the observation, not the
+		// probability that the answer is supported.
+		observationConfidence = 1.0
+	}
 	observations := []blackboard.Observation{{
 		Key:        answerGroundedKey,
 		Value:      value,
-		Confidence: out.Score,
+		Confidence: observationConfidence,
 		Provenance: map[string]string{"source": ConsolidatorWorkerID, "method": out.ScoredBy},
 	}}
 
