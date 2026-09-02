@@ -1,0 +1,58 @@
+{
+  "schema": "tlaloc.calibration-profile.r0",
+  "worker_id": "groundingscore-distilled-r0",
+  "model_version": "r0",
+  "training_distribution_id": "grounding-foldbench-h2o-danube-judge-v0",
+  "calibration_set_id": "in:40939a5d1200c174|ood:4904532e44894589",
+  "tolerance": 0.2,
+  "in_distribution": {
+    "n": 126,
+    "accuracy": 0.8889,
+    "coverage": 1.0,
+    "ece": 0.0733,
+    "brier": 0.1017
+  },
+  "out_of_distribution": {
+    "n": 24,
+    "accuracy": 0.4583,
+    "coverage": 1.0,
+    "ece": 0.5069,
+    "brier": 0.4984
+  },
+  "abstention_curve": [
+    {
+      "threshold": 0.5,
+      "coverage": 1.0,
+      "covered_accuracy": 0.4583
+    },
+    {
+      "threshold": 0.6,
+      "coverage": 1.0,
+      "covered_accuracy": 0.4583
+    },
+    {
+      "threshold": 0.7,
+      "coverage": 1.0,
+      "covered_accuracy": 0.4583
+    },
+    {
+      "threshold": 0.8,
+      "coverage": 1.0,
+      "covered_accuracy": 0.4583
+    },
+    {
+      "threshold": 0.9,
+      "coverage": 1.0,
+      "covered_accuracy": 0.4583
+    },
+    {
+      "threshold": 0.95,
+      "coverage": 0.7917,
+      "covered_accuracy": 0.5263
+    }
+  ],
+  "supported_domains": [],
+  "unsupported_domains": [],
+  "confidence_floor": 1.01,
+  "generated_at": "2026-09-02T05:41:56.428840+00:00"
+}

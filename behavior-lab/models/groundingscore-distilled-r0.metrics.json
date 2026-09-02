@@ -1,0 +1,31 @@
+{
+  "parameters": 638,
+  "train": {
+    "n": 540,
+    "mae": 0.0338,
+    "rmse": 0.0428,
+    "pearson_r": 0.9929,
+    "mae_by_strategy": {
+      "filler": 0.0317,
+      "grounded": 0.0288,
+      "keyword_dump": 0.0271,
+      "offtopic": 0.0353,
+      "partial": 0.0542,
+      "terse_grounded": 0.0254
+    }
+  },
+  "val": {
+    "n": 126,
+    "mae": 0.069,
+    "rmse": 0.1126,
+    "pearson_r": 0.9472,
+    "mae_by_strategy": {
+      "filler": 0.0327,
+      "grounded": 0.0334,
+      "keyword_dump": 0.0398,
+      "offtopic": 0.0956,
+      "partial": 0.1791,
+      "terse_grounded": 0.0335
+    }
+  }
+}
