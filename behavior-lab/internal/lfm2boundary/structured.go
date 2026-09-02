@@ -134,30 +134,51 @@ func roleContract(role string) blackboard.ValueContract {
 		switch role {
 		case RoleRosetta:
 			var v RosettaObservation
-			if err := strictUnmarshal(raw, &v); err != nil { return false }
+			if err := strictUnmarshal(raw, &v); err != nil {
+				return false
+			}
 			return strings.TrimSpace(v.Box) != "" && strings.TrimSpace(v.Arrow) != "" && strings.TrimSpace(v.Ring) != "" && strings.TrimSpace(v.XTime) != ""
 		case RoleCells:
 			var v CellsObservation
-			if err := strictUnmarshal(raw, &v); err != nil || len(v.Cells) == 0 { return false }
+			if err := strictUnmarshal(raw, &v); err != nil || len(v.Cells) == 0 {
+				return false
+			}
 			seen := map[string]bool{}
 			for _, c := range v.Cells {
-				id := norm(c.ID); state := norm(c.InitialState)
-				if id == "" || state == "" || seen[id] { return false }
+				id := norm(c.ID)
+				state := norm(c.InitialState)
+				if id == "" || state == "" || seen[id] {
+					return false
+				}
 				seen[id] = true
 			}
 			return true
 		case RoleTransitions:
 			var v TransitionsObservation
-			if err := strictUnmarshal(raw, &v); err != nil || len(v.Rules) == 0 { return false }
+			if err := strictUnmarshal(raw, &v); err != nil || len(v.Rules) == 0 {
+				return false
+			}
 			for _, r := range v.Rules {
-				if norm(r.TargetCell) == "" || norm(r.FromState) == "" || norm(r.ToState) == "" { return false }
-				for _, req := range r.Requires { if norm(req.CellID) == "" || norm(req.State) == "" { return false } }
+				if norm(r.TargetCell) == "" || norm(r.FromState) == "" || norm(r.ToState) == "" {
+					return false
+				}
+				for _, req := range r.Requires {
+					if norm(req.CellID) == "" || norm(req.State) == "" {
+						return false
+					}
+				}
 			}
 			return true
 		case RoleTimeline:
 			var v TimelineObservation
-			if err := strictUnmarshal(raw, &v); err != nil || len(v.Checkpoints) == 0 { return false }
-			for _, cp := range v.Checkpoints { if norm(cp) == "" { return false } }
+			if err := strictUnmarshal(raw, &v); err != nil || len(v.Checkpoints) == 0 {
+				return false
+			}
+			for _, cp := range v.Checkpoints {
+				if norm(cp) == "" {
+					return false
+				}
+			}
 			return true
 		default:
 			return false
@@ -168,9 +189,13 @@ func roleContract(role string) blackboard.ValueContract {
 func strictUnmarshal(raw json.RawMessage, dst any) error {
 	dec := json.NewDecoder(strings.NewReader(string(raw)))
 	dec.DisallowUnknownFields()
-	if err := dec.Decode(dst); err != nil { return err }
+	if err := dec.Decode(dst); err != nil {
+		return err
+	}
 	var extra any
-	if err := dec.Decode(&extra); err == nil { return fmt.Errorf("extra JSON value") }
+	if err := dec.Decode(&extra); err == nil {
+		return fmt.Errorf("extra JSON value")
+	}
 	return nil
 }
 
@@ -178,7 +203,9 @@ func norm(s string) string { return strings.ToUpper(strings.TrimSpace(s)) }
 
 func decodeRole[T any](raw json.RawMessage) (T, error) {
 	var out T
-	if err := strictUnmarshal(raw, &out); err != nil { return out, err }
+	if err := strictUnmarshal(raw, &out); err != nil {
+		return out, err
+	}
 	return out, nil
 }
 
@@ -189,45 +216,81 @@ func decodeRole[T any](raw json.RawMessage) (T, error) {
 func SimulateObservedRules(cells CellsObservation, transitions TransitionsObservation) (map[string]string, error) {
 	state := map[string]string{}
 	for _, c := range cells.Cells {
-		id := norm(c.ID); st := norm(c.InitialState)
-		if id == "" || st == "" { return nil, fmt.Errorf("invalid cell observation") }
-		if _, exists := state[id]; exists { return nil, fmt.Errorf("duplicate cell %s", id) }
+		id := norm(c.ID)
+		st := norm(c.InitialState)
+		if id == "" || st == "" {
+			return nil, fmt.Errorf("invalid cell observation")
+		}
+		if _, exists := state[id]; exists {
+			return nil, fmt.Errorf("duplicate cell %s", id)
+		}
 		state[id] = st
 	}
-	if len(state) == 0 { return nil, fmt.Errorf("no observed cells") }
+	if len(state) == 0 {
+		return nil, fmt.Errorf("no observed cells")
+	}
 	for step := 0; step < 64; step++ {
 		writes := map[string]string{}
 		for _, rule := range transitions.Rules {
-			target := norm(rule.TargetCell); from := norm(rule.FromState); to := norm(rule.ToState)
+			target := norm(rule.TargetCell)
+			from := norm(rule.FromState)
+			to := norm(rule.ToState)
 			current, ok := state[target]
-			if !ok { return nil, fmt.Errorf("rule targets unknown cell %s", target) }
-			if current != from { continue }
+			if !ok {
+				return nil, fmt.Errorf("rule targets unknown cell %s", target)
+			}
+			if current != from {
+				continue
+			}
 			applies := true
 			for _, req := range rule.Requires {
 				actual, ok := state[norm(req.CellID)]
-				if !ok { return nil, fmt.Errorf("rule requires unknown cell %s", norm(req.CellID)) }
-				if actual != norm(req.State) { applies = false; break }
+				if !ok {
+					return nil, fmt.Errorf("rule requires unknown cell %s", norm(req.CellID))
+				}
+				if actual != norm(req.State) {
+					applies = false
+					break
+				}
 			}
-			if !applies || current == to { continue }
+			if !applies || current == to {
+				continue
+			}
 			if previous, exists := writes[target]; exists && previous != to {
 				return nil, fmt.Errorf("conflicting synchronous writes for %s: %s vs %s", target, previous, to)
 			}
 			writes[target] = to
 		}
-		if len(writes) == 0 { return state, nil }
-		for id, next := range writes { state[id] = next }
+		if len(writes) == 0 {
+			return state, nil
+		}
+		for id, next := range writes {
+			state[id] = next
+		}
 	}
 	return nil, fmt.Errorf("observed rule set did not converge within 64 synchronous steps")
 }
 
 func formatStateMap(states map[string]string) string {
-	ids := make([]string, 0, len(states)); for id := range states { ids = append(ids, id) }; sort.Strings(ids)
-	parts := make([]string, 0, len(ids)); for _, id := range ids { parts = append(parts, id+" "+states[id]) }
+	ids := make([]string, 0, len(states))
+	for id := range states {
+		ids = append(ids, id)
+	}
+	sort.Strings(ids)
+	parts := make([]string, 0, len(ids))
+	for _, id := range ids {
+		parts = append(parts, id+" "+states[id])
+	}
 	return strings.Join(parts, "; ")
 }
 
 func formatRequirements(reqs []ObservedRequirement) string {
-	parts := make([]string,0,len(reqs)); for _, r := range reqs { parts=append(parts,norm(r.CellID)+" "+norm(r.State)) }; sort.Strings(parts); return strings.Join(parts, " AND ")
+	parts := make([]string, 0, len(reqs))
+	for _, r := range reqs {
+		parts = append(parts, norm(r.CellID)+" "+norm(r.State))
+	}
+	sort.Strings(parts)
+	return strings.Join(parts, " AND ")
 }
 
 // SynthesizeBlackboardResponses converts confirmed structured visual evidence
@@ -238,40 +301,98 @@ func SynthesizeBlackboardResponses(snapshot blackboard.Snapshot) (ConsolidatedOu
 	out := ConsolidatedOutput{Responses: map[string]string{}, Consensus: map[string]string{}}
 	roleValues := map[string]json.RawMessage{}
 	for _, role := range SpecialistRoles {
-		c, err := blackboard.Consolidate(snapshot, role, roleContract(role)); if err != nil { return out, err }
+		c, err := blackboard.Consolidate(snapshot, role, roleContract(role))
+		if err != nil {
+			return out, err
+		}
 		out.Consensus[role] = c.Status
-		if c.Status == blackboard.ConsensusConfirmed { roleValues[role] = c.Value }
+		if c.Status == blackboard.ConsensusConfirmed {
+			roleValues[role] = c.Value
+		}
 	}
-	for i:=0;i<9;i++ { out.Responses[fmt.Sprintf("Q%d",i)] = "UNKNOWN" }
+	for i := 0; i < 9; i++ {
+		out.Responses[fmt.Sprintf("Q%d", i)] = "UNKNOWN"
+	}
 	out.Responses["Q8"] = "NOT VERIFIED: NO EXACT DECODER"
 
 	if raw, ok := roleValues[RoleRosetta]; ok {
-		v, err := decodeRole[RosettaObservation](raw); if err != nil { return out, err }
-		out.Responses["Q0"] = fmt.Sprintf("BOX %s; ARROW %s; RING %s; X TIME %s", norm(v.Box), norm(v.Arrow), norm(v.Ring), norm(v.XTime))
-		if v.SemanticFilmNotVideo { out.Responses["Q6"] = "NOT LITERAL VIDEO; TEMPORAL SEMANTIC FILM" }
-	}
-	var cells CellsObservation; cellsOK := false
-	if raw, ok := roleValues[RoleCells]; ok {
-		v, err := decodeRole[CellsObservation](raw); if err != nil { return out, err }; cells=v; cellsOK=true
-		ids:=[]string{}; for _,c:=range v.Cells { ids=append(ids,norm(c.ID)); if norm(c.ID)=="A" { out.Responses["Q2"]="A "+norm(c.InitialState) } }; sort.Strings(ids); out.Responses["Q1"]=strings.Join(ids," ")
-	}
-	var transitions TransitionsObservation; transitionsOK := false
-	if raw, ok := roleValues[RoleTransitions]; ok {
-		v, err := decodeRole[TransitionsObservation](raw); if err != nil { return out, err }; transitions=v; transitionsOK=true
-		q3:=[]string{};q4:=[]string{}
-		for _,r:=range v.Rules {
-			piece:=fmt.Sprintf("%s -> %s %s TO %s",formatRequirements(r.Requires),norm(r.TargetCell),norm(r.FromState),norm(r.ToState))
-			if norm(r.TargetCell)=="B"&&norm(r.ToState)=="ACTIVE"{q3=append(q3,piece)}
-			for _,req:=range r.Requires{if norm(req.CellID)=="B"&&norm(req.State)=="ACTIVE"{q4=append(q4,piece);break}}
+		v, err := decodeRole[RosettaObservation](raw)
+		if err != nil {
+			return out, err
 		}
-		if len(q3)>0{sort.Strings(q3);out.Responses["Q3"]=strings.Join(q3,"; ")};if len(q4)>0{sort.Strings(q4);out.Responses["Q4"]=strings.Join(q4,"; ")}
+		out.Responses["Q0"] = fmt.Sprintf("BOX %s; ARROW %s; RING %s; X TIME %s", norm(v.Box), norm(v.Arrow), norm(v.Ring), norm(v.XTime))
+		if v.SemanticFilmNotVideo {
+			out.Responses["Q6"] = "NOT LITERAL VIDEO; TEMPORAL SEMANTIC FILM"
+		}
+	}
+	var cells CellsObservation
+	cellsOK := false
+	if raw, ok := roleValues[RoleCells]; ok {
+		v, err := decodeRole[CellsObservation](raw)
+		if err != nil {
+			return out, err
+		}
+		cells = v
+		cellsOK = true
+		ids := []string{}
+		for _, c := range v.Cells {
+			ids = append(ids, norm(c.ID))
+			if norm(c.ID) == "A" {
+				out.Responses["Q2"] = "A " + norm(c.InitialState)
+			}
+		}
+		sort.Strings(ids)
+		out.Responses["Q1"] = strings.Join(ids, " ")
+	}
+	var transitions TransitionsObservation
+	transitionsOK := false
+	if raw, ok := roleValues[RoleTransitions]; ok {
+		v, err := decodeRole[TransitionsObservation](raw)
+		if err != nil {
+			return out, err
+		}
+		transitions = v
+		transitionsOK = true
+		q3 := []string{}
+		q4 := []string{}
+		for _, r := range v.Rules {
+			piece := fmt.Sprintf("%s -> %s %s TO %s", formatRequirements(r.Requires), norm(r.TargetCell), norm(r.FromState), norm(r.ToState))
+			if norm(r.TargetCell) == "B" && norm(r.ToState) == "ACTIVE" {
+				q3 = append(q3, piece)
+			}
+			for _, req := range r.Requires {
+				if norm(req.CellID) == "B" && norm(req.State) == "ACTIVE" {
+					q4 = append(q4, piece)
+					break
+				}
+			}
+		}
+		if len(q3) > 0 {
+			sort.Strings(q3)
+			out.Responses["Q3"] = strings.Join(q3, "; ")
+		}
+		if len(q4) > 0 {
+			sort.Strings(q4)
+			out.Responses["Q4"] = strings.Join(q4, "; ")
+		}
 	}
 	if raw, ok := roleValues[RoleTimeline]; ok {
-		v, err := decodeRole[TimelineObservation](raw); if err != nil { return out, err }; cps:=[]string{}; for _,cp:=range v.Checkpoints{cps=append(cps,norm(cp))};sort.Strings(cps);out.Responses["Q5"]=strings.Join(cps," ")
+		v, err := decodeRole[TimelineObservation](raw)
+		if err != nil {
+			return out, err
+		}
+		cps := []string{}
+		for _, cp := range v.Checkpoints {
+			cps = append(cps, norm(cp))
+		}
+		sort.Strings(cps)
+		out.Responses["Q5"] = strings.Join(cps, " ")
 	}
 	if cellsOK && transitionsOK {
 		states, err := SimulateObservedRules(cells, transitions)
-		if err == nil { out.Responses["Q7"] = formatStateMap(states) }
+		if err == nil {
+			out.Responses["Q7"] = formatStateMap(states)
+		}
 	}
 	return out, nil
 }
