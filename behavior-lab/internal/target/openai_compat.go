@@ -39,25 +39,8 @@ type chatResponse struct {
 	} `json:"choices"`
 }
 
-// httpClient makes the request context the timeout authority unless a caller
-// explicitly injects a client or RequestTimeout. This prevents a hidden fixed
-// transport timeout from cutting off longer campaign calls early.
 func (c OpenAICompat) httpClient(ctx context.Context) *http.Client {
-	if c.Client != nil {
-		return c.Client
-	}
-	timeout := c.RequestTimeout
-	if timeout <= 0 {
-		if deadline, ok := ctx.Deadline(); ok {
-			timeout = time.Until(deadline)
-			if timeout <= 0 {
-				timeout = time.Millisecond
-			}
-		} else {
-			timeout = 90 * time.Second
-		}
-	}
-	return &http.Client{Timeout: timeout}
+	return httpClientForTimeout(ctx, c.Client, c.RequestTimeout)
 }
 
 func (c OpenAICompat) Complete(ctx context.Context, systemPrompt, user string) (string, error) {
