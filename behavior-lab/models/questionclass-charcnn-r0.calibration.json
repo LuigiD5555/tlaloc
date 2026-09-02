@@ -1,0 +1,57 @@
+{
+  "schema": "tlaloc.calibration-profile.r0",
+  "worker_id": "questionclass-charcnn-r0",
+  "model_version": "r0",
+  "training_distribution_id": "questionclass-synthetic-templates-v2",
+  "calibration_set_id": "in:52c42e42ef8c7d1d|ood:f7364fd941dcfac2",
+  "in_distribution": {
+    "n": 2000,
+    "accuracy": 1.0,
+    "coverage": 1.0,
+    "ece": 0.0002,
+    "brier": 0.0
+  },
+  "out_of_distribution": {
+    "n": 300,
+    "accuracy": 0.5067,
+    "coverage": 1.0,
+    "ece": 0.3451,
+    "brier": 0.3698
+  },
+  "abstention_curve": [
+    {
+      "threshold": 0.5,
+      "coverage": 0.95,
+      "covered_accuracy": 0.5193
+    },
+    {
+      "threshold": 0.6,
+      "coverage": 0.84,
+      "covered_accuracy": 0.5476
+    },
+    {
+      "threshold": 0.7,
+      "coverage": 0.79,
+      "covered_accuracy": 0.5527
+    },
+    {
+      "threshold": 0.8,
+      "coverage": 0.7067,
+      "covered_accuracy": 0.5613
+    },
+    {
+      "threshold": 0.9,
+      "coverage": 0.58,
+      "covered_accuracy": 0.546
+    },
+    {
+      "threshold": 0.95,
+      "coverage": 0.4633,
+      "covered_accuracy": 0.5468
+    }
+  ],
+  "supported_domains": [],
+  "unsupported_domains": [],
+  "confidence_floor": 1.01,
+  "generated_at": "2026-09-02T03:56:04.749607+00:00"
+}

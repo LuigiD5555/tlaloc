@@ -73,7 +73,7 @@ that; on that example the rules correctly return `PROCESS` from the
 
 **Observed bias**: any locator word (`page`, `figure`, `página`, …) pulls
 the verdict toward `FACTUAL_DETAIL`. Here that is mostly desirable — it
-routes "what's on page N" questions to the guidance that tells the loro to
+routes "what's on page N" questions to the guidance that tells the parrot to
 UNFOLD and verify, which is the behaviour the whole fold-bench effort is
 trying to elicit.
 
@@ -95,5 +95,61 @@ nil the node is exactly the previous rule-based classifier.
 Verified end-to-end against real LM Studio: `swarm-ask` with
 `-classifier-service` — 5/5 nodes, the `question_type` blackboard entry
 carried `provenance.method = "charcnn-model"`, confidence 0.994, verdict
-`COMPARISON`, and the loro produced a comparison-structured answer that the
+`COMPARISON`, and the parrot produced a comparison-structured answer that the
 consolidator scored `grounded=true, 0.8`.
+
+## Calibration / abstention (the real verdict on this model)
+
+`tools/questionclass_ood.py` builds a genuinely out-of-distribution eval
+set — indirect/embedded questions, imperatives, multi-clause, ES/EN
+code-switching, dropped accents, and topics *outside* the training
+vocabulary. `tools/questionclass_calibrate.py` measures the model on it and
+emits `models/questionclass-charcnn-r0.calibration.json` in the
+`tlaloc.calibration-profile.r0` schema
+(`internal/tlaloque/calibration`).
+
+**Result — the model does not generalize:**
+
+| slice | accuracy | ECE | n |
+|---|---|---|---|
+| in-distribution (held-out, same generator) | 1.00 | 0.0002 | 2000 |
+| **out-of-distribution** | **0.51** | **0.345** | 300 |
+
+Even filtering to confidence ≥ 0.95, OOD covered accuracy is only ~0.55.
+No confidence threshold reaches a trustworthy covered accuracy, so the
+profile's `confidence_floor` is set to an unreachable `1.01`:
+`calibration.Verdict` always returns `LOW_EVIDENCE` and
+`AdmitAsActive()` refuses the model (OOD accuracy below the 0.80 floor;
+floor not in (0,1)). Regression-guarded by
+`internal/tlaloque/questionclass.TestShippedProfile_IsNotAdmissibleAsActive`.
+
+**This is the point of the exercise.** The earlier "16/17 hand-written"
+number was misleadingly good because those questions were written in a
+style close to the templates. The char-CNN memorized template structure,
+not question semantics. `minModelConfidence` (a raw-confidence threshold)
+could never have caught this — only measuring held-out competence did.
+
+**Wired in:** `swarmask.QuestionClassifierWorker` takes an optional
+`*calibration.CalibrationProfile`. When set, `calibration.Verdict` decides
+whether to trust each prediction; a non-`ANSWERED` verdict falls back to
+the deterministic rules, recording `model_verdict` and
+`model_rejected: calibration:<verdict>` in the blackboard observation's
+provenance. CLI: `swarm-ask -classifier-service <url> -classifier-calibration
+<profile.json>`. Verified end-to-end: the classifier node emitted
+`method=rule-based, model_rejected=calibration:LOW_EVIDENCE,
+model_verdict=PROCESS` — the model was consulted, overruled, and its
+opinion kept for audit.
+
+**Reproduce the profile:**
+```bash
+python3 questionclass_ood.py --seed 7007 --count 300 --out /tmp/qclass-ood.jsonl
+python3 questionclass_calibrate.py --checkpoint ../models/questionclass-charcnn-r0.pt \
+  --in-dist /tmp/qclass-test.jsonl --ood /tmp/qclass-ood.jsonl \
+  --out ../models/questionclass-charcnn-r0.calibration.json
+```
+
+**Next for this model specifically:** to earn ACTIVE it needs training
+data with far more surface variety (real question logs, paraphrase
+augmentation, adversarial forms) and re-measurement showing OOD accuracy
+≥ 0.80 with a reachable confidence floor. Until then it stays a
+demonstration of the calibration layer, not a production specialist.
