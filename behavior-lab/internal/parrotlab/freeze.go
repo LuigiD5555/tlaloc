@@ -119,6 +119,11 @@ func FreezeStage(exp *Experiment, stage string) (StageFreeze, error) {
 	problems := FreezeValidate(cases)
 	if stage == StageEndToEnd {
 		problems = append(problems, ValidateEndToEnd(cases)...)
+		if _, green, auditErr := WriteP0Audit(exp); auditErr != nil {
+			return StageFreeze{}, auditErr
+		} else if !green {
+			return StageFreeze{}, fmt.Errorf("P0 audit gate is not green — see datasets/P0_AUDIT.md (need 30 balanced questions, all rows PASS, human review complete)")
+		}
 	}
 	if len(problems) > 0 {
 		messages := make([]string, 0, len(problems))

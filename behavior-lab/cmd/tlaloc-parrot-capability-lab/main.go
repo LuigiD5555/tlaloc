@@ -33,6 +33,8 @@ func main() {
 		generate(os.Args[2:])
 	case "validate":
 		validate(os.Args[2:])
+	case "audit":
+		audit(os.Args[2:])
 	case "freeze":
 		freeze(os.Args[2:])
 	case "run":
@@ -55,6 +57,7 @@ func usage() {
   generate  --experiment DIR --stage end_to_end --store STORE_DIR [--pdf FILE] [--seed N]
                                                        deterministically build a stage dataset (+images)
   validate  --experiment DIR [--stage NAME]            validate dataset(s)
+  audit     --experiment DIR                           write datasets/P0_AUDIT.md, check the freeze gate
   freeze    --experiment DIR --scope global            lock prompt + model config (once)
   freeze    --experiment DIR --scope stage --stage X   lock one stage dataset (never rewritten)
   run       --experiment DIR --stage NAME              run a stage against the model
@@ -173,6 +176,16 @@ func generate(args []string) {
 		}
 	default:
 		die(fmt.Errorf("generate supports --stage instruction_cliff | end_to_end"))
+	}
+}
+
+func audit(args []string) {
+	exp, _ := load(args)
+	path, ready, err := parrotlab.WriteP0Audit(exp)
+	die(err)
+	emit(map[string]any{"audit_file": path, "gate_green": ready})
+	if !ready {
+		os.Exit(1)
 	}
 }
 
