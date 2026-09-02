@@ -20,12 +20,12 @@ const (
 type ReasonCode string
 
 const (
-	ReasonAligned              ReasonCode = "ALIGNED"
-	ReasonLowAlignment         ReasonCode = "LOW_ALIGNMENT"
-	ReasonPolarityContradiction ReasonCode = "POLARITY_CONTRADICTION"
-	ReasonNumericContradiction  ReasonCode = "NUMERIC_CONTRADICTION"
+	ReasonAligned                 ReasonCode = "ALIGNED"
+	ReasonLowAlignment            ReasonCode = "LOW_ALIGNMENT"
+	ReasonPolarityContradiction   ReasonCode = "POLARITY_CONTRADICTION"
+	ReasonNumericContradiction    ReasonCode = "NUMERIC_CONTRADICTION"
 	ReasonQuantifierContradiction ReasonCode = "QUANTIFIER_CONTRADICTION"
-	ReasonAntonymContradiction  ReasonCode = "ANTONYM_CONTRADICTION"
+	ReasonAntonymContradiction    ReasonCode = "ANTONYM_CONTRADICTION"
 )
 
 type VerifyInput struct {
@@ -42,11 +42,11 @@ type Reason struct {
 }
 
 type ClaimTrace struct {
-	Claim      string   `json:"claim"`
-	Evidence   string   `json:"evidence,omitempty"`
-	Alignment  float64  `json:"alignment"`
-	Verdict    Verdict  `json:"verdict"`
-	Reasons    []Reason `json:"reasons,omitempty"`
+	Claim     string   `json:"claim"`
+	Evidence  string   `json:"evidence,omitempty"`
+	Alignment float64  `json:"alignment"`
+	Verdict   Verdict  `json:"verdict"`
+	Reasons   []Reason `json:"reasons,omitempty"`
 }
 
 type VerifyOutput struct {

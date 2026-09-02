@@ -4,12 +4,12 @@ package groundingautomaton
 // evaluation commands. Expected is intentionally categorical: R0 evaluates
 // authority boundaries, not only a scalar score.
 type EvalCase struct {
-	ID          string      `json:"id"`
-	Question    string      `json:"question,omitempty"`
-	Answer      string      `json:"answer"`
-	Evidence    string      `json:"evidence"`
-	Expected    Verdict     `json:"expected"`
-	Family      string      `json:"family,omitempty"`
+	ID       string  `json:"id"`
+	Question string  `json:"question,omitempty"`
+	Answer   string  `json:"answer"`
+	Evidence string  `json:"evidence"`
+	Expected Verdict `json:"expected"`
+	Family   string  `json:"family,omitempty"`
 }
 
 type EvalObservation struct {
@@ -21,19 +21,19 @@ type EvalObservation struct {
 }
 
 type EvalMetrics struct {
-	Total                        int     `json:"total"`
-	Correct                      int     `json:"correct"`
-	Accuracy                     float64 `json:"accuracy"`
-	Covered                      int     `json:"covered"`
-	Coverage                     float64 `json:"coverage"`
-	Unknown                      int     `json:"unknown"`
-	Insufficient                 int     `json:"insufficient"`
-	FalseSupportedContradiction  int     `json:"false_supported_contradiction"`
-	ContradictionTruePositive    int     `json:"contradiction_true_positive"`
-	ContradictionFalsePositive   int     `json:"contradiction_false_positive"`
-	ContradictionFalseNegative   int     `json:"contradiction_false_negative"`
-	ContradictionPrecision       float64 `json:"contradiction_precision"`
-	ContradictionRecall          float64 `json:"contradiction_recall"`
+	Total                       int     `json:"total"`
+	Correct                     int     `json:"correct"`
+	Accuracy                    float64 `json:"accuracy"`
+	Covered                     int     `json:"covered"`
+	Coverage                    float64 `json:"coverage"`
+	Unknown                     int     `json:"unknown"`
+	Insufficient                int     `json:"insufficient"`
+	FalseSupportedContradiction int     `json:"false_supported_contradiction"`
+	ContradictionTruePositive   int     `json:"contradiction_true_positive"`
+	ContradictionFalsePositive  int     `json:"contradiction_false_positive"`
+	ContradictionFalseNegative  int     `json:"contradiction_false_negative"`
+	ContradictionPrecision      float64 `json:"contradiction_precision"`
+	ContradictionRecall         float64 `json:"contradiction_recall"`
 }
 
 func Evaluate(cases []EvalCase) ([]EvalObservation, EvalMetrics) {

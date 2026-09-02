@@ -73,7 +73,23 @@ const numberTolerance = 1e-6
 // AND their values differ. Context-sharing is what keeps "3 types" vs "5
 // categories" from being a contradiction. Falls back to R0's
 // equal-cardinality rule when no context word is available on either side.
+// looksLikeCode reports whether text is a code fragment rather than prose.
+// Numbers in code ("== 0", "% 2", "let x = 6") are not factual claims, so
+// the numeric contradiction rule must not treat them as such.
+func looksLikeCode(text string) bool {
+	markers := 0
+	for _, m := range []string{";", "{", "}", "==", "!=", "=>", "::", "fn ", "()", "//", "print"} {
+		if strings.Contains(text, m) {
+			markers++
+		}
+	}
+	return markers >= 2
+}
+
 func numericContradictionR1(claim, evidence string) (string, bool) {
+	if looksLikeCode(claim) || looksLikeCode(evidence) {
+		return "", false
+	}
 	claimNumbers := numberContexts(claim)
 	evidenceNumbers := numberContexts(evidence)
 	if len(claimNumbers) == 0 || len(evidenceNumbers) == 0 {
@@ -118,6 +134,56 @@ func claimNumbersConsistent(claim, evidence string) bool {
 		}
 	}
 	return true
+}
+
+// nearVerbatimDivergence guards against the "one word flipped" attack: an
+// answer that is otherwise a near-exact copy of the evidence but replaces a
+// single content term with something else (an antonym the rule set doesn't
+// know, or any substantive change). At very high lexical alignment even a
+// single unmatched claim term is suspicious, so the automaton abstains
+// rather than assert SUPPORTED. Genuine paraphrases sit below this
+// alignment band and are unaffected.
+func nearVerbatimDivergence(claim, evidence string, alignment float64) bool {
+	if alignment < 0.9 {
+		return false
+	}
+	evidenceTerms := contentTerms(evidence)
+	for term := range coreTerms(claim) {
+		if _, ok := evidenceTerms[term]; !ok {
+			return true
+		}
+	}
+	return false
+}
+
+var lowerBoundPhrases = []string{"at least", "no fewer than", "no less than", "minimum of", "or more", "greater than"}
+var upperBoundPhrases = []string{"at most", "up to", "capped at", "no more than", "no greater than", "maximum of", "or fewer", "or less", "less than", "fewer than"}
+
+func hasAnyPhrase(norm string, phrases []string) bool {
+	padded := " " + norm + " "
+	for _, p := range phrases {
+		if strings.Contains(padded, " "+p+" ") {
+			return true
+		}
+	}
+	return false
+}
+
+// boundContradiction fires when the claim bounds a quantity from one side
+// ("at least N") and the evidence bounds the same quantity from the opposite
+// side ("at most N" / "capped at N"), over a strong shared core. Works on
+// word-numbers too, since it keys on the bound phrase, not the digit.
+func boundContradiction(claim, evidence string) (string, bool) {
+	c, e := normalize(claim), normalize(evidence)
+	claimLower, claimUpper := hasAnyPhrase(c, lowerBoundPhrases), hasAnyPhrase(c, upperBoundPhrases)
+	evidenceLower, evidenceUpper := hasAnyPhrase(e, lowerBoundPhrases), hasAnyPhrase(e, upperBoundPhrases)
+	if (claimLower && evidenceUpper && !claimUpper && !evidenceLower) ||
+		(claimUpper && evidenceLower && !claimLower && !evidenceUpper) {
+		if sharesStrongCore(claim, evidence) {
+			return "opposite bounds on a shared quantity", true
+		}
+	}
+	return "", false
 }
 
 func abs64(f float64) float64 {

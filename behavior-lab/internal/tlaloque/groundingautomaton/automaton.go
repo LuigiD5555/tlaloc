@@ -48,6 +48,9 @@ var antonymPairs = [][2]string{
 	{"synchronous", "asynchronous"}, {"sincrono", "asincrono"},
 	{"include", "exclude"}, {"includes", "excludes"}, {"incluye", "excluye"},
 	{"toward", "away"}, {"towards", "away"}, {"hacia", "lejos"},
+	{"static", "dynamic"}, {"estatico", "dinamico"},
+	{"stateless", "stateful"}, {"mutable", "immutable"}, {"safe", "unsafe"},
+	{"valid", "invalid"}, {"success", "failure"}, {"allow", "deny"}, {"allowed", "denied"},
 }
 
 func Verify(in VerifyInput) VerifyOutput {
@@ -68,14 +71,18 @@ func Verify(in VerifyInput) VerifyOutput {
 		trace := ClaimTrace{Claim: claim, Evidence: evidence, Alignment: alignment, Verdict: VerdictUnknown}
 
 		// A claim below the candidate threshold is still inspected for
-		// CONTRADICTION (not support) when the aligned span carries an
-		// unambiguous conflict signal AND shares a core content term — the
-		// lexical-coverage metric systematically under-scores a long claim
-		// against a short conflicting evidence sentence ("...is centralised
-		// through a leader node" vs "there is no leader node").
+		// CONTRADICTION (never support) when:
+		//  - the span carries a lexically-anchored conflict (antonym of a
+		//    claim term, or a clashing quantifier) and shares a core term, OR
+		//  - the span opposes the claim's polarity AND the span is *mostly*
+		//    shared core terms with the claim (a short negated sentence that
+		//    is entirely about the claim's predicate — "there is no central
+		//    scheduler"). Bare polarity parity with only a generic term in
+		//    common is not enough: unrelated sentences often clash in
+		//    polarity by chance.
 		strongConflict := evidence != "" &&
-			carriesContradictionSignal(claim, evidence) &&
-			sharesCoreTerm(claim, evidence)
+			((anchoredConflictSignal(claim, evidence) && sharesCoreTerm(claim, evidence)) ||
+				(hasNegation(claim) != hasNegation(evidence) && sharesStrongCore(claim, evidence)))
 
 		if (alignment < AlignmentCandidateThreshold || evidence == "") && !strongConflict {
 			trace.Reasons = append(trace.Reasons, Reason{Code: ReasonLowAlignment, Claim: claim, Evidence: evidence})
@@ -87,6 +94,13 @@ func Verify(in VerifyInput) VerifyOutput {
 		trace.Reasons = append(trace.Reasons, Reason{Code: ReasonAligned, Claim: claim, Evidence: evidence})
 
 		if detail, ok := numericContradictionR1(claim, evidence); ok {
+			trace.Verdict = VerdictContradicted
+			trace.Reasons = append(trace.Reasons, Reason{Code: ReasonNumericContradiction, Claim: claim, Evidence: evidence, Detail: detail})
+			contradicted++
+			traces = append(traces, trace)
+			continue
+		}
+		if detail, ok := boundContradiction(claim, evidence); ok {
 			trace.Verdict = VerdictContradicted
 			trace.Reasons = append(trace.Reasons, Reason{Code: ReasonNumericContradiction, Claim: claim, Evidence: evidence, Detail: detail})
 			contradicted++
@@ -117,7 +131,8 @@ func Verify(in VerifyInput) VerifyOutput {
 
 		if alignment >= AlignmentSupportThreshold &&
 			len(coreTerms(claim)) >= 2 &&
-			claimNumbersConsistent(claim, evidence) {
+			claimNumbersConsistent(claim, evidence) &&
+			!nearVerbatimDivergence(claim, evidence, alignment) {
 			trace.Verdict = VerdictSupported
 			supported++
 		}
@@ -141,6 +156,22 @@ func Verify(in VerifyInput) VerifyOutput {
 	return out
 }
 
+var knownAbbrev = map[string]struct{}{
+	"i.e": {}, "e.g": {}, "etc": {}, "vs": {}, "cf": {}, "al": {}, "no": {},
+	"inc": {}, "ltd": {}, "dr": {}, "mr": {}, "ms": {}, "fig": {}, "eq": {},
+	"approx": {}, "u.s": {}, "u.k": {}, "a.m": {}, "p.m": {},
+}
+
+// tokenBefore returns the lowercased run of letters/digits/'.' ending just
+// before index i.
+func tokenBefore(runes []rune, i int) string {
+	j := i - 1
+	for j >= 0 && (unicode.IsLetter(runes[j]) || unicode.IsDigit(runes[j]) || runes[j] == '.') {
+		j--
+	}
+	return strings.ToLower(string(runes[j+1 : i]))
+}
+
 func splitClaims(text string) []string {
 	text = strings.TrimSpace(text)
 	if text == "" {
@@ -158,9 +189,13 @@ func splitClaims(text string) []string {
 	for i, r := range runes {
 		boundary := r == '!' || r == '?' || r == ';' || r == '\n'
 		if r == '.' {
-			prevDigit := i > 0 && unicode.IsDigit(runes[i-1])
-			nextDigit := i+1 < len(runes) && unicode.IsDigit(runes[i+1])
-			boundary = !(prevDigit && nextDigit)
+			// Not a sentence break when the period sits inside a token
+			// (3.14, crates.io) or right after a known abbreviation
+			// (i.e., U.S., etc.).
+			prevInWord := i > 0 && (unicode.IsLetter(runes[i-1]) || unicode.IsDigit(runes[i-1]))
+			nextInWord := i+1 < len(runes) && (unicode.IsLetter(runes[i+1]) || unicode.IsDigit(runes[i+1]))
+			_, isAbbrev := knownAbbrev[tokenBefore(runes, i)]
+			boundary = !(prevInWord && nextInWord) && !isAbbrev
 		}
 		if boundary {
 			flush(i)
@@ -222,6 +257,34 @@ func carriesContradictionSignal(claim, span string) bool {
 	}
 	if hasNegation(claim) != hasNegation(span) {
 		return true
+	}
+	return anchoredConflictSignal(claim, span)
+}
+
+// sharesStrongCore reports that the claim and span share at least two
+// lemmatised core terms AND those shared terms make up at least half of the
+// span's own core — i.e. the span is largely about the same thing the claim
+// is, not merely touching a common topic word.
+func sharesStrongCore(claim, span string) bool {
+	spanTerms := coreTerms(span)
+	if len(spanTerms) == 0 {
+		return false
+	}
+	shared := 0
+	for term := range coreTerms(claim) {
+		if _, ok := spanTerms[term]; ok {
+			shared++
+		}
+	}
+	return shared >= 2 && float64(shared)/float64(len(spanTerms)) >= 0.5
+}
+
+// anchoredConflictSignal is the subset of contradiction signals that are tied
+// to a specific lexical item present on both sides — safe enough to act on
+// even when whole-claim alignment is low.
+func anchoredConflictSignal(claim, span string) bool {
+	if span == "" {
+		return false
 	}
 	if _, ok := antonymContradiction(claim, span); ok {
 		return true
