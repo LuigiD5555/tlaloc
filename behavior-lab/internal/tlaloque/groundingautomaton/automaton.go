@@ -55,7 +55,7 @@ func Verify(in VerifyInput) VerifyOutput {
 	for _, claim := range claims {
 		evidence, alignment := bestEvidence(claim, evidenceSpans)
 		trace := ClaimTrace{Claim: claim, Evidence: evidence, Alignment: alignment, Verdict: VerdictUnknown}
-		if alignment < 0.45 || evidence == "" {
+		if alignment < AlignmentCandidateThreshold || evidence == "" {
 			trace.Reasons = append(trace.Reasons, Reason{Code: ReasonLowAlignment, Claim: claim, Evidence: evidence})
 			traces = append(traces, trace)
 			continue
@@ -93,7 +93,7 @@ func Verify(in VerifyInput) VerifyOutput {
 			continue
 		}
 
-		if alignment >= 0.70 {
+		if alignment >= AlignmentSupportThreshold {
 			trace.Verdict = VerdictSupported
 			supported++
 		}
