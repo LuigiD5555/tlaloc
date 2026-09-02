@@ -1,0 +1,10 @@
+{"id":"supported-en","answer":"Distributed agents coordinate locally in a swarm.","evidence":"A swarm is a system composed of multiple distributed agents that coordinate their behavior through local interactions.","expected":"SUPPORTED","family":"support"}
+{"id":"polarity-en","answer":"The system does not distribute the load between three agents.","evidence":"The system distributes the load between three agents.","expected":"CONTRADICTED","family":"polarity"}
+{"id":"number-en","answer":"The model has 28 million parameters.","evidence":"The model has 27 million parameters.","expected":"CONTRADICTED","family":"numeric"}
+{"id":"quantifier-en","answer":"All workers require network access.","evidence":"None of the workers require network access.","expected":"CONTRADICTED","family":"quantifier"}
+{"id":"antonym-en","answer":"The feature is disabled.","evidence":"The feature is enabled.","expected":"CONTRADICTED","family":"antonym"}
+{"id":"unknown-en","answer":"Paris is the capital of France.","evidence":"A swarm coordinates distributed agents using local interactions.","expected":"UNKNOWN","family":"abstention"}
+{"id":"supported-es","answer":"Los agentes distribuidos coordinan localmente dentro del enjambre.","evidence":"Un enjambre se compone de agentes distribuidos que coordinan su comportamiento mediante interacciones locales.","expected":"SUPPORTED","family":"support"}
+{"id":"polarity-es","answer":"El sistema no distribuye la carga entre tres agentes.","evidence":"El sistema distribuye la carga entre tres agentes.","expected":"CONTRADICTED","family":"polarity"}
+{"id":"number-es","answer":"El modelo tiene 28 millones de parametros.","evidence":"El modelo tiene 27 millones de parametros.","expected":"CONTRADICTED","family":"numeric"}
+{"id":"antonym-es","answer":"La funcion esta deshabilitada.","evidence":"La funcion esta habilitada.","expected":"CONTRADICTED","family":"antonym"}

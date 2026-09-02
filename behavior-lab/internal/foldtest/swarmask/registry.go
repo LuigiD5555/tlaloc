@@ -15,6 +15,9 @@ type RegistryConfig struct {
 	ClassifierCalibrationPath string
 	GroundingEndpoint         string
 	GroundingCalibrationPath  string
+	// DisableGroundingAutomaton turns off the deterministic
+	// grounding-automaton-r0 first pass in the consolidator (default: on).
+	DisableGroundingAutomaton bool
 }
 
 // NewRegistry builds a tlaloque.Registry with every swarmask worker
@@ -48,7 +51,7 @@ func NewRegistry(config RegistryConfig) (*tlaloque.Registry, error) {
 	}
 	_ = registry.Register(classifier)
 
-	consolidator := ConsolidatorWorker{}
+	consolidator := ConsolidatorWorker{DisableAutomaton: config.DisableGroundingAutomaton}
 	if config.GroundingEndpoint != "" {
 		consolidator.GroundingRegistry = groundingscore.NewRegistry(config.GroundingEndpoint)
 	}
