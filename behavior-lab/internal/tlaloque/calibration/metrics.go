@@ -1,6 +1,45 @@
 package calibration
 
-import "sort"
+import (
+	"math"
+	"sort"
+)
+
+// ProportionInterval is a two-sided confidence interval for a binomial
+// success proportion: the point estimate plus its lower and upper bounds.
+type ProportionInterval struct {
+	Proportion float64 `json:"proportion"`
+	Low        float64 `json:"ci95_low"`
+	High       float64 `json:"ci95_high"`
+}
+
+// WilsonInterval returns the 95% Wilson score interval for correct
+// successes out of total trials. The Wilson interval is preferred over the
+// normal approximation for the small samples (n = 30..50) used in the
+// Parrot Capability Lab: it stays inside [0, 1] and does not collapse to a
+// zero-width interval at proportions of 0 or 1. total <= 0 yields a zeroed
+// interval.
+func WilsonInterval(correct, total int) ProportionInterval {
+	if total <= 0 {
+		return ProportionInterval{}
+	}
+	const z = 1.959963984540054 // 97.5th percentile of the standard normal
+	n := float64(total)
+	phat := float64(correct) / n
+	z2 := z * z
+	denominator := 1 + z2/n
+	center := (phat + z2/(2*n)) / denominator
+	margin := (z / denominator) * math.Sqrt(phat*(1-phat)/n+z2/(4*n*n))
+	low := center - margin
+	high := center + margin
+	if low < 0 {
+		low = 0
+	}
+	if high > 1 {
+		high = 1
+	}
+	return ProportionInterval{Proportion: phat, Low: low, High: high}
+}
 
 // Prediction is one scored, labeled outcome from an evaluation run:
 // the model's stated confidence in its top choice, and whether that choice
