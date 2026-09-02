@@ -12,6 +12,16 @@ func TestVerifySupportedParaphrase(t *testing.T) {
 	}
 }
 
+func TestVerifySupportedSpanishParaphrase(t *testing.T) {
+	out := Verify(VerifyInput{
+		ModelAnswer: "Los agentes distribuidos coordinan localmente dentro del enjambre.",
+		PageContent: "Un enjambre se compone de agentes distribuidos que coordinan su comportamiento mediante interacciones locales.",
+	})
+	if out.Verdict != VerdictSupported {
+		t.Fatalf("expected Spanish SUPPORTED, got %s (%+v)", out.Verdict, out)
+	}
+}
+
 func TestVerifyPolarityContradiction(t *testing.T) {
 	out := Verify(VerifyInput{
 		ModelAnswer: "The system does not distribute the load between three agents.",
@@ -36,10 +46,24 @@ func TestVerifyDecimalNumericContradiction(t *testing.T) {
 	}
 }
 
-func TestVerifyQuantifierContradiction(t *testing.T) {
-	out := Verify(VerifyInput{ModelAnswer: "All workers require network access.", PageContent: "Some workers require network access."})
+func TestVerifyExtraEvidenceNumberDoesNotCreateFalseContradiction(t *testing.T) {
+	out := Verify(VerifyInput{ModelAnswer: "The system uses 3 agents.", PageContent: "The system uses 3 agents and has 2 coordinators."})
+	if out.Verdict == VerdictContradicted {
+		t.Fatalf("extra evidence number must not create contradiction: %+v", out)
+	}
+}
+
+func TestVerifyExplicitQuantifierContradiction(t *testing.T) {
+	out := Verify(VerifyInput{ModelAnswer: "All workers require network access.", PageContent: "No workers require network access."})
 	if out.Verdict != VerdictContradicted {
 		t.Fatalf("expected CONTRADICTED, got %s (%+v)", out.Verdict, out)
+	}
+}
+
+func TestVerifySomeDoesNotContradictAll(t *testing.T) {
+	out := Verify(VerifyInput{ModelAnswer: "All workers require network access.", PageContent: "Some workers require network access."})
+	if out.Verdict == VerdictContradicted {
+		t.Fatalf("some does not logically contradict all: %+v", out)
 	}
 }
 
@@ -47,6 +71,13 @@ func TestVerifyAntonymContradiction(t *testing.T) {
 	out := Verify(VerifyInput{ModelAnswer: "The feature is disabled.", PageContent: "The feature is enabled."})
 	if out.Verdict != VerdictContradicted {
 		t.Fatalf("expected CONTRADICTED, got %s (%+v)", out.Verdict, out)
+	}
+}
+
+func TestVerifySpanishAntonymContradiction(t *testing.T) {
+	out := Verify(VerifyInput{ModelAnswer: "La funcion esta deshabilitada.", PageContent: "La funcion esta habilitada."})
+	if out.Verdict != VerdictContradicted {
+		t.Fatalf("expected Spanish CONTRADICTED, got %s (%+v)", out.Verdict, out)
 	}
 }
 
