@@ -1,0 +1,18 @@
+{
+  "global": {
+    "frozen": true,
+    "prompt_file_hash": "0645099a1df85696ff57002c3e55c7eaa5f73acd30adc24ff213535f554bc317",
+    "system_prompt_hash": "4d76acabbdfc70bf9858732fc1d3a08f3cbeb3ae2e776f2a12848d27eb6a1e69",
+    "model_hash": "e1bfcdda5ebab967fc875d0807929574f7eb4c92d6e428c9049f422df3f3f221",
+    "frozen_at": "2026-09-02T18:47:28Z"
+  },
+  "stages": {
+    "instruction_cliff": {
+      "dataset_hashes": {
+        "datasets/instruction-cliff.jsonl": "ed3ee01dbcf644eecb9d10d2361a714156a6c3ee47682be1cd969d43d69c9439"
+      },
+      "cases": 200,
+      "frozen_at": "2026-09-02T18:47:28Z"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+parrot-capability-r0
+
+SYSTEM:
+Follow the requested operations using only the provided image and instruction.
+Do not invent missing information.
+Answer with the final result only, and nothing else.
+If the requested information cannot be determined from the image, answer exactly: UNKNOWN
