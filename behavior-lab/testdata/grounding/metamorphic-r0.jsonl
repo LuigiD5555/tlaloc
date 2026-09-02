@@ -1,0 +1,6 @@
+{"id":"meta-number-supported","answer":"The system uses 3 agents.","evidence":"The system uses 3 agents.","expected":"SUPPORTED","family":"metamorphic"}
+{"id":"meta-number-flip","answer":"The system uses 4 agents.","evidence":"The system uses 3 agents.","expected":"CONTRADICTED","family":"metamorphic"}
+{"id":"meta-polarity-supported","answer":"The feature is enabled.","evidence":"The feature is enabled.","expected":"SUPPORTED","family":"metamorphic"}
+{"id":"meta-polarity-flip","answer":"The feature is not enabled.","evidence":"The feature is enabled.","expected":"CONTRADICTED","family":"metamorphic"}
+{"id":"meta-quantifier-supported","answer":"Some workers use the network.","evidence":"Some workers use the network.","expected":"SUPPORTED","family":"metamorphic"}
+{"id":"meta-quantifier-flip","answer":"All workers use the network.","evidence":"Some workers use the network.","expected":"CONTRADICTED","family":"metamorphic"}
