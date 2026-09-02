@@ -1,0 +1,37 @@
+{
+  "schema": "tlaloc.behavior-profile.r0",
+  "id": "lm-studio-lfm2-vl-1.6b",
+  "status": "EXPERIMENTAL_NOT_PROMOTED",
+  "upstream_contract": "lm-studio.lfm2-vl-1.6b.local",
+  "distillation_contract": "tlaloc.fold-bench-text-only.r0",
+  "working_window_token_eq": 4000,
+  "objective": "Evaluate whether a small 1.6B vision-language model can work against a full PDF book's worth of content while only ever seeing a ~4000-token text window at a time. Test genuine instruction learning on a novel command grammar (UNFOLD, GROUP) rather than transfer of existing protocol conventions.",
+  "search_targets": [
+    "text-only fold/unfold command learning",
+    "arbitrary page/block addressing via UNFOLD",
+    "graph-based grouping via GROUP",
+    "multi-turn context accumulation without vision overhead",
+    "instruction fidelity on unfamiliar syntax"
+  ],
+  "must_not_optimize_away": [
+    "deterministic unfold operations",
+    "Merkle verification of retrieved content",
+    "plain text cost accounting (no vision tokens)",
+    "novel command grammar fidelity",
+    "content-addressed permanence of unfolds"
+  ],
+  "fitness": {
+    "command_learning": 0.25,
+    "unfold_accuracy": 0.25,
+    "answer_correctness": 0.25,
+    "token_efficiency": 0.15,
+    "latency_stability": 0.1
+  },
+  "hard_rejection": [
+    "VISION_TOKEN_COST_GT_0",
+    "COMMAND_PARSING_FAILURE",
+    "UNFOLD_MERKLE_MISMATCH",
+    "HALLUCINATED_CONTENT"
+  ],
+  "promotion_destination": "Tlaloc fold-bench reference suite; no external promotion intended."
+}

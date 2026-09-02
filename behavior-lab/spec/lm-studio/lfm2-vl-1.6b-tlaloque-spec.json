@@ -1,0 +1,80 @@
+{
+  "contract_id": "tlaloc.fold-bench-text-only.r0",
+  "status": "EXPERIMENTAL_REFERENCE_IMPLEMENTATION",
+  "purpose": "Verify that lfm2-vl-1.6b can learn and execute a novel text-only fold/unfold command grammar while maintaining deterministic content retrieval and Merkle verification over a full PDF book in a bounded token window.",
+  "input": {
+    "required": [
+      "PDF file for coverage and content extraction",
+      "LM Studio local server at http://127.0.0.1:1234/v1",
+      "Model: lfm2-vl-1.6b"
+    ],
+    "optional": [
+      "custom test question set",
+      "token budget override"
+    ]
+  },
+  "pipeline": [
+    "BUILD_PDFMEMORY_STORE",
+    "GENERATE_COVER_TEXT",
+    "INITIALIZE_SESSION_WITH_SYSTEM_PROMPT",
+    "PARSE_UNFOLD_COMMAND",
+    "RETRIEVE_CONTENT_VIA_EXPAND",
+    "VERIFY_MERKLE_HASH",
+    "ACCUMULATE_EVIDENCE",
+    "PARSE_GROUP_COMMAND",
+    "RETRIEVE_GRAPH_NEIGHBORS",
+    "EVALUATE_ANSWER_CORRECTNESS",
+    "RECORD_METRICS"
+  ],
+  "command_grammar": {
+    "unfold": "UNFOLD <address>[:fidelity]",
+    "address_forms": [
+      "page:N",
+      "block:doc/page-N/blocks/M",
+      "doc:document-id"
+    ],
+    "fidelity_options": ["low", "high"],
+    "group": "GROUP term:<X> depth:<N>",
+    "answer_format": "ANSWER: <text>"
+  },
+  "hard_invariants": [
+    "NO_VISION_TOKENS",
+    "TEXT_ONLY_COMPLETE",
+    "DETERMINISTIC_UNFOLD",
+    "MERKLE_VERIFIED_CONTENT",
+    "COVER_UNDER_800_TOKENS",
+    "COMMAND_GRAMMAR_FIDELITY",
+    "PERMANENT_CONTENT_ADDRESS",
+    "SESSION_BOUNDED_TURNS",
+    "FALSE_EXACT=0"
+  ],
+  "evaluation_criteria": {
+    "instruction_learning": {
+      "metric": "command_grammar_usage_correctness",
+      "target": "learned_command_used: true in at least 80% of multi-turn questions",
+      "failure": "Model reverts to unlearned syntax or fails to parse commands"
+    },
+    "content_retrieval": {
+      "metric": "merkle_verification_success_rate",
+      "target": "100% of unfolds must pass Merkle verification",
+      "failure": "Hash mismatch indicates corrupted or replaced content"
+    },
+    "answer_quality": {
+      "metric": "correctness_on_ground_truth_qa",
+      "target": "at least 75% of answerable questions answered correctly",
+      "failure": "Hallucination or misuse of unfold/group operations"
+    },
+    "token_efficiency": {
+      "metric": "total_tokens_per_turn",
+      "target": "average under 500 tokens per turn including unfold overhead",
+      "failure": "Token cost exceeds working window efficiency"
+    }
+  },
+  "test_categories": [
+    "answerable_from_cover_alone",
+    "requires_single_unfold",
+    "requires_group_relation_query",
+    "intentionally_unanswerable",
+    "multi_hop_unfold_chain"
+  ]
+}
