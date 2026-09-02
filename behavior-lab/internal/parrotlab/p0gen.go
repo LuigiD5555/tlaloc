@@ -31,6 +31,10 @@ type P0Options struct {
 	PageCount   int // default 10
 	PerCategory int // default 6
 	Variants    []string
+	// Pages, when set, is an explicit page list — a human who has browsed
+	// the PDF picks content-rich pages directly instead of the automatic
+	// filter+spacing. This is the recommended path for an OCR'd source.
+	Pages []int
 }
 
 // P0Report is the generator outcome.
@@ -90,29 +94,41 @@ func GenerateEndToEnd(provider PageProvider, datasetDir string, opts P0Options) 
 	if err != nil {
 		return report, err
 	}
-	usable := usablePages(allPages)
-	// Prefer catalog-entry pages (title + Motivation + Mechanics): every
-	// generator has clean signal on them. Fall back to any usable page.
-	pool := usable
-	var entry []SourcePage
-	for _, page := range usable {
-		if isRefactoringEntryPage(page) {
-			entry = append(entry, page)
+	byNumber := map[int]SourcePage{}
+	for _, page := range allPages {
+		byNumber[page.Number] = page
+	}
+
+	var selected []SourcePage
+	if len(opts.Pages) > 0 {
+		report.PageSelection = "explicit-page-list"
+		for _, number := range opts.Pages {
+			page, ok := byNumber[number]
+			if !ok {
+				return report, fmt.Errorf("page %d not in the document (%d pages)", number, len(allPages))
+			}
+			selected = append(selected, page)
 		}
-	}
-	if len(entry) >= opts.PageCount {
-		pool = entry
-		report.PageSelection = "refactoring-entry-pages"
 	} else {
-		report.PageSelection = "usable-pages"
-	}
-	if len(pool) < opts.PageCount {
-		return report, fmt.Errorf("only %d pages after filtering, need %d", len(pool), opts.PageCount)
-	}
-	positions := foldtest.SelectSpacedPages(len(pool), opts.PageCount, opts.Seed)
-	selected := make([]SourcePage, 0, len(positions))
-	for _, position := range positions {
-		selected = append(selected, pool[position-1])
+		usable := usablePages(allPages)
+		pool := usable
+		var entry []SourcePage
+		for _, page := range usable {
+			if isRefactoringEntryPage(page) {
+				entry = append(entry, page)
+			}
+		}
+		if len(entry) >= opts.PageCount {
+			pool, report.PageSelection = entry, "refactoring-entry-pages"
+		} else {
+			report.PageSelection = "usable-pages"
+		}
+		if len(pool) < opts.PageCount {
+			return report, fmt.Errorf("only %d pages after filtering, need %d — pass an explicit --pages list", len(pool), opts.PageCount)
+		}
+		for _, position := range foldtest.SelectSpacedPages(len(pool), opts.PageCount, opts.Seed) {
+			selected = append(selected, pool[position-1])
+		}
 	}
 	sort.Slice(selected, func(i, j int) bool { return selected[i].Number < selected[j].Number })
 	for _, page := range selected {
@@ -263,7 +279,12 @@ func buildExpected(candidate p0Candidate) Expected {
 
 // --- usable-page filtering (SPEC §2 exclusions) ---
 
-var dotLeader = regexp.MustCompile(`\.{4,}`)
+var (
+	dotLeader         = regexp.MustCompile(`\.{4,}`)
+	citationYearParen = regexp.MustCompile(`\(\d{4}[a-z]?\)`)
+)
+
+var authorBio = regexp.MustCompile(`(?i)\b(PhD|Ph\.D|Department of|University,|Institute of|Professor of)\b`)
 
 func usablePages(pages []SourcePage) []SourcePage {
 	total := len(pages)
@@ -274,21 +295,35 @@ func usablePages(pages []SourcePage) []SourcePage {
 				continue
 			}
 			text := strings.TrimSpace(page.Text)
-			if len(text) < 320 {
+			if len(text) < 500 { // a content page, not a fragment
 				continue
 			}
-			if letterRatio(text) < 0.55 {
+			if letterRatio(text) < 0.55 || digitRatio(text) > 0.14 {
+				continue
+			}
+			sentences := sentencesOf(text)
+			if len(sentences) < 3 { // needs real prose to ask about
 				continue
 			}
 			head := strings.ToLower(firstNonEmptyLine(text))
-			if containsAnyWord(head, "references", "bibliography", "index", "contents", "acknowledgements", "acknowledgments", "copyright", "colophon") {
+			if containsAnyWord(head, "references", "bibliography", "index", "contents", "acknowledgements", "acknowledgments", "copyright", "colophon", "glossary", "contributors", "about the", "list of") {
 				continue
 			}
-			if len(dotLeader.FindAllString(text, -1)) > 15 {
+			if len(dotLeader.FindAllString(text, -1)) > 8 {
 				continue
 			}
-			if shortLineRatio(text) > 0.6 {
+			if shortLineRatio(text) > 0.5 {
 				continue
+			}
+			// reference list: citations outnumber prose sentences.
+			if len(citationYearParen.FindAllString(text, -1)) > len(sentences) {
+				continue
+			}
+			if len(authorBio.FindAllString(text, -1)) >= 3 {
+				continue // contributor / front-matter page
+			}
+			if captionPrefix.MatchString(head) {
+				continue // a page that leads with a figure/table caption
 			}
 			out = append(out, page)
 		}
@@ -311,6 +346,20 @@ func letterRatio(text string) float64 {
 		return 0
 	}
 	return float64(letters) / float64(len([]rune(text)))
+}
+
+func digitRatio(text string) float64 {
+	runes := []rune(text)
+	if len(runes) == 0 {
+		return 0
+	}
+	digits := 0
+	for _, runeValue := range runes {
+		if runeValue >= '0' && runeValue <= '9' {
+			digits++
+		}
+	}
+	return float64(digits) / float64(len(runes))
 }
 
 func shortLineRatio(text string) float64 {
@@ -350,8 +399,12 @@ func containsAnyWord(haystack string, words ...string) bool {
 var (
 	sentenceSplit = regexp.MustCompile(`(?s)(.+?[.!?])(?:\s|$)`)
 	numberSpan    = regexp.MustCompile(`\$?\d[\d,]*(?:\.\d+)?%?`)
-	definitionRe  = regexp.MustCompile(`([A-Z][A-Za-z0-9-]+(?: [A-Za-z0-9-]+){0,3}) ((?:is|are|was|were|refers to|means|is defined as|coordinates|provides|turns|records|checks|keeps|moves|packs|selects|authorises|authorizes|evaluates|compares|blocks|triggers|restricts|stores|reads|resolves|carries|normalises|normalizes) [^.]{15,150})\.`)
-	capPhraseRe   = regexp.MustCompile(`\b([A-Z][A-Za-z0-9-]+(?: [A-Z][A-Za-z0-9-]+){1,3})\b`)
+	// A number carrying a real-world unit — a quantitative fact worth asking
+	// about, unlike a figure/section cross-reference.
+	unitNumber   = regexp.MustCompile(`(?i)\b\d[\d,]*(?:\.\d+)?[- ]?(?:billion|million|thousand|trillion|percent|layers?|attention heads?|heads?|parameters?|tokens?|documents?|gigabytes?|examples?|languages?|datasets?|models?|categories|classes|dimensions?|epochs?|neurons?|words?|sentences?|features?|tasks?|benchmarks?|annotators?|participants?|questions?|%)\b`)
+	crossRef     = regexp.MustCompile(`(?i)\b(?:figure|fig\.?|section|sec\.?|table|chapter|ch\.?|equation|eq\.?|appendix|algorithm|listing)\s+\d`)
+	definitionRe = regexp.MustCompile(`([A-Z][A-Za-z0-9-]+(?: [A-Za-z0-9-]+){0,3}) ((?:is|are|was|were|refers to|means|is defined as|coordinates|provides|turns|records|checks|keeps|moves|packs|selects|authorises|authorizes|evaluates|compares|blocks|triggers|restricts|stores|reads|resolves|carries|normalises|normalizes) [^.]{15,150})\.`)
+	capPhraseRe  = regexp.MustCompile(`\b([A-Z][A-Za-z0-9-]+(?: [A-Z][A-Za-z0-9-]+){1,3})\b`)
 )
 
 func generateCategory(category string, page SourcePage, allSelected []SourcePage, source *rand.Rand) []p0Candidate {
@@ -405,21 +458,9 @@ func genEntityFromHeading(page SourcePage, model headingModel) []p0Candidate {
 	}}
 }
 
-// genSynthesisFromHeadings: reading-order of the two catalog headings on the page.
+// genSynthesisFromHeadings: reading-order of the two clean headings on the page.
 func genSynthesisFromHeadings(page SourcePage, model headingModel) []p0Candidate {
-	var names []string
-	seen := map[string]bool{}
-	for _, heading := range model.Headings {
-		lower := strings.ToLower(heading)
-		if sectionWords[lower] || strings.Contains(lower, "example") || bareNumberLine.MatchString(heading) {
-			continue
-		}
-		if len(strings.Fields(heading)) < 2 || seen[lower] {
-			continue
-		}
-		seen[lower] = true
-		names = append(names, heading)
-	}
+	names := headingNames(model)
 	if len(names) < 2 {
 		return nil
 	}
@@ -448,22 +489,72 @@ func sentencesOf(text string) []string {
 	return out
 }
 
-// looksLikeCode rejects a "sentence" that is really a snippet of source
-// code (operators, braces, semicolons, camelCase call syntax).
-func looksLikeCode(sentence string) bool {
-	if strings.ContainsAny(sentence, "{}=;") {
+var citationYear = regexp.MustCompile(`[,(&]\s*\d{4}[a-z]?\s*[);,]`)
+
+// isCitationContext reports whether the number is part of an academic
+// citation (year, volume, page range) rather than a stated fact.
+func isCitationContext(sentence, number string) bool {
+	if strings.Count(sentence, "&") >= 1 || strings.Contains(sentence, "et al") ||
+		strings.Contains(sentence, "pp.") || citationYear.MatchString(sentence) {
 		return true
 	}
-	if strings.Count(sentence, "(") != strings.Count(sentence, ")") {
+	index := strings.Index(sentence, number)
+	if index > 0 {
+		before := sentence[max(0, index-2):index]
+		after := sentence[index+len(number) : min(len(sentence), index+len(number)+2)]
+		if strings.ContainsAny(before, "(,&") || strings.HasPrefix(after, ")") || strings.HasPrefix(after, "–") || strings.HasPrefix(after, "-") {
+			return true
+		}
+	}
+	return false
+}
+
+// looksLikeCode rejects a "sentence" that is really a snippet of source
+// code: braces or semicolons together with an assignment, or an obviously
+// unbalanced/operator-dense fragment. Plain math notation in prose is fine.
+func looksLikeCode(sentence string) bool {
+	if strings.Contains(sentence, ";") && strings.ContainsAny(sentence, "{}=") {
+		return true
+	}
+	if strings.Count(sentence, "{") != strings.Count(sentence, "}") {
 		return true
 	}
 	symbols := strings.Count(sentence, "*") + strings.Count(sentence, "+") +
-		strings.Count(sentence, "/") + strings.Count(sentence, "_")
-	return symbols >= 2
+		strings.Count(sentence, "/") + strings.Count(sentence, "_") + strings.Count(sentence, "=")
+	return symbols >= 4
 }
 
 func collapseSpace(text string) string {
 	return strings.Join(strings.Fields(strings.ReplaceAll(text, "\n", " ")), " ")
+}
+
+var scaleWord = regexp.MustCompile(`(?i)(billion|million|thousand|trillion)`)
+
+// unitOf returns the trailing unit word of a quantity phrase ("175 billion
+// parameters" -> "parameters"); scaleOf returns its magnitude multiplier.
+func unitOf(quantity string) string {
+	fields := strings.Fields(strings.ToLower(quantity))
+	if len(fields) == 0 {
+		return ""
+	}
+	return strings.TrimRight(fields[len(fields)-1], ".,")
+}
+
+func sameUnit(a, b string) bool { return unitOf(a) != "" && unitOf(a) == unitOf(b) }
+
+func scaleNumber(quantity string) string {
+	value := numberSpan.FindString(quantity)
+	switch strings.ToLower(scaleWord.FindString(quantity)) {
+	case "thousand":
+		return value + "000"
+	case "million":
+		return value + "000000"
+	case "billion":
+		return value + "000000000"
+	case "trillion":
+		return value + "000000000000"
+	}
+	return value
 }
 
 func occurrences(haystack, needle string) int {
@@ -477,33 +568,38 @@ func genNumeric(page SourcePage) []p0Candidate {
 	var out []p0Candidate
 	text := proseText(page)
 	for _, sentence := range sentencesOf(text) {
-		spans := numberSpan.FindAllString(sentence, -1)
-		if len(spans) != 1 {
-			continue
+		if crossRef.MatchString(sentence) || isCitationContext(sentence, "") {
+			continue // "Figure 3.1", "(Author 2020)" — not a stated quantity
 		}
-		number := spans[0]
-		if number == fmt.Sprintf("%d", page.Number) {
-			continue // running page number, not a fact
+		// Ask about a number that carries a real-world unit. The whole
+		// "<number> <unit>" phrase must be unambiguous on the page even if
+		// the bare number is not, and only its number is blanked so the
+		// unit stays as the cue ("_____ layers").
+		for _, quantity := range unitNumber.FindAllString(sentence, -1) {
+			quantity = strings.TrimSpace(quantity)
+			number := numberSpan.FindString(quantity)
+			if number == "" || occurrences(text, quantity) != 1 {
+				continue
+			}
+			if _, ok := firstNumber(number); !ok {
+				continue
+			}
+			clozed := strings.Replace(quantity, number, "_____", 1)
+			blanked := strings.Replace(sentence, quantity, clozed, 1)
+			if strings.HasPrefix(strings.TrimSpace(blanked), "_____") {
+				continue
+			}
+			out = append(out, p0Candidate{
+				Category:         "numeric",
+				Question:         fmt.Sprintf("Fill the blank using only the page. Answer with the number only.\n\"%s\"", blanked),
+				Answer:           strings.TrimPrefix(number, "$"),
+				TaskFamily:       "numeric",
+				EvidenceFragment: sentence,
+				Method:           "unit-number-cloze-r0",
+				Page:             page,
+			})
+			break // one numeric question per sentence
 		}
-		if occurrences(text, number) != 1 {
-			continue
-		}
-		if _, ok := firstNumber(number); !ok {
-			continue
-		}
-		blanked := strings.Replace(sentence, number, "_____", 1)
-		if strings.HasPrefix(strings.TrimSpace(blanked), "_____") {
-			continue // blank at the very start reads as nonsense
-		}
-		out = append(out, p0Candidate{
-			Category:         "numeric",
-			Question:         fmt.Sprintf("Fill the blank using only the page. Answer with the value only.\n\"%s\"", blanked),
-			Answer:           strings.TrimPrefix(number, "$"),
-			TaskFamily:       "numeric",
-			EvidenceFragment: sentence,
-			Method:           "numeric-cloze-r0",
-			Page:             page,
-		})
 	}
 	return out
 }
@@ -522,6 +618,15 @@ var termStopwords = map[string]bool{
 	"here": true, "now": true, "thus": true, "hence": true,
 	"another": true, "both": true, "such": true, "either": true, "neither": true,
 	"first": true, "second": true, "third": true, "next": true, "last": true,
+	"whole": true, "entire": true, "same": true, "former": true, "latter": true,
+	"above": true, "below": true, "following": true, "figure": true, "table": true,
+}
+
+// isBareQuantity reports whether a candidate "term"/"phrase" is really a
+// number (with or without a unit) — never a valid entity or factual answer.
+func isBareQuantity(text string) bool {
+	trimmed := strings.TrimSpace(text)
+	return trimmed != "" && (trimmed[0] >= '0' && trimmed[0] <= '9')
 }
 
 // looksLikeClauseFragment rejects a candidate "term" that is really a snippet
@@ -559,7 +664,7 @@ func genEntity(page SourcePage) []p0Candidate {
 	for _, match := range definitionRe.FindAllStringSubmatch(collapseSpace(page.Text), -1) {
 		term := trimArticle(strings.TrimSpace(match[1]))
 		definition := strings.TrimSpace(match[2])
-		if len(term) > 40 || len(strings.Fields(term)) < 2 || looksLikeClauseFragment(term) {
+		if len(term) > 40 || len(strings.Fields(term)) < 2 || looksLikeClauseFragment(term) || isBareQuantity(term) {
 			continue
 		}
 		if occurrences(definition, term) > 0 || len(strings.Fields(definition)) < 4 {
@@ -587,7 +692,8 @@ func genFactual(page SourcePage) []p0Candidate {
 			continue
 		}
 		phrase := phrases[len(phrases)-1]
-		if strings.HasPrefix(sentence, phrase) || occurrences(text, phrase) != 1 || looksLikeClauseFragment(phrase) {
+		if strings.HasPrefix(sentence, phrase) || occurrences(text, phrase) != 1 ||
+			looksLikeClauseFragment(phrase) || isBareQuantity(phrase) {
 			continue
 		}
 		blanked := strings.Replace(sentence, phrase, "_____", 1)
@@ -655,54 +761,50 @@ func genLocate(page SourcePage, allSelected []SourcePage, model headingModel, so
 
 func genSynthesis(page SourcePage) []p0Candidate {
 	var out []p0Candidate
-	sentences := sentencesOf(page.Text)
-	var numbers []string
-	for _, sentence := range sentences {
-		for _, span := range numberSpan.FindAllString(sentence, -1) {
-			if value, ok := firstNumber(span); ok && value != 0 && occurrences(page.Text, span) == 1 {
-				numbers = append(numbers, span)
+	text := proseText(page)
+	// Compare two quantities that both carry units and both scale to the
+	// same magnitude word, so "larger" is a genuine reading-and-comparing
+	// task rather than an artefact.
+	var quantities []string
+	for _, sentence := range sentencesOf(text) {
+		if crossRef.MatchString(sentence) || isCitationContext(sentence, "") {
+			continue
+		}
+		for _, span := range unitNumber.FindAllString(sentence, -1) {
+			span = strings.TrimSpace(span)
+			if occurrences(text, span) == 1 {
+				quantities = append(quantities, span)
 			}
 		}
 	}
-	if len(numbers) >= 2 {
-		first, second := numbers[0], numbers[1]
-		valueA, _ := firstNumber(first)
-		valueB, _ := firstNumber(second)
-		larger := first
-		if valueB > valueA {
-			larger = second
+	// Any pair sharing a unit but differing in value is a real
+	// read-two-facts-and-compare task.
+	for i := 0; i < len(quantities); i++ {
+		for j := i + 1; j < len(quantities); j++ {
+			first, second := quantities[i], quantities[j]
+			if !sameUnit(first, second) {
+				continue
+			}
+			valueA, _ := firstNumber(scaleNumber(first))
+			valueB, _ := firstNumber(scaleNumber(second))
+			if valueA == valueB {
+				continue
+			}
+			larger := first
+			if valueB > valueA {
+				larger = second
+			}
+			out = append(out, p0Candidate{
+				Category:         "synthesis",
+				Question:         fmt.Sprintf("The page states both %q and %q. Which is the larger quantity? Answer with that quantity exactly as written.", first, second),
+				Answer:           larger,
+				Choices:          []string{first, second},
+				TaskFamily:       "choice",
+				EvidenceFragment: fmt.Sprintf("%s / %s", first, second),
+				Method:           "two-quantity-compare-r0",
+				Page:             page,
+			})
 		}
-		choices := []string{first, second}
-		out = append(out, p0Candidate{
-			Category:         "synthesis",
-			Question:         fmt.Sprintf("The page states both %s and %s. Which is the larger number? Answer with that number only.", first, second),
-			Answer:           larger,
-			Choices:          choices,
-			TaskFamily:       "choice",
-			EvidenceFragment: fmt.Sprintf("%s / %s", first, second),
-			Method:           "two-number-compare-r0",
-			Page:             page,
-		})
-	}
-	terms := distinctiveTerms(page.Text)
-	if len(terms) >= 2 {
-		first, second := terms[0], terms[1]
-		firstPos := strings.Index(strings.ToLower(page.Text), strings.ToLower(first))
-		secondPos := strings.Index(strings.ToLower(page.Text), strings.ToLower(second))
-		earlier := first
-		if secondPos < firstPos {
-			earlier = second
-		}
-		out = append(out, p0Candidate{
-			Category:         "synthesis",
-			Question:         fmt.Sprintf("On the page, which is mentioned first: \"%s\" or \"%s\"? Answer with that phrase only.", first, second),
-			Answer:           earlier,
-			Choices:          []string{first, second},
-			TaskFamily:       "choice",
-			EvidenceFragment: firstSentenceContaining(page.Text, earlier),
-			Method:           "reading-order-r0",
-			Page:             page,
-		})
 	}
 	return out
 }

@@ -16,11 +16,21 @@ import (
 	"tlaloc.local/behaviorlab/internal/pdfmemory"
 )
 
-var bareNumberLine = regexp.MustCompile(`^\d{1,4}$`)
+var (
+	bareNumberLine = regexp.MustCompile(`^\d{1,4}$`)
+	// A running header: an ALL-CAPS chapter/section title with the printed
+	// page number embedded, e.g. "THE ANALYSIS OF VISUAL MOTION 51".
+	runningHeader = regexp.MustCompile(`([A-Z]{3}[A-Z ’'&-]{3,58}?)\s+\d{1,4}(\s|$)`)
+)
 
-// cleanPageText drops running page-number lines and blank lines from the
-// deterministically extracted page text. It does not paraphrase — every
-// remaining line is verbatim from pdfmemory.Expand.
+// A page-start running header: "<Section Title> <printed page number> <body…>"
+// where the number is flanked by a letter on the left and a lowercase word on
+// the right. Only stripped near the top of the page.
+var startHeaderNumber = regexp.MustCompile(`([A-Za-z][A-Za-z'’-]+)\s+\d{2,3}\s+([a-z])`)
+
+// cleanPageText drops page-number lines, running headers and blank lines
+// from the deterministically extracted page text. It does not paraphrase —
+// every remaining fragment is verbatim from pdfmemory.Expand.
 func cleanPageText(raw string) string {
 	lines := strings.Split(raw, "\n")
 	kept := make([]string, 0, len(lines))
@@ -30,11 +40,19 @@ func cleanPageText(raw string) string {
 			continue
 		}
 		if bareNumberLine.MatchString(trimmed) && (index <= 1 || index >= len(lines)-2) {
-			continue // page number at the top or bottom of the page
+			continue
 		}
-		kept = append(kept, trimmed)
+		trimmed = runningHeader.ReplaceAllString(trimmed, "$1$2")
+		kept = append(kept, strings.TrimSpace(trimmed))
 	}
-	return strings.Join(kept, "\n")
+	joined := strings.Join(kept, "\n")
+	// Strip the page-start running-header page number from the first line.
+	if cut := strings.IndexByte(joined, '\n'); cut > 0 && cut < 200 {
+		joined = startHeaderNumber.ReplaceAllString(joined[:cut], "$1 $2") + joined[cut:]
+	} else if len(joined) < 200 {
+		joined = startHeaderNumber.ReplaceAllString(joined, "$1 $2")
+	}
+	return joined
 }
 
 // SourceRegion is one layout region: its kind ("heading", "subheading",
@@ -124,9 +142,12 @@ func (provider *pdfMemoryProvider) SourceID() string {
 func (provider *pdfMemoryProvider) Pages() ([]SourcePage, error) {
 	pages := make([]SourcePage, 0, len(provider.manifest.Pages))
 	for _, ref := range provider.manifest.Pages {
-		text, err := foldtest.ExtractPageContent(provider.storeDir, provider.manifest, ref.Number)
+		// Read the full page text object directly. foldtest.ExtractPageContent
+		// (via pdfmemory.Expand) returns only the first block of a multi-block
+		// page — it truncates most content pages to a few hundred chars.
+		text, err := provider.pageText(ref)
 		if err != nil {
-			return nil, fmt.Errorf("extract page %d: %w", ref.Number, err)
+			return nil, fmt.Errorf("read page %d text: %w", ref.Number, err)
 		}
 		pages = append(pages, SourcePage{
 			Number:  ref.Number,
@@ -138,6 +159,15 @@ func (provider *pdfMemoryProvider) Pages() ([]SourcePage, error) {
 	}
 	sort.Slice(pages, func(i, j int) bool { return pages[i].Number < pages[j].Number })
 	return pages, nil
+}
+
+func (provider *pdfMemoryProvider) pageText(ref pdfmemory.PageRef) (string, error) {
+	if ref.Path != "" {
+		if raw, err := os.ReadFile(filepath.Join(provider.storeDir, filepath.FromSlash(ref.Path))); err == nil {
+			return string(raw), nil
+		}
+	}
+	return foldtest.ExtractPageContent(provider.storeDir, provider.manifest, ref.Number)
 }
 
 func (provider *pdfMemoryProvider) loadRegions(layoutPath string) []SourceRegion {

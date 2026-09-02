@@ -47,7 +47,8 @@ func syntheticBook() fakeProvider {
 			Number:  number,
 			Address: fmt.Sprintf("ohf://fake/page/%d", number),
 			CID:     fmt.Sprintf("cid-%d", number),
-			Text:    body + " " + filler[index%len(filler)] + " " + filler[(index+1)%len(filler)],
+			Text: body + " " + filler[index%len(filler)] + " " + filler[(index+1)%len(filler)] +
+				" " + filler[(index+2)%len(filler)] + " " + filler[(index+3)%len(filler)],
 		})
 	}
 	pages = append(pages,

@@ -12,6 +12,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 
 	"tlaloc.local/behaviorlab/internal/parrotlab"
@@ -78,6 +79,7 @@ func load(args []string) (*parrotlab.Experiment, *flag.FlagSet) {
 	fs.Bool("force", false, "overwrite an existing generated dataset")
 	fs.String("store", "", "pdfmemory store directory (P0 end_to_end source)")
 	fs.String("pdf", "", "source PDF for page rasterising (defaults to the store's source object)")
+	fs.String("pages", "", "P0 end_to_end: explicit comma-separated page list (recommended for OCR'd sources)")
 	fs.Parse(args)
 	if *dir == "" {
 		die(fmt.Errorf("--experiment is required"))
@@ -148,7 +150,15 @@ func generate(args []string) {
 		}
 		provider, err := parrotlab.NewPDFMemoryProvider(store, fs.Lookup("pdf").Value.String())
 		die(err)
-		report, err := parrotlab.GenerateEndToEnd(provider, datasetDir, parrotlab.P0Options{Seed: seed})
+		var pageList []int
+		for _, token := range strings.Split(fs.Lookup("pages").Value.String(), ",") {
+			token = strings.TrimSpace(token)
+			if token == "" {
+				continue
+			}
+			pageList = append(pageList, mustAtoi(token))
+		}
+		report, err := parrotlab.GenerateEndToEnd(provider, datasetDir, parrotlab.P0Options{Seed: seed, Pages: pageList})
 		die(err)
 		cases, loadErr := parrotlab.LoadCases(report.Dataset)
 		die(loadErr)

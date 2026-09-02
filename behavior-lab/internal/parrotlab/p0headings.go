@@ -18,15 +18,41 @@ var sectionWords = map[string]bool{
 
 var headingLineRe = regexp.MustCompile(`^([A-Z][A-Za-z0-9/&'-]*)(\s+[A-Za-z0-9/&'()-]+){0,7}[:]?$`)
 
+var captionPrefix = regexp.MustCompile(`^(?i)(figure|fig\.?|table|appendix|plate|equation|eq\.?|box)\b`)
+
+// isCleanHeading rejects figure captions, equations, running-header debris
+// and prose fragments masquerading as section titles.
+func isCleanHeading(text string) bool {
+	text = strings.TrimSpace(text)
+	fields := strings.Fields(text)
+	if len(fields) < 2 || len(fields) > 9 || len(text) < 8 || len(text) > 64 {
+		return false
+	}
+	if captionPrefix.MatchString(text) || strings.HasPrefix(text, "=") {
+		return false
+	}
+	if strings.HasSuffix(text, ".") || strings.HasSuffix(text, ",") || strings.Contains(text, "(") {
+		return false
+	}
+	letters := 0
+	for _, runeValue := range text {
+		if (runeValue >= 'a' && runeValue <= 'z') || (runeValue >= 'A' && runeValue <= 'Z') {
+			letters++
+		}
+	}
+	return float64(letters)/float64(len([]rune(text))) >= 0.75
+}
+
 // mergedHeadings joins consecutive heading/subheading regions (a real
 // heading is often split across regions) into logical heading strings, in
-// reading order. Bare page numbers are dropped.
+// reading order. Bare page numbers and caption/equation regions are dropped.
 func mergedHeadings(page SourcePage) []headingSpan {
 	var spans []headingSpan
 	var current *headingSpan
 	for _, region := range page.Regions {
 		isHeading := region.Kind == "heading" || region.Kind == "subheading"
-		if !isHeading || region.Text == "" || bareNumberLine.MatchString(region.Text) || region.FontSize < 14 {
+		if !isHeading || region.Text == "" || bareNumberLine.MatchString(region.Text) || region.FontSize < 14 ||
+			captionPrefix.MatchString(strings.TrimSpace(region.Text)) || strings.HasPrefix(strings.TrimSpace(region.Text), "=") {
 			current = nil
 			continue
 		}
@@ -71,11 +97,9 @@ func buildHeadingModel(page SourcePage) headingModel {
 			beforeSections = false
 			continue
 		}
-		// The title is a big heading that comes before the Motivation/
+		// The title is a big clean heading that comes before the Motivation/
 		// Mechanics section headings; later big "headings" are inline refs.
-		if beforeSections && span.font > bestFont &&
-			len(strings.Fields(text)) >= 2 && len(strings.Fields(text)) <= 8 &&
-			!strings.HasPrefix(text, "Figure") {
+		if beforeSections && span.font > bestFont && isCleanHeading(text) {
 			bestFont = span.font
 			model.PatternName = text
 		}
@@ -194,9 +218,13 @@ func isLikelyHeading(line string) bool {
 }
 
 // proseText is the text the generic generators should mine: the named
-// section bodies when the page is catalog-structured, otherwise the whole
-// extracted page (minus code, which the generators already tolerate).
+// section bodies when the page is a catalog entry, otherwise the whole
+// extracted page. A catalog entry has real "Motivation"/"Mechanics" heading
+// regions — a stray "motivation" in running prose must not truncate the page.
 func proseText(page SourcePage) string {
+	if !isRefactoringEntryPage(page) {
+		return page.Text
+	}
 	model := buildHeadingModel(page)
 	parts := []string{}
 	for _, section := range []string{model.Motivation, model.Mechanics} {
@@ -217,10 +245,7 @@ func headingNames(model headingModel) []string {
 	seen := map[string]bool{}
 	for _, heading := range model.Headings {
 		lower := strings.ToLower(heading)
-		if sectionWords[lower] || strings.Contains(lower, "example") || bareNumberLine.MatchString(heading) {
-			continue
-		}
-		if len(strings.Fields(heading)) < 2 || len(heading) > 60 || seen[lower] {
+		if sectionWords[lower] || strings.Contains(lower, "example") || seen[lower] || !isCleanHeading(heading) {
 			continue
 		}
 		seen[lower] = true
