@@ -7,14 +7,14 @@ import (
 
 // MetricsSnapshot captures test execution metrics
 type MetricsSnapshot struct {
-	Timestamp              time.Time        `json:"timestamp"`
-	TotalDuration          time.Duration    `json:"total_duration"`
-	SessionResults         []SessionResult  `json:"session_results"`
-	AverageTurns           float64          `json:"average_turns"`
-	AverageTokensPerTurn   float64          `json:"average_tokens_per_turn"`
-	CommandLearningRate    float64          `json:"command_learning_rate"`
-	SuccessfulUnfolds      int              `json:"successful_unfolds"`
-	TotalUnfolds           int              `json:"total_unfolds"`
+	Timestamp            time.Time       `json:"timestamp"`
+	TotalDuration        time.Duration   `json:"total_duration"`
+	SessionResults       []SessionResult `json:"session_results"`
+	AverageTurns         float64         `json:"average_turns"`
+	AverageTokensPerTurn float64         `json:"average_tokens_per_turn"`
+	CommandLearningRate  float64         `json:"command_learning_rate"`
+	SuccessfulUnfolds    int             `json:"successful_unfolds"`
+	TotalUnfolds         int             `json:"total_unfolds"`
 }
 
 // ComputeMetrics aggregates results from multiple sessions

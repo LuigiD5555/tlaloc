@@ -18,11 +18,12 @@ type Command struct {
 
 // ParseCommand parses a line attempting to extract UNFOLD or GROUP commands.
 // Valid syntax:
-//   UNFOLD page:N
-//   UNFOLD block:doc/page-N/blocks/M
-//   UNFOLD doc:document-id
-//   GROUP term:<X> depth:<N>
-//   UNFOLD <address>[:fidelity]
+//
+//	UNFOLD page:N
+//	UNFOLD block:doc/page-N/blocks/M
+//	UNFOLD doc:document-id
+//	GROUP term:<X> depth:<N>
+//	UNFOLD <address>[:fidelity]
 func ParseCommand(line string) (cmd *Command, ok bool) {
 	line = strings.TrimSpace(line)
 

@@ -29,25 +29,25 @@ type SessionConfig struct {
 
 // SessionResult holds the results of running a question through the fold-bench harness
 type SessionResult struct {
-	Question             string                    `json:"question"`
-	Answer               string                    `json:"answer"`
-	Turns                int                       `json:"turns"`
-	Unfolds              []UnfoldMetric            `json:"unfolds"`
-	TotalTokensPrompt    int                       `json:"total_tokens_prompt"`
-	TotalTokensCompletion int                      `json:"total_tokens_completion"`
-	TotalLatencyMs       int64                     `json:"total_latency_ms"`
-	LearnedCommandUsed   bool                      `json:"learned_command_used"`
-	Status               string                    `json:"status"`
+	Question              string         `json:"question"`
+	Answer                string         `json:"answer"`
+	Turns                 int            `json:"turns"`
+	Unfolds               []UnfoldMetric `json:"unfolds"`
+	TotalTokensPrompt     int            `json:"total_tokens_prompt"`
+	TotalTokensCompletion int            `json:"total_tokens_completion"`
+	TotalLatencyMs        int64          `json:"total_latency_ms"`
+	LearnedCommandUsed    bool           `json:"learned_command_used"`
+	Status                string         `json:"status"`
 }
 
 // UnfoldMetric records metrics about a single unfold operation
 type UnfoldMetric struct {
-	Address         string `json:"address"`
-	Fidelity        string `json:"fidelity,omitempty"`
-	TokenCost       int    `json:"token_cost"`
-	Verified        bool   `json:"verified"`
-	LatencyMs       int64  `json:"latency_ms"`
-	ContentLength   int    `json:"content_length"`
+	Address       string `json:"address"`
+	Fidelity      string `json:"fidelity,omitempty"`
+	TokenCost     int    `json:"token_cost"`
+	Verified      bool   `json:"verified"`
+	LatencyMs     int64  `json:"latency_ms"`
+	ContentLength int    `json:"content_length"`
 }
 
 // RunSession executes a single question through the fold-bench harness

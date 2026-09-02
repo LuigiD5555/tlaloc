@@ -6,35 +6,35 @@ import (
 
 func TestSelectSpacedPages(t *testing.T) {
 	tests := []struct {
-		name      string
-		total     int
-		num       int
-		seed      int64
+		name       string
+		total      int
+		num        int
+		seed       int64
 		minSpacing int
-		wantLen   int
+		wantLen    int
 	}{
 		{
-			name:      "select 5 from 404",
-			total:     404,
-			num:       5,
-			seed:      42,
+			name:       "select 5 from 404",
+			total:      404,
+			num:        5,
+			seed:       42,
 			minSpacing: 30, // At least ~80 pages spacing target
-			wantLen:   5,
+			wantLen:    5,
 		},
 		{
-			name:      "select 3 from 100",
-			total:     100,
-			num:       3,
-			seed:      42,
+			name:       "select 3 from 100",
+			total:      100,
+			num:        3,
+			seed:       42,
 			minSpacing: 20,
-			wantLen:   3,
+			wantLen:    3,
 		},
 		{
-			name:      "request more than available",
-			total:     10,
-			num:       20,
-			seed:      42,
-			wantLen:   10,
+			name:    "request more than available",
+			total:   10,
+			num:     20,
+			seed:    42,
+			wantLen: 10,
 		},
 	}
 

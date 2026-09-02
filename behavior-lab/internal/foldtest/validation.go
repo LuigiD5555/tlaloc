@@ -15,39 +15,39 @@ import (
 
 // ValidationConfig holds configuration for automated validation tests
 type ValidationConfig struct {
-	WorkDir      string
-	StoreDir     string
-	Manifest     pdfmemory.Manifest
-	Cover        string
-	Model        string
-	BaseURL      string
-	MaxTurns     int
-	Budget       int
-	RandomSeed   int64         // For reproducible page selection
-	PageCount    int           // Total pages in document
-	SampleSize   int           // Number of pages to sample (default 5)
-	TimeoutSecs  int           // Timeout per question (default 30)
-	FlexibilityScore float64   // How lenient validation is (0.0-1.0, default 0.8)
-	EmbeddingServiceURL string // Optional; enables the resident embedding-similarity scorer when set
+	WorkDir             string
+	StoreDir            string
+	Manifest            pdfmemory.Manifest
+	Cover               string
+	Model               string
+	BaseURL             string
+	MaxTurns            int
+	Budget              int
+	RandomSeed          int64   // For reproducible page selection
+	PageCount           int     // Total pages in document
+	SampleSize          int     // Number of pages to sample (default 5)
+	TimeoutSecs         int     // Timeout per question (default 30)
+	FlexibilityScore    float64 // How lenient validation is (0.0-1.0, default 0.8)
+	EmbeddingServiceURL string  // Optional; enables the resident embedding-similarity scorer when set
 }
 
 // ValidationTest represents a single test case
 type ValidationTest struct {
-	PageNumber    int       `json:"page_number"`
-	PageContent   string    `json:"page_content"`
-	Questions     []string  `json:"questions"`
-	QuestionsGeneratedBy string `json:"questions_generated_by,omitempty"`
-	Answers       []string  `json:"model_answers"`
-	Validations   []ValidationScore `json:"validations"`
-	AverageScore  float64   `json:"average_score"`
-	TimingMs      int64     `json:"timing_ms"`
+	PageNumber           int               `json:"page_number"`
+	PageContent          string            `json:"page_content"`
+	Questions            []string          `json:"questions"`
+	QuestionsGeneratedBy string            `json:"questions_generated_by,omitempty"`
+	Answers              []string          `json:"model_answers"`
+	Validations          []ValidationScore `json:"validations"`
+	AverageScore         float64           `json:"average_score"`
+	TimingMs             int64             `json:"timing_ms"`
 }
 
 // ValidationScore represents the quality of an answer
 type ValidationScore struct {
 	Question        string  `json:"question"`
 	Answer          string  `json:"answer"`
-	Score           float64 `json:"score"` // 0.0-1.0
+	Score           float64 `json:"score"`      // 0.0-1.0
 	Confidence      float64 `json:"confidence"` // Model confidence (0.0-1.0)
 	KeywordsMatched int     `json:"keywords_matched"`
 	KeywordsTotal   int     `json:"keywords_total"`
@@ -57,29 +57,29 @@ type ValidationScore struct {
 
 // ValidationResult aggregates all validation tests
 type ValidationResult struct {
-	Timestamp          string                `json:"timestamp"`
-	Model              string                `json:"model"`
-	TotalPages         int                   `json:"total_pages"`
-	SampleSize         int                   `json:"sample_size"`
-	SelectedPages      []int                 `json:"selected_pages"`
-	Tests              []ValidationTest      `json:"tests"`
-	AggregateMetrics   AggregateValidationMetrics `json:"aggregate_metrics"`
-	Status             string                `json:"status"`
+	Timestamp        string                     `json:"timestamp"`
+	Model            string                     `json:"model"`
+	TotalPages       int                        `json:"total_pages"`
+	SampleSize       int                        `json:"sample_size"`
+	SelectedPages    []int                      `json:"selected_pages"`
+	Tests            []ValidationTest           `json:"tests"`
+	AggregateMetrics AggregateValidationMetrics `json:"aggregate_metrics"`
+	Status           string                     `json:"status"`
 }
 
 // AggregateValidationMetrics summarizes validation performance
 type AggregateValidationMetrics struct {
-	TotalTests       int     `json:"total_tests"`
-	TotalQuestions   int     `json:"total_questions"`
-	AverageScore     float64 `json:"average_score"`
-	MedianScore      float64 `json:"median_score"`
-	MinScore         float64 `json:"min_score"`
-	MaxScore         float64 `json:"max_score"`
-	AverageTiming    int64   `json:"average_timing_ms"`
-	TotalTokens      int     `json:"total_tokens"`
-	FailedTests      int     `json:"failed_tests"`
-	PartialTests     int     `json:"partial_tests"`
-	SuccessfulTests  int     `json:"successful_tests"`
+	TotalTests      int     `json:"total_tests"`
+	TotalQuestions  int     `json:"total_questions"`
+	AverageScore    float64 `json:"average_score"`
+	MedianScore     float64 `json:"median_score"`
+	MinScore        float64 `json:"min_score"`
+	MaxScore        float64 `json:"max_score"`
+	AverageTiming   int64   `json:"average_timing_ms"`
+	TotalTokens     int     `json:"total_tokens"`
+	FailedTests     int     `json:"failed_tests"`
+	PartialTests    int     `json:"partial_tests"`
+	SuccessfulTests int     `json:"successful_tests"`
 }
 
 // SelectSpacedPages selects N pages randomly but spaced apart
@@ -183,9 +183,9 @@ func RunValidationTest(ctx context.Context, config ValidationConfig) (Validation
 		pageContent, err := ExtractPageContent(config.StoreDir, config.Manifest, pageNum)
 		if err != nil {
 			result.Tests = append(result.Tests, ValidationTest{
-				PageNumber: pageNum,
+				PageNumber:   pageNum,
 				AverageScore: 0.0,
-				TimingMs: int64(time.Since(pageStart).Milliseconds()),
+				TimingMs:     int64(time.Since(pageStart).Milliseconds()),
 			})
 			result.AggregateMetrics.FailedTests++
 			continue
