@@ -14,8 +14,8 @@ var stopwords = map[string]struct{}{
 	"a": {}, "al": {}, "and": {}, "are": {}, "as": {}, "at": {}, "be": {}, "by": {},
 	"con": {}, "de": {}, "del": {}, "dentro": {}, "el": {}, "en": {}, "es": {}, "esta": {},
 	"este": {}, "for": {}, "from": {}, "in": {}, "is": {}, "la": {}, "las": {}, "los": {},
-	"mediante": {}, "of": {}, "on": {}, "o": {}, "or": {}, "para": {}, "por": {}, "que": {},
-	"se": {}, "su": {}, "sus": {}, "the": {}, "to": {}, "un": {}, "una": {}, "y": {},
+	"mediante": {}, "no": {}, "of": {}, "on": {}, "o": {}, "or": {}, "para": {}, "por": {},
+	"que": {}, "se": {}, "su": {}, "sus": {}, "the": {}, "to": {}, "un": {}, "una": {}, "y": {},
 }
 
 var negativeMarkers = []string{
@@ -178,7 +178,7 @@ func contentTerms(text string) map[string]struct{} {
 	terms := make(map[string]struct{})
 	for _, field := range strings.Fields(norm) {
 		field = stem(field)
-		if len(field) < 3 {
+		if len(field) < 2 {
 			continue
 		}
 		if _, stop := stopwords[field]; stop {
