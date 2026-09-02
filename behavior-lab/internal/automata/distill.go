@@ -29,14 +29,22 @@ func Distill(trace ActionTrace) (Result, error) {
 		if steps[i].Step < 0 || steps[i].Tlaloque == "" || steps[i].FromState == "" || steps[i].ToState == "" {
 			return Result{}, fmt.Errorf("invalid trace step at index %d", i)
 		}
-		if steps[i].Step > maxStep { maxStep = steps[i].Step }
+		if steps[i].Step > maxStep {
+			maxStep = steps[i].Step
+		}
 		steps[i].Requires = canonicalPredicates(steps[i].Requires)
 		steps[i].EmitsTo = canonicalStrings(steps[i].EmitsTo)
 	}
 	sort.SliceStable(steps, func(i, j int) bool {
-		if steps[i].Step != steps[j].Step { return steps[i].Step < steps[j].Step }
-		if steps[i].Tlaloque != steps[j].Tlaloque { return steps[i].Tlaloque < steps[j].Tlaloque }
-		if steps[i].FromState != steps[j].FromState { return steps[i].FromState < steps[j].FromState }
+		if steps[i].Step != steps[j].Step {
+			return steps[i].Step < steps[j].Step
+		}
+		if steps[i].Tlaloque != steps[j].Tlaloque {
+			return steps[i].Tlaloque < steps[j].Tlaloque
+		}
+		if steps[i].FromState != steps[j].FromState {
+			return steps[i].FromState < steps[j].FromState
+		}
 		return steps[i].ToState < steps[j].ToState
 	})
 
@@ -45,17 +53,27 @@ func Distill(trace ActionTrace) (Result, error) {
 	neighbors := map[string]map[string]bool{}
 	ensureCell := func(id, kind string) {
 		id = strings.TrimSpace(id)
-		if id == "" { return }
-		if _, ok := kinds[id]; !ok { kinds[id] = kind }
-		if neighbors[id] == nil { neighbors[id] = map[string]bool{} }
-		if _, ok := initial[id]; !ok { initial[id] = "UNKNOWN" }
+		if id == "" {
+			return
+		}
+		if _, ok := kinds[id]; !ok {
+			kinds[id] = kind
+		}
+		if neighbors[id] == nil {
+			neighbors[id] = map[string]bool{}
+		}
+		if _, ok := initial[id]; !ok {
+			initial[id] = "UNKNOWN"
+		}
 	}
 
 	ruleByKey := map[string]Rule{}
 	edgeByKey := map[string]Edge{}
 	for _, s := range steps {
 		ensureCell(s.Tlaloque, "TLALOQUE_DISTILLED_CELL")
-		if initial[s.Tlaloque] == "UNKNOWN" { initial[s.Tlaloque] = s.FromState }
+		if initial[s.Tlaloque] == "UNKNOWN" {
+			initial[s.Tlaloque] = s.FromState
+		}
 		for _, p := range s.Requires {
 			ensureCell(p.CellID, "DECLARED_DEPENDENCY")
 			if p.CellID != s.Tlaloque {
@@ -89,24 +107,36 @@ func Distill(trace ActionTrace) (Result, error) {
 	}
 
 	cellIDs := make([]string, 0, len(kinds))
-	for id := range kinds { cellIDs = append(cellIDs, id) }
+	for id := range kinds {
+		cellIDs = append(cellIDs, id)
+	}
 	sort.Strings(cellIDs)
 	cells := make([]Cell, 0, len(cellIDs))
 	for _, id := range cellIDs {
 		ns := make([]string, 0, len(neighbors[id]))
-		for n := range neighbors[id] { ns = append(ns, n) }
+		for n := range neighbors[id] {
+			ns = append(ns, n)
+		}
 		sort.Strings(ns)
 		cells = append(cells, Cell{ID: id, Kind: kinds[id], InitialState: initial[id], Neighbors: ns})
 	}
 
 	rules := make([]Rule, 0, len(ruleByKey))
-	for _, r := range ruleByKey { rules = append(rules, r) }
+	for _, r := range ruleByKey {
+		rules = append(rules, r)
+	}
 	sort.Slice(rules, func(i, j int) bool { return rules[i].ID < rules[j].ID })
 	edges := make([]Edge, 0, len(edgeByKey))
-	for _, e := range edgeByKey { edges = append(edges, e) }
+	for _, e := range edgeByKey {
+		edges = append(edges, e)
+	}
 	sort.Slice(edges, func(i, j int) bool {
-		if edges[i].From != edges[j].From { return edges[i].From < edges[j].From }
-		if edges[i].To != edges[j].To { return edges[i].To < edges[j].To }
+		if edges[i].From != edges[j].From {
+			return edges[i].From < edges[j].From
+		}
+		if edges[i].To != edges[j].To {
+			return edges[i].To < edges[j].To
+		}
 		return edges[i].Kind < edges[j].Kind
 	})
 
@@ -114,17 +144,19 @@ func Distill(trace ActionTrace) (Result, error) {
 	traceBytes, _ := json.Marshal(canonicalTrace)
 	traceDigest := sha256.Sum256(traceBytes)
 	ratio := 0.0
-	if len(rules) > 0 { ratio = float64(len(steps)) / float64(len(rules)) }
+	if len(rules) > 0 {
+		ratio = float64(len(steps)) / float64(len(rules))
+	}
 	automatonIR := AutomatonIR{Schema: AutomatonSchema, ID: trace.ID + "-distilled", Cells: cells, Rules: rules, Edges: edges, SourceTraceSHA256: hex.EncodeToString(traceDigest[:])}
 	// R0 derives only a bounded synchronous horizon from the explicitly ordered
 	// trace. It does not invent hidden timing or checkpoint placement.
 	temporalIR := TemporalProgramIR{Schema: TemporalProgramSchema, ID: trace.ID + "-temporal", Automaton: automatonIR, MaxSteps: maxStep + 1}
 
 	return Result{
-		Schema: "tlaloc.automaton-distillation-result.r0",
-		Automaton: automatonIR,
+		Schema:          "tlaloc.automaton-distillation-result.r0",
+		Automaton:       automatonIR,
 		TemporalProgram: temporalIR,
-		Metrics: Metrics{TraceSteps: len(steps), TraceMaxStep: maxStep, UniqueCells: len(cells), UniqueRules: len(rules), RepeatedTransitionsRemoved: len(steps)-len(rules), DistillationRatio: ratio},
+		Metrics:         Metrics{TraceSteps: len(steps), TraceMaxStep: maxStep, UniqueCells: len(cells), UniqueRules: len(rules), RepeatedTransitionsRemoved: len(steps) - len(rules), DistillationRatio: ratio},
 	}, nil
 }
 
@@ -132,18 +164,37 @@ func canonicalPredicates(in []Predicate) []Predicate {
 	out := make([]Predicate, 0, len(in))
 	seen := map[string]bool{}
 	for _, p := range in {
-		p.CellID = strings.TrimSpace(p.CellID); p.State = strings.TrimSpace(p.State)
-		if p.CellID == "" || p.State == "" { continue }
+		p.CellID = strings.TrimSpace(p.CellID)
+		p.State = strings.TrimSpace(p.State)
+		if p.CellID == "" || p.State == "" {
+			continue
+		}
 		key := p.CellID + "\x00" + p.State
-		if seen[key] { continue }
-		seen[key] = true; out = append(out, p)
+		if seen[key] {
+			continue
+		}
+		seen[key] = true
+		out = append(out, p)
 	}
-	sort.Slice(out, func(i, j int) bool { if out[i].CellID != out[j].CellID { return out[i].CellID < out[j].CellID }; return out[i].State < out[j].State })
+	sort.Slice(out, func(i, j int) bool {
+		if out[i].CellID != out[j].CellID {
+			return out[i].CellID < out[j].CellID
+		}
+		return out[i].State < out[j].State
+	})
 	return out
 }
 
 func canonicalStrings(in []string) []string {
-	seen := map[string]bool{}; out := make([]string, 0, len(in))
-	for _, s := range in { s = strings.TrimSpace(s); if s != "" && !seen[s] { seen[s]=true; out=append(out,s) } }
-	sort.Strings(out); return out
+	seen := map[string]bool{}
+	out := make([]string, 0, len(in))
+	for _, s := range in {
+		s = strings.TrimSpace(s)
+		if s != "" && !seen[s] {
+			seen[s] = true
+			out = append(out, s)
+		}
+	}
+	sort.Strings(out)
+	return out
 }

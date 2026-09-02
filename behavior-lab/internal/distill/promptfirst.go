@@ -11,11 +11,11 @@ const PromptFirstContractID = "tlaloc.prompt-first-distillation.r0"
 type DeploymentLevel string
 
 const (
-	LevelPromptOnly      DeploymentLevel = "L0_PROMPT_ONLY"
-	LevelPromptContext   DeploymentLevel = "L1_PROMPT_PLUS_CONTEXT_OR_IR"
-	LevelPromptTools     DeploymentLevel = "L2_PROMPT_PLUS_TOOLS"
-	LevelPromptRuntime   DeploymentLevel = "L3_PROMPT_PLUS_RUNTIME"
-	LevelSpecialized     DeploymentLevel = "L4_SPECIALIZED_TARGET"
+	LevelPromptOnly    DeploymentLevel = "L0_PROMPT_ONLY"
+	LevelPromptContext DeploymentLevel = "L1_PROMPT_PLUS_CONTEXT_OR_IR"
+	LevelPromptTools   DeploymentLevel = "L2_PROMPT_PLUS_TOOLS"
+	LevelPromptRuntime DeploymentLevel = "L3_PROMPT_PLUS_RUNTIME"
+	LevelSpecialized   DeploymentLevel = "L4_SPECIALIZED_TARGET"
 )
 
 type ArtifactCandidate struct {
@@ -55,11 +55,11 @@ type ArtifactEvaluation struct {
 }
 
 type PromptFirstDecision struct {
-	Schema       string               `json:"schema"`
-	SelectedID   string               `json:"selected_id,omitempty"`
-	SelectedLevel DeploymentLevel     `json:"selected_level,omitempty"`
-	Evaluations  []ArtifactEvaluation `json:"evaluations"`
-	Decision     string               `json:"decision"`
+	Schema        string               `json:"schema"`
+	SelectedID    string               `json:"selected_id,omitempty"`
+	SelectedLevel DeploymentLevel      `json:"selected_level,omitempty"`
+	Evaluations   []ArtifactEvaluation `json:"evaluations"`
+	Decision      string               `json:"decision"`
 }
 
 // SelectPortableArtifact chooses the least demanding deployment level that
@@ -145,10 +145,18 @@ func SelectPortableArtifact(candidates []ArtifactCandidate, policy PromptFirstPo
 
 func normalizePromptFirstPolicy(policy PromptFirstPolicy) PromptFirstPolicy {
 	defaults := DefaultPromptFirstPolicy()
-	if policy.MinBehavioralFidelity <= 0 { policy.MinBehavioralFidelity = defaults.MinBehavioralFidelity }
-	if policy.MinPassRate <= 0 { policy.MinPassRate = defaults.MinPassRate }
-	if policy.MaxRegressionRate < 0 { policy.MaxRegressionRate = defaults.MaxRegressionRate }
-	if policy.MinCleanTargetTrials <= 0 { policy.MinCleanTargetTrials = defaults.MinCleanTargetTrials }
+	if policy.MinBehavioralFidelity <= 0 {
+		policy.MinBehavioralFidelity = defaults.MinBehavioralFidelity
+	}
+	if policy.MinPassRate <= 0 {
+		policy.MinPassRate = defaults.MinPassRate
+	}
+	if policy.MaxRegressionRate < 0 {
+		policy.MaxRegressionRate = defaults.MaxRegressionRate
+	}
+	if policy.MinCleanTargetTrials <= 0 {
+		policy.MinCleanTargetTrials = defaults.MinCleanTargetTrials
+	}
 	return policy
 }
 

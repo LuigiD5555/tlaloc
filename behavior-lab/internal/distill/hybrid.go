@@ -21,8 +21,9 @@ type HybridArtifactSet struct {
 
 // BuildHybridArtifactSet converts an already distilled candidate into the
 // explicit two-target form used by the Hybrid Receiver:
-//   1. UniversalPrompt -> external receiver bootstrap.
-//   2. Boot/Rosetta/MicroProgram -> carrier/runtime material owned by Origami.
+//  1. UniversalPrompt -> external receiver bootstrap.
+//  2. Boot/Rosetta/MicroProgram -> carrier/runtime material owned by Origami.
+//
 // The function does not promote the proposal and does not assign physical glyph
 // meanings; those remain carrier-local Origami concerns.
 func BuildHybridArtifactSet(candidate Candidate, workingWindow int) (HybridArtifactSet, error) {

@@ -3,16 +3,16 @@ package distill
 import "fmt"
 
 type Fitness struct {
-	BootstrapSuccess float64 `json:"bootstrap_success"`
-	RosettaSuccess   float64 `json:"rosetta_success"`
-	Navigation       float64 `json:"navigation"`
-	Correctness      float64 `json:"correctness"`
-	Evidence         float64 `json:"evidence"`
-	UnknownAccuracy  float64 `json:"unknown_accuracy"`
-	FalseExact       int     `json:"false_exact"`
-	PeakActiveTokenEq int    `json:"peak_active_token_eq"`
-	ToolCost         float64 `json:"tool_cost"`
-	Contaminated     bool    `json:"contaminated"`
+	BootstrapSuccess  float64 `json:"bootstrap_success"`
+	RosettaSuccess    float64 `json:"rosetta_success"`
+	Navigation        float64 `json:"navigation"`
+	Correctness       float64 `json:"correctness"`
+	Evidence          float64 `json:"evidence"`
+	UnknownAccuracy   float64 `json:"unknown_accuracy"`
+	FalseExact        int     `json:"false_exact"`
+	PeakActiveTokenEq int     `json:"peak_active_token_eq"`
+	ToolCost          float64 `json:"tool_cost"`
+	Contaminated      bool    `json:"contaminated"`
 }
 
 type ScoredCandidate struct {
