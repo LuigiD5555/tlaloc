@@ -54,7 +54,7 @@ func TestVerifyExtraEvidenceNumberDoesNotCreateFalseContradiction(t *testing.T) 
 }
 
 func TestVerifyExplicitQuantifierContradiction(t *testing.T) {
-	out := Verify(VerifyInput{ModelAnswer: "All workers require network access.", PageContent: "No workers require network access."})
+	out := Verify(VerifyInput{ModelAnswer: "All workers require network access.", PageContent: "None of the workers require network access."})
 	if out.Verdict != VerdictContradicted {
 		t.Fatalf("expected CONTRADICTED, got %s (%+v)", out.Verdict, out)
 	}
