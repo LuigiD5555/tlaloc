@@ -48,15 +48,15 @@ func (c CandidateConfig) VisualCandidate() visualsearch.Candidate {
 }
 
 type Config struct {
-	Schema                         string            `json:"schema"`
-	RunID                          string            `json:"run_id"`
-	BenchmarkID                    string            `json:"benchmark_id,omitempty"`
-	OutputDir                      string            `json:"output_dir"`
-	MemoryRoot                     string            `json:"memory_root,omitempty"`
-	MasterPrompt                   string            `json:"master_prompt,omitempty"`
-	OrigamiVersion                 string            `json:"origami_version,omitempty"`
-	TlalocVersion                  string            `json:"tlaloc_version,omitempty"`
-	TrialsPerModel                 int               `json:"trials_per_model,omitempty"`
+	Schema                        string            `json:"schema"`
+	RunID                         string            `json:"run_id"`
+	BenchmarkID                   string            `json:"benchmark_id,omitempty"`
+	OutputDir                     string            `json:"output_dir"`
+	MemoryRoot                    string            `json:"memory_root,omitempty"`
+	MasterPrompt                  string            `json:"master_prompt,omitempty"`
+	OrigamiVersion                string            `json:"origami_version,omitempty"`
+	TlalocVersion                 string            `json:"tlaloc_version,omitempty"`
+	TrialsPerModel                int               `json:"trials_per_model,omitempty"`
 	CandidatesPerGeneration       int               `json:"candidates_per_generation,omitempty"`
 	MaxGenerations                int               `json:"max_generations,omitempty"`
 	MinIncumbentImprovement       float64           `json:"min_incumbent_improvement,omitempty"`

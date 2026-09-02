@@ -163,14 +163,20 @@ func mergeCandidateConfigs(manual, automatic []CandidateConfig, tested map[strin
 		return nil
 	}
 	for _, c := range manual {
-		if err := add(c); err != nil { return nil, err }
+		if err := add(c); err != nil {
+			return nil, err
+		}
 	}
 	for _, c := range automatic {
-		if err := add(c); err != nil { return nil, err }
+		if err := add(c); err != nil {
+			return nil, err
+		}
 	}
 	sort.Strings(order)
 	out := make([]CandidateConfig, 0, len(order))
-	for _, id := range order { out = append(out, byID[id]) }
+	for _, id := range order {
+		out = append(out, byID[id])
+	}
 	return out, nil
 }
 
@@ -186,7 +192,9 @@ func visualCandidatesFromConfigs(configs []CandidateConfig) ([]visualsearch.Cand
 
 func containsString(values []string, want string) bool {
 	for _, v := range values {
-		if strings.EqualFold(strings.TrimSpace(v), strings.TrimSpace(want)) { return true }
+		if strings.EqualFold(strings.TrimSpace(v), strings.TrimSpace(want)) {
+			return true
+		}
 	}
 	return false
 }

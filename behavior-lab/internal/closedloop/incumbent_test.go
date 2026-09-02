@@ -68,17 +68,17 @@ ORIGAMI_DEBUG_R0={"schema":"tlaloc.origami-debug-trace.r0","status":"FAIL","last
 	defer server.Close()
 
 	cfg := Config{
-		Schema:                   ConfigSchema,
-		RunID:                    "incumbent-chain",
-		OutputDir:                filepath.Join(dir, "run"),
-		MemoryRoot:               filepath.Join(dir, "memory"),
-		TrialsPerModel:           1,
+		Schema:                  ConfigSchema,
+		RunID:                   "incumbent-chain",
+		OutputDir:               filepath.Join(dir, "run"),
+		MemoryRoot:              filepath.Join(dir, "memory"),
+		TrialsPerModel:          1,
 		CandidatesPerGeneration: 1,
-		MaxGenerations:           3,
-		MinIncumbentImprovement:  0.01,
-		DiagnosticRetries:        true,
-		Conditions:               []string{"NATIVE_PNG_ONLY"},
-		OutcomeMetric:            OutcomeNative,
+		MaxGenerations:          3,
+		MinIncumbentImprovement: 0.01,
+		DiagnosticRetries:       true,
+		Conditions:              []string{"NATIVE_PNG_ONLY"},
+		OutcomeMetric:           OutcomeNative,
 		Models: []ModelConfig{{
 			Name:           "fake",
 			Provider:       "OPENAI_COMPAT",

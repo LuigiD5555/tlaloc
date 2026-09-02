@@ -24,12 +24,12 @@ type HistoricalSignal struct {
 }
 
 type MutationPriority struct {
-	Rank       int                       `json:"rank"`
-	Kind       visualsearch.MutationKind `json:"kind"`
-	Weight     float64                   `json:"weight"`
-	Target     string                    `json:"target,omitempty"`
-	Reason     string                    `json:"reason"`
-	ExplorationFloor bool                `json:"exploration_floor"`
+	Rank             int                       `json:"rank"`
+	Kind             visualsearch.MutationKind `json:"kind"`
+	Weight           float64                   `json:"weight"`
+	Target           string                    `json:"target,omitempty"`
+	Reason           string                    `json:"reason"`
+	ExplorationFloor bool                      `json:"exploration_floor"`
 }
 
 type SuggestedMutation struct {
@@ -41,27 +41,27 @@ type SuggestedMutation struct {
 }
 
 type Plan struct {
-	Schema              string             `json:"schema"`
-	MemoryRoot          string             `json:"memory_root"`
-	Adaptive            bool               `json:"adaptive"`
-	RealFailureEvents   int                `json:"real_failure_events"`
-	NextDebugTarget     string             `json:"next_debug_target,omitempty"`
-	PrimaryPattern      *PatternFocus      `json:"primary_pattern,omitempty"`
-	FailurePatterns     []PatternFocus     `json:"failure_patterns,omitempty"`
-	ParentEvidenceIDs   []string           `json:"parent_evidence_ids,omitempty"`
-	MutationPriorities  []MutationPriority `json:"mutation_priorities"`
-	SuggestedMutations  []SuggestedMutation `json:"suggested_mutations,omitempty"`
-	HistoricalSignals   []HistoricalSignal `json:"historical_signals,omitempty"`
-	Guardrails          []string           `json:"guardrails"`
+	Schema             string              `json:"schema"`
+	MemoryRoot         string              `json:"memory_root"`
+	Adaptive           bool                `json:"adaptive"`
+	RealFailureEvents  int                 `json:"real_failure_events"`
+	NextDebugTarget    string              `json:"next_debug_target,omitempty"`
+	PrimaryPattern     *PatternFocus       `json:"primary_pattern,omitempty"`
+	FailurePatterns    []PatternFocus      `json:"failure_patterns,omitempty"`
+	ParentEvidenceIDs  []string            `json:"parent_evidence_ids,omitempty"`
+	MutationPriorities []MutationPriority  `json:"mutation_priorities"`
+	SuggestedMutations []SuggestedMutation `json:"suggested_mutations,omitempty"`
+	HistoricalSignals  []HistoricalSignal  `json:"historical_signals,omitempty"`
+	Guardrails         []string            `json:"guardrails"`
 }
 
 type CandidatePriority struct {
-	Rank          int                       `json:"rank"`
-	CandidateID   string                    `json:"candidate_id"`
-	PriorityScore float64                   `json:"priority_score"`
+	Rank          int                         `json:"rank"`
+	CandidateID   string                      `json:"candidate_id"`
+	PriorityScore float64                     `json:"priority_score"`
 	MutationKinds []visualsearch.MutationKind `json:"mutation_kinds"`
-	MatchedTarget string                    `json:"matched_target,omitempty"`
-	Reason        string                    `json:"reason"`
+	MatchedTarget string                      `json:"matched_target,omitempty"`
+	Reason        string                      `json:"reason"`
 }
 
 type Queue struct {

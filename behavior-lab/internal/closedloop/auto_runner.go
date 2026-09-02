@@ -15,9 +15,13 @@ import (
 // inference and does not build candidates.
 func ValidateAutoReady(ctx context.Context, cfg Config) error {
 	p, err := prepare(cfg, true)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	normalizeAutoConfig(&p.cfg)
-	if !p.cfg.AutoCandidates { return nil }
+	if !p.cfg.AutoCandidates {
+		return nil
+	}
 	_, err = validateAutoConfig(ctx, p)
 	return err
 }
@@ -28,14 +32,20 @@ func ValidateAutoReady(ctx context.Context, cfg Config) error {
 // the explicitly configured Origami-owned builder through ensureCandidatePNG.
 func RunAuto(ctx context.Context, cfg Config) (Report, error) {
 	p, err := prepare(cfg, true)
-	if err != nil { return Report{}, err }
+	if err != nil {
+		return Report{}, err
+	}
 	normalizeAutoConfig(&p.cfg)
 	caps, err := validateAutoConfig(ctx, p)
-	if err != nil { return Report{}, err }
+	if err != nil {
+		return Report{}, err
+	}
 	if !p.cfg.AutoCandidates {
 		return Run(ctx, cfg)
 	}
-	if err := os.MkdirAll(p.cfg.OutputDir, 0o755); err != nil { return Report{}, err }
+	if err := os.MkdirAll(p.cfg.OutputDir, 0o755); err != nil {
+		return Report{}, err
+	}
 
 	incumbent := p.cfg.Baseline
 	incumbentCandidateID := ""
@@ -43,29 +53,41 @@ func RunAuto(ctx context.Context, cfg Config) (Report, error) {
 		Schema: ReportSchema, RunID: p.cfg.RunID, OutputDir: p.cfg.OutputDir,
 		MemoryRoot: p.store.Root, InitialBaselineID: p.cfg.Baseline.ID,
 		FinalIncumbentID: p.cfg.Baseline.ID,
-		Authority: "EXPERIMENTAL_INCUMBENT_ONLY_ORIGAMI_CANONICAL_PROMOTION_REMAINS_EXTERNAL_AND_EVIDENCE_GATED",
+		Authority:        "EXPERIMENTAL_INCUMBENT_ONLY_ORIGAMI_CANONICAL_PROMOTION_REMAINS_EXTERNAL_AND_EVIDENCE_GATED",
 	}
 	tested := map[string]bool{}
 
 	for gen := 1; gen <= p.cfg.MaxGenerations; gen++ {
 		genDir := filepath.Join(p.cfg.OutputDir, fmt.Sprintf("generation-%03d", gen))
-		if err := os.MkdirAll(genDir, 0o755); err != nil { return report, err }
+		if err := os.MkdirAll(genDir, 0o755); err != nil {
+			return report, err
+		}
 
 		baseRun, errs, err := p.runSpecimen(ctx, gen, genDir, incumbent, incumbentCandidateID)
 		report.ExecutionErrors = append(report.ExecutionErrors, errs...)
-		if err != nil { return report, err }
+		if err != nil {
+			return report, err
+		}
 
 		allEvents, err := p.store.LoadAll()
-		if err != nil { return report, err }
+		if err != nil {
+			return report, err
+		}
 		planBefore := adaptivesearch.BuildPlan(p.store.Root, planningEvents(allEvents, baseRun.events))
 		planBeforePath := filepath.Join(genDir, "plan-before.json")
-		if err := writeJSON(planBeforePath, planBefore); err != nil { return report, err }
+		if err := writeJSON(planBeforePath, planBefore); err != nil {
+			return report, err
+		}
 
 		manual := p.availableCandidateConfigs(tested, incumbent.ID)
 		automatic, err := p.autoCandidateConfigs(planBefore, caps, incumbent, genDir)
-		if err != nil { return report, err }
+		if err != nil {
+			return report, err
+		}
 		available, err := mergeCandidateConfigs(manual, automatic, tested, incumbent.ID)
-		if err != nil { return report, err }
+		if err != nil {
+			return report, err
+		}
 		visualCandidates, cfgByID := visualCandidatesFromConfigs(available)
 
 		g := GenerationReport{
@@ -93,7 +115,9 @@ func RunAuto(ctx context.Context, cfg Config) (Report, error) {
 
 		queue := adaptivesearch.Prioritize(planBefore, visualCandidates, p.cfg.CandidatesPerGeneration)
 		queuePath := filepath.Join(genDir, "candidate-queue.json")
-		if err := writeJSON(queuePath, queue); err != nil { return report, err }
+		if err := writeJSON(queuePath, queue); err != nil {
+			return report, err
+		}
 		g.QueuePath = queuePath
 		if len(queue.CandidateOrder) == 0 {
 			g.PlanAfterPath = planBeforePath
@@ -108,11 +132,17 @@ func RunAuto(ctx context.Context, cfg Config) (Report, error) {
 
 		changeIDs := map[string][]string{}
 		changeEvents := adaptivesearch.ChangeAttemptEvents(queue, visualCandidates)
-		if len(changeEvents) == 0 { changeEvents = p.explorationChangeEvents(queue, baseRun.events, cfgByID) }
+		if len(changeEvents) == 0 {
+			changeEvents = p.explorationChangeEvents(queue, baseRun.events, cfgByID)
+		}
 		if len(changeEvents) > 0 {
 			_, _, stored, putErr := p.store.PutAll(changeEvents)
-			if putErr != nil { return report, putErr }
-			for _, e := range stored { changeIDs[e.CandidateID] = append(changeIDs[e.CandidateID], e.EventID) }
+			if putErr != nil {
+				return report, putErr
+			}
+			for _, e := range stored {
+				changeIDs[e.CandidateID] = append(changeIDs[e.CandidateID], e.EventID)
+			}
 		}
 
 		baselineMetric := metricValue(baseRun.report.Scores, p.cfg.OutcomeMetric)
@@ -122,28 +152,36 @@ func RunAuto(ctx context.Context, cfg Config) (Report, error) {
 
 		for _, item := range queue.CandidateOrder {
 			cc, ok := cfgByID[item.CandidateID]
-			if !ok { continue }
+			if !ok {
+				continue
+			}
 			tested[cc.ID] = true
 			g.SelectedIDs = append(g.SelectedIDs, cc.ID)
 			if err := p.ensureCandidatePNG(ctx, cc, incumbent); err != nil {
-				report.ExecutionErrors = append(report.ExecutionErrors, ExecutionError{Generation:gen,SpecimenID:cc.ID,CandidateID:cc.ID,Error:"candidate build: "+err.Error()})
+				report.ExecutionErrors = append(report.ExecutionErrors, ExecutionError{Generation: gen, SpecimenID: cc.ID, CandidateID: cc.ID, Error: "candidate build: " + err.Error()})
 				continue
 			}
 
-			run, runErrs, runErr := p.runSpecimen(ctx, gen, genDir, SpecimenConfig{ID:cc.ID,PNG:cc.PNG}, cc.ID)
+			run, runErrs, runErr := p.runSpecimen(ctx, gen, genDir, SpecimenConfig{ID: cc.ID, PNG: cc.PNG}, cc.ID)
 			report.ExecutionErrors = append(report.ExecutionErrors, runErrs...)
-			if runErr != nil { return report, runErr }
+			if runErr != nil {
+				return report, runErr
+			}
 			candidateRuns[cc.ID] = run
 			g.Candidates = append(g.Candidates, run.report)
-			if run.report.Scores.CleanTrials == 0 { continue }
+			if run.report.Scores.CleanTrials == 0 {
+				continue
+			}
 
 			after := metricValue(run.report.Scores, p.cfg.OutcomeMetric)
 			delta := after - baselineMetric
 			nonRegress, nonRegressReason := nonRegression(baseRun.result, run.result)
 			advanceable := nonRegress && delta >= p.cfg.MinIncumbentImprovement
 			reason := nonRegressReason
-			if nonRegress && !advanceable { reason = fmt.Sprintf("improvement %.6f below minimum %.6f",delta,p.cfg.MinIncumbentImprovement) }
-			out := CandidateOutcome{CandidateID:cc.ID,Metric:p.cfg.OutcomeMetric,Before:baselineMetric,After:after,Delta:delta,NonRegress:nonRegress,Advanceable:advanceable,Reason:reason}
+			if nonRegress && !advanceable {
+				reason = fmt.Sprintf("improvement %.6f below minimum %.6f", delta, p.cfg.MinIncumbentImprovement)
+			}
+			out := CandidateOutcome{CandidateID: cc.ID, Metric: p.cfg.OutcomeMetric, Before: baselineMetric, After: after, Delta: delta, NonRegress: nonRegress, Advanceable: advanceable, Reason: reason}
 
 			parents := append([]string(nil), changeIDs[cc.ID]...)
 			parents = append(parents, observationIDs(run.events)...)
@@ -151,13 +189,15 @@ func RunAuto(ctx context.Context, cfg Config) (Report, error) {
 			if len(parents) >= 2 && len(changeIDs[cc.ID]) > 0 {
 				beforeCopy, afterCopy, deltaCopy := baselineMetric, after, delta
 				ev := learningmemory.Event{
-					Schema:learningmemory.EventSchema, EventType:learningmemory.EventOutcome,
-					EvidenceClass:learningmemory.EvidenceManual, CandidateID:cc.ID,
-					ParentEventIDs:parents, BeforeScore:&beforeCopy, AfterScore:&afterCopy, Delta:&deltaCopy,
-					Tags:[]string{"closed-loop","auto-candidate","metric:"+p.cfg.OutcomeMetric,fmt.Sprintf("generation:%d",gen),fmt.Sprintf("non-regression:%t",nonRegress),fmt.Sprintf("advanceable:%t",advanceable)},
+					Schema: learningmemory.EventSchema, EventType: learningmemory.EventOutcome,
+					EvidenceClass: learningmemory.EvidenceManual, CandidateID: cc.ID,
+					ParentEventIDs: parents, BeforeScore: &beforeCopy, AfterScore: &afterCopy, Delta: &deltaCopy,
+					Tags: []string{"closed-loop", "auto-candidate", "metric:" + p.cfg.OutcomeMetric, fmt.Sprintf("generation:%d", gen), fmt.Sprintf("non-regression:%t", nonRegress), fmt.Sprintf("advanceable:%t", advanceable)},
 				}
 				_, stored, putErr := p.store.Put(ev)
-				if putErr != nil { return report, putErr }
+				if putErr != nil {
+					return report, putErr
+				}
 				out.EventID = stored.EventID
 			}
 			g.Outcomes = append(g.Outcomes, out)
@@ -169,12 +209,12 @@ func RunAuto(ctx context.Context, cfg Config) (Report, error) {
 		focusRun := baseRun
 		if bestID != "" {
 			winnerCfg := cfgByID[bestID]
-			incumbent = SpecimenConfig{ID:winnerCfg.ID,PNG:winnerCfg.PNG}
+			incumbent = SpecimenConfig{ID: winnerCfg.ID, PNG: winnerCfg.PNG}
 			incumbentCandidateID = winnerCfg.ID
 			focusRun = candidateRuns[bestID]
 			g.IncumbentAdvanced = true
 			g.IncumbentAfterID = winnerCfg.ID
-			g.IncumbentReason = fmt.Sprintf("candidate %s became the next experimental incumbent after evidence-gated non-regression and improvement",winnerCfg.ID)
+			g.IncumbentReason = fmt.Sprintf("candidate %s became the next experimental incumbent after evidence-gated non-regression and improvement", winnerCfg.ID)
 			report.FinalIncumbentID = winnerCfg.ID
 		} else {
 			g.IncumbentReason = "no tested candidate satisfied minimum improvement plus non-regression gates"
@@ -182,19 +222,27 @@ func RunAuto(ctx context.Context, cfg Config) (Report, error) {
 		}
 
 		allEvents, err = p.store.LoadAll()
-		if err != nil { return report, err }
+		if err != nil {
+			return report, err
+		}
 		planAfter := adaptivesearch.BuildPlan(p.store.Root, planningEvents(allEvents, focusRun.events))
 		planAfterPath := filepath.Join(genDir, "plan-after.json")
-		if err := writeJSON(planAfterPath, planAfter); err != nil { return report, err }
+		if err := writeJSON(planAfterPath, planAfter); err != nil {
+			return report, err
+		}
 		g.PlanAfterPath = planAfterPath
 		report.FinalPlanPath = planAfterPath
 
 		nextDir := filepath.Join(p.cfg.OutputDir, fmt.Sprintf("generation-%03d", gen+1))
 		nextManual := p.availableCandidateConfigs(tested, incumbent.ID)
 		nextAuto, err := p.autoCandidateConfigs(planAfter, caps, incumbent, nextDir)
-		if err != nil { return report, err }
+		if err != nil {
+			return report, err
+		}
 		nextAvailable, err := mergeCandidateConfigs(nextManual, nextAuto, tested, incumbent.ID)
-		if err != nil { return report, err }
+		if err != nil {
+			return report, err
+		}
 		g.RemainingBank = len(nextAvailable)
 		report.Generations = append(report.Generations, g)
 
@@ -206,10 +254,16 @@ func RunAuto(ctx context.Context, cfg Config) (Report, error) {
 			report.StopReason = "NO_ELIGIBLE_CANDIDATES"
 			break
 		}
-		if gen == p.cfg.MaxGenerations { report.StopReason = "MAX_GENERATIONS_REACHED" }
+		if gen == p.cfg.MaxGenerations {
+			report.StopReason = "MAX_GENERATIONS_REACHED"
+		}
 	}
 
-	if report.StopReason == "" { report.StopReason = "COMPLETED" }
-	if err := writeJSON(filepath.Join(p.cfg.OutputDir,"closed-loop-report.json"),report); err != nil { return report, err }
+	if report.StopReason == "" {
+		report.StopReason = "COMPLETED"
+	}
+	if err := writeJSON(filepath.Join(p.cfg.OutputDir, "closed-loop-report.json"), report); err != nil {
+		return report, err
+	}
 	return report, nil
 }
