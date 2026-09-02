@@ -12,34 +12,34 @@ var numberPattern = regexp.MustCompile(`[-+]?\d+(?:[.,]\d+)?%?`)
 
 var stopwords = map[string]struct{}{
 	"a": {}, "al": {}, "and": {}, "are": {}, "as": {}, "at": {}, "be": {}, "by": {},
-	"con": {}, "de": {}, "del": {}, "el": {}, "en": {}, "es": {}, "for": {}, "from": {},
-	"in": {}, "is": {}, "la": {}, "las": {}, "los": {}, "of": {}, "on": {}, "o": {}, "or": {},
-	"para": {}, "por": {}, "que": {}, "the": {}, "to": {}, "un": {}, "una": {}, "y": {},
+	"con": {}, "de": {}, "del": {}, "dentro": {}, "el": {}, "en": {}, "es": {}, "esta": {},
+	"este": {}, "for": {}, "from": {}, "in": {}, "is": {}, "la": {}, "las": {}, "los": {},
+	"mediante": {}, "of": {}, "on": {}, "o": {}, "or": {}, "para": {}, "por": {}, "que": {},
+	"se": {}, "su": {}, "sus": {}, "the": {}, "to": {}, "un": {}, "una": {}, "y": {},
 }
 
 var negativeMarkers = []string{
 	" no ", " not ", " never ", " nunca ", " ninguno ", " ninguna ", " without ", " sin ",
-	"does not", "do not", "did not", "isn't", "isnt", "aren't", "arent", "wasn't", "wasnt",
+	" does not ", " do not ", " did not ", " isn t ", " arent ", " aren t ", " wasn t ",
 }
 
-var quantifierGroups = [][]string{
-	{"all", "todos", "todas", "always", "siempre"},
-	{"none", "ninguno", "ninguna", "never", "nunca"},
-	{"some", "algunos", "algunas"},
-	{"at least", "al menos"},
-	{"at most", "como maximo", "como máximo"},
-	{"more than", "mas de", "más de"},
-	{"less than", "menos de"},
-}
+const (
+	quantifierNone = iota
+	quantifierAll
+	quantifierSome
+	quantifierNever
+	quantifierAlways
+)
 
 var antonymPairs = [][2]string{
 	{"increase", "decrease"}, {"increases", "decreases"}, {"increased", "decreased"},
 	{"aumenta", "disminuye"}, {"aumentar", "disminuir"},
 	{"before", "after"}, {"antes", "despues"}, {"antes", "después"},
-	{"enable", "disable"}, {"enabled", "disabled"}, {"habilitado", "deshabilitado"},
+	{"enable", "disable"}, {"enabled", "disabled"},
+	{"habilitado", "deshabilitado"}, {"habilitada", "deshabilitada"},
 	{"present", "absent"}, {"presente", "ausente"},
-	{"true", "false"}, {"verdadero", "falso"},
-	{"distributed", "centralized"}, {"distribuido", "centralizado"},
+	{"true", "false"}, {"verdadero", "falso"}, {"verdadera", "falsa"},
+	{"distributed", "centralized"}, {"distribuido", "centralizado"}, {"distribuida", "centralizada"},
 }
 
 func Verify(in VerifyInput) VerifyOutput {
@@ -204,7 +204,7 @@ func normalize(text string) string {
 }
 
 func stem(s string) string {
-	for _, suffix := range []string{"ing", "ed", "es", "s"} {
+	for _, suffix := range []string{"mente", "ing", "ed", "es", "s"} {
 		if len(s) > len(suffix)+3 && strings.HasSuffix(s, suffix) {
 			return strings.TrimSuffix(s, suffix)
 		}
@@ -226,10 +226,14 @@ func hasNegation(text string) bool {
 	return false
 }
 
+// numericContradiction is intentionally precision-biased. R0 only declares a
+// numeric contradiction when both aligned claims express the same cardinality
+// of explicit numeric values and those normalized values differ. Extra values
+// in either span are treated as ambiguity rather than contradiction.
 func numericContradiction(claim, evidence string) (string, bool) {
 	claimNumbers := normalizedNumbers(claim)
 	evidenceNumbers := normalizedNumbers(evidence)
-	if len(claimNumbers) == 0 || len(evidenceNumbers) == 0 || equalStrings(claimNumbers, evidenceNumbers) {
+	if len(claimNumbers) == 0 || len(claimNumbers) != len(evidenceNumbers) || equalStrings(claimNumbers, evidenceNumbers) {
 		return "", false
 	}
 	return "claim=" + strings.Join(claimNumbers, ",") + "; evidence=" + strings.Join(evidenceNumbers, ","), true
@@ -257,23 +261,47 @@ func normalizedNumbers(text string) []string {
 }
 
 func quantifierContradiction(claim, evidence string) (string, bool) {
-	claimGroup, evidenceGroup := quantifierGroup(claim), quantifierGroup(evidence)
-	if claimGroup == -1 || evidenceGroup == -1 || claimGroup == evidenceGroup {
+	claimQ, evidenceQ := quantifierClass(claim), quantifierClass(evidence)
+	if claimQ == quantifierNone || evidenceQ == quantifierNone || claimQ == evidenceQ {
 		return "", false
 	}
-	return "claim_group=" + strconv.Itoa(claimGroup) + "; evidence_group=" + strconv.Itoa(evidenceGroup), true
+	contradiction := (claimQ == quantifierAll && evidenceQ == quantifierNever) ||
+		(claimQ == quantifierNever && evidenceQ == quantifierAll) ||
+		(claimQ == quantifierSome && evidenceQ == quantifierNever) ||
+		(claimQ == quantifierNever && evidenceQ == quantifierSome) ||
+		(claimQ == quantifierAlways && evidenceQ == quantifierNever) ||
+		(claimQ == quantifierNever && evidenceQ == quantifierAlways)
+	if !contradiction {
+		return "", false
+	}
+	return "claim_class=" + strconv.Itoa(claimQ) + "; evidence_class=" + strconv.Itoa(evidenceQ), true
 }
 
-func quantifierGroup(text string) int {
+func quantifierClass(text string) int {
 	norm := " " + normalize(text) + " "
-	for i, group := range quantifierGroups {
-		for _, term := range group {
-			if strings.Contains(norm, " "+term+" ") {
-				return i
-			}
+	switch {
+	case containsAnyPhrase(norm, "all", "todos", "todas"):
+		return quantifierAll
+	case containsAnyPhrase(norm, "none", "ninguno", "ninguna"):
+		return quantifierNever
+	case containsAnyPhrase(norm, "some", "algunos", "algunas"):
+		return quantifierSome
+	case containsAnyPhrase(norm, "never", "nunca"):
+		return quantifierNever
+	case containsAnyPhrase(norm, "always", "siempre"):
+		return quantifierAlways
+	default:
+		return quantifierNone
 	}
+}
+
+func containsAnyPhrase(norm string, values ...string) bool {
+	for _, value := range values {
+		if strings.Contains(norm, " "+value+" ") {
+			return true
+		}
 	}
-	return -1
+	return false
 }
 
 func antonymContradiction(claim, evidence string) (string, bool) {
