@@ -1,0 +1,13 @@
+{
+  "val": {
+    "overall": 1.0,
+    "per_class": {
+      "DEFINITION": 1.0,
+      "COMPARISON": 1.0,
+      "PROCESS": 1.0,
+      "FACTUAL_DETAIL": 1.0,
+      "GENERAL": 1.0
+    }
+  },
+  "parameters": 7721
+}
