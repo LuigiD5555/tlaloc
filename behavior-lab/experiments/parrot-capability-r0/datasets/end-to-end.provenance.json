@@ -1,0 +1,122 @@
+[
+  {
+    "base_id": "e2e-locate-01",
+    "category": "locate",
+    "question": "This page has a section heading for exactly one of these refactorings: \"Move Field\" or \"Encapsulate Collection\". Which one? Answer with that heading only.",
+    "answer": "Encapsulate Collection",
+    "page": 168,
+    "address": "ohf://fold-bench/pages/000168",
+    "page_cid": "74eb8086ed946555eb301fc14446df67496cc23b7b2b1b537cd652b24018f58c",
+    "evidence_fragment": "page heading: Encapsulate Collection",
+    "evidence_sha256": "cf5ed9071f33493cc931a31baa97ebb1416b20f3f996a0eef06e0190fdc09adc",
+    "method": "heading-presence-r0"
+  },
+  {
+    "base_id": "e2e-locate-02",
+    "category": "locate",
+    "question": "This page has a section heading for exactly one of these refactorings: \"Remove Assignments to Parameters\" or \"Consolidate Conditional Expression\". Which one? Answer with that heading only.",
+    "answer": "Consolidate Conditional Expression",
+    "page": 194,
+    "address": "ohf://fold-bench/pages/000194",
+    "page_cid": "54e7929faeac75c362b00c46eefcdafdc2157c9a55373101d212d213d77af323",
+    "evidence_fragment": "page heading: Consolidate Conditional Expression",
+    "evidence_sha256": "4fe4d6609985a7c012fcd3a79f6e645acb5884b7bf81e2fda3e42318c5f34ff3",
+    "method": "heading-presence-r0"
+  },
+  {
+    "base_id": "e2e-locate-03",
+    "category": "locate",
+    "question": "This page has a section heading for exactly one of these refactorings: \"Extract Class\" or \"Remove Assignments to Parameters\". Which one? Answer with that heading only.",
+    "answer": "Remove Assignments to Parameters",
+    "page": 107,
+    "address": "ohf://fold-bench/pages/000107",
+    "page_cid": "c101c3ba5011abf50ccd02edf95cd0da8285d22738c2e47ff4f6226002f98e00",
+    "evidence_fragment": "page heading: Remove Assignments to Parameters",
+    "evidence_sha256": "67a6ab4ca6a44a4e631db2a40ab55ebc3c5cae690d937d0eaecdedc8afd01daa",
+    "method": "heading-presence-r0"
+  },
+  {
+    "base_id": "e2e-locate-04",
+    "category": "locate",
+    "question": "This page has a section heading for exactly one of these refactorings: \"Introduce Local Extension\" or \"Encapsulate Collection\". Which one? Answer with that heading only.",
+    "answer": "Introduce Local Extension",
+    "page": 133,
+    "address": "ohf://fold-bench/pages/000133",
+    "page_cid": "7006b7facb04cfef86eefdc451549a6970ed84d173549f2fba5892cf396ed4a7",
+    "evidence_fragment": "page heading: Introduce Local Extension",
+    "evidence_sha256": "bd1781f2f115f0bddf0e135f72a52dca28758e6311940ca5fa50501f90799b3f",
+    "method": "heading-presence-r0"
+  },
+  {
+    "base_id": "e2e-locate-05",
+    "category": "locate",
+    "question": "This page has a section heading for exactly one of these refactorings: \"Separate Query from Modifier\" or \"Encapsulate Downcast\". Which one? Answer with that heading only.",
+    "answer": "Separate Query from Modifier",
+    "page": 225,
+    "address": "ohf://fold-bench/pages/000225",
+    "page_cid": "67cec19d32fbd29d170e2f760e2b5bb7d8eb854608eef2cda85382f4528839e4",
+    "evidence_fragment": "page heading: Separate Query from Modifier",
+    "evidence_sha256": "5c83db6c24aaf271afcc9b6be639bfc1522bab0859093ca414f91ca9ace727e5",
+    "method": "heading-presence-r0"
+  },
+  {
+    "base_id": "e2e-locate-06",
+    "category": "locate",
+    "question": "This page has a section heading for exactly one of these refactorings: \"Consolidate Conditional Expression\" or \"Extract Class\". Which one? Answer with that heading only.",
+    "answer": "Extract Class",
+    "page": 122,
+    "address": "ohf://fold-bench/pages/000122",
+    "page_cid": "db6b6de7d3656e65bfde93a0f56542dce26f3f870b9eb34f44489389830853a6",
+    "evidence_fragment": "page heading: Extract Class",
+    "evidence_sha256": "5b209c967f4eaf3ca6d8e1381fd467b9776bd9f38ecb2ec459074be95b5f0a9d",
+    "method": "heading-presence-r0"
+  },
+  {
+    "base_id": "e2e-entity-01",
+    "category": "entity",
+    "question": "This page describes one refactoring. Its motivation section begins: \"Often a class contains a collection of instances.\". Name the refactoring, and nothing else.",
+    "answer": "Encapsulate Collection",
+    "page": 168,
+    "address": "ohf://fold-bench/pages/000168",
+    "page_cid": "74eb8086ed946555eb301fc14446df67496cc23b7b2b1b537cd652b24018f58c",
+    "evidence_fragment": "Encapsulate Collection — Motivation: Often a class contains a collection of instances.",
+    "evidence_sha256": "f35d5ced7d73785731f246a80a629ea69e48cfa5526c40c334bbf428cd926b08",
+    "method": "heading-motivation-r0"
+  },
+  {
+    "base_id": "e2e-synthesis-01",
+    "category": "synthesis",
+    "question": "The page shows two refactoring sections. Which heading appears first on the page: \"Move Field\" or \"Extract Class\"? Answer with that heading only.",
+    "answer": "Move Field",
+    "page": 119,
+    "address": "ohf://fold-bench/pages/000119",
+    "page_cid": "4e6be74fc549159468eafd87424e6d56708926d9b4fc7fca51a272434acb3cbb",
+    "evidence_fragment": "Move Field (before) / Extract Class (after)",
+    "evidence_sha256": "218c7f4a8317998674dc1aa859962fe5d49ddd685eb44daec2496cfe98f1f55f",
+    "method": "heading-order-r0"
+  },
+  {
+    "base_id": "e2e-synthesis-02",
+    "category": "synthesis",
+    "question": "The page shows two refactoring sections. Which heading appears first on the page: \"Move Method\" or \"Extract Class\"? Answer with that heading only.",
+    "answer": "Move Method",
+    "page": 122,
+    "address": "ohf://fold-bench/pages/000122",
+    "page_cid": "db6b6de7d3656e65bfde93a0f56542dce26f3f870b9eb34f44489389830853a6",
+    "evidence_fragment": "Move Method (before) / Extract Class (after)",
+    "evidence_sha256": "aff9a956c915e8a02d2ee68147f17a64673a0fb74e1f00a9917405e5aa56e366",
+    "method": "heading-order-r0"
+  },
+  {
+    "base_id": "e2e-synthesis-03",
+    "category": "synthesis",
+    "question": "The page shows two refactoring sections. Which heading appears first on the page: \"Replace Magic Number with Symbolic Constant\" or \"Replace Type Code with Class\"? Answer with that heading only.",
+    "answer": "Replace Magic Number with Symbolic Constant",
+    "page": 166,
+    "address": "ohf://fold-bench/pages/000166",
+    "page_cid": "3617995141e4852612e572bba0074886ef19be9d85a114b0a1af6051d642e0cc",
+    "evidence_fragment": "Replace Magic Number with Symbolic Constant (before) / Replace Type Code with Class (after)",
+    "evidence_sha256": "3f76959985b0528403535edef160cf09449f77036d7312602b22113d31ce6b1b",
+    "method": "heading-order-r0"
+  }
+]
