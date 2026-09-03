@@ -67,20 +67,43 @@ func Freeze(spec Spec) (Manifest, Dataset, error) {
 	if err != nil {
 		return Manifest{}, Dataset{}, err
 	}
-	// Reuse exocortex.LoadMicroISAArtifact rather than re-parsing P2-A here:
-	// it already enforces frozen==true and execution_errors==0 (E0.15).
-	artifact, artifactHash, err := exocortex.LoadMicroISAArtifact(spec.MicroISAArtifactPath)
+	artifactHash, artifactExperiment, err := loadMicroISAHash(spec.MicroISAArtifactPath)
 	if err != nil {
 		return Manifest{}, Dataset{}, err
 	}
 	manifest := Manifest{
 		Schema: ManifestSchemaR0, ExperimentID: ExperimentID,
 		DatasetPath: spec.DatasetPath, DatasetSHA256: datasetHash, DatasetRecordCount: len(dataset.Records),
-		MicroISAArtifactPath: spec.MicroISAArtifactPath, MicroISAArtifactSHA256: artifactHash, MicroISAExperimentID: artifact.ExperimentID,
+		MicroISAArtifactPath: spec.MicroISAArtifactPath, MicroISAArtifactSHA256: artifactHash, MicroISAExperimentID: artifactExperiment,
 		ProfileID: spec.ExecutorID + "@" + spec.ProfileVersion,
 		Endpoint:  spec.Endpoint, ModelID: spec.ModelID,
 	}
 	return manifest, dataset, nil
+}
+
+// loadMicroISAHash hash-verifies the frozen P2-A artifact and returns its
+// hash + experiment id. It accepts either the real P2-A schema
+// (parrot-microisa-r0.1) or the SYNTHETIC_TEST_FIXTURE schema used by unit
+// tests, so `Freeze`/`doctor`/`run` work against both without a second
+// codepath at every call site (E0.15: reuse the exocortex loaders).
+func loadMicroISAHash(path string) (hash, experimentID string, err error) {
+	if real, h, rerr := exocortex.LoadMicroISAArtifactReal(path); rerr == nil {
+		return h, real.ExperimentID, nil
+	}
+	art, h, serr := exocortex.LoadMicroISAArtifact(path)
+	if serr != nil {
+		return "", "", fmt.Errorf("micro-ISA artifact %s is neither the real P2-A schema nor the synthetic fixture schema: %w", path, serr)
+	}
+	return h, art.ExperimentID, nil
+}
+
+// CompileProfileFlexible compiles a runtime CapabilityProfile from either
+// the real P2-A artifact or the synthetic fixture artifact.
+func CompileProfileFlexible(artifactPath, executorID, modelID, profileVersion string) (exocortex.CapabilityProfile, error) {
+	if profile, err := exocortex.CompileParrotProfileReal(artifactPath, executorID, modelID, profileVersion); err == nil {
+		return profile, nil
+	}
+	return exocortex.CompileParrotProfile(artifactPath, executorID, modelID, profileVersion)
 }
 
 // WriteManifest persists the freeze manifest as canonical indented JSON.

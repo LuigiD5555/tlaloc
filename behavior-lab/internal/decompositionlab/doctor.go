@@ -41,7 +41,7 @@ func Doctor(ctx context.Context, spec Spec) (DoctorResult, error) {
 	}
 	result.Manifest = manifest
 
-	profile, err := exocortex.CompileParrotProfile(spec.MicroISAArtifactPath, spec.ExecutorID, spec.ModelID, spec.ProfileVersion)
+	profile, err := CompileProfileFlexible(spec.MicroISAArtifactPath, spec.ExecutorID, spec.ModelID, spec.ProfileVersion)
 	if err != nil {
 		return DoctorResult{}, fmt.Errorf("compile capability profile: %w", err)
 	}

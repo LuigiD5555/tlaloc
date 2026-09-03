@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"tlaloc.local/behaviorlab/internal/blackboard"
+	"tlaloc.local/behaviorlab/internal/canonicaldoc"
 	"tlaloc.local/behaviorlab/internal/exocortex"
 	"tlaloc.local/behaviorlab/internal/tlaloque"
 )
@@ -77,6 +78,28 @@ type RecordOutcome struct {
 	RawText              string  `json:"raw_text,omitempty"`
 	FinalValue           string  `json:"final_value,omitempty"`
 	Error                string  `json:"error,omitempty"`
+
+	// Locator carries what the LOCATE_REGION step actually selected (T0
+	// protocol section 17/20). It is populated for every condition that
+	// externalizes localization (C1-C3 oracle, B1-B3 real) and left nil for
+	// C0. Ground truth is compared against it only post-hoc, during
+	// aggregation.
+	Locator *LocatorOutcome `json:"locator,omitempty"`
+}
+
+// LocatorOutcome is the deterministic locator's own record for one case.
+type LocatorOutcome struct {
+	Mode           string             `json:"mode"` // ORACLE | REAL
+	SelectedPage   int                `json:"selected_page"`
+	SelectedAddr   string             `json:"selected_address,omitempty"`
+	RegionAddr     string             `json:"region_address,omitempty"`
+	BBox           *canonicaldoc.BBox `json:"bbox,omitempty"`
+	RankingScore   float64            `json:"ranking_score"`
+	SourceMethod   string             `json:"source_method"`
+	CandidateCount int                `json:"candidate_count"`
+	CropWidth      int                `json:"crop_width"`
+	CropHeight     int                `json:"crop_height"`
+	LatencyMS      int64              `json:"latency_ms"`
 }
 
 // RunRecord executes one P0 record under one Condition end-to-end and
@@ -97,6 +120,16 @@ func RunRecord(ctx context.Context, cfg RunnerConfig, record P0Record, condition
 	if condition == ConditionC0ParrotDirect {
 		return c0FromBaseline(outcome, cfg, record, start)
 	}
+
+	// BLOCKER 3: the single model opcode comes from the validated frozen
+	// Recipe, never from the (empty) legacy record.Opcode field. Zero or
+	// more than one model step is an explicit integrity error.
+	modelStep, err := record.ModelStep()
+	if err != nil {
+		outcome.Error = err.Error()
+		return finish(outcome, start)
+	}
+	modelOpcode := modelStep.Opcode
 
 	runID := fmt.Sprintf("t0-%s-%s-%d", strings.ToLower(string(condition)), record.BaseID, time.Now().UnixNano())
 	outcome.RunID = runID
@@ -127,10 +160,19 @@ func RunRecord(ctx context.Context, cfg RunnerConfig, record P0Record, condition
 	visualField := exocortex.VisualFieldFullPage
 	outcome.VisualExposureRatio = 1.0
 
+	cropMargin := cfg.MarginRatio
 	if condition.UsesLocateRegion() {
 		outcome.Attempted = true
 		locateInput := exocortex.RegionLocateInput{}
 		if condition.IsOracle() {
+			// BLOCKER 4: an oracle condition MUST carry the frozen derived
+			// operand bbox. A missing bbox is a hard error — never a silent
+			// full-page fallback (that would make C1 == C0).
+			if record.EvidenceBBox == nil {
+				outcome.Error = fmt.Sprintf("oracle condition %s: record %q has no frozen EvidenceBBox; run T0-B0 prepare with --store-dir first", condition, record.BaseID)
+				return finish(outcome, start)
+			}
+			cropMargin = 0 // the frozen oracle bbox already bakes in the fixed context padding
 			locateInput = exocortex.RegionLocateInput{
 				Mode: exocortex.LocateModeOracle, OracleAddress: record.EvidenceAddress, OracleDocID: record.DocID,
 				OraclePage: record.Page, OracleBBox: record.EvidenceBBox, OraclePageW: record.PageWidth, OraclePageH: record.PageHeight,
@@ -138,6 +180,7 @@ func RunRecord(ctx context.Context, cfg RunnerConfig, record P0Record, condition
 		} else {
 			locateInput = exocortex.RegionLocateInput{Mode: exocortex.LocateModeReal, Question: record.Question, StoreDir: cfg.StoreDir}
 		}
+		locateStart := time.Now()
 		locateOut, err := runStep("locate", exocortex.OpLocateRegion, locateInput)
 		if err != nil {
 			outcome.Error = err.Error()
@@ -149,6 +192,12 @@ func RunRecord(ctx context.Context, cfg RunnerConfig, record P0Record, condition
 			return finish(outcome, start)
 		}
 		outcome.DeterministicOps++
+		outcome.Locator = &LocatorOutcome{
+			Mode:         locateInput.Mode,
+			SelectedPage: located.Page, SelectedAddr: located.SelectedAddress, RegionAddr: located.RegionAddress,
+			BBox: located.BBox, RankingScore: located.RankingScore, SourceMethod: located.SourceMethod,
+			CandidateCount: located.CandidateCount, LatencyMS: time.Since(locateStart).Milliseconds(),
+		}
 
 		pageW, pageH := located.PageWidth, located.PageHeight
 		if pageW == 0 || pageH == 0 {
@@ -157,7 +206,7 @@ func RunRecord(ctx context.Context, cfg RunnerConfig, record P0Record, condition
 		cropPath := filepath.Join(cfg.CropDir, fmt.Sprintf("%s-%s.png", record.BaseID, strings.ToLower(string(condition))))
 		cropInput := exocortex.RegionCropInput{
 			PageImagePath: record.PageImagePath, PageWidth: pageW, PageHeight: pageH,
-			BBox: located.BBox, MarginRatio: cfg.MarginRatio, OutputPath: cropPath,
+			BBox: located.BBox, MarginRatio: cropMargin, OutputPath: cropPath,
 		}
 		cropOut, err := runStep("crop", exocortex.OpCropRegion, cropInput)
 		if err != nil {
@@ -176,13 +225,30 @@ func RunRecord(ctx context.Context, cfg RunnerConfig, record P0Record, condition
 		outcome.VisualExposureRatio = cropped.VisualExposureRatio
 		imagePath = cropped.CropPath
 		visualField = exocortex.VisualFieldTightCrop
+		if outcome.Locator != nil {
+			if w, h, derr := pngDimensions(cropped.CropPath); derr == nil {
+				outcome.Locator.CropWidth, outcome.Locator.CropHeight = w, h
+			}
+		}
+
+		// An oracle crop that did not actually reduce the operand is an
+		// instrumentation failure, not a valid C1/C2/C3 record.
+		if condition.IsOracle() && !(cropped.VisualExposureRatio > 0 && cropped.VisualExposureRatio < 1) {
+			outcome.Error = fmt.Sprintf("oracle condition %s: crop visual_exposure_ratio = %v, want strictly in (0,1)", condition, cropped.VisualExposureRatio)
+			return finish(outcome, start)
+		}
 	}
 
 	outcome.Attempted = true
-	parrotOut, err := runStep("parrot", record.Opcode, exocortex.ParrotInput{
+	parrotInput := exocortex.ParrotInput{
 		ImagePath: imagePath, VisualField: visualField,
 		CharCount: record.OperandCharCount, ChoiceWidth: record.OperandChoiceWidth,
-	})
+	}
+	if modelOpcode == exocortex.OpSelectOne && len(record.Choices) > 0 {
+		parrotInput.Choices = append([]string(nil), record.Choices...)
+		parrotInput.ChoiceWidth = len(record.Choices)
+	}
+	parrotOut, err := runStep("parrot", modelOpcode, parrotInput)
 	if err != nil {
 		outcome.Error = err.Error()
 		return finish(outcome, start)
@@ -198,7 +264,7 @@ func RunRecord(ctx context.Context, cfg RunnerConfig, record P0Record, condition
 
 	if condition.UsesNormalize() {
 		normOut, err := runStep("normalize", exocortex.OpNormalize, exocortex.NormalizeInput{
-			Raw: parrotResult.Text, TargetType: opcodeTargetType(record.Opcode),
+			Raw: parrotResult.Text, TargetType: opcodeTargetType(modelOpcode),
 		})
 		if err != nil {
 			outcome.Error = err.Error()
@@ -210,7 +276,7 @@ func RunRecord(ctx context.Context, cfg RunnerConfig, record P0Record, condition
 			outcome.Error = fmt.Sprintf("decode normalize output: %v", err)
 			return finish(outcome, start)
 		}
-		if opcodeTargetType(record.Opcode) == exocortex.TargetTypeNumber {
+		if opcodeTargetType(modelOpcode) == exocortex.TargetTypeNumber {
 			if normalized.IsNumber {
 				outcome.FinalValue = strconv.FormatFloat(normalized.AsNumber, 'f', -1, 64)
 			} else {
@@ -224,7 +290,7 @@ func RunRecord(ctx context.Context, cfg RunnerConfig, record P0Record, condition
 
 	if condition.UsesVerify() {
 		verifyOut, err := runStep("verify", exocortex.OpVerify, exocortex.VerifyInput{
-			TargetKey: "normalize", FactID: record.BaseID, ExpectedType: opcodeTargetType(record.Opcode),
+			TargetKey: "normalize", FactID: record.BaseID, ExpectedType: opcodeTargetType(modelOpcode),
 		})
 		if err != nil {
 			outcome.Error = err.Error()
@@ -245,7 +311,7 @@ func RunRecord(ctx context.Context, cfg RunnerConfig, record P0Record, condition
 
 	outcome.ContractSuccess = outcome.Error == "" && !outcome.FormatFailure && !outcome.UnsupportedAssertion && strings.TrimSpace(outcome.FinalValue) != ""
 	if outcome.ContractSuccess {
-		outcome.SemanticCorrect = ScoreSemantic(record.Opcode, outcome.FinalValue, record.ExpectedAnswer)
+		outcome.SemanticCorrect = ScoreSemantic(modelOpcode, outcome.FinalValue, record.ExpectedAnswer)
 	}
 	return finish(outcome, start)
 }
@@ -298,12 +364,17 @@ func opcodeTargetType(opcode string) string {
 // with a small float tolerance; everything else compares case-insensitive
 // trimmed text. It is applied only after the pipeline has finished and
 // ExpectedAnswer was never available to any executor along the way.
+//
+// Numeric parsing strips ASCII thousands separators (","), so a frozen gold
+// like "44,000" and a model output "44000" denote the same number — this
+// matches the numeric-equality semantics the frozen P0 scorer already used
+// for the imported C0 rows (e.g. "10000" == "10,000").
 func ScoreSemantic(opcode, got, want string) bool {
 	got = strings.TrimSpace(got)
 	want = strings.TrimSpace(want)
 	if opcodeTargetType(opcode) == exocortex.TargetTypeNumber {
-		gv, gerr := strconv.ParseFloat(got, 64)
-		wv, werr := strconv.ParseFloat(want, 64)
+		gv, gerr := strconv.ParseFloat(stripThousands(got), 64)
+		wv, werr := strconv.ParseFloat(stripThousands(want), 64)
 		if gerr != nil || werr != nil {
 			return false
 		}
@@ -315,4 +386,10 @@ func ScoreSemantic(opcode, got, want string) bool {
 		return diff <= tolerance
 	}
 	return strings.EqualFold(got, want)
+}
+
+// stripThousands removes ASCII comma thousands separators and inner spaces
+// from a numeric string so "1,024" / "1 024" / "1024" parse identically.
+func stripThousands(s string) string {
+	return strings.NewReplacer(",", "", " ", "").Replace(s)
 }

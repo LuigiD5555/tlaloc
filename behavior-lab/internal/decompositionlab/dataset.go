@@ -94,9 +94,57 @@ type P0Record struct {
 	// curator-declared properties of what the region actually shows (not
 	// derived from ExpectedAnswer), used only for the ModelAdapter's
 	// contract check; zero means "no declared bound for this record".
+	//
+	// Opcode is a legacy single-op field kept for hand-authored fixtures.
+	// The frozen prepared T0-B dataset leaves it empty and carries the model
+	// opcode inside Recipe instead (see ModelStep); prefer ModelStep.
 	Opcode             string `json:"opcode"`
 	OperandCharCount   int    `json:"operand_char_count,omitempty"`
 	OperandChoiceWidth int    `json:"operand_choice_width,omitempty"`
+
+	// Choices carries the frozen P0 task's explicit choice labels for a
+	// SELECT_ONE record (the locate/choice family). It is task structure
+	// from the frozen P0 benchmark — never evidence text, never the answer —
+	// and is presented to Parrot in full so a 2-way selection stays a real
+	// selection after oracle localization.
+	Choices []string `json:"choices,omitempty"`
+}
+
+// ModelStep returns the single non-deterministic (model-executed) AtomicStep
+// of a record's bounded recipe — the one opcode that reaches Parrot (P1: one
+// cognitive op per invocation). It is an explicit integrity error for an
+// ELIGIBLE T0-B record to have zero or more than one model step. Records
+// with no Recipe fall back to the legacy single Opcode field so hand-
+// authored fixtures keep working.
+func (r P0Record) ModelStep() (AtomicStep, error) {
+	if len(r.Recipe) == 0 {
+		if strings.TrimSpace(r.Opcode) == "" {
+			return AtomicStep{}, fmt.Errorf("record %q: no recipe and no legacy opcode; cannot determine the model step", r.BaseID)
+		}
+		op, err := exocortex.NormalizeOpcode(r.Opcode)
+		if err != nil {
+			return AtomicStep{}, fmt.Errorf("record %q: %w", r.BaseID, err)
+		}
+		return AtomicStep{ID: "legacy", Opcode: op, OutputKey: "answer"}, nil
+	}
+	var found []AtomicStep
+	for _, step := range r.Recipe {
+		if !step.Deterministic {
+			found = append(found, step)
+		}
+	}
+	if len(found) == 0 {
+		return AtomicStep{}, fmt.Errorf("record %q: recipe has zero model steps; an ELIGIBLE T0-B record must have exactly one", r.BaseID)
+	}
+	if len(found) > 1 {
+		return AtomicStep{}, fmt.Errorf("record %q: recipe has %d model steps; an ELIGIBLE T0-B record must have exactly one (no planner)", r.BaseID, len(found))
+	}
+	op, err := exocortex.NormalizeOpcode(found[0].Opcode)
+	if err != nil {
+		return AtomicStep{}, fmt.Errorf("record %q step %q: %w", r.BaseID, found[0].ID, err)
+	}
+	found[0].Opcode = op
+	return found[0], nil
 }
 
 // ValidateRecipe checks that a record's bounded recipe never asks a model

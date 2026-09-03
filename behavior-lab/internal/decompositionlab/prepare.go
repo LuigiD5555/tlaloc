@@ -1,6 +1,7 @@
 package decompositionlab
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"image"
@@ -42,6 +43,10 @@ type PrepareManifest struct {
 	EligibleR0         int                  `json:"eligible_r0"`
 	NotApplicableR0    int                  `json:"not_applicable_r0"`
 	R0TaskCoverage     float64              `json:"r0_task_coverage"`
+
+	OracleCropsPath       string `json:"oracle_crops_path,omitempty"`
+	OracleCropsCompatible int    `json:"oracle_crops_compatible"`
+	T0B0Status            string `json:"t0b0_status"`
 }
 
 // PrepareInput configures a prepare run.
@@ -52,6 +57,50 @@ type PrepareInput struct {
 	ModelID         string
 	ProfileVersion  string
 	OutDir          string
+
+	// StoreDir is the reconstructed pdfmemory store root. When set, prepare
+	// derives the frozen oracle operand crop for every ELIGIBLE_R0 record
+	// (T0-B0, protocol addendum sections 3/5/9) and writes the compatibility
+	// artifact. Without it the T0-B dataset carries no EvidenceBBox and only
+	// the C0 baseline + eligibility audit are usable.
+	StoreDir string
+}
+
+// p0ChoiceRecord is the minimal shape needed to lift the frozen SELECT_ONE
+// choice labels out of the P0 image dataset (task structure, not evidence).
+type p0ChoiceRecord struct {
+	BaseID  string   `json:"base_id"`
+	Variant string   `json:"variant"`
+	Choices []string `json:"choices"`
+}
+
+// loadP0Choices reads the frozen P0 image dataset and returns the choice
+// labels for every base_id that declares them (the locate/choice family).
+func loadP0Choices(p0ExperimentDir string) (map[string][]string, error) {
+	path := filepath.Join(p0ExperimentDir, "datasets", "end-to-end.jsonl")
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	out := map[string][]string{}
+	scanner := bufio.NewScanner(f)
+	scanner.Buffer(make([]byte, 0, 1<<20), 1<<24)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+		var rec p0ChoiceRecord
+		if err := json.Unmarshal([]byte(line), &rec); err != nil {
+			return nil, fmt.Errorf("decode P0 choice record: %w", err)
+		}
+		if rec.Variant != "image" || len(rec.Choices) == 0 {
+			continue
+		}
+		out[rec.BaseID] = append([]string(nil), rec.Choices...)
+	}
+	return out, scanner.Err()
 }
 
 func pngDimensions(path string) (int, int, error) {
@@ -176,10 +225,37 @@ func Prepare(in PrepareInput) (PrepareManifest, error) {
 			recipeByBase[c.BaseID] = c.Recipe
 		}
 	}
+	choices, err := loadP0Choices(in.P0ExperimentDir)
+	if err != nil {
+		return PrepareManifest{}, fmt.Errorf("load P0 choice labels: %w", err)
+	}
 	for i := range records {
 		records[i].Recipe = recipeByBase[records[i].BaseID]
+		records[i].Choices = choices[records[i].BaseID]
 		if err := records[i].ValidateRecipe(profile.MaxSafeOps); err != nil {
 			return PrepareManifest{}, err
+		}
+	}
+
+	// T0-B0: derive the frozen oracle operand crop for every ELIGIBLE_R0
+	// record from the reconstructed store, and record the compatibility
+	// verdict. This is deterministic and makes zero model calls.
+	var cropReport OracleCropReport
+	haveStore := strings.TrimSpace(in.StoreDir) != ""
+	if haveStore {
+		cropReport, err = deriveOracleCrops(records, audit, in.StoreDir, nil)
+		if err != nil {
+			return PrepareManifest{}, err
+		}
+		bySpec := map[string]OracleCropSpec{}
+		for _, s := range cropReport.Crops {
+			bySpec[s.BaseID] = s
+		}
+		for i := range records {
+			if s, ok := bySpec[records[i].BaseID]; ok && s.Verdict == OracleCompatible {
+				b := s.ImageBBox
+				records[i].EvidenceBBox = &b
+			}
 		}
 	}
 
@@ -213,6 +289,20 @@ func Prepare(in PrepareInput) (PrepareManifest, error) {
 		return PrepareManifest{}, err
 	}
 
+	oracleCropsPath := ""
+	t0b0Status := "NO_STORE_PROVIDED"
+	if haveStore {
+		oracleCropsPath = filepath.Join(in.OutDir, "results", "T0B_ORACLE_CROPS_R0.json")
+		if _, err := writeJSON(oracleCropsPath, cropReport); err != nil {
+			return PrepareManifest{}, err
+		}
+		if cropReport.CompatibleCount == cropReport.EligibleCount && cropReport.EligibleCount == audit.EligibleR0 {
+			t0b0Status = "COMPATIBLE_FOR_T0B"
+		} else {
+			t0b0Status = fmt.Sprintf("NOT_COMPATIBLE_FOR_T0B (%d/%d eligible crops compatible)", cropReport.CompatibleCount, audit.EligibleR0)
+		}
+	}
+
 	manifest := PrepareManifest{
 		Schema: PrepareManifestSchemaR0, ExperimentID: ExperimentID,
 		P0Baseline: baselineProv, P0ProvenanceSHA256: provHash,
@@ -221,6 +311,8 @@ func Prepare(in PrepareInput) (PrepareManifest, error) {
 		T0BDatasetPath: datasetPath, T0BDatasetSHA256: datasetHash,
 		EligibilityPath: eligPath, C0BaselinePath: c0Path,
 		EligibleR0: audit.EligibleR0, NotApplicableR0: audit.NotApplicableR0, R0TaskCoverage: audit.R0TaskCoverage,
+		OracleCropsPath: oracleCropsPath, T0B0Status: t0b0Status,
+		OracleCropsCompatible: cropReport.CompatibleCount,
 	}
 	manifestPath := filepath.Join(in.OutDir, "manifest.json")
 	if _, err := writeJSON(manifestPath, manifest); err != nil {

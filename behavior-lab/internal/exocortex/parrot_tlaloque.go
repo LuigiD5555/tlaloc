@@ -20,10 +20,11 @@ const ParrotTlaloqueIDPrefix = "parrot-tlaloque"
 // ParrotInput is the Parrot Tlaloque's input contract. It is deliberately
 // tiny (E0.8, E3B): one crop, one opcode's operand shape, nothing else.
 type ParrotInput struct {
-	ImagePath   string `json:"image_path"`
-	VisualField string `json:"visual_field,omitempty"` // TIGHT_CROP | FULL_PAGE
-	CharCount   int    `json:"char_count,omitempty"`
-	ChoiceWidth int    `json:"choice_width,omitempty"`
+	ImagePath   string   `json:"image_path"`
+	VisualField string   `json:"visual_field,omitempty"` // TIGHT_CROP | FULL_PAGE
+	CharCount   int      `json:"char_count,omitempty"`
+	ChoiceWidth int      `json:"choice_width,omitempty"`
+	Choices     []string `json:"choices,omitempty"` // SELECT_ONE task choice labels (never the answer)
 }
 
 // ParrotOutput is the raw, unverified model output. It is always written
@@ -91,7 +92,7 @@ func (p ParrotTlaloque) Execute(ctx context.Context, req tlaloque.CapabilityRequ
 		return tlaloque.CapabilityResponse{}, fmt.Errorf("parrot tlaloque: decode input: %w", err)
 	}
 	adapter := ModelAdapter{Profile: p.Profile}
-	plan, err := adapter.Adapt(p.Opcode, Operand{VisualField: in.VisualField, CharCount: in.CharCount, ChoiceWidth: in.ChoiceWidth})
+	plan, err := adapter.Adapt(p.Opcode, Operand{VisualField: in.VisualField, CharCount: in.CharCount, ChoiceWidth: in.ChoiceWidth, Choices: in.Choices})
 	if err != nil {
 		return tlaloque.CapabilityResponse{}, err
 	}

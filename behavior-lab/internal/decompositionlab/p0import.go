@@ -238,6 +238,31 @@ func ImportP0Baseline(experimentDir string) (map[string]P0Outcome, P0BaselinePro
 	return outcomes, prov, nil
 }
 
+// LoadC0Baseline reads a frozen results/C0_P0_BASELINE.json (written by
+// `prepare`) back into the base_id-keyed map the runner consumes for C0
+// rows. C0 makes zero new model calls; this is the only source for it.
+func LoadC0Baseline(path string) (map[string]P0Outcome, error) {
+	body, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var doc struct {
+		Schema   string      `json:"schema"`
+		Outcomes []P0Outcome `json:"outcomes"`
+	}
+	if err := json.Unmarshal(body, &doc); err != nil {
+		return nil, fmt.Errorf("decode C0 baseline %s: %w", path, err)
+	}
+	if len(doc.Outcomes) == 0 {
+		return nil, fmt.Errorf("C0 baseline %s has no outcomes", path)
+	}
+	out := make(map[string]P0Outcome, len(doc.Outcomes))
+	for _, o := range doc.Outcomes {
+		out[o.BaseID] = o
+	}
+	return out, nil
+}
+
 // SortedP0BaseIDs returns the imported base ids in deterministic order.
 func SortedP0BaseIDs(outcomes map[string]P0Outcome) []string {
 	ids := make([]string, 0, len(outcomes))

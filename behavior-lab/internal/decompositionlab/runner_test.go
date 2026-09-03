@@ -233,6 +233,15 @@ func TestScoreSemantic_NumericToleranceAndTextCaseInsensitivity(t *testing.T) {
 	if ScoreSemantic(exocortex.OpExtractNumber, "127", "126") {
 		t.Fatalf("expected 127 != 126 to score as incorrect")
 	}
+	if !ScoreSemantic(exocortex.OpExtractNumber, "44000", "44,000") {
+		t.Fatalf("expected a comma-formatted gold '44,000' to compare equal to '44000'")
+	}
+	if !ScoreSemantic(exocortex.OpExtractNumber, "1,024", "1024") {
+		t.Fatalf("expected thousands separators to be ignored on both sides")
+	}
+	if ScoreSemantic(exocortex.OpExtractNumber, "1", "44,000") {
+		t.Fatalf("expected '1' != '44,000'")
+	}
 	if !ScoreSemantic(exocortex.OpReadShortLabel, "Fashion MNIST", "fashion mnist") {
 		t.Fatalf("expected case-insensitive text match")
 	}

@@ -21,9 +21,10 @@ func (e *ContractViolationError) Error() string {
 // deliberately small and declarative so the ModelAdapter can check it
 // against a CapabilityProfile without touching any model prompt.
 type Operand struct {
-	VisualField string `json:"visual_field,omitempty"` // TIGHT_CROP | FULL_PAGE
-	CharCount   int    `json:"char_count,omitempty"`   // for READ_SHORT_TEXT/LABEL
-	ChoiceWidth int    `json:"choice_width,omitempty"` // for SELECT_ONE
+	VisualField string   `json:"visual_field,omitempty"` // TIGHT_CROP | FULL_PAGE
+	CharCount   int      `json:"char_count,omitempty"`   // for READ_SHORT_TEXT/LABEL
+	ChoiceWidth int      `json:"choice_width,omitempty"` // for SELECT_ONE
+	Choices     []string `json:"choices,omitempty"`      // SELECT_ONE task choice labels (frozen P0 task structure, never the answer)
 }
 
 // AdapterPlan is what a ModelAdapter hands back for one Step: everything a
@@ -74,7 +75,15 @@ func (a ModelAdapter) Adapt(opcode string, operand Operand) (AdapterPlan, error)
 		return AdapterPlan{}, &ContractViolationError{Opcode: op, Reason: fmt.Sprintf("choice_width %d exceeds the formal_max_choice_width %d (the preregistered conservative rung, not the wider observed envelope)", operand.ChoiceWidth, entry.Constraints.FormalMaxChoiceWidth)}
 	}
 
-	instruction, err := FixedInstruction(op)
+	if op == OpSelectOne && len(operand.Choices) > 0 {
+		if operand.ChoiceWidth > 0 && len(operand.Choices) != operand.ChoiceWidth {
+			return AdapterPlan{}, &ContractViolationError{Opcode: op, Reason: fmt.Sprintf("SELECT_ONE operand declares choice_width %d but carries %d choice labels", operand.ChoiceWidth, len(operand.Choices))}
+		}
+		if entry.Constraints.FormalMaxChoiceWidth > 0 && len(operand.Choices) > entry.Constraints.FormalMaxChoiceWidth {
+			return AdapterPlan{}, &ContractViolationError{Opcode: op, Reason: fmt.Sprintf("SELECT_ONE choice label count %d exceeds the formal_max_choice_width %d", len(operand.Choices), entry.Constraints.FormalMaxChoiceWidth)}
+		}
+	}
+	instruction, err := FixedInstructionForOperand(op, operand)
 	if err != nil {
 		return AdapterPlan{}, err
 	}

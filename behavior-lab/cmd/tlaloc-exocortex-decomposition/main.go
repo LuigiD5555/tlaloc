@@ -93,6 +93,7 @@ func prepare(args []string) {
 	modelID := fs.String("model-id", "lfm2-vl-1.6b", "model id")
 	version := fs.String("profile-version", "r0", "profile version tag")
 	out := fs.String("out", "experiments/exocortex-decomposition-r0", "output directory")
+	storeDir := fs.String("store-dir", "", "reconstructed pdfmemory store root; when set, prepare derives the frozen T0-B0 oracle operand crops")
 	fs.Parse(args)
 	if strings.TrimSpace(*p0) == "" || strings.TrimSpace(*p2) == "" {
 		die(fmt.Errorf("--p0-experiment and --p2-experiment are required"))
@@ -100,6 +101,7 @@ func prepare(args []string) {
 	manifest, err := decompositionlab.Prepare(decompositionlab.PrepareInput{
 		P0ExperimentDir: *p0, P2AArtifactPath: *p2,
 		ExecutorID: *executorID, ModelID: *modelID, ProfileVersion: *version, OutDir: *out,
+		StoreDir: *storeDir,
 	})
 	die(err)
 	write(manifest)
@@ -133,18 +135,64 @@ func run(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("run", flag.ExitOnError)
 	spec := specFlags(fs)
 	conditionsFlag := fs.String("conditions", "C0_PARROT_DIRECT,C1_ORACLE_CROP_PARROT,C2_ORACLE_CROP_PARROT_NORMALIZE,C3_ORACLE_CROP_PARROT_NORMALIZE_VERIFY", "comma-separated Condition list")
+	eligibleOnly := fs.Bool("eligible-only", true, "run only the pre-registered ELIGIBLE_R0 records (those with a bounded recipe)")
+	c0BaselinePath := fs.String("c0-baseline", "", "path to results/C0_P0_BASELINE.json (required when C0_PARROT_DIRECT is in --conditions)")
 	fs.Parse(args)
 
 	_, dataset, err := decompositionlab.Freeze(*spec)
 	die(err)
-	profile, err := exocortex.CompileParrotProfile(spec.MicroISAArtifactPath, spec.ExecutorID, spec.ModelID, spec.ProfileVersion)
+	profile, err := decompositionlab.CompileProfileFlexible(spec.MicroISAArtifactPath, spec.ExecutorID, spec.ModelID, spec.ProfileVersion)
 	die(err)
 	die(exocortex.VerifySourceArtifact(profile))
 
 	conditions := parseConditions(*conditionsFlag)
+	needStore, needOracleBBox := false, false
 	for _, c := range conditions {
-		if !c.IsOracle() && strings.TrimSpace(spec.PDFMemoryStoreDir) == "" {
-			die(fmt.Errorf("condition %s requires --store-dir (real locate needs an Origami pdfmemory store)", c))
+		if !c.IsOracle() && c != decompositionlab.ConditionC0ParrotDirect {
+			needStore = true
+		}
+		if c.IsOracle() && c.UsesLocateRegion() {
+			needOracleBBox = true
+		}
+	}
+	if needStore && strings.TrimSpace(spec.PDFMemoryStoreDir) == "" {
+		die(fmt.Errorf("a real (B*) condition requires --store-dir (real locate needs an Origami pdfmemory store)"))
+	}
+
+	records := dataset.Records
+	if *eligibleOnly {
+		filtered := records[:0:0]
+		for _, r := range records {
+			if len(r.Recipe) > 0 {
+				filtered = append(filtered, r)
+			}
+		}
+		records = filtered
+	}
+
+	// T0-B0 gate: every oracle locate condition needs the frozen derived
+	// operand bbox on every record it will run. A missing bbox means the
+	// store-compatibility prepare step was skipped or did not pass 12/12.
+	if needOracleBBox {
+		missing := []string{}
+		for _, r := range records {
+			if r.EvidenceBBox == nil {
+				missing = append(missing, r.BaseID)
+			}
+		}
+		if len(missing) > 0 {
+			die(fmt.Errorf("T0-B0 gate not satisfied: %d record(s) have no frozen oracle EvidenceBBox (%v); re-run `prepare --store-dir ...` and confirm t0b0_status=COMPATIBLE_FOR_T0B", len(missing), missing))
+		}
+	}
+
+	var c0Baseline map[string]decompositionlab.P0Outcome
+	for _, c := range conditions {
+		if c == decompositionlab.ConditionC0ParrotDirect {
+			if strings.TrimSpace(*c0BaselinePath) == "" {
+				die(fmt.Errorf("C0_PARROT_DIRECT is in --conditions but --c0-baseline was not provided"))
+			}
+			c0Baseline, err = decompositionlab.LoadC0Baseline(*c0BaselinePath)
+			die(err)
 		}
 	}
 
@@ -159,13 +207,13 @@ func run(ctx context.Context, args []string) {
 		BaseURL: spec.Endpoint, Model: spec.ModelID, Temperature: spec.Temperature, MaxTokens: spec.MaxOutputTokens,
 	})
 	die(err)
-	cfg := decompositionlab.RunnerConfig{Registry: registry, Store: store, MarginRatio: spec.MarginRatio, CropDir: cropDir, StoreDir: spec.PDFMemoryStoreDir}
+	cfg := decompositionlab.RunnerConfig{Registry: registry, Store: store, MarginRatio: spec.MarginRatio, CropDir: cropDir, StoreDir: spec.PDFMemoryStoreDir, C0Baseline: c0Baseline}
 
 	total, attempted := 0, 0
 	for _, condition := range conditions {
 		condDir := filepath.Join(rawDir, string(condition))
 		die(os.MkdirAll(condDir, 0o755))
-		for _, record := range dataset.Records {
+		for _, record := range records {
 			select {
 			case <-ctx.Done():
 				die(ctx.Err())
