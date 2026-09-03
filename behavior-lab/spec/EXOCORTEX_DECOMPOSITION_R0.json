@@ -1,0 +1,45 @@
+{
+  "schema": "tlaloc.exocortex-decomposition-t0.r0.spec",
+  "experiment_id": "exocortex-decomposition-r0",
+  "status": "IMPLEMENTED_NOT_RUN",
+  "scientific_question": "Can Tlaloc recover end-to-end capability by removing operations from Parrot and executing memory/control/localization/normalization/verification externally?",
+  "depends_on": {
+    "P0": "frozen end-to-end benchmark (30 IMAGE variants, referenced by hash, never copy-edited)",
+    "P1": "Instruction Cliff (PARROT_MAX_SAFE_OPS_SEMANTIC = 1, PARROT_MAX_SAFE_OPS_CONTRACT = 1)",
+    "P2-A": "PARROT MICRO-ISA R0 (results/PARROT_MICRO_ISA_R0.json, experiment parrot-microisa-r0.1)"
+  },
+  "primary_dataset": {
+    "n": 30,
+    "denominator": "the same 30 frozen P0 image-variant questions across every condition",
+    "expected_answer_exposure": "never available to any executor; used only for post-hoc scoring after a condition's pipeline has finished"
+  },
+  "conditions_t0a_oracle": [
+    {"id": "C0_PARROT_DIRECT", "externalized_capabilities": 0},
+    {"id": "C1_ORACLE_CROP_PARROT", "externalized_capabilities": 1},
+    {"id": "C2_ORACLE_CROP_PARROT_NORMALIZE", "externalized_capabilities": 2},
+    {"id": "C3_ORACLE_CROP_PARROT_NORMALIZE_VERIFY", "externalized_capabilities": 3}
+  ],
+  "conditions_t0b_real": [
+    {"id": "B1_REAL_REGION_PARROT", "externalized_capabilities": 1},
+    {"id": "B2_REAL_REGION_PARROT_NORMALIZE", "externalized_capabilities": 2},
+    {"id": "B3_REAL_REGION_PARROT_NORMALIZE_VERIFY", "externalized_capabilities": 3}
+  ],
+  "implementation": {
+    "package": "internal/decompositionlab",
+    "cli": "cmd/tlaloc-exocortex-decomposition",
+    "reused_infrastructure": [
+      "internal/tlaloque (Registry, ResolveGoal, SwarmRunner, SwarmPlan/SwarmNode, CapabilityWorker)",
+      "internal/blackboard (Store, Entry, Observation, Consolidate; extended with Fact/EntryFact)",
+      "internal/pdfmemory (Search, Load, ReadRegion) for the real (non-oracle) Region Tlaloque",
+      "internal/target.OpenAICompat.CompletePerception for the actual model transport",
+      "internal/runrecord for accounting (available to the run command; not yet wired into every record)"
+    ],
+    "new_slice": "internal/exocortex (E0-E6: CapabilityProfile, Micro-ISA opcodes, ModelAdapter, WorkingSetBuilder, CapabilityRouter, five Tlaloques)"
+  },
+  "integrity_checkpoint": "after T0-A, verify: 30 paired cases present, all conditions correctly paired, no GT answer leaked, same questions, same expected answers, frozen artifacts unchanged, no retries outside preregistered policy, no transport errors hidden, crop actually contains intended evidence, no scoring denominator bug, no condition-specific prompt drift. Only on a clean pass does T0-B proceed.",
+  "run_status": {
+    "t0a_executed": false,
+    "t0b_executed": false,
+    "reason": "no real P0 dataset, P2-A artifact, or reachable LFM2-VL endpoint were available in the implementation environment; see docs/EXOCORTEX_R0.md and the tlaloc-exocortex-decomposition CLI for the exact commands to run this locally"
+  }
+}
