@@ -58,6 +58,14 @@ type ModelConfig struct {
 	Runtime            string  `json:"runtime"`
 	RuntimeVersion     *string `json:"runtime_version"`
 	Notes              string  `json:"notes"`
+
+	// Additive P2 instrument-identity fields (parrot-microisa-r0). Legacy
+	// experiments omit them and load with zero values.
+	Quantization            string            `json:"quantization,omitempty"`
+	ModelFilePaths          []string          `json:"model_file_paths,omitempty"`
+	ModelFileHashes         map[string]string `json:"model_file_hashes,omitempty"`
+	ModelFileHashesMeasured bool              `json:"model_file_hashes_measured,omitempty"`
+	RuntimeVersionMeasured  bool              `json:"runtime_version_measured,omitempty"`
 }
 
 // Prompt is the single frozen R0 template (PROMPT.txt): an id line followed

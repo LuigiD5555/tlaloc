@@ -80,6 +80,7 @@ func load(args []string) (*parrotlab.Experiment, *flag.FlagSet) {
 	fs.Int64("seed", 42, "generator seed")
 	fs.Int("scenes", 40, "generator scene count")
 	fs.Bool("force", false, "overwrite an existing generated dataset")
+	fs.Bool("write-model", false, "doctor: fill MODEL.json identity fields from a live probe (pre-freeze)")
 	fs.String("store", "", "pdfmemory store directory (P0 end_to_end source)")
 	fs.String("pdf", "", "source PDF for page rasterising (defaults to the store's source object)")
 	fs.String("pages", "", "P0 end_to_end: explicit comma-separated page list (recommended for OCR'd sources)")
@@ -93,9 +94,15 @@ func load(args []string) (*parrotlab.Experiment, *flag.FlagSet) {
 }
 
 func doctor(ctx context.Context, args []string) {
-	exp, _ := load(args)
+	exp, fs := load(args)
 	report, err := parrotlab.Doctor(ctx, exp)
 	die(err)
+	if fs.Lookup("write-model").Value.String() == "true" {
+		changed, writeErr := parrotlab.WriteModelIdentity(ctx, exp)
+		die(writeErr)
+		emit(map[string]any{"doctor": report, "model_json_updated": changed})
+		return
+	}
 	emit(report)
 }
 
