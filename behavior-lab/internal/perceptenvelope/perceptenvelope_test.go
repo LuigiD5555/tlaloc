@@ -7,6 +7,7 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"math"
 	"os"
 	"path/filepath"
 	"testing"
@@ -367,6 +368,72 @@ func TestR1A1_Geometry_NestedAndFixedScale(t *testing.T) {
 		}
 	}
 }
+
+func TestR1B_Geometry_ScaleOnly(t *testing.T) {
+	pages := map[int][]canonicaldoc.Region{
+		1: {
+			bodyLine("text-0001", 1, 100, "an earlier line of the same paragraph continues here"),
+			bodyLine("text-0002", 2, 118, "the batch size is 128 samples in this configuration run"),
+			bodyLine("text-0003", 3, 136, "and the paragraph keeps going with more explanatory text"),
+		},
+	}
+	dir := writeR1Store(t, pages)
+	pool, err := ScanSourcePool(dir)
+	if err != nil || len(pool.Candidates) != 1 {
+		t.Fatalf("want 1 candidate, got %d (%v)", len(pool.Candidates), err)
+	}
+	base := Base{BaseID: "r1b-test", Candidate: pool.Candidates[0]}
+
+	if len(R1BScaleLadder) != 6 || R1BExpectedRecords != R1BSize*6 {
+		t.Fatalf("ladder/record constants wrong: %d / %d", len(R1BScaleLadder), R1BExpectedRecords)
+	}
+
+	g1, err := DeriveR1BGeometry(dir, base)
+	if err != nil {
+		t.Fatal(err)
+	}
+	g2, _ := DeriveR1BGeometry(dir, base)
+	if b1, _ := json.Marshal(g1); string(b1) != mustJSON(g2) {
+		t.Fatal("geometry not deterministic")
+	}
+	if len(g1.Conditions) != 6 {
+		t.Fatalf("want 6 conditions, got %d", len(g1.Conditions))
+	}
+	var prevScale float64
+	for i, cg := range g1.Conditions {
+		nominal := R1BScaleLadder[i].LinePx
+		if math.Abs(cg.LineHeightCanvasPx-nominal) > R1BLineHeightTolerancePx {
+			t.Fatalf("%s: line height %.3f != %.0f", cg.Condition, cg.LineHeightCanvasPx, nominal)
+		}
+		cx := (cg.CueBBoxCanvasPx[0] + cg.CueBBoxCanvasPx[2]) / 2
+		cy := (cg.CueBBoxCanvasPx[1] + cg.CueBBoxCanvasPx[3]) / 2
+		if math.Abs(cx-canvasCenter) > 1.5 || math.Abs(cy-canvasCenter) > 1.5 {
+			t.Fatalf("%s: target not centred (%.2f,%.2f)", cg.Condition, cx, cy)
+		}
+		if cg.CueBBoxCanvasPx[0] < 0 || cg.CueBBoxCanvasPx[2] > CanvasPx {
+			t.Fatalf("%s: cue clipped", cg.Condition)
+		}
+		if i > 0 && cg.AffineScale <= prevScale {
+			t.Fatalf("%s: affine scale not increasing", cg.Condition)
+		}
+		prevScale = cg.AffineScale
+	}
+
+	// same source crop content for every condition (one shared store rect)
+	if g1.SourceCropStore[0] >= g1.SourceCropStore[2] || g1.SourceCropStore[1] >= g1.SourceCropStore[3] {
+		t.Fatal("degenerate source crop")
+	}
+
+	// byte-deterministic render at B2
+	pagePNG := solidPatternPNG(t, 800, 700)
+	h1, e1 := renderR1BHash(pagePNG, base, g1, g1.Conditions[2])
+	h2, e2 := renderR1BHash(pagePNG, base, g1, g1.Conditions[2])
+	if e1 != nil || e2 != nil || h1 != h2 {
+		t.Fatalf("render not byte-deterministic: %v %v", e1, e2)
+	}
+}
+
+func mustJSON(v any) string { b, _ := json.Marshal(v); return string(b) }
 
 func solidPatternPNG(t *testing.T, w, h int) []byte {
 	t.Helper()
