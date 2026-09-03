@@ -47,6 +47,7 @@ type StageResult struct {
 	Blackboard   *BlackboardResult     `json:"blackboard,omitempty"`
 	Capability   map[string]CapVerdict `json:"capability_class,omitempty"`
 	Variant      *VariantComparison    `json:"variant_comparison,omitempty"`
+	MicroISA     *MicroISAResult       `json:"microisa,omitempty"`
 }
 
 // VariantComparison is the end_to_end text-vs-image controlled contrast
@@ -261,6 +262,9 @@ func Aggregate(exp *Experiment, stage string) (StageResult, error) {
 	case StageEndToEnd:
 		result.Groups = groupBy(records, func(r RunRecord) string { return r.TaskFamily })
 		result.Variant = buildVariantComparison(records)
+	case StageMicroISAVisual:
+		result.Groups = groupBy(records, func(r RunRecord) string { return r.SubExperiment })
+		result.MicroISA = buildMicroISA(records, exp.Manifest.Thresholds)
 	}
 	return result, nil
 }

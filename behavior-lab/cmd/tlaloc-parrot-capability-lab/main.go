@@ -264,7 +264,13 @@ func aggregate(args []string) {
 	die(err)
 	path, err := parrotlab.WriteStageResult(exp, result)
 	die(err)
-	emit(map[string]any{"stage": stage, "result_file": path, "summary": result.Summary})
+	payload := map[string]any{"stage": stage, "result_file": path, "summary": result.Summary}
+	if result.MicroISA != nil {
+		artifacts, artErr := parrotlab.WriteMicroISAArtifacts(exp, result)
+		die(artErr)
+		payload["microisa_artifacts"] = artifacts
+	}
+	emit(payload)
 }
 
 func report(args []string) {
