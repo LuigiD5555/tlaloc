@@ -68,6 +68,18 @@ func main() {
 		runR1B(ctx, os.Args[2:])
 	case "report-r1b":
 		reportR1B(os.Args[2:])
+	case "prepare-r1c":
+		prepareR1C(os.Args[2:])
+	case "glyphbank-r1c":
+		glyphbankR1C(os.Args[2:])
+	case "sanity-r1c":
+		sanityR1C(os.Args[2:])
+	case "doctor-r1c":
+		doctorR1C(ctx, os.Args[2:])
+	case "run-r1c":
+		runR1C(ctx, os.Args[2:])
+	case "report-r1c":
+		reportR1C(os.Args[2:])
 	default:
 		fmt.Fprintln(os.Stderr, "unknown subcommand:", os.Args[1])
 		os.Exit(2)
@@ -697,4 +709,365 @@ func short8(s string) string {
 		return s[:8]
 	}
 	return s
+}
+
+// ---------------------------------------------------------------------------
+// R1-C — NUMERIC MORPHOLOGY
+// ---------------------------------------------------------------------------
+
+func loadMorphPool(expDir string) perceptenvelope.MorphologyPool {
+	body, err := os.ReadFile(filepath.Join(expDir, "datasets", "R1C_POOL.json"))
+	die(err)
+	var pool perceptenvelope.MorphologyPool
+	die(json.Unmarshal(body, &pool))
+	return pool
+}
+
+func r1cExcludeSet(expDir string) map[string]struct{} {
+	ex := map[string]struct{}{}
+	for _, f := range []string{"R1A_BASES.json", "R1A1_BASES.json", "R1B_BASES.json"} {
+		p := filepath.Join(expDir, "datasets", f)
+		if _, err := os.Stat(p); err != nil {
+			continue
+		}
+		a := loadAlloc(p)
+		for _, b := range a.Bases {
+			ex[b.Candidate.CandidateID] = struct{}{}
+		}
+	}
+	return ex
+}
+
+func loadR1CAlloc(expDir string) perceptenvelope.R1CAllocation {
+	body, err := os.ReadFile(filepath.Join(expDir, "datasets", "R1C_DATASET.json"))
+	die(err)
+	var a perceptenvelope.R1CAllocation
+	die(json.Unmarshal(body, &a))
+	return a
+}
+
+func buildR1CBank(storeDir, pdfPath string) *perceptenvelope.GlyphBank {
+	bank, err := perceptenvelope.BuildGlyphBank(storeDir, pdfPath)
+	die(err)
+	return bank
+}
+
+// r1cBank loads the frozen glyph bank from the dataset dir, building and
+// caching it on first use.
+func r1cBank(expDir, storeDir, pdfPath string) *perceptenvelope.GlyphBank {
+	bank, err := perceptenvelope.LoadOrBuildGlyphBank(
+		filepath.Join(expDir, "datasets", "R1C_GLYPHBANK.json"), storeDir, pdfPath)
+	die(err)
+	return bank
+}
+
+func prepareR1C(args []string) {
+	fs := flag.NewFlagSet("prepare-r1c", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	fs.Parse(args)
+
+	pool := loadMorphPool(*expDir)
+	alloc := perceptenvelope.AllocateR1C(pool, r1cExcludeSet(*expDir))
+	bank := buildR1CBank(*storeDir, *pdfPath)
+
+	realCount, synthCount := 0, 0
+	for _, fa := range alloc.Families {
+		realCount += len(fa.RealBases)
+		synthCount += len(fa.SyntheticBases)
+	}
+
+	realDump := map[string]any{}
+	synthDump := map[string]any{}
+	for _, fa := range alloc.Families {
+		realDump[fa.Family] = fa.RealBases
+		if len(fa.SyntheticBases) > 0 {
+			synthDump[fa.Family] = fa.SyntheticBases
+		}
+	}
+	_, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1C_REAL_BASES.json"), realDump)
+	die(err)
+	_, err = perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1C_SYNTHETIC_BASES.json"), synthDump)
+	die(err)
+	datasetSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1C_DATASET.json"), alloc)
+	die(err)
+	bankSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1C_GLYPHBANK.json"), bank)
+	die(err)
+
+	selfTest := perceptenvelope.R1CScorerSelfTest()
+
+	poolSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "datasets", "R1C_POOL.json"))
+	identitySHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "MODEL_IDENTITY.json"))
+	r1bCkptSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "R1B_CHECKPOINT.json"))
+
+	addendum := map[string]any{
+		"schema":      "tlaloc.parrot-perceptual-envelope-r1.protocol-addendum.04",
+		"title":       "R1-C_NUMERIC_MORPHOLOGY — frozen presentation policy + dual-endpoint scoring",
+		"recorded_at": time.Now().UTC().Format(time.RFC3339),
+		"authored":    "BEFORE any R1-C model output existed. R1-A0/R1-A1/R1-B raw outputs, curves and checkpoints are immutable and untouched.",
+		"NO_R1C_MODEL_OUTPUT_EXISTED_WHEN_SCORING_AND_DATASET_WERE_FROZEN": true,
+		"presentation_policy": map[string]any{
+			"line_height_px": perceptenvelope.R1CLineHeightPx,
+			"context_level":  perceptenvelope.R1CContextLevel,
+			"canvas_px":      512,
+			"target_centre":  []int{256, 256},
+			"neutral_bg":     []int{200, 200, 200},
+			"cue":            "R1-B B4 cue semantics, spanning the whole cued operand token",
+			"opcode":         perceptenvelope.FrozenOpcode,
+			"instruction":    perceptenvelope.FrozenInstruction,
+			"temperature":    0,
+			"max_tokens":     32,
+			"note":           "held identical for every R1-C condition; R1-C varies morphology, not presentation",
+		},
+		"dual_endpoints": map[string]string{
+			"VALUE_CORRECT":        "exact numeric / structured meaning (math/big Int and Rat; never float equality)",
+			"SURFACE_FORM_CORRECT": "faithful transcription of the visible string; only outer-whitespace trim and dash-variant folding (U+002D/2010/2011/2012/2013/2014/2212 -> '-') are permitted",
+		},
+		"strata_policy":           "REAL_DOCUMENT and SYNTHETIC_REALISTIC accuracy are never pooled; synthetic evidence cannot promote a family to real-document RELIABLE",
+		"synthetic_families":      []string{perceptenvelope.FamScientific, perceptenvelope.FamEquation, perceptenvelope.FamCoordTuple},
+		"synthetic_renderer":      "glyph bank cut from the real corpus (perceptenvelope.BuildGlyphBank " + perceptenvelope.R1CGlyphBankVersion + "); channel-wise darken composite over the neutral canvas; no font dependency, no contrast alteration, no typographic tuning",
+		"r1b_limitation_recorded": "R1-B's operational finding is 16 px = conservative tested floor, 32 px = nominal high-reliability point. The 8 px -> 12 px jump is NOT claimed as a universal hard perceptual phase transition: at 8 px the 1-pixel-minimum cue stroke gives a larger cue/line-height ratio than at larger rungs. Geometry sanity confirmed the target stayed intact, so B0 remains useful low-scale evidence, but exact attribution of the 8 px collapse is not required for R1-C.",
+		"inputs_hashed": map[string]string{
+			"R1C_POOL.json":       poolSHA,
+			"R1C_DATASET.json":    datasetSHA,
+			"R1C_GLYPHBANK.json":  bankSHA,
+			"MODEL_IDENTITY.json": identitySHA,
+			"R1B_CHECKPOINT.json": r1bCkptSHA,
+		},
+		"scorer_self_test_problems": selfTest,
+	}
+	addSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "R1_PROTOCOL_ADDENDUM_04.json"), addendum)
+	die(err)
+
+	manifest := map[string]any{
+		"schema":                      "tlaloc.parrot-perceptual-envelope-r1.r1c-prepare-manifest.r1",
+		"experiment_id":               perceptenvelope.ExperimentID,
+		"r1c_pool_sha256":             poolSHA,
+		"r1c_dataset_sha256":          datasetSHA,
+		"r1c_glyphbank_sha256":        bankSHA,
+		"protocol_addendum_04_sha256": addSHA,
+		"model_identity_sha256":       identitySHA,
+		"real_bases":                  realCount,
+		"synthetic_bases":             synthCount,
+		"total_records_expected":      realCount + synthCount,
+		"scorer_self_test_ok":         len(selfTest) == 0,
+		"families":                    familyBands(alloc),
+	}
+	mSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "manifests", "R1C_PREPARE_MANIFEST.json"), manifest)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"real_bases": realCount, "synthetic_bases": synthCount,
+		"glyph_bank_sha256": bankSHA, "glyphs": len(bank.Glyphs),
+		"scorer_self_test_problems": selfTest,
+		"manifest_sha256":           mSHA, "addendum_04_sha256": addSHA,
+		"families": familyBands(alloc),
+	}))
+	if len(selfTest) != 0 {
+		os.Exit(1)
+	}
+}
+
+func familyBands(alloc perceptenvelope.R1CAllocation) []map[string]any {
+	var out []map[string]any
+	for _, fa := range alloc.Families {
+		out = append(out, map[string]any{
+			"family": fa.Family, "band": fa.Band, "real_available": fa.RealAvailable,
+			"real_bases": len(fa.RealBases), "synthetic_bases": len(fa.SyntheticBases),
+		})
+	}
+	return out
+}
+
+func glyphbankR1C(args []string) {
+	fs := flag.NewFlagSet("glyphbank-r1c", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	fs.Parse(args)
+	bank := buildR1CBank(*storeDir, *pdfPath)
+	prev, err := perceptenvelope.EncodeGlyphBankPreview(bank)
+	die(err)
+	outDir := filepath.Join(*expDir, "runs", "r1c-glyphbank")
+	die(os.MkdirAll(outDir, 0o755))
+	die(os.WriteFile(filepath.Join(outDir, "glyphbank_preview.png"), prev, 0o644))
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{"sha256": bank.SHA256, "glyphs": bank.Glyphs, "preview": filepath.Join(outDir, "glyphbank_preview.png")}))
+}
+
+func sanityR1C(ctxArgs []string) {
+	fs := flag.NewFlagSet("sanity-r1c", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	perFam := fs.Int("per-family", 2, "real bases per family to render")
+	fs.Parse(ctxArgs)
+
+	alloc := loadR1CAlloc(*expDir)
+	bank := r1cBank(*expDir, *storeDir, *pdfPath)
+	outDir := filepath.Join(*expDir, "runs", "r1c-sanity", "crops")
+	die(os.MkdirAll(outDir, 0o755))
+
+	rendered := 0
+	for _, fa := range alloc.Families {
+		n := *perFam
+		if n > len(fa.RealBases) {
+			n = len(fa.RealBases)
+		}
+		for _, base := range fa.RealBases[:n] {
+			img, e := perceptenvelope.RenderR1CReal(*storeDir, *pdfPath, base)
+			die(e)
+			die(perceptenvelope.WriteRGBA(filepath.Join(outDir, base.BaseID+".png"), img))
+			rendered++
+		}
+		for _, base := range fa.SyntheticBases {
+			img, _, e := perceptenvelope.RenderSyntheticNumber(bank, base.SyntheticTarget)
+			die(e)
+			die(perceptenvelope.WriteRGBA(filepath.Join(outDir, base.BaseID+".png"), img))
+			rendered++
+		}
+	}
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{"rendered": rendered, "out_dir": outDir}))
+}
+
+func doctorR1C(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("doctor-r1c", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	fs.Parse(args)
+
+	rep := perceptenvelope.DoctorR1C(ctx, perceptenvelope.DoctorR1CInput{
+		ExpDir: *expDir, Endpoint: *endpoint, Model: *model, StoreDir: *storeDir,
+	})
+	_, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "R1C_DOCTOR.json"), rep)
+	die(err)
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(rep))
+	if !rep.ReadyR1C {
+		os.Exit(1)
+	}
+}
+
+func runR1C(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("run-r1c", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	temp := fs.Float64("temperature", 0, "sampling temperature")
+	maxTokens := fs.Int("max-tokens", 32, "max output tokens")
+	runID := fs.String("run-id", "r1c-r0", "run id")
+	fs.Parse(args)
+
+	doctorR1C(ctx, []string{"-exp-dir", *expDir, "-endpoint", *endpoint, "-model", *model, "-store-dir", *storeDir})
+
+	alloc := loadR1CAlloc(*expDir)
+	bank := r1cBank(*expDir, *storeDir, *pdfPath)
+	runDir := filepath.Join(*expDir, "runs", *runID)
+	records, err := perceptenvelope.RunR1C(ctx, perceptenvelope.RunConfig{
+		StoreDir: *storeDir, PDFPath: *pdfPath, Endpoint: *endpoint, Model: *model,
+		Temperature: *temp, MaxTokens: *maxTokens, RunDir: runDir,
+	}, alloc, bank)
+	die(err)
+	finalizeR1C(*expDir, runDir, *model, records)
+}
+
+func reportR1C(args []string) {
+	fs := flag.NewFlagSet("report-r1c", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	runID := fs.String("run-id", "r1c-r0", "run id")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	fs.Parse(args)
+	var records []perceptenvelope.R1CRecord
+	rb, err := os.ReadFile(filepath.Join(*expDir, "results", "R1C_RECORDS.json"))
+	die(err)
+	die(json.Unmarshal(rb, &records))
+	finalizeR1C(*expDir, filepath.Join(*expDir, "runs", *runID), *model, records)
+}
+
+func finalizeR1C(expDir, runDir, model string, records []perceptenvelope.R1CRecord) {
+	recSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1C_RECORDS.json"), records)
+	die(err)
+	table := perceptenvelope.AggregateR1C(records)
+	tableSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1C_MORPHOLOGY_TABLE.json"), table)
+	die(err)
+	taxonomy := map[string]any{}
+	for _, row := range table.Rows {
+		taxonomy[row.Family+"|"+row.Provenance] = row.FailureClasses
+	}
+	taxSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1C_FAILURE_TAXONOMY.json"), taxonomy)
+	die(err)
+
+	rawTreeSHA, rawFiles, err := perceptenvelope.SHA256OfTree(filepath.Join(runDir, "raw"))
+	die(err)
+
+	alloc := loadR1CAlloc(expDir)
+	datasetSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "datasets", "R1C_DATASET.json"))
+	bankSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "datasets", "R1C_GLYPHBANK.json"))
+	addSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "R1_PROTOCOL_ADDENDUM_04.json"))
+	storeSHA := alloc.Seed // placeholder if store hash unavailable
+	if b, e := os.ReadFile(filepath.Join(expDir, "datasets", "R1C_POOL.json")); e == nil {
+		var p perceptenvelope.MorphologyPool
+		if json.Unmarshal(b, &p) == nil {
+			storeSHA = p.StoreRootSHA256
+		}
+	}
+	commit := gitCommitShort()
+	selfTest := perceptenvelope.R1CScorerSelfTest()
+	scorerNote := "0 problems"
+	if len(selfTest) > 0 {
+		scorerNote = fmt.Sprintf("%d problems", len(selfTest))
+	}
+
+	report := perceptenvelope.RenderR1CReport(perceptenvelope.R1CReportInput{
+		Table: table, Alloc: alloc, Model: model, GlyphBankSHA: bankSHA, DatasetSHA: datasetSHA,
+		ScorerNote: scorerNote, RecordsSHA: recSHA, TableSHA: tableSHA, TaxonomySHA: taxSHA,
+		RawTreeSHA: rawTreeSHA, AddendumSHA: addSHA, TlalocCommit: commit,
+	})
+	die(os.WriteFile(filepath.Join(expDir, "results", "R1C_REPORT.md"), []byte(report), 0o644))
+
+	checkpoint := map[string]any{
+		"schema":        "tlaloc.parrot-perceptual-envelope-r1.r1c-checkpoint.r1",
+		"experiment_id": perceptenvelope.ExperimentID,
+		"stage":         "R1-C",
+		"status":        "R1-C_NUMERIC_MORPHOLOGY_COMPLETE_FROZEN",
+		"frozen_at":     time.Now().UTC().Format(time.RFC3339),
+		"tlaloc_commit": commit,
+		"records":       len(records),
+		"errors":        table.Errors,
+		"raw_files":     rawFiles,
+		"hashes": map[string]string{
+			"R1C_RECORDS.json":             recSHA,
+			"R1C_MORPHOLOGY_TABLE.json":    tableSHA,
+			"R1C_FAILURE_TAXONOMY.json":    taxSHA,
+			"R1C_DATASET.json":             datasetSHA,
+			"R1C_GLYPHBANK.json":           bankSHA,
+			"R1_PROTOCOL_ADDENDUM_04.json": addSHA,
+			"raw_tree_sha256":              rawTreeSHA,
+			"source_store_root_sha256":     storeSHA,
+		},
+		"scorer_self_test_problems": selfTest,
+		"verdicts":                  table.Verdicts,
+		"HARD_STOP":                 "Do not run R1-D/E/F/G. Return the morphology table for review.",
+	}
+	cpSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "R1C_CHECKPOINT.json"), checkpoint)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"records": len(records), "errors": table.Errors,
+		"records_sha256": recSHA, "table_sha256": tableSHA, "checkpoint_sha256": cpSHA,
+		"verdicts": table.Verdicts, "answers": table.Answers,
+	}))
 }
