@@ -46,7 +46,14 @@ func main() {
 }
 
 func read(path string) ([]byte, error) {
-	if path == "-" { return os.ReadFile("/dev/stdin") }
+	if path == "-" {
+		return os.ReadFile("/dev/stdin")
+	}
 	return os.ReadFile(path)
 }
-func die(err error) { if err != nil { fmt.Fprintln(os.Stderr, "error:", err); os.Exit(1) } }
+func die(err error) {
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "error:", err)
+		os.Exit(1)
+	}
+}

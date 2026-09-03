@@ -127,28 +127,56 @@ func TestRunRecord_C1_OracleCropAllowsExtractNumber(t *testing.T) {
 	}
 }
 
-func TestRunRecord_C0_FullPageIsRejectedByTheProfileContract(t *testing.T) {
-	// The fixture profile only allows TIGHT_CROP for EXTRACT_NUMBER (tight
-	// crop accuracy 0.8 clearly beats full page 0.5). C0 sends the full
-	// page directly, so the ModelAdapter must refuse before ever reaching
-	// the model — this is itself a real, honest T0-A finding for a
-	// profile shaped like this one, not a bug to work around.
-	server := newParrotServer(t, "126")
+func TestRunRecord_C0_IsImportedNeverReRun(t *testing.T) {
+	// BLOCKER 1: C0 is the frozen P0 direct-Parrot baseline. It must be
+	// imported, never re-run through the Exocortex ModelAdapter. The server
+	// here would answer "126" if the pipeline ever called it — the test
+	// asserts it does not.
+	called := false
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		called = true
+		fmt.Fprint(w, `{"choices":[{"message":{"content":"126"}}]}`)
+	}))
 	defer server.Close()
 	profile := fixtureExocortexProfile(t)
 	dir := t.TempDir()
 	record := baseRecord(t, dir)
 	cfg := newRunnerConfig(t, server, profile)
+	cfg.C0Baseline = map[string]P0Outcome{
+		record.BaseID: {BaseID: record.BaseID, Attempted: true, ContractSuccess: true, SemanticCorrect: true, OriginalOutput: "126", LatencyMS: 4321},
+	}
 
 	outcome := RunRecord(context.Background(), cfg, record, ConditionC0ParrotDirect)
-	if outcome.ContractSuccess {
-		t.Fatalf("expected contract failure for a full-page call against a tight-crop-only profile, got %+v", outcome)
+	if called {
+		t.Fatalf("C0 must make zero model calls, but the endpoint was hit")
 	}
-	if outcome.Error == "" {
-		t.Fatalf("expected a recorded CAPABILITY_CONTRACT_VIOLATION error")
+	if outcome.Error != "" {
+		t.Fatalf("unexpected error: %s", outcome.Error)
+	}
+	if outcome.ParrotCalls != 0 {
+		t.Fatalf("C0 parrot_calls = %d, want 0 (the frozen call belongs to P0, not this run)", outcome.ParrotCalls)
+	}
+	if !outcome.ContractSuccess || !outcome.SemanticCorrect || outcome.LatencyMS != 4321 {
+		t.Fatalf("C0 row not faithfully imported from the baseline: %+v", outcome)
 	}
 	if outcome.VisualExposureRatio != 1.0 {
-		t.Fatalf("visual_exposure_ratio = %v, want 1.0 for C0 (full page, no crop)", outcome.VisualExposureRatio)
+		t.Fatalf("visual_exposure_ratio = %v, want 1.0 for C0", outcome.VisualExposureRatio)
+	}
+}
+
+func TestRunRecord_C0_MissingBaselineIsAnErrorNotAModelCall(t *testing.T) {
+	server := newParrotServer(t, "126")
+	defer server.Close()
+	profile := fixtureExocortexProfile(t)
+	record := baseRecord(t, t.TempDir())
+	cfg := newRunnerConfig(t, server, profile) // no C0Baseline set
+
+	outcome := RunRecord(context.Background(), cfg, record, ConditionC0ParrotDirect)
+	if outcome.Error == "" {
+		t.Fatalf("expected an explicit missing-baseline error, got %+v", outcome)
+	}
+	if outcome.ParrotCalls != 0 {
+		t.Fatalf("a missing C0 baseline must never fall through to a model call")
 	}
 }
 

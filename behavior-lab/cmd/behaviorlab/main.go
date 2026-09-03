@@ -189,11 +189,11 @@ func receiverRunCmd(args []string) {
 	executor := target.OrigamiCLIExecutor{Binary: *origamiTool, Carrier: *carrierPath, Packet: *packetPath}
 	result, err := client.CompleteHybrid(context.Background(), target.HybridInput{
 		SystemPrompt: string(prompt),
-		Question: *question,
-		ImagePNG: carrier,
-		Tools: target.OrigamiHybridTools(),
-		Executor: executor,
-		MaxTurns: *maxTurns,
+		Question:     *question,
+		ImagePNG:     carrier,
+		Tools:        target.OrigamiHybridTools(),
+		Executor:     executor,
+		MaxTurns:     *maxTurns,
 	})
 	must(err)
 	b, err := json.MarshalIndent(result, "", "  ")

@@ -102,6 +102,42 @@ func TestLoadDataset_RejectsMissingSourceHash(t *testing.T) {
 	}
 }
 
+func TestP0Record_GoalIsDistinctFromAtomicSteps(t *testing.T) {
+	rec := P0Record{
+		BaseID: "b1", Goal: "Which value is larger, A or B?", Question: "Which value is larger, A or B?",
+		ExpectedAnswer: "A", Category: CategoryNumeric, DocID: "d", Page: 1, PageImagePath: "p.png",
+		EvidenceAddress: "ohf://d/pages/000001",
+		EvidenceRefs: []EvidenceRef{
+			{ID: "ev1", DocID: "d", Page: 1, TextSpan: "A = 12"},
+			{ID: "ev2", DocID: "d", Page: 1, TextSpan: "B = 7"},
+		},
+		Recipe: []AtomicStep{
+			{ID: "a", Opcode: "EXTRACT_NUMBER", EvidenceRefs: []string{"ev1"}, OutputKey: "a"},
+			{ID: "b", Opcode: "EXTRACT_NUMBER", EvidenceRefs: []string{"ev2"}, OutputKey: "b"},
+			{ID: "cmp", Opcode: "COMPARE_NUMBERS", OutputKey: "answer", Deterministic: true},
+		},
+	}
+	if err := rec.ValidateRecipe(1); err != nil {
+		t.Fatalf("valid multi-evidence recipe rejected: %v", err)
+	}
+	// No recipe step is the goal text, and every model step is one opcode.
+	for _, s := range rec.Recipe {
+		if s.Opcode == rec.Goal {
+			t.Fatalf("an AtomicStep opcode must never be the goal text")
+		}
+	}
+}
+
+func TestP0Record_ValidateRecipe_RejectsUnknownEvidenceRef(t *testing.T) {
+	rec := P0Record{
+		BaseID: "b1", EvidenceRefs: []EvidenceRef{{ID: "ev1"}},
+		Recipe: []AtomicStep{{ID: "a", Opcode: "EXTRACT_NUMBER", EvidenceRefs: []string{"ev9"}, OutputKey: "a"}},
+	}
+	if err := rec.ValidateRecipe(1); err == nil {
+		t.Fatalf("expected rejection of a step citing an unknown evidence ref")
+	}
+}
+
 func TestDataset_CategoryCountsAndSortedBaseIDs(t *testing.T) {
 	dataset := Dataset{Schema: DatasetSchemaR0, SourceBenchmark: "P0", SourceArtifactSHA256: "abc123", Records: validRecords(30)}
 	counts := dataset.CategoryCounts()

@@ -11,8 +11,8 @@ import (
 )
 
 type report struct {
-	Cases        []groundingautomaton.EvalObservation `json:"cases"`
-	Metrics      groundingautomaton.EvalMetrics       `json:"metrics"`
+	Cases   []groundingautomaton.EvalObservation `json:"cases"`
+	Metrics groundingautomaton.EvalMetrics       `json:"metrics"`
 }
 
 func main() {

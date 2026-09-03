@@ -23,6 +23,11 @@ type RunnerConfig struct {
 	MarginRatio float64 // crop expansion margin (section 12 "crop expansion")
 	CropDir     string  // where CROP_REGION writes its output PNGs
 	StoreDir    string  // pdfmemory store root, required only for REAL locate (T0-B)
+
+	// C0Baseline holds the imported frozen P0 direct-Parrot outcomes keyed
+	// by base_id (BLOCKER 1). It is the ONLY source for C0 rows: the C0
+	// condition never constructs a ModelAdapter or makes a model call.
+	C0Baseline map[string]P0Outcome
 }
 
 // NewRegistry builds the Registry for one T0 run: the five R0 Tlaloques,
@@ -86,6 +91,13 @@ type RecordOutcome struct {
 func RunRecord(ctx context.Context, cfg RunnerConfig, record P0Record, condition Condition) RecordOutcome {
 	start := time.Now()
 	outcome := RecordOutcome{BaseID: record.BaseID, Condition: condition, Category: record.Category}
+
+	// BLOCKER 1: C0 is the imported frozen P0 direct-Parrot baseline. It
+	// never touches the ModelAdapter, the Registry, or the endpoint.
+	if condition == ConditionC0ParrotDirect {
+		return c0FromBaseline(outcome, cfg, record, start)
+	}
+
 	runID := fmt.Sprintf("t0-%s-%s-%d", strings.ToLower(string(condition)), record.BaseID, time.Now().UnixNano())
 	outcome.RunID = runID
 	bb := &tlaloque.BlackboardRuntime{Store: cfg.Store, RunID: runID}
@@ -236,6 +248,30 @@ func RunRecord(ctx context.Context, cfg RunnerConfig, record P0Record, condition
 		outcome.SemanticCorrect = ScoreSemantic(record.Opcode, outcome.FinalValue, record.ExpectedAnswer)
 	}
 	return finish(outcome, start)
+}
+
+// c0FromBaseline builds the C0 row purely from the imported frozen P0
+// outcome for this base_id. Zero model calls; ParrotCalls stays 0 because
+// the recorded Parrot call belongs to the frozen P0 experiment, not this
+// run.
+func c0FromBaseline(outcome RecordOutcome, cfg RunnerConfig, record P0Record, start time.Time) RecordOutcome {
+	outcome.RunID = "c0-imported-" + record.BaseID
+	base, ok := cfg.C0Baseline[record.BaseID]
+	if !ok {
+		outcome.Error = "C0 baseline missing for base_id " + record.BaseID + " (run `prepare` / pass --p0-baseline)"
+		return finish(outcome, start)
+	}
+	outcome.Attempted = base.Attempted
+	outcome.ContractSuccess = base.ContractSuccess
+	outcome.SemanticCorrect = base.SemanticCorrect
+	outcome.Abstained = base.Abstained
+	outcome.UnsupportedAssertion = base.UnsupportedAssertion
+	outcome.FormatFailure = base.FormatFailure
+	outcome.VisualExposureRatio = 1.0
+	outcome.LatencyMS = base.LatencyMS
+	outcome.RawText = base.OriginalOutput
+	outcome.FinalValue = base.OriginalOutput
+	return outcome
 }
 
 func finish(outcome RecordOutcome, start time.Time) RecordOutcome {

@@ -33,6 +33,8 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	switch os.Args[1] {
+	case "prepare":
+		prepare(os.Args[2:])
 	case "doctor":
 		doctor(ctx, os.Args[2:])
 	case "freeze":
@@ -50,8 +52,12 @@ func main() {
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, `tlaloc-exocortex-decomposition <doctor|freeze|run|aggregate|example> [flags]
+	fmt.Fprintln(os.Stderr, `tlaloc-exocortex-decomposition <prepare|doctor|freeze|run|aggregate|example> [flags]
 
+  prepare    deterministic import of the real frozen P0/P2-A experiments:
+             --p0-experiment <dir> --p2-experiment <artifact.json> --out <dir>.
+             Verifies hashes, compiles the runtime profile, writes the T0-B
+             eligibility audit + C0 baseline + manifest. Zero model calls.
   doctor     validate the P0 dataset, the frozen P2-A artifact, and (if
              --endpoint is set) that the endpoint serves --model-id.
   freeze     hash-verify P0/P2-A and write manifest.json to --out.
@@ -77,6 +83,26 @@ func specFlags(fs *flag.FlagSet) *decompositionlab.Spec {
 	fs.StringVar(&spec.PDFMemoryStoreDir, "store-dir", "", "pdfmemory store root; required only for B1-B3 REAL conditions")
 	fs.StringVar(&spec.OutputDir, "out", "runs/exocortex-decomposition-r0", "output directory")
 	return spec
+}
+
+func prepare(args []string) {
+	fs := flag.NewFlagSet("prepare", flag.ExitOnError)
+	p0 := fs.String("p0-experiment", "", "frozen P0 experiment dir (parrot-capability-r0)")
+	p2 := fs.String("p2-experiment", "", "frozen P2-A artifact (results/PARROT_MICRO_ISA_R0.json)")
+	executorID := fs.String("executor-id", "parrot-lfm2-vl-1.6b", "CapabilityProfile executor id")
+	modelID := fs.String("model-id", "lfm2-vl-1.6b", "model id")
+	version := fs.String("profile-version", "r0", "profile version tag")
+	out := fs.String("out", "experiments/exocortex-decomposition-r0", "output directory")
+	fs.Parse(args)
+	if strings.TrimSpace(*p0) == "" || strings.TrimSpace(*p2) == "" {
+		die(fmt.Errorf("--p0-experiment and --p2-experiment are required"))
+	}
+	manifest, err := decompositionlab.Prepare(decompositionlab.PrepareInput{
+		P0ExperimentDir: *p0, P2AArtifactPath: *p2,
+		ExecutorID: *executorID, ModelID: *modelID, ProfileVersion: *version, OutDir: *out,
+	})
+	die(err)
+	write(manifest)
 }
 
 func doctor(ctx context.Context, args []string) {
