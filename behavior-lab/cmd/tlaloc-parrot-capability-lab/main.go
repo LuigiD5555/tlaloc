@@ -29,6 +29,8 @@ func main() {
 	switch os.Args[1] {
 	case "doctor":
 		doctor(ctx, os.Args[2:])
+	case "glyph-audit":
+		glyphAudit(os.Args[2:])
 	case "generate":
 		generate(os.Args[2:])
 	case "validate":
@@ -140,6 +142,16 @@ func validate(args []string) {
 	}
 }
 
+func glyphAudit(args []string) {
+	exp, _ := load(args)
+	path := filepath.Join(exp.Root, "datasets", "glyph-audit.png")
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		die(err)
+	}
+	die(os.WriteFile(path, parrotlab.RenderGlyphAudit(), 0o644))
+	emit(map[string]any{"glyph_audit": path})
+}
+
 func generate(args []string) {
 	exp, fs := load(args)
 	stage := fs.Lookup("stage").Value.String()
@@ -182,8 +194,13 @@ func generate(args []string) {
 		if len(problems) > 0 {
 			os.Exit(1)
 		}
+	case parrotlab.StageMicroISAVisual:
+		force := fs.Lookup("force").Value.String() == "true"
+		report, err := parrotlab.GenerateMicroISAVisual(datasetDir, seed, force)
+		die(err)
+		emit(report)
 	default:
-		die(fmt.Errorf("generate supports --stage instruction_cliff | end_to_end"))
+		die(fmt.Errorf("generate supports --stage instruction_cliff | end_to_end | microisa_visual"))
 	}
 }
 
