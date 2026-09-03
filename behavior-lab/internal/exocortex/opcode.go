@@ -18,6 +18,14 @@ const (
 	OpNormalize      = "NORMALIZE"
 	OpVerify         = "VERIFY"
 	OpStore          = "STORE"
+
+	// Collapsed / non-transferring model capabilities from P2-A. They are
+	// recognized so NormalizeOpcode accepts them and the profile compiler
+	// can mark them EXTERNALIZE, but they have no fixed one-op instruction
+	// (see prompts.go) and are never Parrot-eligible.
+	OpFollowReference = "FOLLOW_ONE_REFERENCE"
+	OpVisualIdentify  = "VISUAL_IDENTIFY"
+	OpVisualLocate    = "VISUAL_LOCATE"
 )
 
 // Opcodes lists the full R0 vocabulary. Anything outside this set is
@@ -27,6 +35,7 @@ func Opcodes() []string {
 		OpLocateRegion, OpCropRegion, OpReadShortText, OpReadShortLabel,
 		OpExtractNumber, OpExtractEntity, OpSelectOne, OpCompareNumbers,
 		OpSameDifferent, OpNormalize, OpVerify, OpStore,
+		OpFollowReference, OpVisualIdentify, OpVisualLocate,
 	}
 }
 

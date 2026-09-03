@@ -36,15 +36,45 @@ var validCategories = map[string]bool{
 	CategoryNumeric: true, CategorySynthesis: true,
 }
 
+// EvidenceRef is one evidence operand a bounded recipe may cite (BLOCKER 3:
+// "one EvidenceAddress is not general enough"). Frozen P0 addresses are
+// page-level, so BBox is usually nil here and the oracle Region Tlaloque
+// derives geometry at execution time by locating TextSpan among the store's
+// page blocks — TextSpan is a layout locator, never the semantic answer.
+type EvidenceRef struct {
+	ID       string             `json:"id"`
+	DocID    string             `json:"doc_id"`
+	Page     int                `json:"page"`
+	Address  string             `json:"address,omitempty"`
+	TextSpan string             `json:"text_span,omitempty"`
+	BBox     *canonicaldoc.BBox `json:"bbox,omitempty"`
+}
+
+// AtomicStep is one element of a fixed, bounded recipe (BLOCKER 2:
+// "Question != Atomic Operand"). The goal/question stays in Tlaloc; Parrot
+// only ever receives one AtomicStep's opcode and minimum operand. There is
+// no planner — recipes are compiled by the deterministic eligibility audit
+// from a fixed rule table (E0.13/E0.14).
+type AtomicStep struct {
+	ID            string   `json:"id"`
+	Opcode        string   `json:"opcode"`
+	EvidenceRefs  []string `json:"evidence_refs,omitempty"` // ids into P0Record.EvidenceRefs
+	OutputKey     string   `json:"output_key"`
+	Deterministic bool     `json:"deterministic"` // true => a deterministic Tlaloque, not Parrot
+	ChoiceWidth   int      `json:"choice_width,omitempty"`
+}
+
 // P0Record is one frozen P0 image-variant question, referenced by hash
 // from the frozen P0 benchmark (section 16-17). ExpectedAnswer is used
 // only for post-hoc scoring — the T0 runner must never place it on any
 // path an executor (Parrot included) can read.
 type P0Record struct {
 	BaseID          string             `json:"base_id"`
+	Goal            string             `json:"goal,omitempty"` // the broad P0 goal; stays in Tlaloc (BLOCKER 2)
 	Question        string             `json:"question"`
 	ExpectedAnswer  string             `json:"expected_answer"`
 	Category        string             `json:"category"`
+	TaskFamily      string             `json:"task_family,omitempty"`
 	DocID           string             `json:"doc_id"`
 	Page            int                `json:"page"`
 	PageImagePath   string             `json:"page_image_path"`
@@ -52,6 +82,12 @@ type P0Record struct {
 	PageHeight      float64            `json:"page_height"`
 	EvidenceAddress string             `json:"evidence_address"`
 	EvidenceBBox    *canonicaldoc.BBox `json:"evidence_bbox,omitempty"`
+
+	// EvidenceRefs / Recipe are the corrected representation (BLOCKER 2/3).
+	// They are optional on load for backward compatibility with single-op
+	// hand-authored fixtures; `prepare` always populates them.
+	EvidenceRefs []EvidenceRef `json:"evidence_refs,omitempty"`
+	Recipe       []AtomicStep  `json:"recipe,omitempty"`
 
 	// Opcode is the single Micro-ISA opcode Parrot executes for this record
 	// (P1: one op per invocation). OperandCharCount/OperandChoiceWidth are
@@ -61,6 +97,49 @@ type P0Record struct {
 	Opcode             string `json:"opcode"`
 	OperandCharCount   int    `json:"operand_char_count,omitempty"`
 	OperandChoiceWidth int    `json:"operand_choice_width,omitempty"`
+}
+
+// ValidateRecipe checks that a record's bounded recipe never asks a model
+// step to carry more than one cognitive opcode and that every referenced
+// evidence id resolves. It is applied by `prepare` and by the eligibility
+// audit, never by a runtime planner.
+func (r P0Record) ValidateRecipe(maxCognitiveOps int) error {
+	refIDs := map[string]bool{}
+	for _, ref := range r.EvidenceRefs {
+		if strings.TrimSpace(ref.ID) == "" {
+			return fmt.Errorf("record %q: evidence ref with empty id", r.BaseID)
+		}
+		if refIDs[ref.ID] {
+			return fmt.Errorf("record %q: duplicate evidence ref id %q", r.BaseID, ref.ID)
+		}
+		refIDs[ref.ID] = true
+	}
+	stepIDs := map[string]bool{}
+	for _, step := range r.Recipe {
+		if strings.TrimSpace(step.ID) == "" || stepIDs[step.ID] {
+			return fmt.Errorf("record %q: recipe step with missing or duplicate id", r.BaseID)
+		}
+		stepIDs[step.ID] = true
+		if _, err := exocortex.NormalizeOpcode(step.Opcode); err != nil {
+			return fmt.Errorf("record %q step %q: %w", r.BaseID, step.ID, err)
+		}
+		if strings.TrimSpace(step.OutputKey) == "" {
+			return fmt.Errorf("record %q step %q: output_key is required", r.BaseID, step.ID)
+		}
+		for _, id := range step.EvidenceRefs {
+			if !refIDs[id] {
+				return fmt.Errorf("record %q step %q: unknown evidence ref %q", r.BaseID, step.ID, id)
+			}
+		}
+		// One AtomicStep carries exactly one opcode, so a model step is
+		// structurally one cognitive op. A recipe that asked a model step
+		// for more than the profile limit could not be represented here;
+		// this guard makes the invariant explicit for the audit.
+		if !step.Deterministic && maxCognitiveOps < 1 {
+			return fmt.Errorf("record %q step %q: profile permits no model cognitive ops", r.BaseID, step.ID)
+		}
+	}
+	return nil
 }
 
 // Dataset is the loaded, hash-verified T0 primary dataset.
@@ -119,10 +198,18 @@ func LoadDataset(path string) (Dataset, string, error) {
 			return Dataset{}, "", fmt.Errorf("T0 dataset %s: record %q missing doc_id/page/page_image_path", path, r.BaseID)
 		}
 		if strings.TrimSpace(r.EvidenceAddress) == "" {
-			return Dataset{}, "", fmt.Errorf("T0 dataset %s: record %q missing evidence_address (required for the T0-A oracle condition)", path, r.BaseID)
+			return Dataset{}, "", fmt.Errorf("T0 dataset %s: record %q missing evidence_address (required for the T0-B oracle condition)", path, r.BaseID)
 		}
-		if _, err := exocortex.NormalizeOpcode(r.Opcode); err != nil {
-			return Dataset{}, "", fmt.Errorf("T0 dataset %s: record %q: %w", path, r.BaseID, err)
+		// A record is valid with EITHER a single legacy Opcode (hand-authored
+		// fixtures) OR a bounded Recipe (BLOCKER 2). A NOT_APPLICABLE_R0
+		// record legitimately has neither.
+		if strings.TrimSpace(r.Opcode) != "" {
+			if _, err := exocortex.NormalizeOpcode(r.Opcode); err != nil {
+				return Dataset{}, "", fmt.Errorf("T0 dataset %s: record %q: %w", path, r.BaseID, err)
+			}
+		}
+		if err := r.ValidateRecipe(1); err != nil {
+			return Dataset{}, "", fmt.Errorf("T0 dataset %s: %w", path, err)
 		}
 	}
 	return dataset, hash, nil
