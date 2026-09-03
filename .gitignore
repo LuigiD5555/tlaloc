@@ -10,3 +10,11 @@ __pycache__/
 .idea/
 
 .claude/worktrees/
+
+# Local analysis caches
+.aoa_cache/
+
+# Concrete evaluation instances are machine- and model-specific.
+# Keep reusable experiment tooling in source, but create any number of local
+# model/campaign directories under behavior-lab/experiments/.
+/behavior-lab/experiments/*/
