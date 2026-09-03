@@ -179,7 +179,7 @@ func scaleAudit(args []string) {
 	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
 	fs.Parse(args)
 	alloc := loadAlloc(filepath.Join(*expDir, "datasets", "R1A_BASES.json"))
-	rep := perceptenvelope.ScaleAudit(alloc.Bases)
+	rep := perceptenvelope.ScaleAudit(alloc.Bases, filepath.Join(*expDir, "runs", "r1a-r0", "pages"))
 	sha, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "SCALE_AUDIT_R1A.json"), rep)
 	die(err)
 	enc := json.NewEncoder(os.Stdout)

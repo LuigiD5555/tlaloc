@@ -1,16 +1,13 @@
 package perceptenvelope
 
-import "math"
+import (
+	"fmt"
+	"math"
+	"path/filepath"
+)
 
-// RenderDPI is the pdftoppm rasterisation density used everywhere in this
-// experiment (matches parrotlab.pdfMemoryProvider.RenderPNG).
+// RenderDPI is the pdftoppm rasterisation density (parrotlab RenderPNG).
 const RenderDPI = 150.0
-
-// storeDPI is the pdfmemory store's own coordinate density (PDF points).
-const storeDPI = 72.0
-
-// renderScale maps store (page-point) coordinates to rendered-image pixels.
-const renderScale = RenderDPI / storeDPI
 
 // LevelGeometry is the frozen image geometry of one (base, context level)
 // BEFORE the VLM image preprocessor. Everything here is a deterministic
@@ -37,14 +34,15 @@ type BBoxJSON struct {
 
 // BaseScaleAudit is one base's per-level geometry table.
 type BaseScaleAudit struct {
-	BaseID       string          `json:"base_id"`
-	Page         int             `json:"page"`
-	TargetToken  string          `json:"target_token"`
-	StorePageW   float64         `json:"store_page_width"`
-	StorePageH   float64         `json:"store_page_height"`
-	RenderScale  float64         `json:"render_scale_store_to_image"`
-	LineFontSize int             `json:"line_font_size"`
-	Levels       []LevelGeometry `json:"levels"`
+	BaseID            string          `json:"base_id"`
+	Page              int             `json:"page"`
+	TargetToken       string          `json:"target_token"`
+	StorePageW        float64         `json:"store_page_width"`
+	StorePageH        float64         `json:"store_page_height"`
+	RenderScale       float64         `json:"render_scale_store_to_image"`
+	RenderScaleSource string          `json:"render_scale_source"`
+	LineFontSize      int             `json:"line_font_size"`
+	Levels            []LevelGeometry `json:"levels"`
 }
 
 // ScaleAuditReport is SCALE_AUDIT_R1A.json.
@@ -82,23 +80,34 @@ var KnownVisionPreproc = VisionPreproc{
 	Evidence: []string{
 		"mmproj-LFM2-VL-1.6B-F16.gguf: clip.vision.image_size=256, patch_size=16, projector.scale_factor=2 -> 64 tokens per full 256x256 tile",
 		"llama.cpp backend exports clip get_slice_instructions / 'slice %d: x=%d y=%d size=%dx%d' / 'n_patches_x == n_patches_y && only square images supported' -> square-tile slicing keyed to input dimensions",
-		"LM Studio server log 2026-09-03 during R1-A run: 'Evaluated N tokens for image' varied N in {72,96,112,232,256,368,...,991} across the 210 differently-sized crops -> image-token budget (hence effective resolution) scales with the input PNG size",
-		"A0 crops are ~38x41 px and are upscaled to at least one 256 tile (~6x target magnification); A6 full pages are ~1575x2362 px and are downscaled/sliced under the token budget (target shrinks). Effective target glyph scale is NOT held constant across A0..A6.",
+		"LM Studio server log 2026-09-03 during the R1-A0 run: per-image clip token counts clustered by context level at ~{75, 83, 99, 115, 163, 235, 371, 762, 991} (30 images each at the top three) -> the image-token budget, hence effective resolution, scales with input PNG size, saturating near 991 for full pages",
+		"measured R1-A0 crop dimensions: A0 ~41x41 px, A1 ~681x21, A2 ~881x124, A3 ~924x268, A4 ~525x750, A5 ~1050x750, A6 ~1050x1500 (store->image scale ~1.39). A0's ~41 px crop is upscaled to >=1 256-tile (target magnified); A6's 1050 px page is downscaled under the token budget (target glyph ~9 effective px). Effective target glyph scale is NOT held constant across A0..A6.",
 	},
 }
 
-// ScaleAudit computes the per-level image geometry table for the given bases.
-func ScaleAudit(bases []Base) ScaleAuditReport {
+// ScaleAudit computes the per-level image geometry table for the given
+// bases. pagesDir, when non-empty, is the run's rendered-page directory
+// (<baseID>_cued.png); the true store->image scale is measured from each
+// rendered page rather than assumed from DPI.
+func ScaleAudit(bases []Base, pagesDir string) ScaleAuditReport {
 	rep := ScaleAuditReport{
 		Schema: "tlaloc.parrot-perceptual-envelope-r1.scale-audit.r1", ExperimentID: ExperimentID,
 		RenderDPI: RenderDPI, VisionPreproc: KnownVisionPreproc,
 	}
 	for _, base := range bases {
 		c := base.Candidate
+		renderScale := RenderDPI / 72.0
+		scaleSource := "assumed_from_dpi"
+		if pagesDir != "" {
+			if w, _, err := pageDimsFromPNG(filepath.Join(pagesDir, fmt.Sprintf("%s_cued.png", base.BaseID))); err == nil && c.PageWidth > 0 {
+				renderScale = float64(w) / c.PageWidth
+				scaleSource = "measured_from_rendered_page"
+			}
+		}
 		ba := BaseScaleAudit{
 			BaseID: base.BaseID, Page: c.Page, TargetToken: c.NormalizedTarget,
 			StorePageW: c.PageWidth, StorePageH: c.PageHeight, RenderScale: renderScale,
-			LineFontSize: c.Line.FontSize,
+			RenderScaleSource: scaleSource, LineFontSize: c.Line.FontSize,
 		}
 		imgW := c.PageWidth * renderScale
 		imgH := c.PageHeight * renderScale
