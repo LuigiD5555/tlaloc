@@ -156,6 +156,132 @@ func pairMcNemar(from, to ContextLevel, metric string, byLevel map[string][]Reco
 	return tr
 }
 
+// DiagnosticCell is one (mode, level) accuracy cell of the scale-confound
+// diagnostic.
+type DiagnosticCell struct {
+	Mode            string  `json:"mode"`
+	Level           string  `json:"context_level"`
+	N               int     `json:"n"`
+	SemanticCorrect int     `json:"semantic_correct"`
+	SemanticAcc     float64 `json:"semantic_accuracy"`
+	MeanCropW       float64 `json:"mean_crop_width_px"`
+	MeanCropH       float64 `json:"mean_crop_height_px"`
+	MeanExposure    float64 `json:"mean_visual_exposure_ratio"`
+}
+
+// DiagnosticCompare is the full scale-confound diagnostic result.
+type DiagnosticCompare struct {
+	Schema               string               `json:"schema"`
+	ExperimentID         string               `json:"experiment_id"`
+	Bases                []string             `json:"diagnostic_base_ids"`
+	Levels               []string             `json:"levels"`
+	Cells                []DiagnosticCell     `json:"cells"`
+	NaturalCurve         map[string]float64   `json:"natural_crop_semantic_by_level"`
+	FixedCurve           map[string]float64   `json:"fixed_canvas_semantic_by_level"`
+	PerLevelDelta        map[string]float64   `json:"fixed_minus_natural_by_level"`
+	PairedFixedVsNatural []AdjacentTransition `json:"paired_fixed_vs_natural_by_level"`
+	MaxAbsDelta          float64              `json:"max_abs_delta_fixed_minus_natural"`
+	Confounded           bool                 `json:"CURRENT_R1A_CONTEXT_IS_SCALE_CONFOUNDED"`
+	ConfoundNote         string               `json:"confound_note"`
+}
+
+const diagSchema = "tlaloc.parrot-perceptual-envelope-r1.scale-confound-diagnostic.r1"
+
+// AggregateDiagnostic builds the mode x level comparison and applies the
+// decision rule (materially different curves -> confounded).
+func AggregateDiagnostic(records []RecordOutcome, levels []ContextLevel) DiagnosticCompare {
+	baseSet := map[string]struct{}{}
+	byModeLevel := map[string][]RecordOutcome{}
+	for _, r := range records {
+		baseSet[r.BaseID] = struct{}{}
+		byModeLevel[r.Mode+"|"+r.Level] = append(byModeLevel[r.Mode+"|"+r.Level], r)
+	}
+	dc := DiagnosticCompare{
+		Schema: diagSchema, ExperimentID: ExperimentID,
+		NaturalCurve: map[string]float64{}, FixedCurve: map[string]float64{}, PerLevelDelta: map[string]float64{},
+	}
+	for b := range baseSet {
+		dc.Bases = append(dc.Bases, b)
+	}
+	sort.Strings(dc.Bases)
+	for _, lvl := range levels {
+		dc.Levels = append(dc.Levels, string(lvl))
+	}
+	for _, mode := range []string{"NATURAL_CROP", "FIXED_CANVAS"} {
+		for _, lvl := range levels {
+			rs := byModeLevel[mode+"|"+string(lvl)]
+			cell := DiagnosticCell{Mode: mode, Level: string(lvl), N: len(rs)}
+			var cw, ch, ex float64
+			for _, r := range rs {
+				if r.SemanticCorrect {
+					cell.SemanticCorrect++
+				}
+				cw += float64(r.CropWidth)
+				ch += float64(r.CropHeight)
+				ex += r.VisualExposure
+			}
+			if cell.N > 0 {
+				cell.SemanticAcc = float64(cell.SemanticCorrect) / float64(cell.N)
+				cell.MeanCropW = cw / float64(cell.N)
+				cell.MeanCropH = ch / float64(cell.N)
+				cell.MeanExposure = ex / float64(cell.N)
+			}
+			dc.Cells = append(dc.Cells, cell)
+			if mode == "NATURAL_CROP" {
+				dc.NaturalCurve[string(lvl)] = cell.SemanticAcc
+			} else {
+				dc.FixedCurve[string(lvl)] = cell.SemanticAcc
+			}
+		}
+	}
+	for _, lvl := range levels {
+		d := dc.FixedCurve[string(lvl)] - dc.NaturalCurve[string(lvl)]
+		dc.PerLevelDelta[string(lvl)] = d
+		if d < 0 {
+			d = -d
+		}
+		if d > dc.MaxAbsDelta {
+			dc.MaxAbsDelta = d
+		}
+		// paired McNemar fixed-vs-natural at this level
+		nat := map[string]RecordOutcome{}
+		for _, r := range byModeLevel["NATURAL_CROP|"+string(lvl)] {
+			nat[r.BaseID] = r
+		}
+		tr := AdjacentTransition{From: "NATURAL_CROP@" + string(lvl), To: "FIXED_CANVAS@" + string(lvl), Metric: "semantic"}
+		var pairs []decompositionlab.PairedOutcome
+		fx := append([]RecordOutcome(nil), byModeLevel["FIXED_CANVAS|"+string(lvl)]...)
+		sort.Slice(fx, func(i, j int) bool { return fx[i].BaseID < fx[j].BaseID })
+		for _, f := range fx {
+			n, ok := nat[f.BaseID]
+			if !ok {
+				continue
+			}
+			pairs = append(pairs, decompositionlab.PairedOutcome{CorrectBefore: n.SemanticCorrect, CorrectAfter: f.SemanticCorrect})
+			switch {
+			case n.SemanticCorrect && f.SemanticCorrect:
+				tr.CorrectToCorrect++
+			case n.SemanticCorrect && !f.SemanticCorrect:
+				tr.CorrectToWrong++
+			case !n.SemanticCorrect && f.SemanticCorrect:
+				tr.WrongToCorrect++
+			default:
+				tr.WrongToWrong++
+			}
+		}
+		res := decompositionlab.McNemarExact(pairs)
+		tr.AbsoluteDelta, tr.PValue = res.AbsoluteDelta, res.PValue
+		dc.PairedFixedVsNatural = append(dc.PairedFixedVsNatural, tr)
+	}
+	dc.Confounded = dc.MaxAbsDelta >= 0.25
+	if dc.Confounded {
+		dc.ConfoundNote = "FIXED_CANVAS (constant image size / target scale) and NATURAL_CROP context curves differ by >= 0.25 at one or more levels: the R1-A0 natural-crop context decline is at least partly an effective-scale effect. R1-A0 is the NATURAL_VISUAL_FIELD_CURVE, not the isolated context envelope. Build R1-A1_FIXED_SCALE_CONTEXT as canonical."
+	} else {
+		dc.ConfoundNote = "FIXED_CANVAS and NATURAL_CROP context curves agree within 0.25 at every tested level: context and scale are not materially confounded on this diagnostic set."
+	}
+	return dc
+}
+
 func metricValue(r RecordOutcome, metric string) bool {
 	if metric == "contract" {
 		return r.ContractSuccess

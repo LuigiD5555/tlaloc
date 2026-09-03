@@ -35,6 +35,7 @@ type RecordOutcome struct {
 	BaseID      string `json:"base_id"`
 	CandidateID string `json:"candidate_id"`
 	Stage       string `json:"stage"`
+	Mode        string `json:"mode,omitempty"` // NATURAL_CROP | FIXED_CANVAS
 	Level       string `json:"context_level"`
 	Page        int    `json:"page"`
 	Gold        string `json:"gold"`
@@ -163,6 +164,119 @@ func RunContextEnvelope(ctx context.Context, cfg RunConfig, alloc Allocation) ([
 		}
 	}
 	return out, nil
+}
+
+// DiagnosticMode selects the variant renderer for RunScaleConfoundDiagnostic.
+type DiagnosticMode struct {
+	Name  string
+	Write func(cuedPagePath, outPath string, cand Candidate, level ContextLevel) (float64, error)
+}
+
+// NaturalCropMode / FixedCanvasMode are the two diagnostic renderers
+// (protocol PRE-FREEZE R1-A DESIGN AUDIT section 3).
+var (
+	NaturalCropMode = DiagnosticMode{Name: "NATURAL_CROP", Write: WriteContextVariant}
+	FixedCanvasMode = DiagnosticMode{Name: "FIXED_CANVAS", Write: WriteFixedCanvasVariant}
+)
+
+// RunScaleConfoundDiagnostic runs a small predeclared set of bases across
+// the given context levels under BOTH the natural-crop and fixed-canvas
+// renderers, to test whether the R1-A0 context decline is confounded with
+// effective target scale after the VLM image preprocessor.
+func RunScaleConfoundDiagnostic(ctx context.Context, cfg RunConfig, bases []Base, levels []ContextLevel) ([]RecordOutcome, error) {
+	provider, err := parrotlab.NewPDFMemoryProvider(cfg.StoreDir, cfg.PDFPath)
+	if err != nil {
+		return nil, fmt.Errorf("page provider: %w", err)
+	}
+	baseURL := strings.TrimRight(cfg.Endpoint, "/")
+	if !strings.HasSuffix(baseURL, "/v1") {
+		baseURL += "/v1"
+	}
+	client := target.OpenAICompat{BaseURL: baseURL, Model: cfg.Model, Temperature: cfg.Temperature, MaxTokens: cfg.MaxTokens}
+
+	pageDir := filepath.Join(cfg.RunDir, "pages")
+	cropDir := filepath.Join(cfg.RunDir, "crops")
+	rawDir := filepath.Join(cfg.RunDir, "raw")
+	for _, d := range []string{pageDir, cropDir, rawDir} {
+		if err := os.MkdirAll(d, 0o755); err != nil {
+			return nil, err
+		}
+	}
+
+	var out []RecordOutcome
+	for _, base := range bases {
+		cand := base.Candidate
+		cuedPath := filepath.Join(pageDir, fmt.Sprintf("%s_cued.png", base.BaseID))
+		if _, statErr := os.Stat(cuedPath); statErr != nil {
+			pagePNG, rerr := provider.RenderPNG(cand.Page)
+			if rerr != nil {
+				return nil, fmt.Errorf("render page %d: %w", cand.Page, rerr)
+			}
+			cued, _, cerr := RenderCuedPage(pagePNG, cand)
+			if cerr != nil {
+				return nil, cerr
+			}
+			if werr := os.WriteFile(cuedPath, cued, 0o644); werr != nil {
+				return nil, werr
+			}
+		}
+		for _, mode := range []DiagnosticMode{NaturalCropMode, FixedCanvasMode} {
+			for _, level := range levels {
+				select {
+				case <-ctx.Done():
+					return out, ctx.Err()
+				default:
+				}
+				rec := RecordOutcome{
+					BaseID: base.BaseID, CandidateID: cand.CandidateID, Stage: "R1-A-DIAGNOSTIC",
+					Mode: mode.Name, Level: string(level), Page: cand.Page, Gold: cand.NormalizedTarget,
+				}
+				cropPath := filepath.Join(cropDir, fmt.Sprintf("%s_%s_%s.png", base.BaseID, strings.ToLower(mode.Name), strings.ToLower(string(level))))
+				exposure, cerr := mode.Write(cuedPath, cropPath, cand, level)
+				if cerr != nil {
+					rec.Error = cerr.Error()
+					out = append(out, rec)
+					writeRawNamed(rawDir, rec, mode.Name)
+					continue
+				}
+				rec.VisualExposure = exposure
+				rec.CropPath = cropPath
+				if w, h, derr := pageDimsFromPNG(cropPath); derr == nil {
+					rec.CropWidth, rec.CropHeight, rec.PixelArea = w, h, w*h
+				}
+				img, rerr := os.ReadFile(cropPath)
+				if rerr != nil {
+					rec.Error = rerr.Error()
+					out = append(out, rec)
+					writeRawNamed(rawDir, rec, mode.Name)
+					continue
+				}
+				start := time.Now()
+				result, ierr := client.CompletePerception(ctx, target.PerceptionInput{
+					Question: FrozenInstruction, Image: img, MediaType: "image/png",
+				})
+				rec.LatencyMS = time.Since(start).Milliseconds()
+				if ierr != nil {
+					rec.Error = ierr.Error()
+					out = append(out, rec)
+					writeRawNamed(rawDir, rec, mode.Name)
+					continue
+				}
+				rec.RawText = result.Content
+				rec.PromptTokens = result.PromptTokensReported
+				rec.CompletionToks = result.CompletionTokensReported
+				scoreRecord(&rec, cand.NormalizedTarget)
+				out = append(out, rec)
+				writeRawNamed(rawDir, rec, mode.Name)
+			}
+		}
+	}
+	return out, nil
+}
+
+func writeRawNamed(rawDir string, rec RecordOutcome, mode string) {
+	body, _ := json.MarshalIndent(rec, "", "  ")
+	_ = os.WriteFile(filepath.Join(rawDir, fmt.Sprintf("%s_%s_%s.json", rec.BaseID, strings.ToLower(mode), strings.ToLower(rec.Level))), body, 0o644)
 }
 
 func writeRaw(rawDir string, rec RecordOutcome) {

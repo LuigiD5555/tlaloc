@@ -179,6 +179,56 @@ func WriteContextVariant(cuedPagePath, outPath string, cand Candidate, level Con
 	return exposure, err
 }
 
+// fixedCanvasBG is the frozen neutral fill for pixels outside the visible
+// context region in the FIXED_CANVAS diagnostic (mid grey).
+var fixedCanvasBG = color.RGBA{R: 200, G: 200, B: 200, A: 255}
+
+// WriteFixedCanvasVariant writes a context variant whose IMAGE DIMENSIONS,
+// target position and target pixel scale are identical for every context
+// level: the full rendered page canvas, with the cued document pixels kept
+// only inside the level's context region and every outside pixel replaced
+// by one fixed neutral grey. Only the amount of visible document context
+// changes across A0..A6; total image size, target location and target
+// glyph scale are constant. Returns visible-region area / canvas area.
+func WriteFixedCanvasVariant(cuedPagePath, outPath string, cand Candidate, level ContextLevel) (float64, error) {
+	data, err := os.ReadFile(cuedPagePath)
+	if err != nil {
+		return 0, err
+	}
+	src, err := png.Decode(bytes.NewReader(data))
+	if err != nil {
+		return 0, err
+	}
+	b := src.Bounds()
+	out := image.NewRGBA(b)
+	if level == A6FullPage {
+		draw.Draw(out, b, src, b.Min, draw.Src)
+	} else {
+		draw.Draw(out, b, &image.Uniform{C: fixedCanvasBG}, image.Point{}, draw.Src)
+		region := ContextRegionStore(cand, level)
+		sx := float64(b.Dx()) / cand.PageWidth
+		sy := float64(b.Dy()) / cand.PageHeight
+		vis := image.Rect(
+			b.Min.X+int(region.X1*sx), b.Min.Y+int(region.Y1*sy),
+			b.Min.X+int(region.X2*sx), b.Min.Y+int(region.Y2*sy),
+		).Intersect(b)
+		draw.Draw(out, vis, src, vis.Min, draw.Src)
+	}
+	var buf bytes.Buffer
+	enc := png.Encoder{CompressionLevel: png.BestSpeed}
+	if err := enc.Encode(&buf, out); err != nil {
+		return 0, err
+	}
+	if err := os.WriteFile(outPath, buf.Bytes(), 0o644); err != nil {
+		return 0, err
+	}
+	region := ContextRegionStore(cand, level)
+	if level == A6FullPage {
+		return 1.0, nil
+	}
+	return ((region.X2 - region.X1) * (region.Y2 - region.Y1)) / (cand.PageWidth * cand.PageHeight), nil
+}
+
 // pageDimsFromPNG reads a PNG's pixel dimensions.
 func pageDimsFromPNG(path string) (int, int, error) {
 	f, err := os.Open(path)

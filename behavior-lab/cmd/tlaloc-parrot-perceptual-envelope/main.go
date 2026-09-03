@@ -45,6 +45,10 @@ func main() {
 		doctor(ctx, os.Args[2:])
 	case "run-r1a":
 		runR1A(ctx, os.Args[2:])
+	case "scale-audit":
+		scaleAudit(os.Args[2:])
+	case "run-diagnostic":
+		runDiagnostic(ctx, os.Args[2:])
 	default:
 		fmt.Fprintln(os.Stderr, "unknown subcommand:", os.Args[1])
 		os.Exit(2)
@@ -168,6 +172,61 @@ func doctor(ctx context.Context, args []string) {
 	if !rep.ReadyR1A {
 		os.Exit(1)
 	}
+}
+
+func scaleAudit(args []string) {
+	fs := flag.NewFlagSet("scale-audit", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	fs.Parse(args)
+	alloc := loadAlloc(filepath.Join(*expDir, "datasets", "R1A_BASES.json"))
+	rep := perceptenvelope.ScaleAudit(alloc.Bases)
+	sha, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "SCALE_AUDIT_R1A.json"), rep)
+	die(err)
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{"scale_audit_sha256": sha, "vision_preprocessing": rep.VisionPreproc, "bases": len(rep.Bases)}))
+}
+
+func runDiagnostic(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("run-diagnostic", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	temp := fs.Float64("temperature", 0, "sampling temperature")
+	maxTokens := fs.Int("max-tokens", 32, "max output tokens")
+	nbases := fs.Int("bases", 6, "number of predeclared diagnostic bases (first N of R1A_BASES)")
+	runID := fs.String("run-id", "r1a-diagnostic-r0", "run id")
+	fs.Parse(args)
+
+	alloc := loadAlloc(filepath.Join(*expDir, "datasets", "R1A_BASES.json"))
+	bases := perceptenvelope.DiagnosticBases(alloc, *nbases)
+	levels := []perceptenvelope.ContextLevel{
+		perceptenvelope.A0TargetOnly, perceptenvelope.A2LocalBlock,
+		perceptenvelope.A4QuarterPage, perceptenvelope.A6FullPage,
+	}
+	records, err := perceptenvelope.RunScaleConfoundDiagnostic(ctx, perceptenvelope.RunConfig{
+		StoreDir: *storeDir, PDFPath: *pdfPath, Endpoint: *endpoint, Model: *model,
+		Temperature: *temp, MaxTokens: *maxTokens, RunDir: filepath.Join(*expDir, "runs", *runID),
+	}, bases, levels)
+	die(err)
+	recSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "R1A_DIAGNOSTIC_RECORDS.json"), records)
+	die(err)
+	cmp := perceptenvelope.AggregateDiagnostic(records, levels)
+	cmpSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "R1A_SCALE_CONFOUND_DIAGNOSTIC.json"), cmp)
+	die(err)
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"records": len(records), "records_sha256": recSHA, "diagnostic_sha256": cmpSHA,
+		"natural_crop_semantic_by_level":          cmp.NaturalCurve,
+		"fixed_canvas_semantic_by_level":          cmp.FixedCurve,
+		"fixed_minus_natural_by_level":            cmp.PerLevelDelta,
+		"max_abs_delta":                           cmp.MaxAbsDelta,
+		"CURRENT_R1A_CONTEXT_IS_SCALE_CONFOUNDED": cmp.Confounded,
+		"confound_note":                           cmp.ConfoundNote,
+	}))
 }
 
 func runR1A(ctx context.Context, args []string) {
