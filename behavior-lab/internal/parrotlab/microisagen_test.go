@@ -26,15 +26,6 @@ func generateMicroISAForTest(t *testing.T) ([]Case, string) {
 			microISAGenErr = err
 			return
 		}
-		src := "../../experiments/parrot-microisa-r0.1/datasets"
-		copyFileBestEffort(filepath.Join(src, "microisa-visual.crops.json"), filepath.Join(dir, "microisa-visual.crops.json"))
-		pages, _ := filepath.Glob(filepath.Join(src, "microisa-visual", "pages", "*.png"))
-		if len(pages) > 0 {
-			_ = os.MkdirAll(filepath.Join(dir, "microisa-visual", "pages"), 0o755)
-			for _, page := range pages {
-				copyFileBestEffort(page, filepath.Join(dir, "microisa-visual", "pages", filepath.Base(page)))
-			}
-		}
 		if _, err := GenerateMicroISAVisual(dir, 42, false); err != nil {
 			microISAGenErr = err
 			return
@@ -48,12 +39,6 @@ func generateMicroISAForTest(t *testing.T) ([]Case, string) {
 	return microISAGenCases, microISAGenDir
 }
 
-func copyFileBestEffort(from, to string) {
-	if data, err := os.ReadFile(from); err == nil {
-		_ = os.WriteFile(to, data, 0o644)
-	}
-}
-
 func TestMicroISAGeneratorIsDeterministicAndValid(t *testing.T) {
 	casesA, dirA := generateMicroISAForTest(t)
 	if problems := Validate(casesA); len(problems) > 0 {
@@ -62,13 +47,6 @@ func TestMicroISAGeneratorIsDeterministicAndValid(t *testing.T) {
 	rawA, _ := os.ReadFile(filepath.Join(dirA, "microisa-visual.jsonl"))
 
 	dirB := t.TempDir()
-	src := "../../experiments/parrot-microisa-r0.1/datasets"
-	copyFileBestEffort(filepath.Join(src, "microisa-visual.crops.json"), filepath.Join(dirB, "microisa-visual.crops.json"))
-	pages, _ := filepath.Glob(filepath.Join(src, "microisa-visual", "pages", "*.png"))
-	_ = os.MkdirAll(filepath.Join(dirB, "microisa-visual", "pages"), 0o755)
-	for _, page := range pages {
-		copyFileBestEffort(page, filepath.Join(dirB, "microisa-visual", "pages", filepath.Base(page)))
-	}
 	if _, err := GenerateMicroISAVisual(dirB, 42, false); err != nil {
 		t.Fatalf("second generate: %v", err)
 	}
