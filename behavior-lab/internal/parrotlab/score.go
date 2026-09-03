@@ -105,7 +105,13 @@ func isShortAnswer(normalised string) bool {
 	if strings.HasPrefix(normalised, "{") && strings.HasSuffix(normalised, "}") {
 		return true
 	}
-	return len(strings.Fields(normalised)) <= 6 && len(normalised) <= 48
+	fields := strings.Fields(normalised)
+	// A single whitespace-free token is a bare answer even when long (a
+	// 32-char READ_SHORT_TEXT string is one token, not a narration).
+	if len(fields) == 1 {
+		return len(normalised) <= 64
+	}
+	return len(fields) <= 6 && len(normalised) <= 48
 }
 
 func acceptedAnswers(expected Expected) []string {

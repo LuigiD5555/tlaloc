@@ -31,6 +31,16 @@ type RunRecord struct {
 	EvidenceCID    string   `json:"evidence_cid,omitempty"`
 	SourceMethod   string   `json:"source_method,omitempty"`
 
+	// microisa_visual only: which sub-experiment the case belongs to
+	// (A1|A2|A3|A4), the value of its single varied variable, which
+	// dimension is varied, and whether the stimulus is synthetic or a
+	// real-PDF crop. Aggregation partitions on SubExperiment and never
+	// pools accuracies across sub-experiments.
+	SubExperiment string `json:"sub_experiment,omitempty"`
+	Condition     string `json:"condition,omitempty"`
+	VariedDim     string `json:"varied_dim,omitempty"`
+	Source        string `json:"source,omitempty"`
+
 	// Input audit (P-1 fix #8): everything Parrot actually received, so
 	// no-leakage can be demonstrated after the fact from the record alone.
 	PromptFileHash   string `json:"prompt_file_hash"`
@@ -76,10 +86,16 @@ type Resources struct {
 
 // RunOptions controls a single stage run.
 type RunOptions struct {
-	Stage          string
-	DatasetPath    string // optional override; defaults to the stage's manifest dataset
-	Repetitions    int
-	SentinelOnly   bool
+	Stage        string
+	DatasetPath  string // optional override; defaults to the stage's manifest dataset
+	Repetitions  int
+	SentinelOnly bool
+	// SubExperiment, when set, runs only microisa_visual cases whose
+	// sub_experiment matches. The freeze gate still verifies the whole
+	// dataset hash — this only selects which frozen cases execute, so the
+	// stage can be run in the mandated A1→A2→A3→A4 integrity-checkpoint
+	// order without touching the dataset.
+	SubExperiment  string
 	TimeoutSeconds int
 	// AllowUnfrozen skips the stage-freeze gate — for ad-hoc smoke runs
 	// only. A real campaign run requires the global config and the stage
@@ -157,6 +173,9 @@ func RunStage(ctx context.Context, exp *Experiment, opts RunOptions) (RunReport,
 		if opts.SentinelOnly && !item.Sentinel {
 			continue
 		}
+		if opts.SubExperiment != "" && item.SubExperiment != opts.SubExperiment {
+			continue
+		}
 		report.Cases++
 		image, imageErr := item.ImageBytes()
 		if imageErr != nil {
@@ -185,6 +204,10 @@ func RunStage(ctx context.Context, exp *Experiment, opts RunOptions) (RunReport,
 				Variant:          item.Variant,
 				EvidenceCID:      item.EvidenceCID,
 				SourceMethod:     item.SourceMethod,
+				SubExperiment:    item.SubExperiment,
+				Condition:        item.Condition,
+				VariedDim:        item.VariedDim,
+				Source:           item.Source,
 				PromptFileHash:   promptFileHash,
 				SystemPromptHash: systemPromptHash,
 				UserText:         userText,

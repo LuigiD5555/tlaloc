@@ -21,25 +21,39 @@ import (
 
 // Stage identifiers, in mandatory execution order (SPEC §3).
 const (
-	StageEndToEnd         = "end_to_end"
-	StageInstructionCliff = "instruction_cliff"
-	StageSingles          = "singles"
-	StageInterference     = "interference"
-	StageCoalitions       = "coalitions"
-	StageBlackboard       = "blackboard"
+	StageEndToEnd                 = "end_to_end"
+	StageInstructionCliff         = "instruction_cliff"
+	StageSingles                  = "singles"
+	StageInterference             = "interference"
+	StageCoalitions               = "coalitions"
+	StageBlackboard               = "blackboard"
+	StageMicroISAVisual           = "microisa_visual"
+	StageMicroISAImageInstruction = "microisa_image_instruction"
 )
 
 // StageOrder is the fixed order stages must be executed and reported in.
 var StageOrder = []string{
 	StageEndToEnd, StageInstructionCliff, StageSingles,
 	StageInterference, StageCoalitions, StageBlackboard,
+	StageMicroISAVisual, StageMicroISAImageInstruction,
 }
 
-// Capabilities measured in R0 (SPEC §15).
+// Capabilities measured in R0 (SPEC §15) plus the P2 Micro-ISA atomic
+// visual capabilities (parrot-microisa-r0).
 var Capabilities = []string{
 	"VISUAL_IDENTIFY", "VISUAL_LOCATE", "READ_SHORT_TEXT", "EXTRACT_ENTITY",
 	"EXTRACT_NUMBER", "CLASSIFY_SIMPLE", "COMPARE_SIMPLE", "FOLLOW_REFERENCE",
 	"SELECT_ACTION", "USE_BLACKBOARD_HINT", "ANSWER_FROM_EVIDENCE",
+	"READ_SHORT_LABEL", "SELECT_ONE_OF_N", "FOLLOW_ONE_REFERENCE",
+	"COMPARE_TWO_VALUES", "SAME_DIFFERENT", "EXECUTE_ONE_INSTRUCTION_READ_FROM_IMAGE",
+}
+
+// MicroISACapabilities are the ten atomic visual capabilities probed by the
+// microisa_visual stage, in report order.
+var MicroISACapabilities = []string{
+	"VISUAL_IDENTIFY", "VISUAL_LOCATE", "READ_SHORT_LABEL", "READ_SHORT_TEXT",
+	"EXTRACT_NUMBER", "EXTRACT_ENTITY", "SELECT_ONE_OF_N", "FOLLOW_ONE_REFERENCE",
+	"COMPARE_TWO_VALUES", "SAME_DIFFERENT",
 }
 
 // ModelConfig is the frozen model configuration (MODEL.json).

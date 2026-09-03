@@ -73,6 +73,7 @@ func load(args []string) (*parrotlab.Experiment, *flag.FlagSet) {
 	fs.String("stage", "", "stage id")
 	fs.Int("repetitions", 1, "repetitions per case")
 	fs.Bool("sentinel-only", false, "run only cases marked sentinel")
+	fs.String("sub-experiment", "", "microisa_visual: run only one sub-experiment (A1|A2|A3|A4)")
 	fs.Int("timeout", 180, "per-call timeout seconds")
 	fs.String("dataset", "", "optional dataset path override (ad-hoc runs before freeze)")
 	fs.Bool("allow-unfrozen", false, "skip the stage-freeze gate (smoke runs only)")
@@ -228,6 +229,7 @@ func run(ctx context.Context, args []string) {
 		DatasetPath:    fs.Lookup("dataset").Value.String(),
 		Repetitions:    mustAtoi(fs.Lookup("repetitions").Value.String()),
 		SentinelOnly:   fs.Lookup("sentinel-only").Value.String() == "true",
+		SubExperiment:  fs.Lookup("sub-experiment").Value.String(),
 		TimeoutSeconds: mustAtoi(fs.Lookup("timeout").Value.String()),
 		AllowUnfrozen:  fs.Lookup("allow-unfrozen").Value.String() == "true",
 	})

@@ -63,6 +63,17 @@ type Case struct {
 	EvidenceCID  string `json:"evidence_cid,omitempty"`
 	SourceMethod string `json:"source_method,omitempty"`
 
+	// microisa_visual only. SubExperiment is A1|A2|A3|A4. Condition is the
+	// value of the single varied variable ("canonical", "chars=8",
+	// "regions=6", "field=block", "reftype=arrow", "crop=tight",
+	// "full_page"). VariedDim names that variable ("" for A1). Source is
+	// "synthetic" | "real_crop" | "full_page". Cases sharing BaseID within a
+	// sub-experiment are paired observations of one nested base stimulus.
+	SubExperiment string `json:"sub_experiment,omitempty"`
+	Condition     string `json:"condition,omitempty"`
+	VariedDim     string `json:"varied_dim,omitempty"`
+	Source        string `json:"source,omitempty"`
+
 	// sourceDir is the directory the case was loaded from, used to resolve
 	// ImagePath. Not serialised.
 	sourceDir string
@@ -74,6 +85,14 @@ var taskFamilies = map[string]bool{
 
 var hintConditions = map[string]bool{
 	"correct": true, "none": true, "incorrect": true, "random": true,
+}
+
+var microISASubExperiments = map[string]bool{
+	"A1": true, "A2": true, "A3": true, "A4": true,
+}
+
+var microISASources = map[string]bool{
+	"synthetic": true, "real_crop": true, "full_page": true,
 }
 
 // LoadCases reads every *.jsonl under path (a file or a directory) into a
@@ -251,6 +270,42 @@ func Validate(cases []Case) []error {
 			}
 			if item.HintCondition != "none" && strings.TrimSpace(item.BlackboardHint) == "" {
 				add("%s: blackboard case %q without blackboard_hint", id, item.HintCondition)
+			}
+		case StageMicroISAVisual:
+			if len(item.Capabilities) != 1 {
+				add("%s: microisa_visual case must name exactly one capability", id)
+			} else if !containsString(MicroISACapabilities, item.Capabilities[0]) {
+				add("%s: %q is not a microisa_visual capability", id, item.Capabilities[0])
+			}
+			if !microISASubExperiments[item.SubExperiment] {
+				add("%s: microisa_visual case with invalid sub_experiment %q", id, item.SubExperiment)
+			}
+			if !microISASources[item.Source] {
+				add("%s: microisa_visual case with invalid source %q", id, item.Source)
+			}
+			if item.ImagePath == "" {
+				add("%s: microisa_visual case without image_path", id)
+			}
+			if item.Condition == "" {
+				add("%s: microisa_visual case without condition", id)
+			}
+			if item.SubExperiment == "A1" {
+				if item.Condition != "canonical" {
+					add("%s: A1 case must be condition=canonical, got %q", id, item.Condition)
+				}
+				if item.VariedDim != "" {
+					add("%s: A1 case must not vary a dimension (varied_dim=%q)", id, item.VariedDim)
+				}
+			} else if item.SubExperiment != "" {
+				if item.VariedDim == "" {
+					add("%s: %s case without varied_dim", id, item.SubExperiment)
+				}
+				if item.BaseID == "" {
+					add("%s: %s case without base_id (needed to pair observations)", id, item.SubExperiment)
+				}
+			}
+			if len(item.PageRefs) != 0 || item.EvidenceText != "" {
+				add("%s: microisa_visual case must not carry page_refs/evidence_text", id)
 			}
 		default:
 			add("%s: unknown stage %q", id, item.Stage)
