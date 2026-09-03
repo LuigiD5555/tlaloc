@@ -1,5 +1,9 @@
 # Local build outputs
 behavior-lab/tlaloc-behavior-lab
+behavior-lab/tlaloc-exocortex-decomposition
+behavior-lab/tlaloc-exocortex-t0a
+behavior-lab/tlaloc-parrot-perceptual-envelope
+behavior-lab/tlaloc-fold-bench
 *.test
 *.out
 __pycache__/
