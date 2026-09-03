@@ -141,8 +141,8 @@ func Aggregate(datasetSHA string, byCondition map[Condition][]StimulusOutcome) R
 		from, to Condition
 	}{
 		{"D0_to_D1", ConditionD0Direct, ConditionD1ExternalSeq},
-		{"D1_to_D2", ConditionD1ExternalSeq, ConditionD2ExternalOp1},
-		{"D2_to_D3", ConditionD2ExternalOp1, ConditionD3Verify},
+		{"D1_to_D2", ConditionD1ExternalSeq, ConditionD2OracleExternalOp1},
+		{"D2_to_D3", ConditionD2OracleExternalOp1, ConditionD3Verify},
 		{"D0_to_D3", ConditionD0Direct, ConditionD3Verify},
 	}
 	for _, p := range pairs {

@@ -127,7 +127,7 @@ func TestD2_ExternalizesOP1_OneModelCall(t *testing.T) {
 	cfg.Endpoint = exocortex.ParrotEndpoint{BaseURL: server.URL, Model: "m"}
 	reg, _ := NewRegistry(profile, cfg.Endpoint)
 
-	out := RunStimulus(context.Background(), cfg, reg, record, ConditionD2ExternalOp1)
+	out := RunStimulus(context.Background(), cfg, reg, record, ConditionD2OracleExternalOp1)
 	if out.Error != "" {
 		t.Fatalf("D2 error: %s", out.Error)
 	}
@@ -138,6 +138,103 @@ func TestD2_ExternalizesOP1_OneModelCall(t *testing.T) {
 		if st.StepID == "op1_a" && st.ExecutorType != "DETERMINISTIC" {
 			t.Fatalf("D2 OP1 must be deterministic, got %s", st.ExecutorType)
 		}
+	}
+}
+
+// LEAKAGE AUDIT (final, pre-execution): no D-condition workflow path may
+// read the expected answer (record.Larger) before post-execution scoring.
+// This test poisons Larger with the WRONG label and asserts the pipeline's
+// pre-scoring answer is unaffected, while scoring dutifully uses the wrong
+// label.
+func TestNoLeakage_ExpectedAnswerNeverSteersTheWorkflow(t *testing.T) {
+	profile := testProfile(t)
+	cfg, record := fixture(t)
+	// Force a scene where A is truly larger, then LIE in the label.
+	record.ValueA, record.ValueB = 900, 100
+	record.OracleOperandA = "900"
+	record.Larger = "B" // deliberately wrong
+
+	for _, cond := range []Condition{ConditionD1ExternalSeq, ConditionD2OracleExternalOp1, ConditionD3Verify} {
+		var calls int64
+		// OP2 (operand B) reads "100" from the model; D1 also reads A="900".
+		server := mockEndpoint(t, &calls, "100")
+		cfg.Endpoint = exocortex.ParrotEndpoint{BaseURL: server.URL, Model: "m"}
+		reg, _ := NewRegistry(profile, cfg.Endpoint)
+		if cond == ConditionD1ExternalSeq {
+			// D1 needs A from the model too; a single fixed "100" would make
+			// A==B. Use a per-call sequence: first call A="900", then B="100".
+			server.Close()
+			var seq int64
+			server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				atomic.AddInt64(&calls, 1)
+				n := atomic.AddInt64(&seq, 1)
+				ans := "100"
+				if n == 1 {
+					ans = "900"
+				}
+				fmt.Fprintf(w, `{"choices":[{"message":{"content":%q}}]}`, ans)
+			}))
+			t.Cleanup(server.Close)
+			cfg.Endpoint = exocortex.ParrotEndpoint{BaseURL: server.URL, Model: "m"}
+			reg, _ = NewRegistry(profile, cfg.Endpoint)
+		}
+
+		out := RunStimulus(context.Background(), cfg, reg, record, cond)
+		if out.Error != "" {
+			t.Fatalf("%s error: %s", cond, out.Error)
+		}
+		// Pipeline computed the answer from the operands alone: A(900) > B(100) => "A".
+		if out.FinalAnswer != "A" {
+			t.Fatalf("%s: workflow answer %q, want \"A\" (derived from operands, not the poisoned label)", cond, out.FinalAnswer)
+		}
+		// Scoring used the poisoned label, so it must disagree.
+		if out.SemanticCorrect {
+			t.Fatalf("%s: semantic_correct=true against a poisoned label proves the label leaked into scoring only, not the workflow — but here it must be false", cond)
+		}
+	}
+}
+
+func TestD2_IsExplicitOracleIntervention_NotRealExtraction(t *testing.T) {
+	// D2/D3 obtain operand A from T0ARecord.OracleOperandA (generator scene
+	// truth), NOT from the rendered pixels. Document + lock that: change the
+	// crop-A image to show a different number and assert operand A is still
+	// the oracle value.
+	profile := testProfile(t)
+	cfg, record := fixture(t)
+	record.OracleOperandA = "777"
+	record.ValueA = 777
+	record.ValueB = 111
+	record.Larger = "A"
+	var calls int64
+	server := mockEndpoint(t, &calls, "111") // model would read B=111
+	cfg.Endpoint = exocortex.ParrotEndpoint{BaseURL: server.URL, Model: "m"}
+	reg, _ := NewRegistry(profile, cfg.Endpoint)
+
+	out := RunStimulus(context.Background(), cfg, reg, record, ConditionD2OracleExternalOp1)
+	if out.Error != "" {
+		t.Fatalf("D2 error: %s", out.Error)
+	}
+	// A=777 (oracle) vs B=111 (model) => "A".
+	if out.FinalAnswer != "A" {
+		t.Fatalf("D2 answer %q, want \"A\" from oracle A=777 vs model B=111", out.FinalAnswer)
+	}
+	if !OracleConditions()[ConditionD2OracleExternalOp1] {
+		t.Fatalf("D2 must be registered as an oracle condition")
+	}
+}
+
+func TestT0ADataset_SHA256IsStableAcrossRegeneration(t *testing.T) {
+	_, h1, err := parrotlab.GenerateT0A(20260903, 40, filepath.Join(t.TempDir(), "a"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, h2, err := parrotlab.GenerateT0A(20260903, 40, filepath.Join(t.TempDir(), "b"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	const frozen = "5e69b1acf1348024a1f30068b32a051a3e959c80a70f742e6fcc0b06576dccfc"
+	if h1 != h2 || h1 != frozen {
+		t.Fatalf("T0-A dataset sha256 drift: %s / %s, frozen %s", h1, h2, frozen)
 	}
 }
 

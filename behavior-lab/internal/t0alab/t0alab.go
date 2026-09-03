@@ -41,15 +41,29 @@ const (
 	// D1 — Parrot OP1 -> external Blackboard state -> Parrot OP2, each call
 	// exactly one opcode; the deterministic COMPARE is the external join.
 	ConditionD1ExternalSeq Condition = "D1_EXTERNAL_SEQUENCING"
-	// D2 — external deterministic OP1 -> Parrot OP2 -> deterministic COMPARE.
-	ConditionD2ExternalOp1 Condition = "D2_EXTERNAL_OP1"
+	// D2 — ORACLE_EXTERNAL_OP1: operand A is supplied to the workflow from
+	// the T0-A generator's own scene truth (T0ARecord.OracleOperandA), NOT
+	// extracted by a real deterministic Tlaloque from the rendered pixels.
+	// D2 is therefore an UPPER-BOUND intervention: "how well does external
+	// composition do when OP1 is perfect?", never evidence that a real
+	// deterministic executor can extract the operand. The primary causal
+	// test of external sequencing is D0 -> D1, which uses no oracle value.
+	ConditionD2OracleExternalOp1 Condition = "D2_ORACLE_EXTERNAL_OP1"
 	// D3 — D2 + deterministic Normalize + external Verify (Fact | UNKNOWN).
+	// Inherits D2's oracle-OP1 upper-bound caveat.
 	ConditionD3Verify Condition = "D3_NORMALIZE_VERIFY"
 )
 
+// OracleConditions are the D-conditions that inject T0-A generator scene
+// truth for operand A. Their results are upper bounds, not real-executor
+// evidence; every report and aggregate flags them.
+func OracleConditions() map[Condition]bool {
+	return map[Condition]bool{ConditionD2OracleExternalOp1: true, ConditionD3Verify: true}
+}
+
 // AllConditions is the fixed report order.
 func AllConditions() []Condition {
-	return []Condition{ConditionD0Direct, ConditionD1ExternalSeq, ConditionD2ExternalOp1, ConditionD3Verify}
+	return []Condition{ConditionD0Direct, ConditionD1ExternalSeq, ConditionD2OracleExternalOp1, ConditionD3Verify}
 }
 
 // StepTrace instruments one workflow step (T0 protocol section 13). It only
@@ -165,7 +179,7 @@ func RunStimulus(ctx context.Context, cfg Config, registry *tlaloque.Registry, r
 
 	case ConditionD1ExternalSeq:
 		return runExternal(ctx, cfg, registry, record, condition, out, start, false)
-	case ConditionD2ExternalOp1:
+	case ConditionD2OracleExternalOp1:
 		return runExternal(ctx, cfg, registry, record, condition, out, start, true)
 	case ConditionD3Verify:
 		return runExternal(ctx, cfg, registry, record, condition, out, start, true)
@@ -219,7 +233,7 @@ func runExternal(ctx context.Context, cfg Config, registry *tlaloque.Registry, r
 	if externalOp1 {
 		st.ExecutorType = "DETERMINISTIC"
 		st.DeterministicOps = 1
-		valueA = record.DetOperandA
+		valueA = record.OracleOperandA
 		out.DeterministicOps++
 	} else {
 		st.ExecutorType = "MODEL"
@@ -263,7 +277,7 @@ func runExternal(ctx context.Context, cfg Config, registry *tlaloque.Registry, r
 	stepIndex++
 
 	valueB := valueBRaw
-	if condition == ConditionD3Verify || condition == ConditionD2ExternalOp1 {
+	if condition == ConditionD3Verify || condition == ConditionD2OracleExternalOp1 {
 		before = hashSnapshot(snap())
 		st = StepTrace{StepID: "normalize_b", StepIndex: stepIndex, WorkflowDepth: 3, Opcode: exocortex.OpNormalize, ExecutorType: "DETERMINISTIC", DeterministicOps: 1, StateBeforeHash: before}
 		nOut, err := runStep("normalize_b", exocortex.OpNormalize, exocortex.NormalizeInput{Raw: valueBRaw, TargetType: exocortex.TargetTypeNumber})

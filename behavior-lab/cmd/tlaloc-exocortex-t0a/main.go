@@ -50,7 +50,7 @@ func usage() {
             renders + freezes the T0-A controlled-composition dataset.
   doctor    --dataset <t0a_dataset.json> --p2-experiment <artifact> [--endpoint URL --model-id ID]
   run       --dataset <t0a_dataset.json> --p2-experiment <artifact> --endpoint URL --model-id ID
-            --conditions D0_DIRECT_TWO_OP,D1_EXTERNAL_SEQUENCING,D2_EXTERNAL_OP1,D3_NORMALIZE_VERIFY
+            --conditions D0_DIRECT_TWO_OP,D1_EXTERNAL_SEQUENCING,D2_ORACLE_EXTERNAL_OP1,D3_NORMALIZE_VERIFY
             --out runs/exocortex-t0a-r0
   aggregate --in <run dir> --dataset <t0a_dataset.json> --out results/EXOCORTEX_T0A_R0.json`)
 }
@@ -116,7 +116,7 @@ func run(ctx context.Context, args []string) {
 	p2 := fs.String("p2-experiment", "", "frozen P2-A artifact")
 	endpoint := fs.String("endpoint", "http://127.0.0.1:1234/v1", "OpenAI-compatible base URL")
 	modelID := fs.String("model-id", "lfm2-vl-1.6b", "model id")
-	condsFlag := fs.String("conditions", "D0_DIRECT_TWO_OP,D1_EXTERNAL_SEQUENCING,D2_EXTERNAL_OP1,D3_NORMALIZE_VERIFY", "comma-separated conditions")
+	condsFlag := fs.String("conditions", "D0_DIRECT_TWO_OP,D1_EXTERNAL_SEQUENCING,D2_ORACLE_EXTERNAL_OP1,D3_NORMALIZE_VERIFY", "comma-separated conditions")
 	maxTok := fs.Int("max-output-tokens", 16, "max generated tokens per Parrot call")
 	out := fs.String("out", "runs/exocortex-t0a-r0", "output dir")
 	fs.Parse(args)

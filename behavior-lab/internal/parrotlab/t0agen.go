@@ -47,11 +47,14 @@ type T0ARecord struct {
 	CropA    string `json:"crop_a_path"`
 	CropB    string `json:"crop_b_path"`
 
-	// DetOperandA is the reliable deterministic value of operand A, made
-	// available to conditions D2/D3 (external OP1). It is a property of the
-	// generator's own scene, not an OCR of the rendered pixels, and is
-	// never exposed to any Parrot call.
-	DetOperandA string `json:"deterministic_operand_a"`
+	// OracleOperandA is the T0-A generator's own scene truth for operand A.
+	// It is consumed ONLY by the D2_ORACLE_EXTERNAL_OP1 / D3 conditions as
+	// an explicit upper-bound intervention — it is NOT an OCR/extraction of
+	// the rendered pixels and must never be read as evidence that a real
+	// deterministic Tlaloque can obtain the operand. It is never exposed to
+	// any Parrot call. (JSON tag kept as-is to preserve the frozen dataset
+	// sha256; the name says what it really is.)
+	OracleOperandA string `json:"deterministic_operand_a"`
 }
 
 // T0ADataset is the frozen dataset document.
@@ -113,7 +116,7 @@ func GenerateT0A(seed int64, count int, outDir string) (T0ADataset, string, erro
 		dataset.Records = append(dataset.Records, T0ARecord{
 			ID: id, Seed: seed + int64(index), ValueA: valueA, ValueB: valueB, Larger: larger,
 			FullPath: fullRel, CropA: cropARel, CropB: cropBRel,
-			DetOperandA: fmt.Sprintf("%d", valueA),
+			OracleOperandA: fmt.Sprintf("%d", valueA),
 		})
 	}
 
