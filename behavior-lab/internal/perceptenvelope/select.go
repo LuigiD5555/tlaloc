@@ -113,6 +113,58 @@ func Allocate(pool SourcePool, poolSHA256 string) (r1a, r1b Allocation) {
 	return mk("R1-A", aBases), mk("R1-B", bBases)
 }
 
+// R1A1Size is the fresh canonical R1-A1 base count.
+const R1A1Size = 30
+
+// AllocateR1A1 selects R1-A1's fresh bases: the same frozen rank
+// (sha256(seed||candidate_id)) and <=2/page rule, over the candidates
+// remaining after excluding every R1-A0 and R1-B candidate_id.
+func AllocateR1A1(pool SourcePool, exclude map[string]struct{}, poolSHA256 string) Allocation {
+	type ranked struct {
+		cand Candidate
+		key  string
+	}
+	items := make([]ranked, 0, len(pool.Candidates))
+	for _, c := range pool.Candidates {
+		if _, skip := exclude[c.CandidateID]; skip {
+			continue
+		}
+		items = append(items, ranked{cand: c, key: rankKey(c.CandidateID)})
+	}
+	sort.Slice(items, func(i, j int) bool {
+		if items[i].key != items[j].key {
+			return items[i].key < items[j].key
+		}
+		return items[i].cand.CandidateID < items[j].cand.CandidateID
+	})
+	perPage := map[int]int{}
+	var bs []Base
+	for _, it := range items {
+		if len(bs) >= R1A1Size {
+			break
+		}
+		if perPage[it.cand.Page] >= MaxCandidatesPerPage {
+			continue
+		}
+		perPage[it.cand.Page]++
+		bs = append(bs, Base{Stage: "R1-A1", RankKey: it.key, Candidate: it.cand})
+	}
+	for i := range bs {
+		bs[i].BaseID = baseID("r1a1", i, bs[i].Candidate.CandidateID)
+	}
+	ids := make([]string, len(bs))
+	for i, b := range bs {
+		ids[i] = b.BaseID
+	}
+	return Allocation{
+		Schema: allocSchema, ExperimentID: ExperimentID, Stage: "R1-A1",
+		Seed: Seed, RankRule: "sha256(seed || candidate_id) ascending, R1-A0 + R1-B candidate_ids excluded",
+		AlgorithmVersion: SelectionAlgorithmVersion, SourcePoolSHA256: poolSHA256,
+		PageDiversity: "at most 2 candidates per source page within R1-A1",
+		BaseCount:     len(bs), BaseIDs: ids, Bases: bs,
+	}
+}
+
 func baseID(prefix string, index int, candidateID string) string {
 	return prefix + "-" + pad2(index+1) + "-" + candidateID[:8]
 }

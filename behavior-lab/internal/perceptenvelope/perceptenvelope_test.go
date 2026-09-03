@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"image"
+	"image/color"
 	"image/png"
 	"os"
 	"path/filepath"
@@ -271,6 +272,109 @@ func solidPNG(t *testing.T, w, h int) []byte {
 	img := image.NewRGBA(image.Rect(0, 0, w, h))
 	for i := range img.Pix {
 		img.Pix[i] = 255
+	}
+	var buf bytes.Buffer
+	if err := png.Encode(&buf, img); err != nil {
+		t.Fatal(err)
+	}
+	return buf.Bytes()
+}
+
+// R1-A1: geometry deterministic, line normalised to 32 px, levels nested,
+// masks over one viewport keep visible pixels byte-identical.
+func TestR1A1_Geometry_NestedAndFixedScale(t *testing.T) {
+	pages := map[int][]canonicaldoc.Region{
+		1: {
+			bodyLine("text-0001", 1, 100, "an earlier line of the same paragraph continues here"),
+			bodyLine("text-0002", 2, 118, "the batch size is 128 samples in this configuration run"),
+			bodyLine("text-0003", 3, 136, "and the paragraph keeps going with more explanatory text"),
+			bodyLine("text-0004", 4, 300, "a separate later paragraph far below the target line here"),
+		},
+	}
+	dir := writeR1Store(t, pages)
+	pool, err := ScanSourcePool(dir)
+	if err != nil || len(pool.Candidates) != 1 {
+		t.Fatalf("want 1 candidate, got %d (%v)", len(pool.Candidates), err)
+	}
+	base := Base{BaseID: "r1a1-test", Candidate: pool.Candidates[0]}
+
+	g1, err := DeriveR1A1Geometry(dir, base)
+	if err != nil {
+		t.Fatal(err)
+	}
+	g2, _ := DeriveR1A1Geometry(dir, base)
+	b1, _ := json.Marshal(g1)
+	b2, _ := json.Marshal(g2)
+	if string(b1) != string(b2) {
+		t.Fatal("geometry not deterministic")
+	}
+	if g1.LineHeightCanvas < TargetLineHeightPx-1 || g1.LineHeightCanvas > TargetLineHeightPx+1 {
+		t.Fatalf("line not normalised to %v px: %v", TargetLineHeightPx, g1.LineHeightCanvas)
+	}
+	cx := (g1.CueBBoxCanvas[0] + g1.CueBBoxCanvas[2]) / 2
+	cy := (g1.CueBBoxCanvas[1] + g1.CueBBoxCanvas[3]) / 2
+	if cx < canvasCenter-6 || cx > canvasCenter+6 || cy < canvasCenter-6 || cy > canvasCenter+6 {
+		t.Fatalf("target not centred: (%v,%v)", cx, cy)
+	}
+	// nested rect sets
+	var prev map[[4]int]bool
+	for _, lvl := range AllR1A1Levels {
+		cur := map[[4]int]bool{}
+		for _, r := range g1.RevealRects[string(lvl)] {
+			cur[r] = true
+		}
+		for r := range prev {
+			if !cur[r] {
+				t.Fatalf("%s not nested", lvl)
+			}
+		}
+		prev = cur
+	}
+
+	// masks over one viewport: a pixel visible at level k has identical RGB at k+1
+	pagePNG := solidPatternPNG(t, 800, 700)
+	vp, err := BuildR1A1Viewport(pagePNG, dir, base, g1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tmp := t.TempDir()
+	prevImg := map[[2]int][3]uint32{}
+	for _, lvl := range AllR1A1Levels {
+		p := filepath.Join(tmp, string(lvl)+".png")
+		if _, err := WriteR1A1Level(vp, p, g1, lvl); err != nil {
+			t.Fatal(err)
+		}
+		f, _ := os.Open(p)
+		im, _ := png.Decode(f)
+		f.Close()
+		if im.Bounds().Dx() != CanvasPx || im.Bounds().Dy() != CanvasPx {
+			t.Fatalf("%s not 512x512", lvl)
+		}
+		for yx, rgb := range prevImg {
+			r, g, b, _ := im.At(yx[0], yx[1]).RGBA()
+			if [3]uint32{r, g, b} != rgb {
+				t.Fatalf("%s: previously-visible pixel %v changed", lvl, yx)
+			}
+		}
+		bg := uint32(200) * 257
+		for y := 0; y < CanvasPx; y += 7 {
+			for x := 0; x < CanvasPx; x += 7 {
+				r, g, b, _ := im.At(x, y).RGBA()
+				if !(r == bg && g == bg && b == bg) {
+					prevImg[[2]int{x, y}] = [3]uint32{r, g, b}
+				}
+			}
+		}
+	}
+}
+
+func solidPatternPNG(t *testing.T, w, h int) []byte {
+	t.Helper()
+	img := image.NewRGBA(image.Rect(0, 0, w, h))
+	for y := 0; y < h; y++ {
+		for x := 0; x < w; x++ {
+			img.SetRGBA(x, y, color.RGBA{R: uint8(x % 251), G: uint8(y % 241), B: uint8((x + y) % 233), A: 255})
+		}
 	}
 	var buf bytes.Buffer
 	if err := png.Encode(&buf, img); err != nil {

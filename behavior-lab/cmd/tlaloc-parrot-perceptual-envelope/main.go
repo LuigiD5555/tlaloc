@@ -49,6 +49,12 @@ func main() {
 		scaleAudit(os.Args[2:])
 	case "run-diagnostic":
 		runDiagnostic(ctx, os.Args[2:])
+	case "prepare-r1a1":
+		prepareR1A1(os.Args[2:])
+	case "sanity-r1a1":
+		sanityR1A1(os.Args[2:])
+	case "run-r1a1":
+		runR1A1(ctx, os.Args[2:])
 	default:
 		fmt.Fprintln(os.Stderr, "unknown subcommand:", os.Args[1])
 		os.Exit(2)
@@ -267,4 +273,124 @@ func runR1A(ctx context.Context, args []string) {
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
 	die(enc.Encode(out))
+}
+
+func prepareR1A1(args []string) {
+	fs := flag.NewFlagSet("prepare-r1a1", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	fs.Parse(args)
+
+	poolBody, err := os.ReadFile(filepath.Join(*expDir, "datasets", "SOURCE_POOL_R1.json"))
+	die(err)
+	var pool perceptenvelope.SourcePool
+	die(json.Unmarshal(poolBody, &pool))
+	poolSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "datasets", "SOURCE_POOL_R1.json"))
+
+	r1a0 := loadAlloc(filepath.Join(*expDir, "datasets", "R1A_BASES.json"))
+	r1b := loadAlloc(filepath.Join(*expDir, "datasets", "R1B_BASES.json"))
+	exclude := map[string]struct{}{}
+	for _, b := range r1a0.Bases {
+		exclude[b.Candidate.CandidateID] = struct{}{}
+	}
+	for _, b := range r1b.Bases {
+		exclude[b.Candidate.CandidateID] = struct{}{}
+	}
+	r1a1 := perceptenvelope.AllocateR1A1(pool, exclude, poolSHA)
+	r1a1SHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1A1_BASES.json"), r1a1)
+	die(err)
+
+	audit := perceptenvelope.AuditR1A1Geometry(*storeDir, r1a1, r1a0, r1b)
+	_, err = perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1A1_CONTEXT_DATASET.json"), audit.PerBase)
+	die(err)
+	auditSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "R1A1_GEOMETRY_AUDIT.json"), audit)
+	die(err)
+
+	manifest := map[string]any{
+		"schema":                     "tlaloc.parrot-perceptual-envelope-r1.r1a1-prepare-manifest.r1",
+		"experiment_id":              perceptenvelope.ExperimentID,
+		"source_pool_sha256":         poolSHA,
+		"r1a1_bases_sha256":          r1a1SHA,
+		"r1a1_geometry_audit_sha256": auditSHA,
+		"r1a1_base_ids":              r1a1.BaseIDs,
+		"canvas_px":                  perceptenvelope.CanvasPx,
+		"target_line_height_px":      perceptenvelope.TargetLineHeightPx,
+		"ready_r1a1_geometry":        audit.ReadyR1A1Geom,
+	}
+	mSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "manifests", "R1A1_PREPARE_MANIFEST.json"), manifest)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"r1a1_bases": len(r1a1.Bases), "r1a1_base_ids": r1a1.BaseIDs,
+		"ready_r1a1_geometry": audit.ReadyR1A1Geom, "problems": audit.Problems,
+		"checks": audit.Checks, "manifest_sha256": mSHA,
+	}))
+	if !audit.ReadyR1A1Geom {
+		os.Exit(1)
+	}
+}
+
+func runR1A1(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("run-r1a1", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	temp := fs.Float64("temperature", 0, "sampling temperature")
+	maxTokens := fs.Int("max-tokens", 32, "max output tokens")
+	runID := fs.String("run-id", "r1a1-r0", "run id")
+	fs.Parse(args)
+
+	audBody, err := os.ReadFile(filepath.Join(*expDir, "results", "R1A1_GEOMETRY_AUDIT.json"))
+	die(err)
+	var aud perceptenvelope.R1A1GeometryAudit
+	die(json.Unmarshal(audBody, &aud))
+	if !aud.ReadyR1A1Geom {
+		die(fmt.Errorf("R1A1_GEOMETRY_AUDIT.ready_r1a1_geometry is false; run prepare-r1a1 first"))
+	}
+
+	alloc := loadAlloc(filepath.Join(*expDir, "datasets", "R1A1_BASES.json"))
+	runDir := filepath.Join(*expDir, "runs", *runID)
+	records, geos, err := perceptenvelope.RunR1A1Context(ctx, perceptenvelope.RunConfig{
+		StoreDir: *storeDir, PDFPath: *pdfPath, Endpoint: *endpoint, Model: *model,
+		Temperature: *temp, MaxTokens: *maxTokens, RunDir: runDir,
+	}, alloc)
+	die(err)
+
+	recSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "R1A1_RECORDS.json"), records)
+	die(err)
+	_, err = perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "R1A1_GEOMETRY_FROZEN.json"), geos)
+	die(err)
+	curve := perceptenvelope.AggregateR1A1Curve(records)
+	curveSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "R1A1_CONTEXT_CURVE.json"), curve)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"records": len(records), "records_sha256": recSHA, "curve_sha256": curveSHA, "curve": curve,
+	}))
+}
+
+func sanityR1A1(args []string) {
+	fs := flag.NewFlagSet("sanity-r1a1", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	n := fs.Int("bases", 3, "bases to render")
+	fs.Parse(args)
+	alloc := loadAlloc(filepath.Join(*expDir, "datasets", "R1A1_BASES.json"))
+	bases := alloc.Bases
+	if *n < len(bases) {
+		bases = bases[:*n]
+	}
+	outDir := filepath.Join(*expDir, "runs", "r1a1-sanity")
+	geos, err := perceptenvelope.RenderR1A1Sanity(*storeDir, *pdfPath, bases, outDir)
+	die(err)
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{"rendered_bases": len(geos), "out_dir": outDir, "geometry": geos}))
 }

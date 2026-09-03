@@ -53,8 +53,25 @@ type ContextCurve struct {
 
 const curveSchema = "tlaloc.parrot-perceptual-envelope-r1.context-curve.r1"
 
-// AggregateContextCurve builds the curve from R1-A record outcomes.
+// AggregateContextCurve builds the R1-A0 curve (7 A0..A6 levels).
 func AggregateContextCurve(records []RecordOutcome) ContextCurve {
+	order := make([]string, len(AllContextLevels))
+	for i, l := range AllContextLevels {
+		order[i] = string(l)
+	}
+	return aggregateCurveByLevels(records, order, "R1-A")
+}
+
+// AggregateR1A1Curve builds the R1-A1 fixed-scale curve (7 nested levels).
+func AggregateR1A1Curve(records []RecordOutcome) ContextCurve {
+	order := make([]string, len(AllR1A1Levels))
+	for i, l := range AllR1A1Levels {
+		order[i] = string(l)
+	}
+	return aggregateCurveByLevels(records, order, "R1-A1")
+}
+
+func aggregateCurveByLevels(records []RecordOutcome, levelOrder []string, stage string) ContextCurve {
 	byLevel := map[string][]RecordOutcome{}
 	baseSet := map[string]struct{}{}
 	for _, r := range records {
@@ -62,15 +79,15 @@ func AggregateContextCurve(records []RecordOutcome) ContextCurve {
 		baseSet[r.BaseID] = struct{}{}
 	}
 	curve := ContextCurve{
-		Schema: curveSchema, ExperimentID: ExperimentID, Stage: "R1-A",
+		Schema: curveSchema, ExperimentID: ExperimentID, Stage: stage,
 		Bases: len(baseSet), Records: len(records),
 	}
-	for _, level := range AllContextLevels {
-		rs := byLevel[string(level)]
+	for _, level := range levelOrder {
+		rs := byLevel[level]
 		if len(rs) == 0 {
 			continue
 		}
-		agg := LevelAggregate{Level: string(level), N: len(rs), FailureClasses: map[string]int{}}
+		agg := LevelAggregate{Level: level, N: len(rs), FailureClasses: map[string]int{}}
 		var expSum, areaSum, latSum float64
 		lat := make([]float64, 0, len(rs))
 		for _, r := range rs {
@@ -107,29 +124,28 @@ func AggregateContextCurve(records []RecordOutcome) ContextCurve {
 		curve.Levels = append(curve.Levels, agg)
 	}
 
-	adj := func(from, to ContextLevel) {
+	for i := 0; i+1 < len(levelOrder); i++ {
 		curve.Adjacent = append(curve.Adjacent,
-			pairMcNemar(from, to, "semantic", byLevel),
-			pairMcNemar(from, to, "contract", byLevel))
+			pairMcNemar(levelOrder[i], levelOrder[i+1], "semantic", byLevel),
+			pairMcNemar(levelOrder[i], levelOrder[i+1], "contract", byLevel))
 	}
-	for i := 0; i+1 < len(AllContextLevels); i++ {
-		adj(AllContextLevels[i], AllContextLevels[i+1])
+	if len(levelOrder) >= 3 {
+		last := levelOrder[len(levelOrder)-1]
+		curve.EndToEnd = append(curve.EndToEnd,
+			pairMcNemar(levelOrder[0], last, "semantic", byLevel),
+			pairMcNemar(levelOrder[2], last, "semantic", byLevel))
 	}
-	curve.EndToEnd = append(curve.EndToEnd,
-		pairMcNemar(A0TargetOnly, A6FullPage, "semantic", byLevel),
-		pairMcNemar(A1TargetPlusLine, A6FullPage, "semantic", byLevel),
-		pairMcNemar(A2LocalBlock, A6FullPage, "semantic", byLevel))
 	return curve
 }
 
-func pairMcNemar(from, to ContextLevel, metric string, byLevel map[string][]RecordOutcome) AdjacentTransition {
+func pairMcNemar(from, to string, metric string, byLevel map[string][]RecordOutcome) AdjacentTransition {
 	fromByBase := map[string]RecordOutcome{}
-	for _, r := range byLevel[string(from)] {
+	for _, r := range byLevel[from] {
 		fromByBase[r.BaseID] = r
 	}
 	var pairs []decompositionlab.PairedOutcome
-	tr := AdjacentTransition{From: string(from), To: string(to), Metric: metric}
-	toRecs := append([]RecordOutcome(nil), byLevel[string(to)]...)
+	tr := AdjacentTransition{From: from, To: to, Metric: metric}
+	toRecs := append([]RecordOutcome(nil), byLevel[to]...)
 	sort.Slice(toRecs, func(i, j int) bool { return toRecs[i].BaseID < toRecs[j].BaseID })
 	for _, tRec := range toRecs {
 		fRec, ok := fromByBase[tRec.BaseID]
