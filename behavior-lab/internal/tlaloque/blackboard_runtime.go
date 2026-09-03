@@ -76,6 +76,8 @@ func (w *runBlackboardWriter) RecordNode(ex NodeExecution, observations []blackb
 		entryType := blackboard.EntryObservation
 		if strings.Contains(strings.ToUpper(ex.Capability), "CONSOLIDATE") && strings.HasPrefix(strings.ToLower(o.Key), "decision.") {
 			entryType = blackboard.EntryDecision
+		} else if strings.Contains(strings.ToUpper(ex.Capability), "VERIFY") && strings.HasPrefix(strings.ToLower(o.Key), "fact.") {
+			entryType = blackboard.EntryFact
 		}
 		if err := w.append(blackboard.Entry{Type: entryType, RunID: w.runID, TaskID: w.taskID, NodeID: ex.NodeID, WorkerID: workerID, Key: o.Key, Value: o.Value, Confidence: o.Confidence, References: o.References, Provenance: o.Provenance}); err != nil {
 			return err

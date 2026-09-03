@@ -72,7 +72,7 @@ func ValidateEntry(e Entry) error {
 		return fmt.Errorf("unexpected blackboard schema %q", e.Schema)
 	}
 	switch e.Type {
-	case EntryObservation, EntryDecision, EntryFailure, EntryMetric:
+	case EntryObservation, EntryDecision, EntryFailure, EntryMetric, EntryFact:
 	default:
 		return fmt.Errorf("unknown blackboard entry type %q", e.Type)
 	}

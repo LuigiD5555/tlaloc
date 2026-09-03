@@ -109,6 +109,7 @@ tlaloc_bins() {
     tlaloc-prompt \
     tlaloc-lfm2-worker \
     tlaloc-lfm2-boundary \
+    tlaloc-exocortex-decomposition \
     tlaloc-uninstall
 }
 

@@ -78,6 +78,7 @@ mkdir -p "$TLALOC_DST.tmp/bin" "$TLALOC_DST.tmp/tools"
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-prompt" ./cmd/tlaloc-prompt
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-lfm2-worker" ./cmd/tlaloc-lfm2-worker
   CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-lfm2-boundary" ./cmd/tlaloc-lfm2-boundary
+  CGO_ENABLED=0 go build -trimpath -o "$TLALOC_DST.tmp/bin/tlaloc-exocortex-decomposition" ./cmd/tlaloc-exocortex-decomposition
 )
 cp -a "$HERE/tools/tlaloc" "$TLALOC_DST.tmp/bin/tlaloc"
 cp -a "$HERE/tools/doctor.sh" "$TLALOC_DST.tmp/tools/doctor.sh"
@@ -92,7 +93,7 @@ printf 'Tlaloc\t%s\n' "$TLALOC_VERSION" > "$TLALOC_DST.tmp/.tlaloc-managed-versi
 rm -rf -- "$TLALOC_DST"
 mv "$TLALOC_DST.tmp" "$TLALOC_DST"
 ln -sfn "$TLALOC_DST" "$TLALOC_ROOT/current"
-for b in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench tlaloc-learning-memory tlaloc-adaptive-search tlaloc-closed-loop tlaloc-real-vlm-campaign tlaloc-learn tlaloc-prompt tlaloc-lfm2-worker tlaloc-lfm2-boundary; do
+for b in tlaloc tlaloc-behavior-lab tlaloc-origami tlaloc-perception-campaign tlaloc-visual-search tlaloc-native-eval tlaloc-protocol-eval tlaloc-automaton-distill tlaloc-temporal-bench tlaloc-learning-memory tlaloc-adaptive-search tlaloc-closed-loop tlaloc-real-vlm-campaign tlaloc-learn tlaloc-prompt tlaloc-lfm2-worker tlaloc-lfm2-boundary tlaloc-exocortex-decomposition; do
   ln -sfn "$TLALOC_DST/bin/$b" "$BIN_HOME/$b"
 done
 ln -sfn "$TLALOC_DST/tools/uninstall.sh" "$BIN_HOME/tlaloc-uninstall"
