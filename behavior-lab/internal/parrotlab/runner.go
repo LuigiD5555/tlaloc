@@ -219,7 +219,13 @@ func RunStage(ctx context.Context, exp *Experiment, opts RunOptions) (RunReport,
 
 func invoke(ctx context.Context, client target.OpenAICompat, system, user string, image []byte, res *Resources) (string, error) {
 	if len(image) == 0 {
-		return client.Complete(ctx, system, user)
+		result, err := client.CompleteText(ctx, system, user)
+		if err != nil {
+			return "", err
+		}
+		res.TokensIn = result.PromptTokensReported
+		res.TokensOut = result.CompletionTokensReported
+		return result.Content, nil
 	}
 	result, err := client.CompletePerception(ctx, target.PerceptionInput{
 		SystemPrompt: system,
