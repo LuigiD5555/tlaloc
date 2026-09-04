@@ -1,0 +1,27 @@
+{
+  "schema": "tonal.t1.image-lineage.r1",
+  "generated_at": "2026-09-04T22:14:50.616764+00:00",
+  "provenance_chain": [
+    "source PDF (sha256 79db14b30d58a528c858b48d859ef24ab61378cb5879782ea550043472edd8b4)",
+    "frozen D4 workflow allocation (experiments/tonal-t1/d4/T1_D4_WORKFLOWS.json, sha256 a6467a5864414b98c6b40a14f2b845ce6998008c5597f866bbca370bacc517b2) -- 60 workflows, 144 operand-role assignments, loaded verbatim, zero reallocation",
+    "candidate resolution against frozen primary universe (experiments/tonal-t1/fresh-corpus/FRESH_PRIMARY_UNIVERSE.json, sha256 894cf2b4b1ce0825dbc00cd01d50afcebe8b83ed50d4c28e5a40ad652c03ced3) -- 144/144 resolved",
+    "authoritative page set derived from the 144 resolved candidates only (92 unique pages) -- not the 217-page eligible-scan superset, not the 173-page primary-universe superset",
+    "fresh page rasterization at 150 DPI via internal/parrotlab/p0source.go RenderPNG (pdftoppm -png -r 150)",
+    "frozen geometry.operand_bbox_estimate used as token bbox (no recomputation, no OCR, no manual repair)",
+    "internal/parrotpresent/prepare.go Prepare() -- unmodified production renderer, 512x512 canvas, TargetLineHeightPx=32, DrawCue=true, PNG BestSpeed encoding",
+    "internal/tonalt1/materialize.go GenerateArmAComposites -- vertical pixel-exact stacking, zero rescale, zero interpolation, alphabetical role order (frozen T1_D5_ARM_A_POLICY.json operand_crop_order)"
+  ],
+  "implementation": {
+    "command": "cmd/tonalt1-rasterize/main.go",
+    "package": "internal/tonalt1/materialize.go",
+    "renderer": "internal/parrotpresent/prepare.go",
+    "rasterizer": "internal/parrotlab/p0source.go"
+  },
+  "run1_directory": "(ephemeral run output; canonical hashes frozen in TONAL_T1_IMAGE_MANIFEST_FINAL.json)",
+  "run2_directory": "(ephemeral run output; canonical hashes frozen in TONAL_T1_IMAGE_MANIFEST_FINAL.json)",
+  "regeneration_command": "go build -o tonalt1-rasterize ./cmd/tonalt1-rasterize && ./tonalt1-rasterize -run <dir>",
+  "invalid_prior_attempts_superseded": [
+    "Python/PIL synthetic placeholder generation (2-color gray+magenta fixtures) -- rejected, superseded",
+    "'sort candidates and take [:144]' allocation -- rejected; superseded by loading the actual frozen D4 workflow allocation"
+  ]
+}

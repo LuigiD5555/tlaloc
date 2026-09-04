@@ -1,0 +1,1227 @@
+{
+  "schema": "tonal.t1.arm-a-composite-manifest.r1",
+  "generated_at": "2026-09-04T22:15:08.151534+00:00",
+  "policy_reference": "experiments/tonal-t1/d4/T1_D5_ARM_A_POLICY.json (policy_hash 6ca0e269cde8a7c31d0ea013b8663b3f949cacfc0c52328ee67bdb1a93c10cf7)",
+  "operand_crop_order": "by_role_alphabetical",
+  "composition_rule": "stack_crops_vertically_with_padding",
+  "padding_px_note": "The frozen policy names 'stack_crops_vertically_with_padding' without a pixel value; no padding amount is separately frozen anywhere in the repository. This materialization uses padding_px=0 (pure vertical concatenation) as the only value that requires no invention, and records this explicitly per instruction to not invent an arbitrary constant.",
+  "padding_px_used": 0,
+  "rescale_count": 0,
+  "interpolation_used": false,
+  "pixel_preservation": "144/144 (mechanically verified: every operand's pixels appear byte-identical at its assigned rectangle in its composite)",
+  "composite_count": 60,
+  "records": [
+    {
+      "workflow_id": "tonal-t1-workflow-COM-13",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "07c045291cbded0024d8a4baf3791d43",
+        "07d95f27efb073bf69b8063e91916b23"
+      ],
+      "operand_sha256": [
+        "bc4ab885aebbe500612849c546ff00f0905926578a6cc62bac4831090b652953",
+        "f85e54560aa6bb71801313ed46a6ad5c20ff130b81d7da4e83abf40e8dd84e15"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "267f088e9f3429f0dd1b7de06ab0ea672b15e0bc16cd9467a4170680d6d9829a"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-14",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "086cc2e907ac3c5eff154a892c03f9b1",
+        "09d9393377808a421288d4631b1a48cd"
+      ],
+      "operand_sha256": [
+        "8d923e56eeb3d2b23416051cde1105bd042bcd11007c81cc2596cec761d32955",
+        "c8af5e7b8e377c65c6fe55704f79031ab1aa6564f304643c68a69451d7724a6b"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "008dd99dde00bad39a0b5bede94fc5f62c584ede605293ebfcb1464e5ed5dd18"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-15",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "0a3e98328a43770157ce5c3ed763d495",
+        "0b5c495ccfb9cd57e2f06c3452cfb9ba"
+      ],
+      "operand_sha256": [
+        "c81c4d111ba0a1d67bcf212ff651ca4f05a6e90bbd81f072c321c0e2424d607c",
+        "02212d678981a528f54bac72ab7a86b6b95e5ac9b20f79746c24d39e4875673c"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "ed5b83e9688b480fdf4e183dc9b4793afd1203ca80b18367b52087cabab91089"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-16",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "0c89b62364f406a7d63060a36fcb8a52",
+        "0d0b279732dbca6d016a8c56cbee1ece"
+      ],
+      "operand_sha256": [
+        "04445335130e370b0883183e75a757cc5139d7c84a7edc137ce33037d11b3f49",
+        "53110d894c3f7ac7d720d081779f03d1d55284aca41e1e6fd023b66d8a0d078c"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "6c1459c472e185d6776e02a7d32d121b97c665e9a5a228c17591564e401bdb53"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-17",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "0dbe4ca9cadbd40d3bae567ce1f60722",
+        "0eb66a0920b4109fc0a0d25ea29f6ff1"
+      ],
+      "operand_sha256": [
+        "1adc0f2df4c192e298fbdb577cde17702eb85e70c6d6b7a9f972aa603d8e6af4",
+        "d5195d51d3861eac01507fc4cf42449be162218027643bf7feca53fff6d7b9e0"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "47d296e8293acde4afcd78ef67ad99e0c584dc8b6eebd54627a8caa1c11040ca"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-18",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "0ea6e820d333e71d0c2dc0362695e183",
+        "0f91a76f65c4c07cd4a0de690005d553"
+      ],
+      "operand_sha256": [
+        "99960683efbf633203cb489d33987d1970cad75f890ce165c4180b2fffc230a1",
+        "152d15785ecdc37cc7547427a3279870cf03efd9df688cf818218497e35fe6bb"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "0001f8684553f2be138e34d7e53466420dc933c3c2484614c665ff0aef82d4b6"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-19",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "0fdd29f7a4bd2c6d16d8a01cc37c6213",
+        "101870fa4732e68e98ff63bc6c6c4fcf"
+      ],
+      "operand_sha256": [
+        "c7e5356e3b81ee1ed816db85f6504a5b79bb892fb2378670411504441f1c36aa",
+        "e1a35bb0f40b683696e6601f4320071faaa8f3b6632a6738aad17c3aca6f4da6"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "393d84da0b2dbbe3bf84a90562bba565cd2aa583722ced4216a08ea051550b27"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-20",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "10e4b547cbe501f5d8182edc44e202d5",
+        "116f290f632e299a0767175938fe9df2"
+      ],
+      "operand_sha256": [
+        "3b6938ff64fadf6f62ad03332d354588f01effea9a96153d2fb1d61df8587298",
+        "8804d735d22603bba29ec73c377d44f5e013992d8d90846b2d44519dda0f6819"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "df4d319dc6c364fb5c12da14f310c769c977b0a2f7a5ecdf5f00a305c9c6f92e"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-21",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "11a1bf2b04ace301e3d3a56ca5df6e73",
+        "11d877cdbeddf1d62d963224619faea8"
+      ],
+      "operand_sha256": [
+        "aa2d0c1a8864ba446b455879a1ee2d5b404c30a40ec40135bd4eed9022d8999c",
+        "6eb2a9a2bbe6682dd211d6f9c23018423d100cbfbc76087a6004fb941935b46a"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "a9e2a67378c8c8adc50b7f58a35eb50463c908967536fdce4e816f3888f404ce"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-22",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "12c7133dfdfeb1ff58b9d331fd2b41fe",
+        "144cb1f5e67cad833d298e3515fcdbab"
+      ],
+      "operand_sha256": [
+        "8b5441da918815721746eb4c8d993ae646129de802a4042d000c9f464a8eb854",
+        "660fa6524fef4445b48eba19318f7986365146b264db097c6e5b8fe4e9938da5"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "b4a4a20ef4762f1b08551b7c12840036ca7091ca162a8c623f48399ce01a6e57"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-23",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "151abc59f5ddb176582749f217880696",
+        "162d06f3c67bd7f8eef9cb43210264ed"
+      ],
+      "operand_sha256": [
+        "3c872a471488415cb1a53dc7bf37cecdb206e41ae21b03d911ea568570bb6b70",
+        "ae2108fca416bc46de4a9880b16be1d4acd0b5db7c75f07b55b7e67d70d286df"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "867e07af470262b34f12eb730d52916950c62afd26dc08d0c184ef9a9b189b55"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-24",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "163be6e182aec9c08660c4dab0e821ff",
+        "1796a31f7df1fd8a1dfb78dbfbaf4e40"
+      ],
+      "operand_sha256": [
+        "98a150c6d6a691f98361bd3b249507297a2057ece0f18090f513d34a158f8e0f",
+        "3cb4e9b4eeca34b1eec50650f006df24a4edc48044e672d31e6678a17ef88269"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "0ee6dacea6e6df128e4d7247d740ca5661f9f4819c40da8a5e7944352b18d82c"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-25",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "18b776f0a5f56acf4485327429e33ad3",
+        "1a4cabfa4dd55d60ab5302f6734102ab"
+      ],
+      "operand_sha256": [
+        "427bdef98dcb17619bf7ce1fd504bc11e597822e5e141b33b9094390d50c7da7",
+        "cc1dbcaebbfc139057df40dfb85715e291f95e0affcc7b4ab20091a39f1229c6"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "4c058cfff3b008b31c732866bcca35b9f163575f90ec8d5b90cbfbdbcfc8afa6"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-26",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "1a9d63d227384c9adcf48faab2414658",
+        "1acd8913db5a867516b7b6d214e3aa38"
+      ],
+      "operand_sha256": [
+        "4167567bce52bfde78b0a34a92c4028e28b422152d348ffdd867e4f8b3246b21",
+        "dbbd72393a962fbf6225edb31d98b0829a131f1cff2f7230c58523f9a532a8dd"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "ac5b3e4ca3072d0731f018f465d6e64629e80996f844e2803ac85b8802269e6d"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-27",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "1c5f975c8dc4cc3bd0c68078e726c206",
+        "1c8636967abf8a8d6005b4f66025eaf9"
+      ],
+      "operand_sha256": [
+        "370388bd959e1f0bfbc32ee1a0d7c870041a7f4484cefbb0a9c72e031f2dcf8f",
+        "ecf343f6cd308d0278f2157b11292d3edf09c25884c0780120fa2e6c954f8a48"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "6e023c6759b31ca6807ca799b118d5bc39ecaa479030500cddd3302ec2703dcb"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-28",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "1e1a79269b7e24a6a608623cc6a75a0d",
+        "1e1ab031e7bb77a2a5c026996477d3ee"
+      ],
+      "operand_sha256": [
+        "c8b2fd9b64e42a48ee20f6497a08813fb2abe5275c5b238b2c9a3527b748ebf9",
+        "98f4b70c1e774b65d85f8ad18d3f1b08449912a45c329e50e151315a92d96e24"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "5fed03fe32c9860b6fdc27e80a9dbd9c82f3b8e53d37a89c395a64f403e37e34"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-29",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "1eb7b95c00f82dc93c824f4d80f0cf6c",
+        "1efc77cd2a82756955ffc79af64d6990"
+      ],
+      "operand_sha256": [
+        "eefd63e0534479f4ac494b32949a1b23762c73386e4716b2ea1b83a658a08bad",
+        "e83b91c28df8e88b8738d5b9774a75a01932116f3cc2009401626d4fcbb3b4c2"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "394adedf276b44b6a6eb607484a9396d5dceeae3717d8c8eaf1d00ecd4aa2da2"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-30",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "1f7ec5393d5d2778860bd453f25584c4",
+        "1fc2a453be48344a72fd9b5bf677f0c5"
+      ],
+      "operand_sha256": [
+        "8414f4957266792a1a6f6f0cbe0f286fde2e3ac979e729a39bc0571bf3846033",
+        "32d197ddc308a9842a0400694231aff20b6cf4a2cd68d9133b67cd23f61bc147"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "8aa81d9e5245f45059a930597df9a87523b254e4ba203bc03e270ce7fa4842e8"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-31",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "1ff644cf839b75495ab2194344cb8866",
+        "20288c41b638bb2b2870ec7b16eaf8ef"
+      ],
+      "operand_sha256": [
+        "02015dc295c50067ae3b93ccf1dec86e8b640d67e92d8e17c35f3d7e4617cf29",
+        "b4bef9489475bafe17341d8e2e325cd0f568f8b2209690d958c83c2213e982a3"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "21b6f8b5927c11870975ec9245a1ea7b1962ddc778c2ded0b4d1514809af514f"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-32",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "2069f3b4f4228c125794380f04f23530",
+        "222aa5ac493e379fef789dfb03f7dbf3"
+      ],
+      "operand_sha256": [
+        "d816e68543354d19695a6c1ea9323a26f4d55684d27f4cbd54ded0e2da93a53c",
+        "4fdc3d089d3fd1fdee09d052adba5478ffdb637f1ffa5b35108e887f84ebaf7c"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "f54504fdfdf7f48c870833e299d2b51b67593501d2ea3022740588afa750ce45"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-33",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "2249ac87793fb10d5d78399f8c65242e",
+        "2265a78a75772885c29cfe8d30a281e5"
+      ],
+      "operand_sha256": [
+        "af8a8506b89c1f84a2c0c73eaa4e1970e99af6e9e46eebeadb011ec961b4921a",
+        "2578465865f17a2e1d14ac27b3ad61ade121799ded24c761526e44a8cee45720"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "3caae8385091f84480036df08469e08c5667da531793cdd32484838d2c4d1591"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-34",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "23a92f1628073acb03edf70cee500ccc",
+        "23cb058d69f72f1f6923c4ce416ade4b"
+      ],
+      "operand_sha256": [
+        "08eaf87f8976632bd13fa26d01c5675a953917478939549574adb04fc7f13157",
+        "064223a5810c59e2699b908585e42010495fbb788de44448273d0a488ca59566"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "344f6517171fc0f128c87025fd99a2eafdc1930c2903ddd791d49e2f232f405b"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-35",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "246173b840cdd9c0ea839d5f82de3b76",
+        "249a8957f80ac4ea06cbf88fc62ed986"
+      ],
+      "operand_sha256": [
+        "8663facaf3e66c54cecf2b374d0f0f0ba8a0df21bfd973472547a939c39be5ec",
+        "aa94f672ca9eab96e9ffcc13a8f016d01b944955538d83f7cf5501df9b1362b9"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "b54ca22742649731f3a85e6148eed26ca1ee131ca4661acadf9ad751ae48b37b"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-36",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "24bbc2fd1c7c7141451777fe03ec8903",
+        "25e99fcd12c90f94837202830402c5f4"
+      ],
+      "operand_sha256": [
+        "eb96051878b0209c784c1edbd854127be7caab07600f47fdeb54788b542222c5",
+        "66d893ed8eb58793ffe4d13508d777dee63edcf6f00775a0744ffbaaba5578ee"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "composite_sha256": "fa2898b57a1476e37cd102603ed31dbf6b4d7f5b2e333110a00fa8a7991fd1f9"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-37",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "2681397e09234e8720a8f3812e103abf",
+        "269660e56465d1d543fc57c93532057a",
+        "26bd220228613469923698af18537820"
+      ],
+      "operand_sha256": [
+        "6b0b05c97ae1381b759e9effa1fe83776d006d58ac7e7096bca727558b5a649c",
+        "123ddc105c3b438deabe38b4d1c8cf381a1255d09ebf7826b20f4850dde528c8",
+        "442af7fe514acd8c4d0e91303f1382009ff04889b6855285528bce5cf334a4b1"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "composite_sha256": "d343e76a2840219e0dc3492cd2acc909d55b165b4d54250b5396a9cd1917c876"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-38",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "26fae9567b790a2ac3f16671cd2c71ba",
+        "279a89daaea4683a18f158d68357211e",
+        "288f47a1102a6cc3758dc3988dfb3978"
+      ],
+      "operand_sha256": [
+        "bc6b157f3fba078364666d49479f6ee54b67156e136bf1aa30335a25b8d26da1",
+        "437f565cd6085458b8ee60ef391b37c888bb6daa175e2e0b7d44634c67b822bb",
+        "e464c45b7c8da64624b14fca73c8df179179a7e7a1494982325f017774a06f7e"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "composite_sha256": "f24ee966949177cce6fc47364cb5cec59bdcbd1dc7869f6e1935806b5666fad7"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-39",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "2930d18c78b8fe6506584ddcaa2d6d99",
+        "2938df34d1588231d581305c3b52417c",
+        "2a096ec5e130341fa89720187d863e39"
+      ],
+      "operand_sha256": [
+        "8ee3f6516c9d11e2219bd152fbd48571ef0ba9f07a1e0c2fd037d30c4382bb95",
+        "1cd01613c78bcba701609f4a1d17a0120d396a384847e3c7ad292053c4842b79",
+        "08cebcb16cb315c75f7623b42fb8c67745899aab8e5f1a58bc068f3f4029a9e6"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "composite_sha256": "19118cd5f94f7082b49b39120c5fcb8c00cca57b8d0d858a8149c9a6dd6aae00"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-40",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "2a2f55b16e91e1b356dba2f1415909a1",
+        "2a8df2c03a3bacbbf36f3a6e97d69cb2",
+        "2ae510a7b164d04ee718b0adde5f4309"
+      ],
+      "operand_sha256": [
+        "bbf58e7be8eed1656e56f01347033a851052d9d5068071839a0edb6a7becade9",
+        "a343c70b71b6d55216ecf2603ff89c82bb89c97e99a14d2198b4fb1297b431dc",
+        "23d5ec1b4e1d548ccbbc86e368ceba9446b6a23a75a02a08ab6b083cd881dafc"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "composite_sha256": "009ebb1b71197720f5f692153d62d09bca108977916f60773894e3460c833e8a"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-41",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "2bfd254846717dcb81fe30c0818c2b41",
+        "2c6a97e859260796ebcad8b4de9059c4",
+        "2c80087b5f79453c91463967f301b2b4"
+      ],
+      "operand_sha256": [
+        "af19cf8ddbd952166bc0eca59c0a60839f685568bdc0d0715d1807a39b62a9e6",
+        "119fa06035cf48f644aa3f2066671633a4676a6acf33875b2e36c9e1a113bcc2",
+        "d36dba5586deca85ef6dbd17be2c4891ba18f8e43e955b60612440f67b23096b"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "composite_sha256": "7c90b00605f092793ee8bbd914510a625bce22ee9e69001c830e79a9b0801de2"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-42",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "2c96074d27cb42a6ca7e7b3fb607e2d6",
+        "2f78254622e01d0054161b38c27c5b08",
+        "2f9b8a6f1cf42dbdb67ab5f61836da9c"
+      ],
+      "operand_sha256": [
+        "d56c1804651a213fa3229258ae7dfde7ef57ec2152e9898c9ef666e72af0ba0b",
+        "bb101909068a64473241a1d09149f6d4930d625d2b2e8821840866f17aa36285",
+        "fc1a4788e05ae174cbd34c5a725d8182013c03afcd4b7f7d13e27edf9c9e1626"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "composite_sha256": "26683d2c0d25126d5f052de06d7fd6f4c4388764e6c70597d1808f1ff86fc5b1"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-43",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "2ff340e0906fa8c01c86045e836635d2",
+        "3059ac3a58f75e32b6d93e88add7992a",
+        "30d35de3c2c9968caac13b9fbba0b385"
+      ],
+      "operand_sha256": [
+        "ad9fdac9f7bc5775891aaefb4e7c0fcf28c9226ddb74eb49e0a126b91453537a",
+        "228a8f55331bd86a8f6018305d12edf1d2459321ad96530d017d3bfc262989c3",
+        "2d1d51b9b8f480c9821cdec98a7cbc9361bee3bd6b5567779c3eb6ff67f443c1"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "composite_sha256": "d0aa87db3d182b93d4617d3e439ccca49a73e1227d252f1b5dca6fc63cf23a09"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-44",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "310b8ffb7ca9871a228ccfea6c112934",
+        "322b44a441351c29847a08814748b8ef",
+        "32dd9eb95dd9bb8cd9173ce83100360a"
+      ],
+      "operand_sha256": [
+        "50b3bc1bb5bdecca678bff0130fee3b04ad0ff13d110755b3e4d22b8791158c6",
+        "d5e145a2148b2b49610ea6f1e331b630af6db01cde358c45d14a2cdc9ccbdb56",
+        "a6ca3b5993336e37c2585703b3e2aeb4a0119cf926fcc6a0d0d715b4c2210366"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "composite_sha256": "cd15f22d607bb7fc5d08cc634c51f4c7147b63e3a04d59a8288744dd123ff6b8"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-45",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "33a85bb5f9b70de97415ec9689dd6d6e",
+        "33ef946cf1e93a449f238db3716bddec",
+        "342d72b317f415145fd7fee4028ca580"
+      ],
+      "operand_sha256": [
+        "5f36e5a6d7cb1d819519c97fc4aa951218f638f83c9d22a5ecf058b530fa2949",
+        "e9f57c52f2d1cc782d4fc098fe611d3b6f0912eb74889f5030a7b4d4e333a7d6",
+        "3eaf6180facc6cd54755e4e233c076d7ffe46c933539e96d7f8332655ea3d621"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "composite_sha256": "eec6c3ddcb7875007054704bfc7320bf19190a3b18975eb4fbfe87d71ae9a22b"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-46",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "342f6e8c5361128d8112ee49f0bc1dd0",
+        "344d54b10c93de8eaa7b3d61eb7e0081",
+        "34a975f221a99f117d66d86800d7ff2a"
+      ],
+      "operand_sha256": [
+        "399da8819d67de001595d882bfa084a52faa895732e2d8b775ffde40fa85aac9",
+        "f246d448be9aa77abc1249893ff7e74e3de5985f8e871d085e61fd403ad41ecb",
+        "4359a19fe33b7155175b6dcbf1db51558a1eae95ba69d219e39086a65a64a5b6"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "composite_sha256": "aa769e494de30270f8edd7500276360d34b18de2cb8742e9317139913f8fb064"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-47",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "350bcc0725dfe25dbea98a165d00424e",
+        "353212d6998968ae9e08be6c480907e0",
+        "35348afa7c5284809f377524369b38e6"
+      ],
+      "operand_sha256": [
+        "756d4f897c6722cb5ec95fa9cd26d335a5cf6107d20b8b5640bdfeee4435412f",
+        "cc92a9581fed28f4f5d9b331a1db53c8997b57b1b6e6a41ec905577511f96c16",
+        "b368115192b4bf9c5334d97c0cdabcb1428171df12c19940286a84840935d236"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "composite_sha256": "83d83e769b6bc95dc5a93d78b7744fe255e212264b2fca80f56f8aadace4bd46"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-48",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "3554018d30b581ea648685304b9d95a1",
+        "377663d09f9e722553f362d653b3b0b5",
+        "3873840d77d8ce7e3b9a73ad8e334fe0"
+      ],
+      "operand_sha256": [
+        "e5ee26c2431d62bbb1aa32e585cd6ec16ad2fa4f7187699fa5309bc8f52610fd",
+        "d21d5c9453bc4dd23cabf195bb66a29f70d344bba5cc28233f175ee10e33f8e7",
+        "201190e2ecbfdbe17ace8d2d4fc2cf95e4554d9dd3fdb03765401a7f55d7be4b"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "composite_sha256": "f714f1d3cbc8f68ec4cfc60ecca39f9e0940d89aa1696d96b06f983f4c2a7418"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-01",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "0055ea76c2d9c3b1359ff621263c2853"
+      ],
+      "operand_sha256": [
+        "337f9e46648c38754f35ba895a5c3ba7731a13547949ba3e3c89eee518331227"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "composite_sha256": "337f9e46648c38754f35ba895a5c3ba7731a13547949ba3e3c89eee518331227"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-02",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "0111d38a8384cc11d37799f5309a259b"
+      ],
+      "operand_sha256": [
+        "0c5bee6ad3021e485c83370a32394eab5de0d8ff310b6b8ee47f760881f4df3f"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "composite_sha256": "0c5bee6ad3021e485c83370a32394eab5de0d8ff310b6b8ee47f760881f4df3f"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-03",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "0275f92983318166187a1d1e070135b7"
+      ],
+      "operand_sha256": [
+        "92ec59986f5a0afe454d657062710f2e657b81e5a1802235c7377cc10a9519c2"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "composite_sha256": "92ec59986f5a0afe454d657062710f2e657b81e5a1802235c7377cc10a9519c2"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-04",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "027b3e1ef77418a652e10f1150b68c6d"
+      ],
+      "operand_sha256": [
+        "0605241a5c995f777c17850c8533c8528ced170f24c73b0887df3d790e4752d4"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "composite_sha256": "0605241a5c995f777c17850c8533c8528ced170f24c73b0887df3d790e4752d4"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-05",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "030104cc11ece01e29921b47005072ac"
+      ],
+      "operand_sha256": [
+        "b9db23fd205a48d712df75e4ddfa911c0d113c3d7c3eff37f3bfe8b5fb3ff7a2"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "composite_sha256": "b9db23fd205a48d712df75e4ddfa911c0d113c3d7c3eff37f3bfe8b5fb3ff7a2"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-06",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "03a121652d66d41eb89f885682907fa9"
+      ],
+      "operand_sha256": [
+        "0010c3be3eea996b26629347b1f40c5bd47e084a8a417ad5153b358ecc091d38"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "composite_sha256": "0010c3be3eea996b26629347b1f40c5bd47e084a8a417ad5153b358ecc091d38"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-07",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "03b5ebb725faa7a08322c7d7b4dd3d61"
+      ],
+      "operand_sha256": [
+        "01af9387faf9d7bd5f543701d801a05d5fd6a7334d5a17740bdfd23dfafeb68b"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "composite_sha256": "01af9387faf9d7bd5f543701d801a05d5fd6a7334d5a17740bdfd23dfafeb68b"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-08",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "04a621a5d833cda5fe68e4ad68761383"
+      ],
+      "operand_sha256": [
+        "2e7894e6cc9ceed274b7b544e08e0151bb4af20a99b9a977353e4f7bfb1b5bf3"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "composite_sha256": "2e7894e6cc9ceed274b7b544e08e0151bb4af20a99b9a977353e4f7bfb1b5bf3"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-09",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "0693b58db1bceeaf30bb60317a971fb0"
+      ],
+      "operand_sha256": [
+        "8d53b53857d56fd065043bbb48dbd753cbe8a2fb25ffa05b51847c7826ed334b"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "composite_sha256": "8d53b53857d56fd065043bbb48dbd753cbe8a2fb25ffa05b51847c7826ed334b"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-10",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "06f18a0d414e7c0ceff092adc39db7fd"
+      ],
+      "operand_sha256": [
+        "40f0f869ed087bc858b9d9890ace094174f8f4a930f834e661439972569c4838"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "composite_sha256": "40f0f869ed087bc858b9d9890ace094174f8f4a930f834e661439972569c4838"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-11",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "0760d600ade74b7c31f2e40e34f90a69"
+      ],
+      "operand_sha256": [
+        "d4a3d597ee8aa482827c834a0101c511b1af7a8ec8871d51c0deba6d6317a444"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "composite_sha256": "d4a3d597ee8aa482827c834a0101c511b1af7a8ec8871d51c0deba6d6317a444"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-12",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "078bb4b81aff4a66635a8b570614fd18"
+      ],
+      "operand_sha256": [
+        "eba1f718c465f6333d7067bafe80e5e6a7d424fc85c7128a4b83daea601ad5d9"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "composite_sha256": "eba1f718c465f6333d7067bafe80e5e6a7d424fc85c7128a4b83daea601ad5d9"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-49",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "38e33ffc86d19b6d5ff20c475b024e7b",
+        "3a77597ce92fd0103711f8628124c9a2",
+        "396b6a824368959ebaa41b188080a415",
+        "3c095dd44d96adebab6e9c531892a432"
+      ],
+      "operand_sha256": [
+        "28a43e8dbf1a1b5f0011b54bac1f6093ddc5b049e6ccb4b738231c0973f6635c",
+        "e181ad73c6cfcffd184f9e5dac082ead0079deb9a154caa22be5f2b68946f64a",
+        "45a972c1123e01272f6dea47b5e521f1b9cd022d34162ab5c110d66d49292c02",
+        "19246c5857f45bfae3f07da297ade0cdfd42ba85e6cd4308cb1fcb49934063a7"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "composite_sha256": "9d9539bbd2e91bdc8443a97a9cc6ce9ecafde5689090754c733758e96fce2d1e"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-50",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "3c5107c0d831782e8f395209e35117cb",
+        "3d03914521ab699b1ad1a37cb67c07b4",
+        "3c8f4542235678c69b1eaeed6b399d70",
+        "3eee0060d1949e2eec88aa551134a2bb"
+      ],
+      "operand_sha256": [
+        "9b3bc3308c0785125cbd25f135cce3853377bf89c08f0c115b734ccd68bef1d3",
+        "038c1433680644a34c88a72eb712a6207c8994f476760986c62e4abe4779ea33",
+        "d765d13b134e4b51f46808e8a757c2b08a23f427ab92b181148e2f064855b773",
+        "e27052e02ebf99384ba7e435783eee8f5faf40d1b4d1abd03ab9a17bae9d671a"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "composite_sha256": "8ae11bb6a3f356fd90933c81afba17c0361bded687d55c5f2fa072092bb6e683"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-51",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "3fa6f0cc678396b8cac24c9a8dccbf46",
+        "409b9900412f2046cf949b09f58849e0",
+        "40051ceb4568650010bd5780d0d282ec",
+        "41f542593add04b30869759ab6d791a9"
+      ],
+      "operand_sha256": [
+        "d4c253f0a3dcd293359506087419be9a2c86ea4e0f9efa6a8e6113723324f4dd",
+        "fcb710cec2a4ca2e45b0b488315114c5bee87461badd1463f23cf52ab0179248",
+        "0e8dcfeefd64589dddca4864c312e549f4918cbd5898554d020819869a918f30",
+        "2e4e604020969bf5d92b40c6f6cf6d5674c84d4f5a195f0dc5b39fa6169ee643"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "composite_sha256": "e1267c6c0de7d6ab388a0501a1f663404cf0aace84ce6b616841bb99defae8d0"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-52",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "4249a2e4a698a9d14f80b0399d8807c5",
+        "4322df5db672e1e8278c03a758889959",
+        "425ce822d88b8f46749b4b71dbaf8b07",
+        "433bfe6b387a1e75f21c9a4eb5e848a4"
+      ],
+      "operand_sha256": [
+        "13c4bb3da71f822470cb97d49b85d545645e16f07b36119816a26fe00109cce2",
+        "f37f0dd8c0b219ba39438f8359332f1da0c517c9e3dc3654ef7028d7565cd67e",
+        "6b9ae39843f83f2eeed022f256a29fd0214a73d6cdcc4020e56553be9f103c41",
+        "919a403316fe94aaf6913fa998231b3c2480a7fb7c856d37dd251c66dd5171d0"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "composite_sha256": "44bcb04b10461c2deb02ee6343c057b61d5d6a125f7e5ad9823b97f4d8d945a7"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-53",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "437ab57154e914fea52feb4170e08557",
+        "4540c67f9df8728c60d954dd32b51cb5",
+        "452b8b3689fa5dac3eca2b7ebfec7e47",
+        "458c4963312272dc425956e4b59ca74b"
+      ],
+      "operand_sha256": [
+        "833c013c11354c82d490a7ead369b7c69646a21f1ce67caceab674088e5545ae",
+        "1a158e6ed4e0f89f8f0fa5269f1b87e7acc5067bc5d79c0c96c79918df0bfd81",
+        "afb30be241f04ed9bb23985f2ee517a319f1b88e75db3f0ad816fd58bf5223ce",
+        "4ff1017e4b1fe0a78d5de7a28b41f0d83e7a274b07a2322d6674894c0fd50c40"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "composite_sha256": "d626edc682730a220927a835c8163347798f8145aecdbaaedf5a1573f3931cc1"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-54",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "45bd4b2032d3e0132fba5b8501817eff",
+        "462f70aaae8a65026c0b459504afc9e7",
+        "461aedd4317f2c9395474c3a3ff9cee8",
+        "46bd873a362619e27207041287f7ccd9"
+      ],
+      "operand_sha256": [
+        "b8747784614ff5e75651789482b93fff87a41ac6bbe457b55dba854db673a3a2",
+        "5b235d7559eaf5b64d4a83f5e4221fd5f20d1715fe2115f4590d374cd3b8182d",
+        "2b2258464a4a5c80e1cab0353e16af051dc5d68037a6941d6faef6ec1c41623d",
+        "186623a4c50b238a7521e70d3f3c5c51617eca1fb09a7ac72684785081fb4a66"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "composite_sha256": "deac42a9f8a53d4f0dd05572e372c4e851353b084fba215d70c6a33f36fe289b"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-55",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "46fb266d0d52ee5e6b6893743de5cff5",
+        "479fdcbda0c8c87240736f42f07c31b3",
+        "4737ba865e7b6ea695eb179a89c5211c",
+        "48ba2d688e91fe24519dad9e4bda6f1e"
+      ],
+      "operand_sha256": [
+        "c99899ff601df311f56605a7dc05730bf8459849ef2d77af609a5ac9f07c1ea5",
+        "b473213d152c86c3c842caf79a40376abbeab15b66bdaeb4b1fe4cd8719340e9",
+        "df853e5df361ecf0b4e92ca8ad2ff97e421b5e4f28b28445c83cc53dd43df0a6",
+        "d8193c562b77ef2d694e9cec721da2c0d798f51112d83143207bc1594675393a"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "composite_sha256": "0e1580d80551a677ad84a54694122a8586e28f087ba3b4b5075acb0859310870"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-56",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "489087903a86350cd5ed9362743a9936",
+        "48e6e85070ff9d9433d01af9d33f1b33",
+        "48cb4a3d9fb9a9fc72283051f50748db",
+        "4acb556fdcf3d836c82775341e23b2a5"
+      ],
+      "operand_sha256": [
+        "f15edd1aa07e48709fd6ec6ff6d4887ca552f1125db4f2706eab7318bc03cbda",
+        "245fc3a3fab8797ac9bce2f5aff12da1befdd375b616c97dcddc57876aedc2ff",
+        "cdc1c1cc8a4d24a098d46b317c47d967b9095dc5c749d4ab3dc2a6f9dcb379d8",
+        "3a4119ca8809fffc2ae4d46563aa02958b2b7a818d5aa8a78467fa2f36f5efcf"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "composite_sha256": "06035ab08c007999161fc1b8cc66cd275c99cbe5a9a55aa50206fba4267b0dff"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-57",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "4af0b6eeb086915646739bfe0cb7bacc",
+        "4c062842594afebc8c7ea9e8dea4f204",
+        "4bc305ef0ba2ea247309e2578ac4de2a",
+        "4c1d148b7445257ef375711b9ac3ab83"
+      ],
+      "operand_sha256": [
+        "b83ab68a0f596e08f31ca6942f2130da595e69c99e803def99ff5de7e13dd21b",
+        "55d48e934253348e20e3c5f067a14c02dc0bbf41de0313d075bbe19b7dee2653",
+        "46c00630a6857635a7886e256fe216f6bda824b37a282b7bf512a662e044bbce",
+        "c9f28a1746d6af17fab4da2009d077f162259c9c1cbc173688e241725c767a75"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "composite_sha256": "4472acf8b1b6d44a65e75b5f9ae874f005406ed99d27d9c1d91417fb2a39aaf3"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-58",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "4c2eb0677833eff44dcb3d71b4f88c62",
+        "4e96788732356770ad7b1dad2e387e03",
+        "4e4fce82f841d1cb92bfca31aed8c9e5",
+        "5090960eec6ad7c95645ebbd3fbb732e"
+      ],
+      "operand_sha256": [
+        "16a16882de1b239aae7518cccdeab176da1b45adaf123ef1ec4fefb4d8d5004a",
+        "f03d5cee2aa700c1eb023b1e245ca2e9e108d895dc52a3459ca8b64ddc5eaab7",
+        "9e150e5f62da3dfe5a73bb88abc9281697e5215e4c515a5f27d7eacce4858e08",
+        "53ba9e9c5eeafe952614acdb31cfba460264c935eb1d5717b2a67d3052ad7e36"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "composite_sha256": "fac93b63daedd3ed10b5ded805c32968def5e5ca3279e8624f5cc2daa055dd67"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-59",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "50afa4dcf283a1c8abbef0751f2d3f1b",
+        "52abbe876669a42a08bc34ae1e0e4b2c",
+        "5287ba7f8f0719dd827dddd577ecca32",
+        "53d87571042f563242871a441c6d8cc3"
+      ],
+      "operand_sha256": [
+        "ab96f187a6105caffdb81acf3f8662289bd2ffc386113969c01a99da44e45336",
+        "661819c4d9216bd6fb1ac5749c0de7b329db36f9fea584bd1e2580ebcba82f2e",
+        "1d37d836a9422fbdc61a424a061cb7f98b8e0865a639a8087ae648e8a1c6687a",
+        "63938627113f1d72da1c46d1f654f27b500e462aedf6333ceb96b61908b8222d"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "composite_sha256": "f42276802fcca186b0a4e041288078de9deea8d8ef494c5e4f09192ca65af64c"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-60",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "5476afef2f7b4e60dec271cf6e8cf335",
+        "5620015a8d4fa81ee4ee4e31a5b178fe",
+        "55a9a7ed90a74c26bddc47a9904c86e5",
+        "56476b00fb29c4a3aee09824c4cac0a2"
+      ],
+      "operand_sha256": [
+        "64c0dd013be08544ea7f3f3799163b0dade0aba5c27709ca96e5c43f9f269722",
+        "08aba40fbeb4fb39b7c3922b9badded4b82705e7edbd37e41abd4a9f28f5c0d8",
+        "59d682751c5c48f6e07d627c5c95dc5ad19f2cfafea8daee9e713892fc7fa1eb",
+        "bdd3c6067b5776b3b97f1ceb7bb386e1b462c119868ac051db360cfe1968a920"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "composite_sha256": "704be2f857e92986a2eea826bebe50af9850b38e1c5b4cadcb64da01a214517c"
+    }
+  ]
+}

@@ -1,0 +1,1018 @@
+{
+  "schema": "tonal.t1.d4-selected-operands.r1",
+  "generated_at": "2026-09-04T22:14:17.040627+00:00",
+  "source_artifact": "experiments/tonal-t1/d4/T1_D4_WORKFLOWS.json",
+  "source_artifact_sha256": "a6467a5864414b98c6b40a14f2b845ce6998008c5597f866bbca370bacc517b2",
+  "operand_count": 144,
+  "unique_candidate_ids": 144,
+  "operands": [
+    {
+      "workflow_id": "tonal-t1-workflow-COM-13",
+      "role": "A",
+      "candidate_id": "07c045291cbded0024d8a4baf3791d43",
+      "page": 443,
+      "region_id": "text-0085"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-13",
+      "role": "B",
+      "candidate_id": "07d95f27efb073bf69b8063e91916b23",
+      "page": 178,
+      "region_id": "text-0060"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-14",
+      "role": "A",
+      "candidate_id": "086cc2e907ac3c5eff154a892c03f9b1",
+      "page": 122,
+      "region_id": "text-0116"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-14",
+      "role": "B",
+      "candidate_id": "09d9393377808a421288d4631b1a48cd",
+      "page": 340,
+      "region_id": "text-0037"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-15",
+      "role": "A",
+      "candidate_id": "0a3e98328a43770157ce5c3ed763d495",
+      "page": 122,
+      "region_id": "text-0097"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-15",
+      "role": "B",
+      "candidate_id": "0b5c495ccfb9cd57e2f06c3452cfb9ba",
+      "page": 89,
+      "region_id": "text-0066"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-16",
+      "role": "A",
+      "candidate_id": "0c89b62364f406a7d63060a36fcb8a52",
+      "page": 256,
+      "region_id": "text-0013"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-16",
+      "role": "B",
+      "candidate_id": "0d0b279732dbca6d016a8c56cbee1ece",
+      "page": 373,
+      "region_id": "text-0014"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-17",
+      "role": "A",
+      "candidate_id": "0dbe4ca9cadbd40d3bae567ce1f60722",
+      "page": 156,
+      "region_id": "text-0048"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-17",
+      "role": "B",
+      "candidate_id": "0eb66a0920b4109fc0a0d25ea29f6ff1",
+      "page": 347,
+      "region_id": "text-0121"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-18",
+      "role": "A",
+      "candidate_id": "0ea6e820d333e71d0c2dc0362695e183",
+      "page": 156,
+      "region_id": "text-0043"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-18",
+      "role": "B",
+      "candidate_id": "0f91a76f65c4c07cd4a0de690005d553",
+      "page": 306,
+      "region_id": "text-0061"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-19",
+      "role": "A",
+      "candidate_id": "0fdd29f7a4bd2c6d16d8a01cc37c6213",
+      "page": 356,
+      "region_id": "text-0127"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-19",
+      "role": "B",
+      "candidate_id": "101870fa4732e68e98ff63bc6c6c4fcf",
+      "page": 325,
+      "region_id": "text-0085"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-20",
+      "role": "A",
+      "candidate_id": "10e4b547cbe501f5d8182edc44e202d5",
+      "page": 264,
+      "region_id": "text-0087"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-20",
+      "role": "B",
+      "candidate_id": "116f290f632e299a0767175938fe9df2",
+      "page": 51,
+      "region_id": "text-0023"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-21",
+      "role": "A",
+      "candidate_id": "11a1bf2b04ace301e3d3a56ca5df6e73",
+      "page": 290,
+      "region_id": "text-0187"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-21",
+      "role": "B",
+      "candidate_id": "11d877cdbeddf1d62d963224619faea8",
+      "page": 272,
+      "region_id": "text-0014"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-22",
+      "role": "A",
+      "candidate_id": "12c7133dfdfeb1ff58b9d331fd2b41fe",
+      "page": 341,
+      "region_id": "text-0045"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-22",
+      "role": "B",
+      "candidate_id": "144cb1f5e67cad833d298e3515fcdbab",
+      "page": 126,
+      "region_id": "text-0045"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-23",
+      "role": "A",
+      "candidate_id": "151abc59f5ddb176582749f217880696",
+      "page": 300,
+      "region_id": "text-0074"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-23",
+      "role": "B",
+      "candidate_id": "162d06f3c67bd7f8eef9cb43210264ed",
+      "page": 302,
+      "region_id": "text-0012"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-24",
+      "role": "A",
+      "candidate_id": "163be6e182aec9c08660c4dab0e821ff",
+      "page": 51,
+      "region_id": "text-0052"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-24",
+      "role": "B",
+      "candidate_id": "1796a31f7df1fd8a1dfb78dbfbaf4e40",
+      "page": 169,
+      "region_id": "text-0023"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-25",
+      "role": "A",
+      "candidate_id": "18b776f0a5f56acf4485327429e33ad3",
+      "page": 61,
+      "region_id": "text-0061"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-25",
+      "role": "B",
+      "candidate_id": "1a4cabfa4dd55d60ab5302f6734102ab",
+      "page": 96,
+      "region_id": "text-0052"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-26",
+      "role": "A",
+      "candidate_id": "1a9d63d227384c9adcf48faab2414658",
+      "page": 210,
+      "region_id": "text-0134"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-26",
+      "role": "B",
+      "candidate_id": "1acd8913db5a867516b7b6d214e3aa38",
+      "page": 152,
+      "region_id": "text-0134"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-27",
+      "role": "A",
+      "candidate_id": "1c5f975c8dc4cc3bd0c68078e726c206",
+      "page": 2,
+      "region_id": "text-0021"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-27",
+      "role": "B",
+      "candidate_id": "1c8636967abf8a8d6005b4f66025eaf9",
+      "page": 99,
+      "region_id": "text-0106"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-28",
+      "role": "A",
+      "candidate_id": "1e1a79269b7e24a6a608623cc6a75a0d",
+      "page": 340,
+      "region_id": "text-0070"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-28",
+      "role": "B",
+      "candidate_id": "1e1ab031e7bb77a2a5c026996477d3ee",
+      "page": 237,
+      "region_id": "text-0017"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-29",
+      "role": "A",
+      "candidate_id": "1eb7b95c00f82dc93c824f4d80f0cf6c",
+      "page": 215,
+      "region_id": "text-0156"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-29",
+      "role": "B",
+      "candidate_id": "1efc77cd2a82756955ffc79af64d6990",
+      "page": 159,
+      "region_id": "text-0118"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-30",
+      "role": "A",
+      "candidate_id": "1f7ec5393d5d2778860bd453f25584c4",
+      "page": 233,
+      "region_id": "text-0050"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-30",
+      "role": "B",
+      "candidate_id": "1fc2a453be48344a72fd9b5bf677f0c5",
+      "page": 65,
+      "region_id": "text-0077"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-31",
+      "role": "A",
+      "candidate_id": "1ff644cf839b75495ab2194344cb8866",
+      "page": 39,
+      "region_id": "text-0061"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-31",
+      "role": "B",
+      "candidate_id": "20288c41b638bb2b2870ec7b16eaf8ef",
+      "page": 332,
+      "region_id": "text-0029"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-32",
+      "role": "A",
+      "candidate_id": "2069f3b4f4228c125794380f04f23530",
+      "page": 366,
+      "region_id": "text-0035"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-32",
+      "role": "B",
+      "candidate_id": "222aa5ac493e379fef789dfb03f7dbf3",
+      "page": 74,
+      "region_id": "text-0028"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-33",
+      "role": "A",
+      "candidate_id": "2249ac87793fb10d5d78399f8c65242e",
+      "page": 297,
+      "region_id": "text-0063"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-33",
+      "role": "B",
+      "candidate_id": "2265a78a75772885c29cfe8d30a281e5",
+      "page": 295,
+      "region_id": "text-0077"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-34",
+      "role": "A",
+      "candidate_id": "23a92f1628073acb03edf70cee500ccc",
+      "page": 410,
+      "region_id": "text-0051"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-34",
+      "role": "B",
+      "candidate_id": "23cb058d69f72f1f6923c4ce416ade4b",
+      "page": 351,
+      "region_id": "text-0114"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-35",
+      "role": "A",
+      "candidate_id": "246173b840cdd9c0ea839d5f82de3b76",
+      "page": 59,
+      "region_id": "text-0067"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-35",
+      "role": "B",
+      "candidate_id": "249a8957f80ac4ea06cbf88fc62ed986",
+      "page": 168,
+      "region_id": "text-0049"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-36",
+      "role": "A",
+      "candidate_id": "24bbc2fd1c7c7141451777fe03ec8903",
+      "page": 256,
+      "region_id": "text-0035"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-36",
+      "role": "B",
+      "candidate_id": "25e99fcd12c90f94837202830402c5f4",
+      "page": 60,
+      "region_id": "text-0064"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-37",
+      "role": "A",
+      "candidate_id": "2681397e09234e8720a8f3812e103abf",
+      "page": 116,
+      "region_id": "text-0062"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-37",
+      "role": "B",
+      "candidate_id": "269660e56465d1d543fc57c93532057a",
+      "page": 256,
+      "region_id": "text-0018"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-37",
+      "role": "C",
+      "candidate_id": "26bd220228613469923698af18537820",
+      "page": 410,
+      "region_id": "text-0041"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-38",
+      "role": "A",
+      "candidate_id": "26fae9567b790a2ac3f16671cd2c71ba",
+      "page": 400,
+      "region_id": "text-0146"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-38",
+      "role": "B",
+      "candidate_id": "279a89daaea4683a18f158d68357211e",
+      "page": 361,
+      "region_id": "text-0041"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-38",
+      "role": "C",
+      "candidate_id": "288f47a1102a6cc3758dc3988dfb3978",
+      "page": 402,
+      "region_id": "text-0132"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-39",
+      "role": "A",
+      "candidate_id": "2930d18c78b8fe6506584ddcaa2d6d99",
+      "page": 153,
+      "region_id": "text-0073"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-39",
+      "role": "B",
+      "candidate_id": "2938df34d1588231d581305c3b52417c",
+      "page": 209,
+      "region_id": "text-0187"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-39",
+      "role": "C",
+      "candidate_id": "2a096ec5e130341fa89720187d863e39",
+      "page": 169,
+      "region_id": "text-0022"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-40",
+      "role": "A",
+      "candidate_id": "2a2f55b16e91e1b356dba2f1415909a1",
+      "page": 341,
+      "region_id": "text-0012"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-40",
+      "role": "B",
+      "candidate_id": "2a8df2c03a3bacbbf36f3a6e97d69cb2",
+      "page": 340,
+      "region_id": "text-0035"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-40",
+      "role": "C",
+      "candidate_id": "2ae510a7b164d04ee718b0adde5f4309",
+      "page": 351,
+      "region_id": "text-0057"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-41",
+      "role": "A",
+      "candidate_id": "2bfd254846717dcb81fe30c0818c2b41",
+      "page": 68,
+      "region_id": "text-0045"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-41",
+      "role": "B",
+      "candidate_id": "2c6a97e859260796ebcad8b4de9059c4",
+      "page": 189,
+      "region_id": "text-0099"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-41",
+      "role": "C",
+      "candidate_id": "2c80087b5f79453c91463967f301b2b4",
+      "page": 89,
+      "region_id": "text-0017"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-42",
+      "role": "A",
+      "candidate_id": "2c96074d27cb42a6ca7e7b3fb607e2d6",
+      "page": 363,
+      "region_id": "text-0015"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-42",
+      "role": "B",
+      "candidate_id": "2f78254622e01d0054161b38c27c5b08",
+      "page": 178,
+      "region_id": "text-0051"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-42",
+      "role": "C",
+      "candidate_id": "2f9b8a6f1cf42dbdb67ab5f61836da9c",
+      "page": 226,
+      "region_id": "text-0029"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-43",
+      "role": "A",
+      "candidate_id": "2ff340e0906fa8c01c86045e836635d2",
+      "page": 357,
+      "region_id": "text-0011"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-43",
+      "role": "B",
+      "candidate_id": "3059ac3a58f75e32b6d93e88add7992a",
+      "page": 399,
+      "region_id": "text-0119"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-43",
+      "role": "C",
+      "candidate_id": "30d35de3c2c9968caac13b9fbba0b385",
+      "page": 60,
+      "region_id": "text-0054"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-44",
+      "role": "A",
+      "candidate_id": "310b8ffb7ca9871a228ccfea6c112934",
+      "page": 340,
+      "region_id": "text-0069"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-44",
+      "role": "B",
+      "candidate_id": "322b44a441351c29847a08814748b8ef",
+      "page": 214,
+      "region_id": "text-0075"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-44",
+      "role": "C",
+      "candidate_id": "32dd9eb95dd9bb8cd9173ce83100360a",
+      "page": 86,
+      "region_id": "text-0058"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-45",
+      "role": "A",
+      "candidate_id": "33a85bb5f9b70de97415ec9689dd6d6e",
+      "page": 358,
+      "region_id": "text-0040"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-45",
+      "role": "B",
+      "candidate_id": "33ef946cf1e93a449f238db3716bddec",
+      "page": 301,
+      "region_id": "text-0113"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-45",
+      "role": "C",
+      "candidate_id": "342d72b317f415145fd7fee4028ca580",
+      "page": 471,
+      "region_id": "text-0007"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-46",
+      "role": "A",
+      "candidate_id": "342f6e8c5361128d8112ee49f0bc1dd0",
+      "page": 415,
+      "region_id": "text-0112"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-46",
+      "role": "B",
+      "candidate_id": "344d54b10c93de8eaa7b3d61eb7e0081",
+      "page": 410,
+      "region_id": "text-0080"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-46",
+      "role": "C",
+      "candidate_id": "34a975f221a99f117d66d86800d7ff2a",
+      "page": 307,
+      "region_id": "text-0037"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-47",
+      "role": "A",
+      "candidate_id": "350bcc0725dfe25dbea98a165d00424e",
+      "page": 368,
+      "region_id": "text-0069"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-47",
+      "role": "B",
+      "candidate_id": "353212d6998968ae9e08be6c480907e0",
+      "page": 141,
+      "region_id": "text-0029"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-47",
+      "role": "C",
+      "candidate_id": "35348afa7c5284809f377524369b38e6",
+      "page": 169,
+      "region_id": "text-0047"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-48",
+      "role": "A",
+      "candidate_id": "3554018d30b581ea648685304b9d95a1",
+      "page": 363,
+      "region_id": "text-0051"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-48",
+      "role": "B",
+      "candidate_id": "377663d09f9e722553f362d653b3b0b5",
+      "page": 242,
+      "region_id": "text-0066"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-48",
+      "role": "C",
+      "candidate_id": "3873840d77d8ce7e3b9a73ad8e334fe0",
+      "page": 232,
+      "region_id": "text-0016"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-01",
+      "role": "A",
+      "candidate_id": "0055ea76c2d9c3b1359ff621263c2853",
+      "page": 308,
+      "region_id": "text-0082"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-02",
+      "role": "A",
+      "candidate_id": "0111d38a8384cc11d37799f5309a259b",
+      "page": 155,
+      "region_id": "text-0077"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-03",
+      "role": "A",
+      "candidate_id": "0275f92983318166187a1d1e070135b7",
+      "page": 399,
+      "region_id": "text-0110"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-04",
+      "role": "A",
+      "candidate_id": "027b3e1ef77418a652e10f1150b68c6d",
+      "page": 75,
+      "region_id": "text-0025"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-05",
+      "role": "A",
+      "candidate_id": "030104cc11ece01e29921b47005072ac",
+      "page": 123,
+      "region_id": "text-0135"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-06",
+      "role": "A",
+      "candidate_id": "03a121652d66d41eb89f885682907fa9",
+      "page": 52,
+      "region_id": "text-0041"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-07",
+      "role": "A",
+      "candidate_id": "03b5ebb725faa7a08322c7d7b4dd3d61",
+      "page": 431,
+      "region_id": "text-0117"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-08",
+      "role": "A",
+      "candidate_id": "04a621a5d833cda5fe68e4ad68761383",
+      "page": 99,
+      "region_id": "text-0103"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-09",
+      "role": "A",
+      "candidate_id": "0693b58db1bceeaf30bb60317a971fb0",
+      "page": 335,
+      "region_id": "text-0041"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-10",
+      "role": "A",
+      "candidate_id": "06f18a0d414e7c0ceff092adc39db7fd",
+      "page": 297,
+      "region_id": "text-0065"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-11",
+      "role": "A",
+      "candidate_id": "0760d600ade74b7c31f2e40e34f90a69",
+      "page": 363,
+      "region_id": "text-0047"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-12",
+      "role": "A",
+      "candidate_id": "078bb4b81aff4a66635a8b570614fd18",
+      "page": 340,
+      "region_id": "text-0077"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-49",
+      "role": "A",
+      "candidate_id": "38e33ffc86d19b6d5ff20c475b024e7b",
+      "page": 116,
+      "region_id": "text-0070"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-49",
+      "role": "B",
+      "candidate_id": "3a77597ce92fd0103711f8628124c9a2",
+      "page": 51,
+      "region_id": "text-0042"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-49",
+      "role": "a",
+      "candidate_id": "396b6a824368959ebaa41b188080a415",
+      "page": 215,
+      "region_id": "text-0012"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-49",
+      "role": "b",
+      "candidate_id": "3c095dd44d96adebab6e9c531892a432",
+      "page": 272,
+      "region_id": "text-0046"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-50",
+      "role": "A",
+      "candidate_id": "3c5107c0d831782e8f395209e35117cb",
+      "page": 227,
+      "region_id": "text-0079"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-50",
+      "role": "B",
+      "candidate_id": "3d03914521ab699b1ad1a37cb67c07b4",
+      "page": 70,
+      "region_id": "text-0209"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-50",
+      "role": "a",
+      "candidate_id": "3c8f4542235678c69b1eaeed6b399d70",
+      "page": 256,
+      "region_id": "text-0020"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-50",
+      "role": "b",
+      "candidate_id": "3eee0060d1949e2eec88aa551134a2bb",
+      "page": 69,
+      "region_id": "text-0016"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-51",
+      "role": "A",
+      "candidate_id": "3fa6f0cc678396b8cac24c9a8dccbf46",
+      "page": 52,
+      "region_id": "text-0009"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-51",
+      "role": "B",
+      "candidate_id": "409b9900412f2046cf949b09f58849e0",
+      "page": 72,
+      "region_id": "text-0046"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-51",
+      "role": "a",
+      "candidate_id": "40051ceb4568650010bd5780d0d282ec",
+      "page": 37,
+      "region_id": "text-0031"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-51",
+      "role": "b",
+      "candidate_id": "41f542593add04b30869759ab6d791a9",
+      "page": 401,
+      "region_id": "text-0102"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-52",
+      "role": "A",
+      "candidate_id": "4249a2e4a698a9d14f80b0399d8807c5",
+      "page": 341,
+      "region_id": "text-0079"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-52",
+      "role": "B",
+      "candidate_id": "4322df5db672e1e8278c03a758889959",
+      "page": 144,
+      "region_id": "text-0095"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-52",
+      "role": "a",
+      "candidate_id": "425ce822d88b8f46749b4b71dbaf8b07",
+      "page": 59,
+      "region_id": "text-0019"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-52",
+      "role": "b",
+      "candidate_id": "433bfe6b387a1e75f21c9a4eb5e848a4",
+      "page": 118,
+      "region_id": "text-0165"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-53",
+      "role": "A",
+      "candidate_id": "437ab57154e914fea52feb4170e08557",
+      "page": 160,
+      "region_id": "text-0043"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-53",
+      "role": "B",
+      "candidate_id": "4540c67f9df8728c60d954dd32b51cb5",
+      "page": 391,
+      "region_id": "text-0138"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-53",
+      "role": "a",
+      "candidate_id": "452b8b3689fa5dac3eca2b7ebfec7e47",
+      "page": 207,
+      "region_id": "text-0025"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-53",
+      "role": "b",
+      "candidate_id": "458c4963312272dc425956e4b59ca74b",
+      "page": 399,
+      "region_id": "text-0023"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-54",
+      "role": "A",
+      "candidate_id": "45bd4b2032d3e0132fba5b8501817eff",
+      "page": 118,
+      "region_id": "text-0166"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-54",
+      "role": "B",
+      "candidate_id": "462f70aaae8a65026c0b459504afc9e7",
+      "page": 93,
+      "region_id": "text-0057"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-54",
+      "role": "a",
+      "candidate_id": "461aedd4317f2c9395474c3a3ff9cee8",
+      "page": 303,
+      "region_id": "text-0036"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-54",
+      "role": "b",
+      "candidate_id": "46bd873a362619e27207041287f7ccd9",
+      "page": 296,
+      "region_id": "text-0034"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-55",
+      "role": "A",
+      "candidate_id": "46fb266d0d52ee5e6b6893743de5cff5",
+      "page": 303,
+      "region_id": "text-0057"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-55",
+      "role": "B",
+      "candidate_id": "479fdcbda0c8c87240736f42f07c31b3",
+      "page": 51,
+      "region_id": "text-0072"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-55",
+      "role": "a",
+      "candidate_id": "4737ba865e7b6ea695eb179a89c5211c",
+      "page": 256,
+      "region_id": "text-0069"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-55",
+      "role": "b",
+      "candidate_id": "48ba2d688e91fe24519dad9e4bda6f1e",
+      "page": 230,
+      "region_id": "text-0061"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-56",
+      "role": "A",
+      "candidate_id": "489087903a86350cd5ed9362743a9936",
+      "page": 256,
+      "region_id": "text-0055"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-56",
+      "role": "B",
+      "candidate_id": "48e6e85070ff9d9433d01af9d33f1b33",
+      "page": 296,
+      "region_id": "text-0042"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-56",
+      "role": "a",
+      "candidate_id": "48cb4a3d9fb9a9fc72283051f50748db",
+      "page": 152,
+      "region_id": "text-0040"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-56",
+      "role": "b",
+      "candidate_id": "4acb556fdcf3d836c82775341e23b2a5",
+      "page": 340,
+      "region_id": "text-0122"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-57",
+      "role": "A",
+      "candidate_id": "4af0b6eeb086915646739bfe0cb7bacc",
+      "page": 296,
+      "region_id": "text-0033"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-57",
+      "role": "B",
+      "candidate_id": "4c062842594afebc8c7ea9e8dea4f204",
+      "page": 59,
+      "region_id": "text-0028"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-57",
+      "role": "a",
+      "candidate_id": "4bc305ef0ba2ea247309e2578ac4de2a",
+      "page": 169,
+      "region_id": "text-0105"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-57",
+      "role": "b",
+      "candidate_id": "4c1d148b7445257ef375711b9ac3ab83",
+      "page": 51,
+      "region_id": "text-0037"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-58",
+      "role": "A",
+      "candidate_id": "4c2eb0677833eff44dcb3d71b4f88c62",
+      "page": 152,
+      "region_id": "text-0059"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-58",
+      "role": "B",
+      "candidate_id": "4e96788732356770ad7b1dad2e387e03",
+      "page": 393,
+      "region_id": "text-0067"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-58",
+      "role": "a",
+      "candidate_id": "4e4fce82f841d1cb92bfca31aed8c9e5",
+      "page": 118,
+      "region_id": "text-0048"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-58",
+      "role": "b",
+      "candidate_id": "5090960eec6ad7c95645ebbd3fbb732e",
+      "page": 401,
+      "region_id": "text-0115"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-59",
+      "role": "A",
+      "candidate_id": "50afa4dcf283a1c8abbef0751f2d3f1b",
+      "page": 99,
+      "region_id": "text-0107"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-59",
+      "role": "B",
+      "candidate_id": "52abbe876669a42a08bc34ae1e0e4b2c",
+      "page": 52,
+      "region_id": "text-0032"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-59",
+      "role": "a",
+      "candidate_id": "5287ba7f8f0719dd827dddd577ecca32",
+      "page": 306,
+      "region_id": "text-0056"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-59",
+      "role": "b",
+      "candidate_id": "53d87571042f563242871a441c6d8cc3",
+      "page": 274,
+      "region_id": "text-0011"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-60",
+      "role": "A",
+      "candidate_id": "5476afef2f7b4e60dec271cf6e8cf335",
+      "page": 355,
+      "region_id": "text-0009"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-60",
+      "role": "B",
+      "candidate_id": "5620015a8d4fa81ee4ee4e31a5b178fe",
+      "page": 84,
+      "region_id": "text-0070"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-60",
+      "role": "a",
+      "candidate_id": "55a9a7ed90a74c26bddc47a9904c86e5",
+      "page": 335,
+      "region_id": "text-0039"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-60",
+      "role": "b",
+      "candidate_id": "56476b00fb29c4a3aee09824c4cac0a2",
+      "page": 215,
+      "region_id": "text-0070"
+    }
+  ]
+}

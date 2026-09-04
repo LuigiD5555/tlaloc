@@ -1,0 +1,16 @@
+{
+  "schema": "tonal.t1.noleakage-audit.r2",
+  "generated_at": "2026-09-04T22:15:08.151534+00:00",
+  "audit_scope": "the exact 144 resolved D4 candidates (not the 405-candidate primary universe)",
+  "candidate_in_primary_universe": "144/144",
+  "duplicate_candidate_id": 0,
+  "duplicate_physical_identity": 0,
+  "prior_use_excluded_count": 0,
+  "allowed_morphology_count": "144/144",
+  "morphology_breakdown": {
+    "MULTI_DIGIT_INTEGER": 95,
+    "DECIMAL": 49
+  },
+  "single_digit_count": 0,
+  "bridge_page_overlap": "0/92 (mechanically checked: set(D4 selected pages) & set(freeze.page_partition.bridge_pages) == empty)"
+}

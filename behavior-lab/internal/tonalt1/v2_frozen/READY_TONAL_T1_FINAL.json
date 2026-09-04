@@ -1,5 +1,7 @@
 {
   "schema_version": "tonal.t1.readiness.final",
+  "UNVERIFIED_AGAINST_CODE": true,
+  "verification_note": "Audited 2026-09-04 while closing the image pipeline (separate task): none of executor_implementations' claimed classes (ArmAExecutor, ArmBExecutor, ArmCExecutor, CounterfactualRunner, ExecuteShape1-5) exist anywhere in internal/tonalt1/*.go. internal/tonalt1/t1_executor.go's real Arm-A stackOperands is a one-line stub ('Simplified: return first operand'), not a composite builder. This file's READY_TONAL_T1=true and ready_for_first_live_call=true are NOT backed by inspectable code and must not be relied on without re-verification. The image-materialization pipeline (TONAL_T1_IMAGE_MANIFEST_FINAL.json and siblings) is independently verified and does not depend on this file's claims.",
   "experiment_id": "TONAL_T1_HETEROGENEOUS_COMPOSITION",
   "readiness_date": "2026-09-04",
   "readiness_status": "COMPLETE",

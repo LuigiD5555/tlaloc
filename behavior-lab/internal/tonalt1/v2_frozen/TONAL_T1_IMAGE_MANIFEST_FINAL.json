@@ -1,0 +1,4373 @@
+{
+  "schema": "tonal.t1.image-manifest-final.r2",
+  "generated_at": "2026-09-04T22:14:17.040627+00:00",
+  "READY_TONAL_T1_IMAGES": true,
+  "READY_TONAL_T1_EXECUTION": false,
+  "T1_PRIMARY_MODEL_CALLS": 0,
+  "source_pdf_sha256": "79db14b30d58a528c858b48d859ef24ab61378cb5879782ea550043472edd8b4",
+  "d4_workflows_sha256": "a6467a5864414b98c6b40a14f2b845ce6998008c5597f866bbca370bacc517b2",
+  "primary_universe_sha256": "894cf2b4b1ce0825dbc00cd01d50afcebe8b83ed50d4c28e5a40ad652c03ced3",
+  "workflows": 60,
+  "operand_assignments": 144,
+  "unique_pages": 92,
+  "operands": [
+    {
+      "workflow_id": "tonal-t1-workflow-COM-13",
+      "role": "A",
+      "candidate_id": "07c045291cbded0024d8a4baf3791d43",
+      "page": 443,
+      "region_id": "text-0085",
+      "operand_bbox_estimate": [
+        671.2452830188679,
+        373,
+        685.9622641509434,
+        387
+      ],
+      "page_sha256": "c67f6d43455d3ac92ffc313365c0b7f6cd7a5331ca46c02efd0f07249c3f4fdb",
+      "run1_prepared_sha256": "bc4ab885aebbe500612849c546ff00f0905926578a6cc62bac4831090b652953",
+      "run2_prepared_sha256": "bc4ab885aebbe500612849c546ff00f0905926578a6cc62bac4831090b652953",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4779,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-13",
+      "role": "B",
+      "candidate_id": "07d95f27efb073bf69b8063e91916b23",
+      "page": 178,
+      "region_id": "text-0060",
+      "operand_bbox_estimate": [
+        714.1896551724137,
+        747,
+        733.8965517241379,
+        761
+      ],
+      "page_sha256": "930ea73d21696b9d6cd1264f0b75b1cf8933c23e4a07f884822a7005e8e0337f",
+      "run1_prepared_sha256": "f85e54560aa6bb71801313ed46a6ad5c20ff130b81d7da4e83abf40e8dd84e15",
+      "run2_prepared_sha256": "f85e54560aa6bb71801313ed46a6ad5c20ff130b81d7da4e83abf40e8dd84e15",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5326,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-14",
+      "role": "A",
+      "candidate_id": "086cc2e907ac3c5eff154a892c03f9b1",
+      "page": 122,
+      "region_id": "text-0116",
+      "operand_bbox_estimate": [
+        178.0769230769231,
+        1063,
+        197.34615384615384,
+        1074
+      ],
+      "page_sha256": "07bf2938d4119c23df6140a51cd46b6207ac20d7db48d3a3e2d7260d7dfe4c0b",
+      "run1_prepared_sha256": "8d923e56eeb3d2b23416051cde1105bd042bcd11007c81cc2596cec761d32955",
+      "run2_prepared_sha256": "8d923e56eeb3d2b23416051cde1105bd042bcd11007c81cc2596cec761d32955",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6343,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-14",
+      "role": "B",
+      "candidate_id": "09d9393377808a421288d4631b1a48cd",
+      "page": 340,
+      "region_id": "text-0037",
+      "operand_bbox_estimate": [
+        259.8461538461538,
+        502,
+        281.36538461538464,
+        516
+      ],
+      "page_sha256": "606516366b05cfd34dbb13e0cfe53b1641ffb0c631db3d1de8625a4affdabca9",
+      "run1_prepared_sha256": "c8af5e7b8e377c65c6fe55704f79031ab1aa6564f304643c68a69451d7724a6b",
+      "run2_prepared_sha256": "c8af5e7b8e377c65c6fe55704f79031ab1aa6564f304643c68a69451d7724a6b",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6260,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-15",
+      "role": "A",
+      "candidate_id": "0a3e98328a43770157ce5c3ed763d495",
+      "page": 122,
+      "region_id": "text-0097",
+      "operand_bbox_estimate": [
+        72.85294117647058,
+        994,
+        90.27941176470588,
+        1005
+      ],
+      "page_sha256": "07bf2938d4119c23df6140a51cd46b6207ac20d7db48d3a3e2d7260d7dfe4c0b",
+      "run1_prepared_sha256": "c81c4d111ba0a1d67bcf212ff651ca4f05a6e90bbd81f072c321c0e2424d607c",
+      "run2_prepared_sha256": "c81c4d111ba0a1d67bcf212ff651ca4f05a6e90bbd81f072c321c0e2424d607c",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5909,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-15",
+      "role": "B",
+      "candidate_id": "0b5c495ccfb9cd57e2f06c3452cfb9ba",
+      "page": 89,
+      "region_id": "text-0066",
+      "operand_bbox_estimate": [
+        342.22222222222223,
+        675,
+        372,
+        689
+      ],
+      "page_sha256": "7ccab61d464160c638d6b32f2affb6dd37b22b4a97f71131ea1ba4e1d6cd1695",
+      "run1_prepared_sha256": "02212d678981a528f54bac72ab7a86b6b95e5ac9b20f79746c24d39e4875673c",
+      "run2_prepared_sha256": "02212d678981a528f54bac72ab7a86b6b95e5ac9b20f79746c24d39e4875673c",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4262,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-16",
+      "role": "A",
+      "candidate_id": "0c89b62364f406a7d63060a36fcb8a52",
+      "page": 256,
+      "region_id": "text-0013",
+      "operand_bbox_estimate": [
+        89.5,
+        189,
+        136.75,
+        203
+      ],
+      "page_sha256": "ac4ca69b397aba74b8b8a442411f73d9f2c721fc07d1974a1d74306317eb0d1a",
+      "run1_prepared_sha256": "04445335130e370b0883183e75a757cc5139d7c84a7edc137ce33037d11b3f49",
+      "run2_prepared_sha256": "04445335130e370b0883183e75a757cc5139d7c84a7edc137ce33037d11b3f49",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 8272,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-16",
+      "role": "B",
+      "candidate_id": "0d0b279732dbca6d016a8c56cbee1ece",
+      "page": 373,
+      "region_id": "text-0014",
+      "operand_bbox_estimate": [
+        112.76363636363637,
+        199,
+        134.14545454545453,
+        213
+      ],
+      "page_sha256": "3b25c155afa566e4931732d4562cb9649d7a1cf0544b8dedf1f117aebbe573b8",
+      "run1_prepared_sha256": "53110d894c3f7ac7d720d081779f03d1d55284aca41e1e6fd023b66d8a0d078c",
+      "run2_prepared_sha256": "53110d894c3f7ac7d720d081779f03d1d55284aca41e1e6fd023b66d8a0d078c",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5990,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-17",
+      "role": "A",
+      "candidate_id": "0dbe4ca9cadbd40d3bae567ce1f60722",
+      "page": 156,
+      "region_id": "text-0048",
+      "operand_bbox_estimate": [
+        114.3125,
+        703,
+        142.0625,
+        717
+      ],
+      "page_sha256": "ba262a21a2474db634e333401299d1695ae1bf46bb4a8726bfd0262c95c271a7",
+      "run1_prepared_sha256": "1adc0f2df4c192e298fbdb577cde17702eb85e70c6d6b7a9f972aa603d8e6af4",
+      "run2_prepared_sha256": "1adc0f2df4c192e298fbdb577cde17702eb85e70c6d6b7a9f972aa603d8e6af4",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6191,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-17",
+      "role": "B",
+      "candidate_id": "0eb66a0920b4109fc0a0d25ea29f6ff1",
+      "page": 347,
+      "region_id": "text-0121",
+      "operand_bbox_estimate": [
+        759.6774193548388,
+        764,
+        784.1935483870968,
+        778
+      ],
+      "page_sha256": "3709cc02b475cd8f23a272246eb0f97942460879654d03fce30bcdbe6d7fc40c",
+      "run1_prepared_sha256": "d5195d51d3861eac01507fc4cf42449be162218027643bf7feca53fff6d7b9e0",
+      "run2_prepared_sha256": "d5195d51d3861eac01507fc4cf42449be162218027643bf7feca53fff6d7b9e0",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5390,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-18",
+      "role": "A",
+      "candidate_id": "0ea6e820d333e71d0c2dc0362695e183",
+      "page": 156,
+      "region_id": "text-0043",
+      "operand_bbox_estimate": [
+        296.7931034482759,
+        616,
+        310.41379310344826,
+        630
+      ],
+      "page_sha256": "ba262a21a2474db634e333401299d1695ae1bf46bb4a8726bfd0262c95c271a7",
+      "run1_prepared_sha256": "99960683efbf633203cb489d33987d1970cad75f890ce165c4180b2fffc230a1",
+      "run2_prepared_sha256": "99960683efbf633203cb489d33987d1970cad75f890ce165c4180b2fffc230a1",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4341,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-18",
+      "role": "B",
+      "candidate_id": "0f91a76f65c4c07cd4a0de690005d553",
+      "page": 306,
+      "region_id": "text-0061",
+      "operand_bbox_estimate": [
+        749.0588235294117,
+        574,
+        768.1176470588235,
+        588
+      ],
+      "page_sha256": "d4a6bcf9caf10199c2a569ade60cf20fcf623ee4d4ea1d7431a1a0acd1d35cea",
+      "run1_prepared_sha256": "152d15785ecdc37cc7547427a3279870cf03efd9df688cf818218497e35fe6bb",
+      "run2_prepared_sha256": "152d15785ecdc37cc7547427a3279870cf03efd9df688cf818218497e35fe6bb",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5525,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-19",
+      "role": "A",
+      "candidate_id": "0fdd29f7a4bd2c6d16d8a01cc37c6213",
+      "page": 356,
+      "region_id": "text-0127",
+      "operand_bbox_estimate": [
+        148.76,
+        949,
+        163.72,
+        963
+      ],
+      "page_sha256": "cf4b6f81db6b9f8bb4e83ac97787be06d4e1f522f74529a7fc9539ad9b172024",
+      "run1_prepared_sha256": "c7e5356e3b81ee1ed816db85f6504a5b79bb892fb2378670411504441f1c36aa",
+      "run2_prepared_sha256": "c7e5356e3b81ee1ed816db85f6504a5b79bb892fb2378670411504441f1c36aa",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4593,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-19",
+      "role": "B",
+      "candidate_id": "101870fa4732e68e98ff63bc6c6c4fcf",
+      "page": 325,
+      "region_id": "text-0085",
+      "operand_bbox_estimate": [
+        511.27777777777777,
+        981,
+        525.4629629629629,
+        995
+      ],
+      "page_sha256": "7443849371d84077a95e3b3ef81d55e24ee41e3cb5bdf52b184659b9dbb449c3",
+      "run1_prepared_sha256": "e1a35bb0f40b683696e6601f4320071faaa8f3b6632a6738aad17c3aca6f4da6",
+      "run2_prepared_sha256": "e1a35bb0f40b683696e6601f4320071faaa8f3b6632a6738aad17c3aca6f4da6",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4552,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-20",
+      "role": "A",
+      "candidate_id": "10e4b547cbe501f5d8182edc44e202d5",
+      "page": 264,
+      "region_id": "text-0087",
+      "operand_bbox_estimate": [
+        141.22,
+        968,
+        165.04000000000002,
+        982
+      ],
+      "page_sha256": "6a90fd65dd5dd3a8ae04c665c8221f994d56bae15ba5d4d738c82edae7c3a4e6",
+      "run1_prepared_sha256": "3b6938ff64fadf6f62ad03332d354588f01effea9a96153d2fb1d61df8587298",
+      "run2_prepared_sha256": "3b6938ff64fadf6f62ad03332d354588f01effea9a96153d2fb1d61df8587298",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5686,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-20",
+      "role": "B",
+      "candidate_id": "116f290f632e299a0767175938fe9df2",
+      "page": 51,
+      "region_id": "text-0023",
+      "operand_bbox_estimate": [
+        299.8181818181818,
+        321,
+        321.3636363636364,
+        335
+      ],
+      "page_sha256": "f691cfcb072cbb25b9623c1a569fbb399e29ae88d94534b930b01eccfd17ad41",
+      "run1_prepared_sha256": "8804d735d22603bba29ec73c377d44f5e013992d8d90846b2d44519dda0f6819",
+      "run2_prepared_sha256": "8804d735d22603bba29ec73c377d44f5e013992d8d90846b2d44519dda0f6819",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5259,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-21",
+      "role": "A",
+      "candidate_id": "11a1bf2b04ace301e3d3a56ca5df6e73",
+      "page": 290,
+      "region_id": "text-0187",
+      "operand_bbox_estimate": [
+        243.02631578947367,
+        991,
+        256.6578947368421,
+        1005
+      ],
+      "page_sha256": "9dfaceeff72fdcf7ddb0318bb84fa9be75ab206052b70328b8f21c42c3a645e8",
+      "run1_prepared_sha256": "aa2d0c1a8864ba446b455879a1ee2d5b404c30a40ec40135bd4eed9022d8999c",
+      "run2_prepared_sha256": "aa2d0c1a8864ba446b455879a1ee2d5b404c30a40ec40135bd4eed9022d8999c",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4522,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-21",
+      "role": "B",
+      "candidate_id": "11d877cdbeddf1d62d963224619faea8",
+      "page": 272,
+      "region_id": "text-0014",
+      "operand_bbox_estimate": [
+        311.1372549019608,
+        232,
+        334.54901960784315,
+        246
+      ],
+      "page_sha256": "26dfa2169f26b1c666f022c1956d9bd55c11f28c20f4692f649c2824fa0e5f1e",
+      "run1_prepared_sha256": "6eb2a9a2bbe6682dd211d6f9c23018423d100cbfbc76087a6004fb941935b46a",
+      "run2_prepared_sha256": "6eb2a9a2bbe6682dd211d6f9c23018423d100cbfbc76087a6004fb941935b46a",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4633,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-22",
+      "role": "A",
+      "candidate_id": "12c7133dfdfeb1ff58b9d331fd2b41fe",
+      "page": 341,
+      "region_id": "text-0045",
+      "operand_bbox_estimate": [
+        249.32075471698113,
+        566,
+        271.7358490566038,
+        580
+      ],
+      "page_sha256": "79696d0bac342680c17e2c9624b7330248aca2127df4a02d19fae830937127b9",
+      "run1_prepared_sha256": "8b5441da918815721746eb4c8d993ae646129de802a4042d000c9f464a8eb854",
+      "run2_prepared_sha256": "8b5441da918815721746eb4c8d993ae646129de802a4042d000c9f464a8eb854",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5630,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-22",
+      "role": "B",
+      "candidate_id": "144cb1f5e67cad833d298e3515fcdbab",
+      "page": 126,
+      "region_id": "text-0045",
+      "operand_bbox_estimate": [
+        189.96,
+        311,
+        213.12,
+        325
+      ],
+      "page_sha256": "e38ba5e286c03274bd4944b43cf698e3784ce2f0aeecaa0dc03a21d775f2b426",
+      "run1_prepared_sha256": "660fa6524fef4445b48eba19318f7986365146b264db097c6e5b8fe4e9938da5",
+      "run2_prepared_sha256": "660fa6524fef4445b48eba19318f7986365146b264db097c6e5b8fe4e9938da5",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5103,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-23",
+      "role": "A",
+      "candidate_id": "151abc59f5ddb176582749f217880696",
+      "page": 300,
+      "region_id": "text-0074",
+      "operand_bbox_estimate": [
+        228.3846153846154,
+        883,
+        243.6153846153846,
+        897
+      ],
+      "page_sha256": "16ac4007fbc12d727454f74a8c7883316e4dc45fa59264a3757aba440792d4c2",
+      "run1_prepared_sha256": "3c872a471488415cb1a53dc7bf37cecdb206e41ae21b03d911ea568570bb6b70",
+      "run2_prepared_sha256": "3c872a471488415cb1a53dc7bf37cecdb206e41ae21b03d911ea568570bb6b70",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4215,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-23",
+      "role": "B",
+      "candidate_id": "162d06f3c67bd7f8eef9cb43210264ed",
+      "page": 302,
+      "region_id": "text-0012",
+      "operand_bbox_estimate": [
+        632.4603174603175,
+        163,
+        650.5079365079365,
+        177
+      ],
+      "page_sha256": "47055e5b8e8bb96fe9262a2e0d5e416161f50718c47eaebf13d04cd39684f9ee",
+      "run1_prepared_sha256": "ae2108fca416bc46de4a9880b16be1d4acd0b5db7c75f07b55b7e67d70d286df",
+      "run2_prepared_sha256": "ae2108fca416bc46de4a9880b16be1d4acd0b5db7c75f07b55b7e67d70d286df",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5596,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-24",
+      "role": "A",
+      "candidate_id": "163be6e182aec9c08660c4dab0e821ff",
+      "page": 51,
+      "region_id": "text-0052",
+      "operand_bbox_estimate": [
+        800.3333333333333,
+        734,
+        819.3333333333333,
+        748
+      ],
+      "page_sha256": "f691cfcb072cbb25b9623c1a569fbb399e29ae88d94534b930b01eccfd17ad41",
+      "run1_prepared_sha256": "98a150c6d6a691f98361bd3b249507297a2057ece0f18090f513d34a158f8e0f",
+      "run2_prepared_sha256": "98a150c6d6a691f98361bd3b249507297a2057ece0f18090f513d34a158f8e0f",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4951,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-24",
+      "role": "B",
+      "candidate_id": "1796a31f7df1fd8a1dfb78dbfbaf4e40",
+      "page": 169,
+      "region_id": "text-0023",
+      "operand_bbox_estimate": [
+        301.41999999999996,
+        326,
+        325.36,
+        340
+      ],
+      "page_sha256": "f04967c0eb4a5d3964d69fa250785ab9d1487b33bd14b30d88574673ad2c01e5",
+      "run1_prepared_sha256": "3cb4e9b4eeca34b1eec50650f006df24a4edc48044e672d31e6678a17ef88269",
+      "run2_prepared_sha256": "3cb4e9b4eeca34b1eec50650f006df24a4edc48044e672d31e6678a17ef88269",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6012,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-25",
+      "role": "A",
+      "candidate_id": "18b776f0a5f56acf4485327429e33ad3",
+      "page": 61,
+      "region_id": "text-0061",
+      "operand_bbox_estimate": [
+        241.27586206896552,
+        645,
+        260,
+        656
+      ],
+      "page_sha256": "ceeb137c6b811e04f086d02363e13cff09828f90a596444fb7ed4bd2d87f81ea",
+      "run1_prepared_sha256": "427bdef98dcb17619bf7ce1fd504bc11e597822e5e141b33b9094390d50c7da7",
+      "run2_prepared_sha256": "427bdef98dcb17619bf7ce1fd504bc11e597822e5e141b33b9094390d50c7da7",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6749,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-25",
+      "role": "B",
+      "candidate_id": "1a4cabfa4dd55d60ab5302f6734102ab",
+      "page": 96,
+      "region_id": "text-0052",
+      "operand_bbox_estimate": [
+        390.8,
+        823,
+        405.2,
+        837
+      ],
+      "page_sha256": "5b02071636ca42c053f05aeb888d19074d53928f742e9ae10d75a4a9472be765",
+      "run1_prepared_sha256": "cc1dbcaebbfc139057df40dfb85715e291f95e0affcc7b4ab20091a39f1229c6",
+      "run2_prepared_sha256": "cc1dbcaebbfc139057df40dfb85715e291f95e0affcc7b4ab20091a39f1229c6",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4927,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-26",
+      "role": "A",
+      "candidate_id": "1a9d63d227384c9adcf48faab2414658",
+      "page": 210,
+      "region_id": "text-0134",
+      "operand_bbox_estimate": [
+        562.8275862068965,
+        773,
+        582.4827586206897,
+        787
+      ],
+      "page_sha256": "c6244112187a0539a0861163865eefc4db49d5cc59040be30a1966aba8e302d0",
+      "run1_prepared_sha256": "4167567bce52bfde78b0a34a92c4028e28b422152d348ffdd867e4f8b3246b21",
+      "run2_prepared_sha256": "4167567bce52bfde78b0a34a92c4028e28b422152d348ffdd867e4f8b3246b21",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5193,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-26",
+      "role": "B",
+      "candidate_id": "1acd8913db5a867516b7b6d214e3aa38",
+      "page": 152,
+      "region_id": "text-0134",
+      "operand_bbox_estimate": [
+        664.918918918919,
+        752,
+        686.3243243243244,
+        766
+      ],
+      "page_sha256": "589dd8d8c2cdfd063eff36369bc69cf0ae3fd2c20f40ac14efd37a06838aadcf",
+      "run1_prepared_sha256": "dbbd72393a962fbf6225edb31d98b0829a131f1cff2f7230c58523f9a532a8dd",
+      "run2_prepared_sha256": "dbbd72393a962fbf6225edb31d98b0829a131f1cff2f7230c58523f9a532a8dd",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4446,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-27",
+      "role": "A",
+      "candidate_id": "1c5f975c8dc4cc3bd0c68078e726c206",
+      "page": 2,
+      "region_id": "text-0021",
+      "operand_bbox_estimate": [
+        465,
+        335,
+        497,
+        349
+      ],
+      "page_sha256": "0c768b8e259c54ddd884e609512e42ae397b68f6c0efa1b11abc0648629f0ace",
+      "run1_prepared_sha256": "370388bd959e1f0bfbc32ee1a0d7c870041a7f4484cefbb0a9c72e031f2dcf8f",
+      "run2_prepared_sha256": "370388bd959e1f0bfbc32ee1a0d7c870041a7f4484cefbb0a9c72e031f2dcf8f",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 8207,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-27",
+      "role": "B",
+      "candidate_id": "1c8636967abf8a8d6005b4f66025eaf9",
+      "page": 99,
+      "region_id": "text-0106",
+      "operand_bbox_estimate": [
+        810,
+        648,
+        838.4444444444445,
+        662
+      ],
+      "page_sha256": "86ec56930bdd50d34aff0fd6b7df73a51b0f675342a69571eff3044d9885abe2",
+      "run1_prepared_sha256": "ecf343f6cd308d0278f2157b11292d3edf09c25884c0780120fa2e6c954f8a48",
+      "run2_prepared_sha256": "ecf343f6cd308d0278f2157b11292d3edf09c25884c0780120fa2e6c954f8a48",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5679,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-28",
+      "role": "A",
+      "candidate_id": "1e1a79269b7e24a6a608623cc6a75a0d",
+      "page": 340,
+      "region_id": "text-0070",
+      "operand_bbox_estimate": [
+        225.09677419354838,
+        832,
+        247.5483870967742,
+        846
+      ],
+      "page_sha256": "606516366b05cfd34dbb13e0cfe53b1641ffb0c631db3d1de8625a4affdabca9",
+      "run1_prepared_sha256": "c8b2fd9b64e42a48ee20f6497a08813fb2abe5275c5b238b2c9a3527b748ebf9",
+      "run2_prepared_sha256": "c8b2fd9b64e42a48ee20f6497a08813fb2abe5275c5b238b2c9a3527b748ebf9",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5239,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-28",
+      "role": "B",
+      "candidate_id": "1e1ab031e7bb77a2a5c026996477d3ee",
+      "page": 237,
+      "region_id": "text-0017",
+      "operand_bbox_estimate": [
+        252.76923076923077,
+        233,
+        275.61538461538464,
+        247
+      ],
+      "page_sha256": "f9e49dae8f67798b8003520e9d6f67746a48056b08497876e3e0f1c97e680cd7",
+      "run1_prepared_sha256": "98f4b70c1e774b65d85f8ad18d3f1b08449912a45c329e50e151315a92d96e24",
+      "run2_prepared_sha256": "98f4b70c1e774b65d85f8ad18d3f1b08449912a45c329e50e151315a92d96e24",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5305,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-29",
+      "role": "A",
+      "candidate_id": "1eb7b95c00f82dc93c824f4d80f0cf6c",
+      "page": 215,
+      "region_id": "text-0156",
+      "operand_bbox_estimate": [
+        589.672131147541,
+        920,
+        602.1311475409836,
+        934
+      ],
+      "page_sha256": "e2b95ade79b55199b3dc0f5f3686a5ba3773982140b077253d6a5cdfcdec7107",
+      "run1_prepared_sha256": "eefd63e0534479f4ac494b32949a1b23762c73386e4716b2ea1b83a658a08bad",
+      "run2_prepared_sha256": "eefd63e0534479f4ac494b32949a1b23762c73386e4716b2ea1b83a658a08bad",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4523,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-29",
+      "role": "B",
+      "candidate_id": "1efc77cd2a82756955ffc79af64d6990",
+      "page": 159,
+      "region_id": "text-0118",
+      "operand_bbox_estimate": [
+        724.561403508772,
+        917,
+        737.9649122807018,
+        931
+      ],
+      "page_sha256": "7d488215b58f70b3171665542171f0d0a3b6fd539c8b10a9fe0b80b839f7b96d",
+      "run1_prepared_sha256": "e83b91c28df8e88b8738d5b9774a75a01932116f3cc2009401626d4fcbb3b4c2",
+      "run2_prepared_sha256": "e83b91c28df8e88b8738d5b9774a75a01932116f3cc2009401626d4fcbb3b4c2",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4185,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-30",
+      "role": "A",
+      "candidate_id": "1f7ec5393d5d2778860bd453f25584c4",
+      "page": 233,
+      "region_id": "text-0050",
+      "operand_bbox_estimate": [
+        422,
+        611,
+        436.6666666666667,
+        625
+      ],
+      "page_sha256": "81e3b8841c44543a0638752da187d849ce02a3cbee16f8fbab7885e5c1ed359e",
+      "run1_prepared_sha256": "8414f4957266792a1a6f6f0cbe0f286fde2e3ac979e729a39bc0571bf3846033",
+      "run2_prepared_sha256": "8414f4957266792a1a6f6f0cbe0f286fde2e3ac979e729a39bc0571bf3846033",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4103,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-30",
+      "role": "B",
+      "candidate_id": "1fc2a453be48344a72fd9b5bf677f0c5",
+      "page": 65,
+      "region_id": "text-0077",
+      "operand_bbox_estimate": [
+        253.33333333333334,
+        837,
+        268,
+        851
+      ],
+      "page_sha256": "40eaf0df84ac43b3d365825514511141e9adbf593e87220dbe1ed1f63012f31e",
+      "run1_prepared_sha256": "32d197ddc308a9842a0400694231aff20b6cf4a2cd68d9133b67cd23f61bc147",
+      "run2_prepared_sha256": "32d197ddc308a9842a0400694231aff20b6cf4a2cd68d9133b67cd23f61bc147",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4550,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-31",
+      "role": "A",
+      "candidate_id": "1ff644cf839b75495ab2194344cb8866",
+      "page": 39,
+      "region_id": "text-0061",
+      "operand_bbox_estimate": [
+        226.9056603773585,
+        906,
+        241.8490566037736,
+        920
+      ],
+      "page_sha256": "562cba93a474d6e00b774ecbf2cea4ae0e4f0a9545752e13a3b6eaeff7161259",
+      "run1_prepared_sha256": "02015dc295c50067ae3b93ccf1dec86e8b640d67e92d8e17c35f3d7e4617cf29",
+      "run2_prepared_sha256": "02015dc295c50067ae3b93ccf1dec86e8b640d67e92d8e17c35f3d7e4617cf29",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4813,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-31",
+      "role": "B",
+      "candidate_id": "20288c41b638bb2b2870ec7b16eaf8ef",
+      "page": 332,
+      "region_id": "text-0029",
+      "operand_bbox_estimate": [
+        322.1666666666667,
+        435,
+        343.4791666666667,
+        449
+      ],
+      "page_sha256": "19da0dc5d9dd7f6886d302aacfb082eae941cbdf9119617e5db3e4fd5c879bc1",
+      "run1_prepared_sha256": "b4bef9489475bafe17341d8e2e325cd0f568f8b2209690d958c83c2213e982a3",
+      "run2_prepared_sha256": "b4bef9489475bafe17341d8e2e325cd0f568f8b2209690d958c83c2213e982a3",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5190,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-32",
+      "role": "A",
+      "candidate_id": "2069f3b4f4228c125794380f04f23530",
+      "page": 366,
+      "region_id": "text-0035",
+      "operand_bbox_estimate": [
+        639.0545454545454,
+        291,
+        659.9454545454546,
+        305
+      ],
+      "page_sha256": "155fbd781b1a822fa48e021fd6d980fc91c00cfbf325fba25d68de79da5c53dc",
+      "run1_prepared_sha256": "d816e68543354d19695a6c1ea9323a26f4d55684d27f4cbd54ded0e2da93a53c",
+      "run2_prepared_sha256": "d816e68543354d19695a6c1ea9323a26f4d55684d27f4cbd54ded0e2da93a53c",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4818,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-32",
+      "role": "B",
+      "candidate_id": "222aa5ac493e379fef789dfb03f7dbf3",
+      "page": 74,
+      "region_id": "text-0028",
+      "operand_bbox_estimate": [
+        586.7142857142858,
+        336,
+        617,
+        350
+      ],
+      "page_sha256": "813c11b7af616b9c76e81fe1447882c2e4dea01624eff8fdf126914918526872",
+      "run1_prepared_sha256": "4fdc3d089d3fd1fdee09d052adba5478ffdb637f1ffa5b35108e887f84ebaf7c",
+      "run2_prepared_sha256": "4fdc3d089d3fd1fdee09d052adba5478ffdb637f1ffa5b35108e887f84ebaf7c",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 7153,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-33",
+      "role": "A",
+      "candidate_id": "2249ac87793fb10d5d78399f8c65242e",
+      "page": 297,
+      "region_id": "text-0063",
+      "operand_bbox_estimate": [
+        238.80769230769232,
+        599,
+        261.8269230769231,
+        613
+      ],
+      "page_sha256": "2f0f1bada8413652ec7becd5a15c2847330723ec94a4ea3d126d451931d7e893",
+      "run1_prepared_sha256": "af8a8506b89c1f84a2c0c73eaa4e1970e99af6e9e46eebeadb011ec961b4921a",
+      "run2_prepared_sha256": "af8a8506b89c1f84a2c0c73eaa4e1970e99af6e9e46eebeadb011ec961b4921a",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4832,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-33",
+      "role": "B",
+      "candidate_id": "2265a78a75772885c29cfe8d30a281e5",
+      "page": 295,
+      "region_id": "text-0077",
+      "operand_bbox_estimate": [
+        323.21153846153845,
+        1044,
+        346.2307692307692,
+        1058
+      ],
+      "page_sha256": "630481cc66e87c09790c43127292cf2ae29bf5330e3de600c391982d57f24bd3",
+      "run1_prepared_sha256": "2578465865f17a2e1d14ac27b3ad61ade121799ded24c761526e44a8cee45720",
+      "run2_prepared_sha256": "2578465865f17a2e1d14ac27b3ad61ade121799ded24c761526e44a8cee45720",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5521,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-34",
+      "role": "A",
+      "candidate_id": "23a92f1628073acb03edf70cee500ccc",
+      "page": 410,
+      "region_id": "text-0051",
+      "operand_bbox_estimate": [
+        311.02127659574467,
+        481,
+        328.0851063829787,
+        495
+      ],
+      "page_sha256": "3170a1b61687102a5bb7a9d7a755b86e6f8b655b013acdba9aacf105bdbeae62",
+      "run1_prepared_sha256": "08eaf87f8976632bd13fa26d01c5675a953917478939549574adb04fc7f13157",
+      "run2_prepared_sha256": "08eaf87f8976632bd13fa26d01c5675a953917478939549574adb04fc7f13157",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4418,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-34",
+      "role": "B",
+      "candidate_id": "23cb058d69f72f1f6923c4ce416ade4b",
+      "page": 351,
+      "region_id": "text-0114",
+      "operand_bbox_estimate": [
+        178.16666666666669,
+        1079,
+        201.66666666666669,
+        1093
+      ],
+      "page_sha256": "b3b6102dbca8f5c80004417701bb5c615042e242d7339aed5bb0c4d5603b0afd",
+      "run1_prepared_sha256": "064223a5810c59e2699b908585e42010495fbb788de44448273d0a488ca59566",
+      "run2_prepared_sha256": "064223a5810c59e2699b908585e42010495fbb788de44448273d0a488ca59566",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5667,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-35",
+      "role": "A",
+      "candidate_id": "246173b840cdd9c0ea839d5f82de3b76",
+      "page": 59,
+      "region_id": "text-0067",
+      "operand_bbox_estimate": [
+        572.9787234042553,
+        786,
+        606.1702127659574,
+        800
+      ],
+      "page_sha256": "91e8101a137431a358fe5e73ea533f5b3f001ec1d20f20b8e2d3837f4caa5243",
+      "run1_prepared_sha256": "8663facaf3e66c54cecf2b374d0f0f0ba8a0df21bfd973472547a939c39be5ec",
+      "run2_prepared_sha256": "8663facaf3e66c54cecf2b374d0f0f0ba8a0df21bfd973472547a939c39be5ec",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4912,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-35",
+      "role": "B",
+      "candidate_id": "249a8957f80ac4ea06cbf88fc62ed986",
+      "page": 168,
+      "region_id": "text-0049",
+      "operand_bbox_estimate": [
+        72.6590909090909,
+        511,
+        93.45454545454545,
+        525
+      ],
+      "page_sha256": "b9fb040f6431c34ceab89c46f164dce4c6becc9c530913c1c2086965e4242738",
+      "run1_prepared_sha256": "aa94f672ca9eab96e9ffcc13a8f016d01b944955538d83f7cf5501df9b1362b9",
+      "run2_prepared_sha256": "aa94f672ca9eab96e9ffcc13a8f016d01b944955538d83f7cf5501df9b1362b9",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4859,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-36",
+      "role": "A",
+      "candidate_id": "24bbc2fd1c7c7141451777fe03ec8903",
+      "page": 256,
+      "region_id": "text-0035",
+      "operand_bbox_estimate": [
+        85.71428571428572,
+        466,
+        127.28571428571429,
+        480
+      ],
+      "page_sha256": "ac4ca69b397aba74b8b8a442411f73d9f2c721fc07d1974a1d74306317eb0d1a",
+      "run1_prepared_sha256": "eb96051878b0209c784c1edbd854127be7caab07600f47fdeb54788b542222c5",
+      "run2_prepared_sha256": "eb96051878b0209c784c1edbd854127be7caab07600f47fdeb54788b542222c5",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 7370,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-36",
+      "role": "B",
+      "candidate_id": "25e99fcd12c90f94837202830402c5f4",
+      "page": 60,
+      "region_id": "text-0064",
+      "operand_bbox_estimate": [
+        161.82758620689657,
+        757,
+        185.41379310344828,
+        768
+      ],
+      "page_sha256": "ed6bb65e5f1d0efa94d7c834d6067c1f25a610264a1b71f0e199193b821fb446",
+      "run1_prepared_sha256": "66d893ed8eb58793ffe4d13508d777dee63edcf6f00775a0744ffbaaba5578ee",
+      "run2_prepared_sha256": "66d893ed8eb58793ffe4d13508d777dee63edcf6f00775a0744ffbaaba5578ee",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5579,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-37",
+      "role": "A",
+      "candidate_id": "2681397e09234e8720a8f3812e103abf",
+      "page": 116,
+      "region_id": "text-0062",
+      "operand_bbox_estimate": [
+        225.41071428571428,
+        298,
+        245.5,
+        312
+      ],
+      "page_sha256": "5d93d353ce41a2d5af0255da0283f79ca6e578e0cbd1b74fbf54b77f2066215f",
+      "run1_prepared_sha256": "6b0b05c97ae1381b759e9effa1fe83776d006d58ac7e7096bca727558b5a649c",
+      "run2_prepared_sha256": "6b0b05c97ae1381b759e9effa1fe83776d006d58ac7e7096bca727558b5a649c",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5451,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-37",
+      "role": "B",
+      "candidate_id": "269660e56465d1d543fc57c93532057a",
+      "page": 256,
+      "region_id": "text-0018",
+      "operand_bbox_estimate": [
+        255.8695652173913,
+        207,
+        279.6086956521739,
+        221
+      ],
+      "page_sha256": "ac4ca69b397aba74b8b8a442411f73d9f2c721fc07d1974a1d74306317eb0d1a",
+      "run1_prepared_sha256": "123ddc105c3b438deabe38b4d1c8cf381a1255d09ebf7826b20f4850dde528c8",
+      "run2_prepared_sha256": "123ddc105c3b438deabe38b4d1c8cf381a1255d09ebf7826b20f4850dde528c8",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5488,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-37",
+      "role": "C",
+      "candidate_id": "26bd220228613469923698af18537820",
+      "page": 410,
+      "region_id": "text-0041",
+      "operand_bbox_estimate": [
+        335.48,
+        390,
+        367.64,
+        404
+      ],
+      "page_sha256": "3170a1b61687102a5bb7a9d7a755b86e6f8b655b013acdba9aacf105bdbeae62",
+      "run1_prepared_sha256": "442af7fe514acd8c4d0e91303f1382009ff04889b6855285528bce5cf334a4b1",
+      "run2_prepared_sha256": "442af7fe514acd8c4d0e91303f1382009ff04889b6855285528bce5cf334a4b1",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6775,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-38",
+      "role": "A",
+      "candidate_id": "26fae9567b790a2ac3f16671cd2c71ba",
+      "page": 400,
+      "region_id": "text-0146",
+      "operand_bbox_estimate": [
+        296.8235294117647,
+        923,
+        320.3529411764706,
+        937
+      ],
+      "page_sha256": "e416f36e2c67196fb10dab24ef4cf018335364d5553d4f3556387e680b3bf8e8",
+      "run1_prepared_sha256": "bc6b157f3fba078364666d49479f6ee54b67156e136bf1aa30335a25b8d26da1",
+      "run2_prepared_sha256": "bc6b157f3fba078364666d49479f6ee54b67156e136bf1aa30335a25b8d26da1",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4002,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-38",
+      "role": "B",
+      "candidate_id": "279a89daaea4683a18f158d68357211e",
+      "page": 361,
+      "region_id": "text-0041",
+      "operand_bbox_estimate": [
+        657.457627118644,
+        310,
+        670.3389830508474,
+        324
+      ],
+      "page_sha256": "71f2dd341134d80f47579f9b7236029f42701a8e039cfeabf8ff371d7aed40f7",
+      "run1_prepared_sha256": "437f565cd6085458b8ee60ef391b37c888bb6daa175e2e0b7d44634c67b822bb",
+      "run2_prepared_sha256": "437f565cd6085458b8ee60ef391b37c888bb6daa175e2e0b7d44634c67b822bb",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4565,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-38",
+      "role": "C",
+      "candidate_id": "288f47a1102a6cc3758dc3988dfb3978",
+      "page": 402,
+      "region_id": "text-0132",
+      "operand_bbox_estimate": [
+        708.6290322580645,
+        767,
+        726.9677419354839,
+        781
+      ],
+      "page_sha256": "abbae8db560b069cc288c394c4ab78f77001ee98303170a992b6a2977aeb7a97",
+      "run1_prepared_sha256": "e464c45b7c8da64624b14fca73c8df179179a7e7a1494982325f017774a06f7e",
+      "run2_prepared_sha256": "e464c45b7c8da64624b14fca73c8df179179a7e7a1494982325f017774a06f7e",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5096,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-39",
+      "role": "A",
+      "candidate_id": "2930d18c78b8fe6506584ddcaa2d6d99",
+      "page": 153,
+      "region_id": "text-0073",
+      "operand_bbox_estimate": [
+        634.1379310344828,
+        1000,
+        653.7931034482758,
+        1014
+      ],
+      "page_sha256": "4a9b971ae846c5720dc8542075ad25fb8c30a46bca540d09946500c131a8ca93",
+      "run1_prepared_sha256": "8ee3f6516c9d11e2219bd152fbd48571ef0ba9f07a1e0c2fd037d30c4382bb95",
+      "run2_prepared_sha256": "8ee3f6516c9d11e2219bd152fbd48571ef0ba9f07a1e0c2fd037d30c4382bb95",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5857,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-39",
+      "role": "B",
+      "candidate_id": "2938df34d1588231d581305c3b52417c",
+      "page": 209,
+      "region_id": "text-0187",
+      "operand_bbox_estimate": [
+        149.33333333333331,
+        1073,
+        175.77777777777777,
+        1087
+      ],
+      "page_sha256": "f4bcc9abe0231f1bf30167cb055a0e8228b52d0dfdc73bcbe8746ccc4ed089ca",
+      "run1_prepared_sha256": "1cd01613c78bcba701609f4a1d17a0120d396a384847e3c7ad292053c4842b79",
+      "run2_prepared_sha256": "1cd01613c78bcba701609f4a1d17a0120d396a384847e3c7ad292053c4842b79",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4904,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-39",
+      "role": "C",
+      "candidate_id": "2a096ec5e130341fa89720187d863e39",
+      "page": 169,
+      "region_id": "text-0022",
+      "operand_bbox_estimate": [
+        349.3818181818182,
+        309,
+        370.8727272727273,
+        323
+      ],
+      "page_sha256": "f04967c0eb4a5d3964d69fa250785ab9d1487b33bd14b30d88574673ad2c01e5",
+      "run1_prepared_sha256": "08cebcb16cb315c75f7623b42fb8c67745899aab8e5f1a58bc068f3f4029a9e6",
+      "run2_prepared_sha256": "08cebcb16cb315c75f7623b42fb8c67745899aab8e5f1a58bc068f3f4029a9e6",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5696,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-40",
+      "role": "A",
+      "candidate_id": "2a2f55b16e91e1b356dba2f1415909a1",
+      "page": 341,
+      "region_id": "text-0012",
+      "operand_bbox_estimate": [
+        122.54545454545455,
+        182,
+        145.45454545454544,
+        196
+      ],
+      "page_sha256": "79696d0bac342680c17e2c9624b7330248aca2127df4a02d19fae830937127b9",
+      "run1_prepared_sha256": "bbf58e7be8eed1656e56f01347033a851052d9d5068071839a0edb6a7becade9",
+      "run2_prepared_sha256": "bbf58e7be8eed1656e56f01347033a851052d9d5068071839a0edb6a7becade9",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5631,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-40",
+      "role": "B",
+      "candidate_id": "2a8df2c03a3bacbbf36f3a6e97d69cb2",
+      "page": 340,
+      "region_id": "text-0035",
+      "operand_bbox_estimate": [
+        341.75,
+        468,
+        365.3125,
+        482
+      ],
+      "page_sha256": "606516366b05cfd34dbb13e0cfe53b1641ffb0c631db3d1de8625a4affdabca9",
+      "run1_prepared_sha256": "a343c70b71b6d55216ecf2603ff89c82bb89c97e99a14d2198b4fb1297b431dc",
+      "run2_prepared_sha256": "a343c70b71b6d55216ecf2603ff89c82bb89c97e99a14d2198b4fb1297b431dc",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5157,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-40",
+      "role": "C",
+      "candidate_id": "2ae510a7b164d04ee718b0adde5f4309",
+      "page": 351,
+      "region_id": "text-0057",
+      "operand_bbox_estimate": [
+        334.1875,
+        513,
+        357.625,
+        527
+      ],
+      "page_sha256": "b3b6102dbca8f5c80004417701bb5c615042e242d7339aed5bb0c4d5603b0afd",
+      "run1_prepared_sha256": "23d5ec1b4e1d548ccbbc86e368ceba9446b6a23a75a02a08ab6b083cd881dafc",
+      "run2_prepared_sha256": "23d5ec1b4e1d548ccbbc86e368ceba9446b6a23a75a02a08ab6b083cd881dafc",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5531,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-41",
+      "role": "A",
+      "candidate_id": "2bfd254846717dcb81fe30c0818c2b41",
+      "page": 68,
+      "region_id": "text-0045",
+      "operand_bbox_estimate": [
+        249,
+        615,
+        263.1538461538462,
+        629
+      ],
+      "page_sha256": "d6d22875b79dea3562a92323a7846804d15a8e85eaca95f2e26f1edd77c1c488",
+      "run1_prepared_sha256": "af19cf8ddbd952166bc0eca59c0a60839f685568bdc0d0715d1807a39b62a9e6",
+      "run2_prepared_sha256": "af19cf8ddbd952166bc0eca59c0a60839f685568bdc0d0715d1807a39b62a9e6",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5148,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-41",
+      "role": "B",
+      "candidate_id": "2c6a97e859260796ebcad8b4de9059c4",
+      "page": 189,
+      "region_id": "text-0099",
+      "operand_bbox_estimate": [
+        86.66666666666667,
+        793,
+        111.66666666666666,
+        807
+      ],
+      "page_sha256": "e2a08917336dd6604e847f519ced295b4bca8af1445d99425332e0489ed4afde",
+      "run1_prepared_sha256": "119fa06035cf48f644aa3f2066671633a4676a6acf33875b2e36c9e1a113bcc2",
+      "run2_prepared_sha256": "119fa06035cf48f644aa3f2066671633a4676a6acf33875b2e36c9e1a113bcc2",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6114,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-41",
+      "role": "C",
+      "candidate_id": "2c80087b5f79453c91463967f301b2b4",
+      "page": 89,
+      "region_id": "text-0017",
+      "operand_bbox_estimate": [
+        153.04000000000002,
+        268,
+        166.88,
+        282
+      ],
+      "page_sha256": "7ccab61d464160c638d6b32f2affb6dd37b22b4a97f71131ea1ba4e1d6cd1695",
+      "run1_prepared_sha256": "d36dba5586deca85ef6dbd17be2c4891ba18f8e43e955b60612440f67b23096b",
+      "run2_prepared_sha256": "d36dba5586deca85ef6dbd17be2c4891ba18f8e43e955b60612440f67b23096b",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4663,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-42",
+      "role": "A",
+      "candidate_id": "2c96074d27cb42a6ca7e7b3fb607e2d6",
+      "page": 363,
+      "region_id": "text-0015",
+      "operand_bbox_estimate": [
+        128.08333333333334,
+        187,
+        143.625,
+        201
+      ],
+      "page_sha256": "458882cfa13e04d31c9ecb537445482fa1afdf7b5734ed3c1cc0c58f082f6d0d",
+      "run1_prepared_sha256": "d56c1804651a213fa3229258ae7dfde7ef57ec2152e9898c9ef666e72af0ba0b",
+      "run2_prepared_sha256": "d56c1804651a213fa3229258ae7dfde7ef57ec2152e9898c9ef666e72af0ba0b",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4575,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-42",
+      "role": "B",
+      "candidate_id": "2f78254622e01d0054161b38c27c5b08",
+      "page": 178,
+      "region_id": "text-0051",
+      "operand_bbox_estimate": [
+        329.18367346938777,
+        745,
+        350.48979591836735,
+        759
+      ],
+      "page_sha256": "930ea73d21696b9d6cd1264f0b75b1cf8933c23e4a07f884822a7005e8e0337f",
+      "run1_prepared_sha256": "bb101909068a64473241a1d09149f6d4930d625d2b2e8821840866f17aa36285",
+      "run2_prepared_sha256": "bb101909068a64473241a1d09149f6d4930d625d2b2e8821840866f17aa36285",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5285,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-42",
+      "role": "C",
+      "candidate_id": "2f9b8a6f1cf42dbdb67ab5f61836da9c",
+      "page": 226,
+      "region_id": "text-0029",
+      "operand_bbox_estimate": [
+        171.6875,
+        302,
+        186.5625,
+        316
+      ],
+      "page_sha256": "1147859d4b714567f1f0b8567b9eaa1530fd869927802e6b8c6a79c74fff42f3",
+      "run1_prepared_sha256": "fc1a4788e05ae174cbd34c5a725d8182013c03afcd4b7f7d13e27edf9c9e1626",
+      "run2_prepared_sha256": "fc1a4788e05ae174cbd34c5a725d8182013c03afcd4b7f7d13e27edf9c9e1626",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4502,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-43",
+      "role": "A",
+      "candidate_id": "2ff340e0906fa8c01c86045e836635d2",
+      "page": 357,
+      "region_id": "text-0011",
+      "operand_bbox_estimate": [
+        281.7647058823529,
+        147,
+        305.2941176470588,
+        161
+      ],
+      "page_sha256": "5c69a74e74433ce41aeb919305be71cfc45888198e230ca18fa8736761286da6",
+      "run1_prepared_sha256": "ad9fdac9f7bc5775891aaefb4e7c0fcf28c9226ddb74eb49e0a126b91453537a",
+      "run2_prepared_sha256": "ad9fdac9f7bc5775891aaefb4e7c0fcf28c9226ddb74eb49e0a126b91453537a",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5167,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-43",
+      "role": "B",
+      "candidate_id": "3059ac3a58f75e32b6d93e88add7992a",
+      "page": 399,
+      "region_id": "text-0119",
+      "operand_bbox_estimate": [
+        788.45,
+        475,
+        807.5,
+        489
+      ],
+      "page_sha256": "e8a6986a16a0831e127d830c241d72d81e60a304c9285795a02b86dc11b17307",
+      "run1_prepared_sha256": "228a8f55331bd86a8f6018305d12edf1d2459321ad96530d017d3bfc262989c3",
+      "run2_prepared_sha256": "228a8f55331bd86a8f6018305d12edf1d2459321ad96530d017d3bfc262989c3",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4613,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-43",
+      "role": "C",
+      "candidate_id": "30d35de3c2c9968caac13b9fbba0b385",
+      "page": 60,
+      "region_id": "text-0054",
+      "operand_bbox_estimate": [
+        124.91176470588235,
+        633,
+        136.5,
+        644
+      ],
+      "page_sha256": "ed6bb65e5f1d0efa94d7c834d6067c1f25a610264a1b71f0e199193b821fb446",
+      "run1_prepared_sha256": "2d1d51b9b8f480c9821cdec98a7cbc9361bee3bd6b5567779c3eb6ff67f443c1",
+      "run2_prepared_sha256": "2d1d51b9b8f480c9821cdec98a7cbc9361bee3bd6b5567779c3eb6ff67f443c1",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5408,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-44",
+      "role": "A",
+      "candidate_id": "310b8ffb7ca9871a228ccfea6c112934",
+      "page": 340,
+      "region_id": "text-0069",
+      "operand_bbox_estimate": [
+        334.375,
+        811,
+        359.78125,
+        825
+      ],
+      "page_sha256": "606516366b05cfd34dbb13e0cfe53b1641ffb0c631db3d1de8625a4affdabca9",
+      "run1_prepared_sha256": "50b3bc1bb5bdecca678bff0130fee3b04ad0ff13d110755b3e4d22b8791158c6",
+      "run2_prepared_sha256": "50b3bc1bb5bdecca678bff0130fee3b04ad0ff13d110755b3e4d22b8791158c6",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5174,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-44",
+      "role": "B",
+      "candidate_id": "322b44a441351c29847a08814748b8ef",
+      "page": 214,
+      "region_id": "text-0075",
+      "operand_bbox_estimate": [
+        316.8571428571429,
+        1103,
+        340.0857142857143,
+        1117
+      ],
+      "page_sha256": "2eac3aa8a5538115234e6d2969b13101cb1a5689366271ad578ef6fccc50d259",
+      "run1_prepared_sha256": "d5e145a2148b2b49610ea6f1e331b630af6db01cde358c45d14a2cdc9ccbdb56",
+      "run2_prepared_sha256": "d5e145a2148b2b49610ea6f1e331b630af6db01cde358c45d14a2cdc9ccbdb56",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5795,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-44",
+      "role": "C",
+      "candidate_id": "32dd9eb95dd9bb8cd9173ce83100360a",
+      "page": 86,
+      "region_id": "text-0058",
+      "operand_bbox_estimate": [
+        305.21153846153845,
+        922,
+        320.4807692307692,
+        936
+      ],
+      "page_sha256": "62f95faddf33b9410bafbd79f854a02a5bb9bdb18e3f0c0c058d0ed703e87b1e",
+      "run1_prepared_sha256": "a6ca3b5993336e37c2585703b3e2aeb4a0119cf926fcc6a0d0d715b4c2210366",
+      "run2_prepared_sha256": "a6ca3b5993336e37c2585703b3e2aeb4a0119cf926fcc6a0d0d715b4c2210366",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4741,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-45",
+      "role": "A",
+      "candidate_id": "33a85bb5f9b70de97415ec9689dd6d6e",
+      "page": 358,
+      "region_id": "text-0040",
+      "operand_bbox_estimate": [
+        139.33333333333331,
+        490,
+        161.04761904761904,
+        504
+      ],
+      "page_sha256": "b2defa56edc53ba0ba5d5049267d85e2138e870e6560e7fc71863b0b4f4a0bb5",
+      "run1_prepared_sha256": "5f36e5a6d7cb1d819519c97fc4aa951218f638f83c9d22a5ecf058b530fa2949",
+      "run2_prepared_sha256": "5f36e5a6d7cb1d819519c97fc4aa951218f638f83c9d22a5ecf058b530fa2949",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5427,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-45",
+      "role": "B",
+      "candidate_id": "33ef946cf1e93a449f238db3716bddec",
+      "page": 301,
+      "region_id": "text-0113",
+      "operand_bbox_estimate": [
+        624.0350877192982,
+        1092,
+        644.140350877193,
+        1106
+      ],
+      "page_sha256": "3e2a93df0bc57692a6247d2e783028ed1db8e6d7fccf213e23876f89e8298475",
+      "run1_prepared_sha256": "e9f57c52f2d1cc782d4fc098fe611d3b6f0912eb74889f5030a7b4d4e333a7d6",
+      "run2_prepared_sha256": "e9f57c52f2d1cc782d4fc098fe611d3b6f0912eb74889f5030a7b4d4e333a7d6",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4062,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-45",
+      "role": "C",
+      "candidate_id": "342d72b317f415145fd7fee4028ca580",
+      "page": 471,
+      "region_id": "text-0007",
+      "operand_bbox_estimate": [
+        673.4651162790698,
+        101,
+        688.1162790697674,
+        115
+      ],
+      "page_sha256": "0b49eea48cdf73caf5156d5c5b95c85dc94a78bc30f77bf7cf93f262a0a44b28",
+      "run1_prepared_sha256": "3eaf6180facc6cd54755e4e233c076d7ffe46c933539e96d7f8332655ea3d621",
+      "run2_prepared_sha256": "3eaf6180facc6cd54755e4e233c076d7ffe46c933539e96d7f8332655ea3d621",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4171,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-46",
+      "role": "A",
+      "candidate_id": "342f6e8c5361128d8112ee49f0bc1dd0",
+      "page": 415,
+      "region_id": "text-0112",
+      "operand_bbox_estimate": [
+        665,
+        635,
+        686,
+        649
+      ],
+      "page_sha256": "22856c4f986c0c5804646efb386eeb72d2f378ac866a438ae694166620bca1ec",
+      "run1_prepared_sha256": "399da8819d67de001595d882bfa084a52faa895732e2d8b775ffde40fa85aac9",
+      "run2_prepared_sha256": "399da8819d67de001595d882bfa084a52faa895732e2d8b775ffde40fa85aac9",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5108,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-46",
+      "role": "B",
+      "candidate_id": "344d54b10c93de8eaa7b3d61eb7e0081",
+      "page": 410,
+      "region_id": "text-0080",
+      "operand_bbox_estimate": [
+        516.1132075471698,
+        642,
+        530.6415094339623,
+        656
+      ],
+      "page_sha256": "3170a1b61687102a5bb7a9d7a755b86e6f8b655b013acdba9aacf105bdbeae62",
+      "run1_prepared_sha256": "f246d448be9aa77abc1249893ff7e74e3de5985f8e871d085e61fd403ad41ecb",
+      "run2_prepared_sha256": "f246d448be9aa77abc1249893ff7e74e3de5985f8e871d085e61fd403ad41ecb",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4115,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-46",
+      "role": "C",
+      "candidate_id": "34a975f221a99f117d66d86800d7ff2a",
+      "page": 307,
+      "region_id": "text-0037",
+      "operand_bbox_estimate": [
+        428.3333333333333,
+        596,
+        445,
+        610
+      ],
+      "page_sha256": "a01bf45cdc0f7f42d515c5bbafae4afbc5379d249b62bcd9f8d5bc739dc35de0",
+      "run1_prepared_sha256": "4359a19fe33b7155175b6dcbf1db51558a1eae95ba69d219e39086a65a64a5b6",
+      "run2_prepared_sha256": "4359a19fe33b7155175b6dcbf1db51558a1eae95ba69d219e39086a65a64a5b6",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4395,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-47",
+      "role": "A",
+      "candidate_id": "350bcc0725dfe25dbea98a165d00424e",
+      "page": 368,
+      "region_id": "text-0069",
+      "operand_bbox_estimate": [
+        722.6181818181818,
+        894,
+        736.5454545454545,
+        908
+      ],
+      "page_sha256": "3ff3fc323c29b95d416811a517c670e2d2faaa1ff9bf3ecbf087f4ea6a000b06",
+      "run1_prepared_sha256": "756d4f897c6722cb5ec95fa9cd26d335a5cf6107d20b8b5640bdfeee4435412f",
+      "run2_prepared_sha256": "756d4f897c6722cb5ec95fa9cd26d335a5cf6107d20b8b5640bdfeee4435412f",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4200,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-47",
+      "role": "B",
+      "candidate_id": "353212d6998968ae9e08be6c480907e0",
+      "page": 141,
+      "region_id": "text-0029",
+      "operand_bbox_estimate": [
+        503.0689655172414,
+        417,
+        535.7413793103449,
+        431
+      ],
+      "page_sha256": "3373ec84df6c03a50e88a20f727977f9e577406b70ce47f74c5bcf5b0e08853a",
+      "run1_prepared_sha256": "cc92a9581fed28f4f5d9b331a1db53c8997b57b1b6e6a41ec905577511f96c16",
+      "run2_prepared_sha256": "cc92a9581fed28f4f5d9b331a1db53c8997b57b1b6e6a41ec905577511f96c16",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6387,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-47",
+      "role": "C",
+      "candidate_id": "35348afa7c5284809f377524369b38e6",
+      "page": 169,
+      "region_id": "text-0047",
+      "operand_bbox_estimate": [
+        594.1935483870968,
+        518,
+        612.5806451612904,
+        532
+      ],
+      "page_sha256": "f04967c0eb4a5d3964d69fa250785ab9d1487b33bd14b30d88574673ad2c01e5",
+      "run1_prepared_sha256": "b368115192b4bf9c5334d97c0cdabcb1428171df12c19940286a84840935d236",
+      "run2_prepared_sha256": "b368115192b4bf9c5334d97c0cdabcb1428171df12c19940286a84840935d236",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5466,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-48",
+      "role": "A",
+      "candidate_id": "3554018d30b581ea648685304b9d95a1",
+      "page": 363,
+      "region_id": "text-0051",
+      "operand_bbox_estimate": [
+        130.45454545454544,
+        720,
+        155.54545454545456,
+        734
+      ],
+      "page_sha256": "458882cfa13e04d31c9ecb537445482fa1afdf7b5734ed3c1cc0c58f082f6d0d",
+      "run1_prepared_sha256": "e5ee26c2431d62bbb1aa32e585cd6ec16ad2fa4f7187699fa5309bc8f52610fd",
+      "run2_prepared_sha256": "e5ee26c2431d62bbb1aa32e585cd6ec16ad2fa4f7187699fa5309bc8f52610fd",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6110,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-48",
+      "role": "B",
+      "candidate_id": "377663d09f9e722553f362d653b3b0b5",
+      "page": 242,
+      "region_id": "text-0066",
+      "operand_bbox_estimate": [
+        614.8518518518518,
+        510,
+        629.1111111111111,
+        524
+      ],
+      "page_sha256": "adac65c9981cd4a2eacfa5e6bd32d0e26d03a3aeab50b1ea3341d608d5cd8672",
+      "run1_prepared_sha256": "d21d5c9453bc4dd23cabf195bb66a29f70d344bba5cc28233f175ee10e33f8e7",
+      "run2_prepared_sha256": "d21d5c9453bc4dd23cabf195bb66a29f70d344bba5cc28233f175ee10e33f8e7",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4465,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-48",
+      "role": "C",
+      "candidate_id": "3873840d77d8ce7e3b9a73ad8e334fe0",
+      "page": 232,
+      "region_id": "text-0016",
+      "operand_bbox_estimate": [
+        274.0769230769231,
+        559,
+        296.9230769230769,
+        573
+      ],
+      "page_sha256": "eea52e4b3de452f5e134b46bba95e81124d3944c33514fbea10619169e3d296c",
+      "run1_prepared_sha256": "201190e2ecbfdbe17ace8d2d4fc2cf95e4554d9dd3fdb03765401a7f55d7be4b",
+      "run2_prepared_sha256": "201190e2ecbfdbe17ace8d2d4fc2cf95e4554d9dd3fdb03765401a7f55d7be4b",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6043,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-01",
+      "role": "A",
+      "candidate_id": "0055ea76c2d9c3b1359ff621263c2853",
+      "page": 308,
+      "region_id": "text-0082",
+      "operand_bbox_estimate": [
+        736.6666666666667,
+        946,
+        749.3333333333333,
+        960
+      ],
+      "page_sha256": "71f56e167046f68ec7accee9c807a0c114200a3b0692f72bc339d262d819267f",
+      "run1_prepared_sha256": "337f9e46648c38754f35ba895a5c3ba7731a13547949ba3e3c89eee518331227",
+      "run2_prepared_sha256": "337f9e46648c38754f35ba895a5c3ba7731a13547949ba3e3c89eee518331227",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4608,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-02",
+      "role": "A",
+      "candidate_id": "0111d38a8384cc11d37799f5309a259b",
+      "page": 155,
+      "region_id": "text-0077",
+      "operand_bbox_estimate": [
+        436.35087719298247,
+        932,
+        464,
+        946
+      ],
+      "page_sha256": "08c5e2f04f495ba310d49294d294d21fe9773f0b7e7971251461c743dd679557",
+      "run1_prepared_sha256": "0c5bee6ad3021e485c83370a32394eab5de0d8ff310b6b8ee47f760881f4df3f",
+      "run2_prepared_sha256": "0c5bee6ad3021e485c83370a32394eab5de0d8ff310b6b8ee47f760881f4df3f",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5466,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-03",
+      "role": "A",
+      "candidate_id": "0275f92983318166187a1d1e070135b7",
+      "page": 399,
+      "region_id": "text-0110",
+      "operand_bbox_estimate": [
+        622.6984126984128,
+        401,
+        646.8253968253969,
+        415
+      ],
+      "page_sha256": "e8a6986a16a0831e127d830c241d72d81e60a304c9285795a02b86dc11b17307",
+      "run1_prepared_sha256": "92ec59986f5a0afe454d657062710f2e657b81e5a1802235c7377cc10a9519c2",
+      "run2_prepared_sha256": "92ec59986f5a0afe454d657062710f2e657b81e5a1802235c7377cc10a9519c2",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5501,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-04",
+      "role": "A",
+      "candidate_id": "027b3e1ef77418a652e10f1150b68c6d",
+      "page": 75,
+      "region_id": "text-0025",
+      "operand_bbox_estimate": [
+        687.3035714285714,
+        303,
+        700.9107142857142,
+        317
+      ],
+      "page_sha256": "3d646adc0d601553569325109c8becefca0210a5940b894eb3677799094425ac",
+      "run1_prepared_sha256": "0605241a5c995f777c17850c8533c8528ced170f24c73b0887df3d790e4752d4",
+      "run2_prepared_sha256": "0605241a5c995f777c17850c8533c8528ced170f24c73b0887df3d790e4752d4",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4267,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-05",
+      "role": "A",
+      "candidate_id": "030104cc11ece01e29921b47005072ac",
+      "page": 123,
+      "region_id": "text-0135",
+      "operand_bbox_estimate": [
+        141.13953488372093,
+        852,
+        175.27906976744185,
+        866
+      ],
+      "page_sha256": "256d0db88c64ade75fce2aa095d05e5ced72d55f56989a1dbe23bb6674d9f4fd",
+      "run1_prepared_sha256": "b9db23fd205a48d712df75e4ddfa911c0d113c3d7c3eff37f3bfe8b5fb3ff7a2",
+      "run2_prepared_sha256": "b9db23fd205a48d712df75e4ddfa911c0d113c3d7c3eff37f3bfe8b5fb3ff7a2",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6172,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-06",
+      "role": "A",
+      "candidate_id": "03a121652d66d41eb89f885682907fa9",
+      "page": 52,
+      "region_id": "text-0041",
+      "operand_bbox_estimate": [
+        736.64,
+        308,
+        759.86,
+        322
+      ],
+      "page_sha256": "4e922a9e7ad8fe2e2ffa315eefe5325d20c5f75fee3d531606f3e27de99b44af",
+      "run1_prepared_sha256": "0010c3be3eea996b26629347b1f40c5bd47e084a8a417ad5153b358ecc091d38",
+      "run2_prepared_sha256": "0010c3be3eea996b26629347b1f40c5bd47e084a8a417ad5153b358ecc091d38",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5030,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-07",
+      "role": "A",
+      "candidate_id": "03b5ebb725faa7a08322c7d7b4dd3d61",
+      "page": 431,
+      "region_id": "text-0117",
+      "operand_bbox_estimate": [
+        275.6764705882353,
+        971,
+        298.52941176470586,
+        985
+      ],
+      "page_sha256": "48f41084075eeea699800b14f0735807ea42ac0e7718b5c13d4157b04ecbdb6d",
+      "run1_prepared_sha256": "01af9387faf9d7bd5f543701d801a05d5fd6a7334d5a17740bdfd23dfafeb68b",
+      "run2_prepared_sha256": "01af9387faf9d7bd5f543701d801a05d5fd6a7334d5a17740bdfd23dfafeb68b",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5341,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-08",
+      "role": "A",
+      "candidate_id": "04a621a5d833cda5fe68e4ad68761383",
+      "page": 99,
+      "region_id": "text-0103",
+      "operand_bbox_estimate": [
+        576.2222222222222,
+        596,
+        593.4666666666667,
+        610
+      ],
+      "page_sha256": "86ec56930bdd50d34aff0fd6b7df73a51b0f675342a69571eff3044d9885abe2",
+      "run1_prepared_sha256": "2e7894e6cc9ceed274b7b544e08e0151bb4af20a99b9a977353e4f7bfb1b5bf3",
+      "run2_prepared_sha256": "2e7894e6cc9ceed274b7b544e08e0151bb4af20a99b9a977353e4f7bfb1b5bf3",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4526,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-09",
+      "role": "A",
+      "candidate_id": "0693b58db1bceeaf30bb60317a971fb0",
+      "page": 335,
+      "region_id": "text-0041",
+      "operand_bbox_estimate": [
+        130.45454545454544,
+        687,
+        155.54545454545456,
+        701
+      ],
+      "page_sha256": "299d0bdbe2868216619e8481c1ffccea323454e79d49a6f70bf6e0d9b81fd34e",
+      "run1_prepared_sha256": "8d53b53857d56fd065043bbb48dbd753cbe8a2fb25ffa05b51847c7826ed334b",
+      "run2_prepared_sha256": "8d53b53857d56fd065043bbb48dbd753cbe8a2fb25ffa05b51847c7826ed334b",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6179,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-10",
+      "role": "A",
+      "candidate_id": "06f18a0d414e7c0ceff092adc39db7fd",
+      "page": 297,
+      "region_id": "text-0065",
+      "operand_bbox_estimate": [
+        154.85714285714286,
+        634,
+        176.07142857142856,
+        648
+      ],
+      "page_sha256": "2f0f1bada8413652ec7becd5a15c2847330723ec94a4ea3d126d451931d7e893",
+      "run1_prepared_sha256": "40f0f869ed087bc858b9d9890ace094174f8f4a930f834e661439972569c4838",
+      "run2_prepared_sha256": "40f0f869ed087bc858b9d9890ace094174f8f4a930f834e661439972569c4838",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5892,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-11",
+      "role": "A",
+      "candidate_id": "0760d600ade74b7c31f2e40e34f90a69",
+      "page": 363,
+      "region_id": "text-0047",
+      "operand_bbox_estimate": [
+        128.08333333333334,
+        617,
+        143.625,
+        631
+      ],
+      "page_sha256": "458882cfa13e04d31c9ecb537445482fa1afdf7b5734ed3c1cc0c58f082f6d0d",
+      "run1_prepared_sha256": "d4a3d597ee8aa482827c834a0101c511b1af7a8ec8871d51c0deba6d6317a444",
+      "run2_prepared_sha256": "d4a3d597ee8aa482827c834a0101c511b1af7a8ec8871d51c0deba6d6317a444",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4681,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-12",
+      "role": "A",
+      "candidate_id": "078bb4b81aff4a66635a8b570614fd18",
+      "page": 340,
+      "region_id": "text-0077",
+      "operand_bbox_estimate": [
+        384.75,
+        903,
+        410.375,
+        917
+      ],
+      "page_sha256": "606516366b05cfd34dbb13e0cfe53b1641ffb0c631db3d1de8625a4affdabca9",
+      "run1_prepared_sha256": "eba1f718c465f6333d7067bafe80e5e6a7d424fc85c7128a4b83daea601ad5d9",
+      "run2_prepared_sha256": "eba1f718c465f6333d7067bafe80e5e6a7d424fc85c7128a4b83daea601ad5d9",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5128,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-49",
+      "role": "A",
+      "candidate_id": "38e33ffc86d19b6d5ff20c475b024e7b",
+      "page": 116,
+      "region_id": "text-0070",
+      "operand_bbox_estimate": [
+        133.8421052631579,
+        369,
+        154.5263157894737,
+        383
+      ],
+      "page_sha256": "5d93d353ce41a2d5af0255da0283f79ca6e578e0cbd1b74fbf54b77f2066215f",
+      "run1_prepared_sha256": "28a43e8dbf1a1b5f0011b54bac1f6093ddc5b049e6ccb4b738231c0973f6635c",
+      "run2_prepared_sha256": "28a43e8dbf1a1b5f0011b54bac1f6093ddc5b049e6ccb4b738231c0973f6635c",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4952,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-49",
+      "role": "B",
+      "candidate_id": "3a77597ce92fd0103711f8628124c9a2",
+      "page": 51,
+      "region_id": "text-0042",
+      "operand_bbox_estimate": [
+        765.8064516129032,
+        562,
+        784.1935483870968,
+        576
+      ],
+      "page_sha256": "f691cfcb072cbb25b9623c1a569fbb399e29ae88d94534b930b01eccfd17ad41",
+      "run1_prepared_sha256": "e181ad73c6cfcffd184f9e5dac082ead0079deb9a154caa22be5f2b68946f64a",
+      "run2_prepared_sha256": "e181ad73c6cfcffd184f9e5dac082ead0079deb9a154caa22be5f2b68946f64a",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5273,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-49",
+      "role": "a",
+      "candidate_id": "396b6a824368959ebaa41b188080a415",
+      "page": 215,
+      "region_id": "text-0012",
+      "operand_bbox_estimate": [
+        332.64,
+        131,
+        356.88,
+        145
+      ],
+      "page_sha256": "e2b95ade79b55199b3dc0f5f3686a5ba3773982140b077253d6a5cdfcdec7107",
+      "run1_prepared_sha256": "45a972c1123e01272f6dea47b5e521f1b9cd022d34162ab5c110d66d49292c02",
+      "run2_prepared_sha256": "45a972c1123e01272f6dea47b5e521f1b9cd022d34162ab5c110d66d49292c02",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4162,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-49",
+      "role": "b",
+      "candidate_id": "3c095dd44d96adebab6e9c531892a432",
+      "page": 272,
+      "region_id": "text-0046",
+      "operand_bbox_estimate": [
+        287.02,
+        590,
+        300.9,
+        604
+      ],
+      "page_sha256": "26dfa2169f26b1c666f022c1956d9bd55c11f28c20f4692f649c2824fa0e5f1e",
+      "run1_prepared_sha256": "19246c5857f45bfae3f07da297ade0cdfd42ba85e6cd4308cb1fcb49934063a7",
+      "run2_prepared_sha256": "19246c5857f45bfae3f07da297ade0cdfd42ba85e6cd4308cb1fcb49934063a7",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4425,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-50",
+      "role": "A",
+      "candidate_id": "3c5107c0d831782e8f395209e35117cb",
+      "page": 227,
+      "region_id": "text-0079",
+      "operand_bbox_estimate": [
+        317.89361702127655,
+        945,
+        345.7234042553191,
+        959
+      ],
+      "page_sha256": "5ef2ac4035f96e4c9b6af61aab36cc6a3e8c21397ec8b112d5973a91eb11fca7",
+      "run1_prepared_sha256": "9b3bc3308c0785125cbd25f135cce3853377bf89c08f0c115b734ccd68bef1d3",
+      "run2_prepared_sha256": "9b3bc3308c0785125cbd25f135cce3853377bf89c08f0c115b734ccd68bef1d3",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5043,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-50",
+      "role": "B",
+      "candidate_id": "3d03914521ab699b1ad1a37cb67c07b4",
+      "page": 70,
+      "region_id": "text-0209",
+      "operand_bbox_estimate": [
+        827.2307692307693,
+        1090,
+        842,
+        1104
+      ],
+      "page_sha256": "92b30870aaa86617c7318c453dba53a4c3ee83aaa3ed881c81fae8b6ccd22532",
+      "run1_prepared_sha256": "038c1433680644a34c88a72eb712a6207c8994f476760986c62e4abe4779ea33",
+      "run2_prepared_sha256": "038c1433680644a34c88a72eb712a6207c8994f476760986c62e4abe4779ea33",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 3381,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-50",
+      "role": "a",
+      "candidate_id": "3c8f4542235678c69b1eaeed6b399d70",
+      "page": 256,
+      "region_id": "text-0020",
+      "operand_bbox_estimate": [
+        88.32,
+        282,
+        133.8,
+        296
+      ],
+      "page_sha256": "ac4ca69b397aba74b8b8a442411f73d9f2c721fc07d1974a1d74306317eb0d1a",
+      "run1_prepared_sha256": "d765d13b134e4b51f46808e8a757c2b08a23f427ab92b181148e2f064855b773",
+      "run2_prepared_sha256": "d765d13b134e4b51f46808e8a757c2b08a23f427ab92b181148e2f064855b773",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 7836,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-50",
+      "role": "b",
+      "candidate_id": "3eee0060d1949e2eec88aa551134a2bb",
+      "page": 69,
+      "region_id": "text-0016",
+      "operand_bbox_estimate": [
+        157.0909090909091,
+        212,
+        172,
+        224
+      ],
+      "page_sha256": "6d1aaaa810433ffb101e2290d2cd76ead18ef505d071ed2e73c659f82d8e86d2",
+      "run1_prepared_sha256": "e27052e02ebf99384ba7e435783eee8f5faf40d1b4d1abd03ab9a17bae9d671a",
+      "run2_prepared_sha256": "e27052e02ebf99384ba7e435783eee8f5faf40d1b4d1abd03ab9a17bae9d671a",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4432,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-51",
+      "role": "A",
+      "candidate_id": "3fa6f0cc678396b8cac24c9a8dccbf46",
+      "page": 52,
+      "region_id": "text-0009",
+      "operand_bbox_estimate": [
+        345.5238095238095,
+        95,
+        369.3809523809524,
+        109
+      ],
+      "page_sha256": "4e922a9e7ad8fe2e2ffa315eefe5325d20c5f75fee3d531606f3e27de99b44af",
+      "run1_prepared_sha256": "d4c253f0a3dcd293359506087419be9a2c86ea4e0f9efa6a8e6113723324f4dd",
+      "run2_prepared_sha256": "d4c253f0a3dcd293359506087419be9a2c86ea4e0f9efa6a8e6113723324f4dd",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5387,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-51",
+      "role": "B",
+      "candidate_id": "409b9900412f2046cf949b09f58849e0",
+      "page": 72,
+      "region_id": "text-0046",
+      "operand_bbox_estimate": [
+        206.17142857142858,
+        642,
+        234.2,
+        656
+      ],
+      "page_sha256": "fa63c96a4b39f8587fdf029c13b0e4ad5a8903b84fc91076ed7f25f900db3228",
+      "run1_prepared_sha256": "fcb710cec2a4ca2e45b0b488315114c5bee87461badd1463f23cf52ab0179248",
+      "run2_prepared_sha256": "fcb710cec2a4ca2e45b0b488315114c5bee87461badd1463f23cf52ab0179248",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5012,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-51",
+      "role": "a",
+      "candidate_id": "40051ceb4568650010bd5780d0d282ec",
+      "page": 37,
+      "region_id": "text-0031",
+      "operand_bbox_estimate": [
+        436.16,
+        511,
+        468,
+        525
+      ],
+      "page_sha256": "9bf5b1457465d51302f541b71cfd04c2c110ef3b1e77e18f78481f3d7cde2aaf",
+      "run1_prepared_sha256": "0e8dcfeefd64589dddca4864c312e549f4918cbd5898554d020819869a918f30",
+      "run2_prepared_sha256": "0e8dcfeefd64589dddca4864c312e549f4918cbd5898554d020819869a918f30",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5181,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-51",
+      "role": "b",
+      "candidate_id": "41f542593add04b30869759ab6d791a9",
+      "page": 401,
+      "region_id": "text-0102",
+      "operand_bbox_estimate": [
+        419.9375,
+        992,
+        453.3125,
+        1006
+      ],
+      "page_sha256": "9a9368192e6513ba72520904b3e708768604db53d464689e7f85c4beb2593c0c",
+      "run1_prepared_sha256": "2e4e604020969bf5d92b40c6f6cf6d5674c84d4f5a195f0dc5b39fa6169ee643",
+      "run2_prepared_sha256": "2e4e604020969bf5d92b40c6f6cf6d5674c84d4f5a195f0dc5b39fa6169ee643",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6512,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-52",
+      "role": "A",
+      "candidate_id": "4249a2e4a698a9d14f80b0399d8807c5",
+      "page": 341,
+      "region_id": "text-0079",
+      "operand_bbox_estimate": [
+        288.63157894736844,
+        740,
+        309.7894736842105,
+        754
+      ],
+      "page_sha256": "79696d0bac342680c17e2c9624b7330248aca2127df4a02d19fae830937127b9",
+      "run1_prepared_sha256": "13c4bb3da71f822470cb97d49b85d545645e16f07b36119816a26fe00109cce2",
+      "run2_prepared_sha256": "13c4bb3da71f822470cb97d49b85d545645e16f07b36119816a26fe00109cce2",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5221,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-52",
+      "role": "B",
+      "candidate_id": "4322df5db672e1e8278c03a758889959",
+      "page": 144,
+      "region_id": "text-0095",
+      "operand_bbox_estimate": [
+        603.2758620689656,
+        597,
+        629.6896551724137,
+        611
+      ],
+      "page_sha256": "29aaeeabe8c946b2b7a9a63ac518c95b7f928242a240de5a343859d7e2f7114b",
+      "run1_prepared_sha256": "f37f0dd8c0b219ba39438f8359332f1da0c517c9e3dc3654ef7028d7565cd67e",
+      "run2_prepared_sha256": "f37f0dd8c0b219ba39438f8359332f1da0c517c9e3dc3654ef7028d7565cd67e",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5223,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-52",
+      "role": "a",
+      "candidate_id": "425ce822d88b8f46749b4b71dbaf8b07",
+      "page": 59,
+      "region_id": "text-0019",
+      "operand_bbox_estimate": [
+        830.8947368421052,
+        341,
+        857.6315789473684,
+        355
+      ],
+      "page_sha256": "91e8101a137431a358fe5e73ea533f5b3f001ec1d20f20b8e2d3837f4caa5243",
+      "run1_prepared_sha256": "6b9ae39843f83f2eeed022f256a29fd0214a73d6cdcc4020e56553be9f103c41",
+      "run2_prepared_sha256": "6b9ae39843f83f2eeed022f256a29fd0214a73d6cdcc4020e56553be9f103c41",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6031,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-52",
+      "role": "b",
+      "candidate_id": "433bfe6b387a1e75f21c9a4eb5e848a4",
+      "page": 118,
+      "region_id": "text-0165",
+      "operand_bbox_estimate": [
+        652.7457627118645,
+        1042,
+        672.2203389830509,
+        1056
+      ],
+      "page_sha256": "02d6fa54d62cf2aef923285a5625e86507384be6393596d37f07334c419853e9",
+      "run1_prepared_sha256": "919a403316fe94aaf6913fa998231b3c2480a7fb7c856d37dd251c66dd5171d0",
+      "run2_prepared_sha256": "919a403316fe94aaf6913fa998231b3c2480a7fb7c856d37dd251c66dd5171d0",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5035,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-53",
+      "role": "A",
+      "candidate_id": "437ab57154e914fea52feb4170e08557",
+      "page": 160,
+      "region_id": "text-0043",
+      "operand_bbox_estimate": [
+        667.55,
+        282,
+        692.95,
+        296
+      ],
+      "page_sha256": "ba18ae3731d6150d5ede7105f9c45a811739a5c2353b861ae8dc5bdcc6781aaf",
+      "run1_prepared_sha256": "833c013c11354c82d490a7ead369b7c69646a21f1ce67caceab674088e5545ae",
+      "run2_prepared_sha256": "833c013c11354c82d490a7ead369b7c69646a21f1ce67caceab674088e5545ae",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5896,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-53",
+      "role": "B",
+      "candidate_id": "4540c67f9df8728c60d954dd32b51cb5",
+      "page": 391,
+      "region_id": "text-0138",
+      "operand_bbox_estimate": [
+        545.016129032258,
+        981,
+        557.241935483871,
+        995
+      ],
+      "page_sha256": "c1382ec10a90a8ca0f143973622e1c94e1cf730edd19d16214c0974f7d906cc8",
+      "run1_prepared_sha256": "1a158e6ed4e0f89f8f0fa5269f1b87e7acc5067bc5d79c0c96c79918df0bfd81",
+      "run2_prepared_sha256": "1a158e6ed4e0f89f8f0fa5269f1b87e7acc5067bc5d79c0c96c79918df0bfd81",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4609,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-53",
+      "role": "a",
+      "candidate_id": "452b8b3689fa5dac3eca2b7ebfec7e47",
+      "page": 207,
+      "region_id": "text-0025",
+      "operand_bbox_estimate": [
+        197.84,
+        407,
+        220.4,
+        421
+      ],
+      "page_sha256": "002ed8f48e3bd08ca4b0577b86f689b32a615ea4f1162e913627b1c0a8782642",
+      "run1_prepared_sha256": "afb30be241f04ed9bb23985f2ee517a319f1b88e75db3f0ad816fd58bf5223ce",
+      "run2_prepared_sha256": "afb30be241f04ed9bb23985f2ee517a319f1b88e75db3f0ad816fd58bf5223ce",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5390,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-53",
+      "role": "b",
+      "candidate_id": "458c4963312272dc425956e4b59ca74b",
+      "page": 399,
+      "region_id": "text-0023",
+      "operand_bbox_estimate": [
+        857.3333333333333,
+        274,
+        870,
+        288
+      ],
+      "page_sha256": "e8a6986a16a0831e127d830c241d72d81e60a304c9285795a02b86dc11b17307",
+      "run1_prepared_sha256": "4ff1017e4b1fe0a78d5de7a28b41f0d83e7a274b07a2322d6674894c0fd50c40",
+      "run2_prepared_sha256": "4ff1017e4b1fe0a78d5de7a28b41f0d83e7a274b07a2322d6674894c0fd50c40",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 3857,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-54",
+      "role": "A",
+      "candidate_id": "45bd4b2032d3e0132fba5b8501817eff",
+      "page": 118,
+      "region_id": "text-0166",
+      "operand_bbox_estimate": [
+        676.8125,
+        1059,
+        701.125,
+        1073
+      ],
+      "page_sha256": "02d6fa54d62cf2aef923285a5625e86507384be6393596d37f07334c419853e9",
+      "run1_prepared_sha256": "b8747784614ff5e75651789482b93fff87a41ac6bbe457b55dba854db673a3a2",
+      "run2_prepared_sha256": "b8747784614ff5e75651789482b93fff87a41ac6bbe457b55dba854db673a3a2",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5201,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-54",
+      "role": "B",
+      "candidate_id": "462f70aaae8a65026c0b459504afc9e7",
+      "page": 93,
+      "region_id": "text-0057",
+      "operand_bbox_estimate": [
+        849.4117647058824,
+        337,
+        880,
+        351
+      ],
+      "page_sha256": "7e0d35efb6b7988de8667500fe10aea3a3966d01fd4596cc0c42535463d14383",
+      "run1_prepared_sha256": "5b235d7559eaf5b64d4a83f5e4221fd5f20d1715fe2115f4590d374cd3b8182d",
+      "run2_prepared_sha256": "5b235d7559eaf5b64d4a83f5e4221fd5f20d1715fe2115f4590d374cd3b8182d",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5034,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-54",
+      "role": "a",
+      "candidate_id": "461aedd4317f2c9395474c3a3ff9cee8",
+      "page": 303,
+      "region_id": "text-0036",
+      "operand_bbox_estimate": [
+        153.76923076923077,
+        644,
+        184.23076923076923,
+        658
+      ],
+      "page_sha256": "2278daf3ad050a24174d0b3c79a294708c794e853ee1fa6f4ce796d40e7ba6ee",
+      "run1_prepared_sha256": "2b2258464a4a5c80e1cab0353e16af051dc5d68037a6941d6faef6ec1c41623d",
+      "run2_prepared_sha256": "2b2258464a4a5c80e1cab0353e16af051dc5d68037a6941d6faef6ec1c41623d",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5826,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-54",
+      "role": "b",
+      "candidate_id": "46bd873a362619e27207041287f7ccd9",
+      "page": 296,
+      "region_id": "text-0034",
+      "operand_bbox_estimate": [
+        287.33333333333337,
+        559,
+        316.6666666666667,
+        573
+      ],
+      "page_sha256": "aab312de63f3a1eb4b2fc50b8cae3086fb02c0795a0955c4aaf85d88b5f96fa8",
+      "run1_prepared_sha256": "186623a4c50b238a7521e70d3f3c5c51617eca1fb09a7ac72684785081fb4a66",
+      "run2_prepared_sha256": "186623a4c50b238a7521e70d3f3c5c51617eca1fb09a7ac72684785081fb4a66",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6463,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-55",
+      "role": "A",
+      "candidate_id": "46fb266d0d52ee5e6b6893743de5cff5",
+      "page": 303,
+      "region_id": "text-0057",
+      "operand_bbox_estimate": [
+        407.92452830188677,
+        925,
+        430.45283018867923,
+        939
+      ],
+      "page_sha256": "2278daf3ad050a24174d0b3c79a294708c794e853ee1fa6f4ce796d40e7ba6ee",
+      "run1_prepared_sha256": "c99899ff601df311f56605a7dc05730bf8459849ef2d77af609a5ac9f07c1ea5",
+      "run2_prepared_sha256": "c99899ff601df311f56605a7dc05730bf8459849ef2d77af609a5ac9f07c1ea5",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5356,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-55",
+      "role": "B",
+      "candidate_id": "479fdcbda0c8c87240736f42f07c31b3",
+      "page": 51,
+      "region_id": "text-0072",
+      "operand_bbox_estimate": [
+        149.6909090909091,
+        1012,
+        170.25454545454545,
+        1026
+      ],
+      "page_sha256": "f691cfcb072cbb25b9623c1a569fbb399e29ae88d94534b930b01eccfd17ad41",
+      "run1_prepared_sha256": "b473213d152c86c3c842caf79a40376abbeab15b66bdaeb4b1fe4cd8719340e9",
+      "run2_prepared_sha256": "b473213d152c86c3c842caf79a40376abbeab15b66bdaeb4b1fe4cd8719340e9",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5051,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-55",
+      "role": "a",
+      "candidate_id": "4737ba865e7b6ea695eb179a89c5211c",
+      "page": 256,
+      "region_id": "text-0069",
+      "operand_bbox_estimate": [
+        62.9,
+        1104,
+        87.8,
+        1118
+      ],
+      "page_sha256": "ac4ca69b397aba74b8b8a442411f73d9f2c721fc07d1974a1d74306317eb0d1a",
+      "run1_prepared_sha256": "df853e5df361ecf0b4e92ca8ad2ff97e421b5e4f28b28445c83cc53dd43df0a6",
+      "run2_prepared_sha256": "df853e5df361ecf0b4e92ca8ad2ff97e421b5e4f28b28445c83cc53dd43df0a6",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6241,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-55",
+      "role": "b",
+      "candidate_id": "48ba2d688e91fe24519dad9e4bda6f1e",
+      "page": 230,
+      "region_id": "text-0061",
+      "operand_bbox_estimate": [
+        634.9230769230769,
+        532,
+        658,
+        546
+      ],
+      "page_sha256": "bbf27bc5f421cccc7eb142f63071aa0fd69f191f2711b717dca413affff51220",
+      "run1_prepared_sha256": "d8193c562b77ef2d694e9cec721da2c0d798f51112d83143207bc1594675393a",
+      "run2_prepared_sha256": "d8193c562b77ef2d694e9cec721da2c0d798f51112d83143207bc1594675393a",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5114,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-56",
+      "role": "A",
+      "candidate_id": "489087903a86350cd5ed9362743a9936",
+      "page": 256,
+      "region_id": "text-0055",
+      "operand_bbox_estimate": [
+        412.52830188679246,
+        863,
+        435,
+        877
+      ],
+      "page_sha256": "ac4ca69b397aba74b8b8a442411f73d9f2c721fc07d1974a1d74306317eb0d1a",
+      "run1_prepared_sha256": "f15edd1aa07e48709fd6ec6ff6d4887ca552f1125db4f2706eab7318bc03cbda",
+      "run2_prepared_sha256": "f15edd1aa07e48709fd6ec6ff6d4887ca552f1125db4f2706eab7318bc03cbda",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4667,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-56",
+      "role": "B",
+      "candidate_id": "48e6e85070ff9d9433d01af9d33f1b33",
+      "page": 296,
+      "region_id": "text-0042",
+      "operand_bbox_estimate": [
+        735.6779661016949,
+        577,
+        755.0508474576271,
+        591
+      ],
+      "page_sha256": "aab312de63f3a1eb4b2fc50b8cae3086fb02c0795a0955c4aaf85d88b5f96fa8",
+      "run1_prepared_sha256": "245fc3a3fab8797ac9bce2f5aff12da1befdd375b616c97dcddc57876aedc2ff",
+      "run2_prepared_sha256": "245fc3a3fab8797ac9bce2f5aff12da1befdd375b616c97dcddc57876aedc2ff",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4914,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-56",
+      "role": "a",
+      "candidate_id": "48cb4a3d9fb9a9fc72283051f50748db",
+      "page": 152,
+      "region_id": "text-0040",
+      "operand_bbox_estimate": [
+        295.4,
+        421,
+        325,
+        435
+      ],
+      "page_sha256": "589dd8d8c2cdfd063eff36369bc69cf0ae3fd2c20f40ac14efd37a06838aadcf",
+      "run1_prepared_sha256": "cdc1c1cc8a4d24a098d46b317c47d967b9095dc5c749d4ab3dc2a6f9dcb379d8",
+      "run2_prepared_sha256": "cdc1c1cc8a4d24a098d46b317c47d967b9095dc5c749d4ab3dc2a6f9dcb379d8",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5716,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-56",
+      "role": "b",
+      "candidate_id": "4acb556fdcf3d836c82775341e23b2a5",
+      "page": 340,
+      "region_id": "text-0122",
+      "operand_bbox_estimate": [
+        739.3461538461538,
+        823,
+        761.5576923076924,
+        837
+      ],
+      "page_sha256": "606516366b05cfd34dbb13e0cfe53b1641ffb0c631db3d1de8625a4affdabca9",
+      "run1_prepared_sha256": "3a4119ca8809fffc2ae4d46563aa02958b2b7a818d5aa8a78467fa2f36f5efcf",
+      "run2_prepared_sha256": "3a4119ca8809fffc2ae4d46563aa02958b2b7a818d5aa8a78467fa2f36f5efcf",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4640,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-57",
+      "role": "A",
+      "candidate_id": "4af0b6eeb086915646739bfe0cb7bacc",
+      "page": 296,
+      "region_id": "text-0033",
+      "operand_bbox_estimate": [
+        347.6,
+        542,
+        369.2,
+        556
+      ],
+      "page_sha256": "aab312de63f3a1eb4b2fc50b8cae3086fb02c0795a0955c4aaf85d88b5f96fa8",
+      "run1_prepared_sha256": "b83ab68a0f596e08f31ca6942f2130da595e69c99e803def99ff5de7e13dd21b",
+      "run2_prepared_sha256": "b83ab68a0f596e08f31ca6942f2130da595e69c99e803def99ff5de7e13dd21b",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5262,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-57",
+      "role": "B",
+      "candidate_id": "4c062842594afebc8c7ea9e8dea4f204",
+      "page": 59,
+      "region_id": "text-0028",
+      "operand_bbox_estimate": [
+        503.43859649122805,
+        432,
+        516.8771929824561,
+        446
+      ],
+      "page_sha256": "91e8101a137431a358fe5e73ea533f5b3f001ec1d20f20b8e2d3837f4caa5243",
+      "run1_prepared_sha256": "55d48e934253348e20e3c5f067a14c02dc0bbf41de0313d075bbe19b7dee2653",
+      "run2_prepared_sha256": "55d48e934253348e20e3c5f067a14c02dc0bbf41de0313d075bbe19b7dee2653",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4156,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-57",
+      "role": "a",
+      "candidate_id": "4bc305ef0ba2ea247309e2578ac4de2a",
+      "page": 169,
+      "region_id": "text-0105",
+      "operand_bbox_estimate": [
+        94.9,
+        961,
+        119.8,
+        975
+      ],
+      "page_sha256": "f04967c0eb4a5d3964d69fa250785ab9d1487b33bd14b30d88574673ad2c01e5",
+      "run1_prepared_sha256": "46c00630a6857635a7886e256fe216f6bda824b37a282b7bf512a662e044bbce",
+      "run2_prepared_sha256": "46c00630a6857635a7886e256fe216f6bda824b37a282b7bf512a662e044bbce",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6074,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-57",
+      "role": "b",
+      "candidate_id": "4c1d148b7445257ef375711b9ac3ab83",
+      "page": 51,
+      "region_id": "text-0037",
+      "operand_bbox_estimate": [
+        508.95,
+        475,
+        527.9,
+        489
+      ],
+      "page_sha256": "f691cfcb072cbb25b9623c1a569fbb399e29ae88d94534b930b01eccfd17ad41",
+      "run1_prepared_sha256": "c9f28a1746d6af17fab4da2009d077f162259c9c1cbc173688e241725c767a75",
+      "run2_prepared_sha256": "c9f28a1746d6af17fab4da2009d077f162259c9c1cbc173688e241725c767a75",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5088,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-58",
+      "role": "A",
+      "candidate_id": "4c2eb0677833eff44dcb3d71b4f88c62",
+      "page": 152,
+      "region_id": "text-0059",
+      "operand_bbox_estimate": [
+        146.92857142857144,
+        520,
+        169,
+        534
+      ],
+      "page_sha256": "589dd8d8c2cdfd063eff36369bc69cf0ae3fd2c20f40ac14efd37a06838aadcf",
+      "run1_prepared_sha256": "16a16882de1b239aae7518cccdeab176da1b45adaf123ef1ec4fefb4d8d5004a",
+      "run2_prepared_sha256": "16a16882de1b239aae7518cccdeab176da1b45adaf123ef1ec4fefb4d8d5004a",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4640,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-58",
+      "role": "B",
+      "candidate_id": "4e96788732356770ad7b1dad2e387e03",
+      "page": 393,
+      "region_id": "text-0067",
+      "operand_bbox_estimate": [
+        832,
+        777,
+        857.3333333333333,
+        791
+      ],
+      "page_sha256": "1e9d93cd88f11f0b444b21c257e1c84e3a226e32b490c1cf3834ffcfcfff53f0",
+      "run1_prepared_sha256": "f03d5cee2aa700c1eb023b1e245ca2e9e108d895dc52a3459ca8b64ddc5eaab7",
+      "run2_prepared_sha256": "f03d5cee2aa700c1eb023b1e245ca2e9e108d895dc52a3459ca8b64ddc5eaab7",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5573,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-58",
+      "role": "a",
+      "candidate_id": "4e4fce82f841d1cb92bfca31aed8c9e5",
+      "page": 118,
+      "region_id": "text-0048",
+      "operand_bbox_estimate": [
+        328,
+        531,
+        355,
+        545
+      ],
+      "page_sha256": "02d6fa54d62cf2aef923285a5625e86507384be6393596d37f07334c419853e9",
+      "run1_prepared_sha256": "9e150e5f62da3dfe5a73bb88abc9281697e5215e4c515a5f27d7eacce4858e08",
+      "run2_prepared_sha256": "9e150e5f62da3dfe5a73bb88abc9281697e5215e4c515a5f27d7eacce4858e08",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5110,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-58",
+      "role": "b",
+      "candidate_id": "5090960eec6ad7c95645ebbd3fbb732e",
+      "page": 401,
+      "region_id": "text-0115",
+      "operand_bbox_estimate": [
+        288.27906976744185,
+        1060,
+        321.8604651162791,
+        1074
+      ],
+      "page_sha256": "9a9368192e6513ba72520904b3e708768604db53d464689e7f85c4beb2593c0c",
+      "run1_prepared_sha256": "53ba9e9c5eeafe952614acdb31cfba460264c935eb1d5717b2a67d3052ad7e36",
+      "run2_prepared_sha256": "53ba9e9c5eeafe952614acdb31cfba460264c935eb1d5717b2a67d3052ad7e36",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5829,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-59",
+      "role": "A",
+      "candidate_id": "50afa4dcf283a1c8abbef0751f2d3f1b",
+      "page": 99,
+      "region_id": "text-0107",
+      "operand_bbox_estimate": [
+        738.2407407407408,
+        665,
+        752.4259259259259,
+        679
+      ],
+      "page_sha256": "86ec56930bdd50d34aff0fd6b7df73a51b0f675342a69571eff3044d9885abe2",
+      "run1_prepared_sha256": "ab96f187a6105caffdb81acf3f8662289bd2ffc386113969c01a99da44e45336",
+      "run2_prepared_sha256": "ab96f187a6105caffdb81acf3f8662289bd2ffc386113969c01a99da44e45336",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4098,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-59",
+      "role": "B",
+      "candidate_id": "52abbe876669a42a08bc34ae1e0e4b2c",
+      "page": 52,
+      "region_id": "text-0032",
+      "operand_bbox_estimate": [
+        184.2962962962963,
+        366,
+        206.24074074074073,
+        380
+      ],
+      "page_sha256": "4e922a9e7ad8fe2e2ffa315eefe5325d20c5f75fee3d531606f3e27de99b44af",
+      "run1_prepared_sha256": "661819c4d9216bd6fb1ac5749c0de7b329db36f9fea584bd1e2580ebcba82f2e",
+      "run2_prepared_sha256": "661819c4d9216bd6fb1ac5749c0de7b329db36f9fea584bd1e2580ebcba82f2e",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5642,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-59",
+      "role": "a",
+      "candidate_id": "5287ba7f8f0719dd827dddd577ecca32",
+      "page": 306,
+      "region_id": "text-0056",
+      "operand_bbox_estimate": [
+        254,
+        866,
+        275.6,
+        880
+      ],
+      "page_sha256": "d4a6bcf9caf10199c2a569ade60cf20fcf623ee4d4ea1d7431a1a0acd1d35cea",
+      "run1_prepared_sha256": "1d37d836a9422fbdc61a424a061cb7f98b8e0865a639a8087ae648e8a1c6687a",
+      "run2_prepared_sha256": "1d37d836a9422fbdc61a424a061cb7f98b8e0865a639a8087ae648e8a1c6687a",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 6068,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-59",
+      "role": "b",
+      "candidate_id": "53d87571042f563242871a441c6d8cc3",
+      "page": 274,
+      "region_id": "text-0011",
+      "operand_bbox_estimate": [
+        104.66666666666667,
+        163,
+        121.33333333333333,
+        177
+      ],
+      "page_sha256": "0faf938c20b566ffa931e947801d1a55071bc60b68f6a06c7795b305b5512208",
+      "run1_prepared_sha256": "63938627113f1d72da1c46d1f654f27b500e462aedf6333ceb96b61908b8222d",
+      "run2_prepared_sha256": "63938627113f1d72da1c46d1f654f27b500e462aedf6333ceb96b61908b8222d",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4945,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-60",
+      "role": "A",
+      "candidate_id": "5476afef2f7b4e60dec271cf6e8cf335",
+      "page": 355,
+      "region_id": "text-0009",
+      "operand_bbox_estimate": [
+        442.89285714285717,
+        95,
+        464,
+        109
+      ],
+      "page_sha256": "1e0ec292d617838ca56b30535a227dc6bb190f6f2167cb239259e5ad2d1e5544",
+      "run1_prepared_sha256": "64c0dd013be08544ea7f3f3799163b0dade0aba5c27709ca96e5c43f9f269722",
+      "run2_prepared_sha256": "64c0dd013be08544ea7f3f3799163b0dade0aba5c27709ca96e5c43f9f269722",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5253,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-60",
+      "role": "B",
+      "candidate_id": "5620015a8d4fa81ee4ee4e31a5b178fe",
+      "page": 84,
+      "region_id": "text-0070",
+      "operand_bbox_estimate": [
+        614.1304347826087,
+        353,
+        643,
+        367
+      ],
+      "page_sha256": "fd2664757b1d1ccdeb1646b38522596cfaba3672b042b8c033f19f3ebb1a2240",
+      "run1_prepared_sha256": "08aba40fbeb4fb39b7c3922b9badded4b82705e7edbd37e41abd4a9f28f5c0d8",
+      "run2_prepared_sha256": "08aba40fbeb4fb39b7c3922b9badded4b82705e7edbd37e41abd4a9f28f5c0d8",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5431,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-60",
+      "role": "a",
+      "candidate_id": "55a9a7ed90a74c26bddc47a9904c86e5",
+      "page": 335,
+      "region_id": "text-0039",
+      "operand_bbox_estimate": [
+        128.08333333333334,
+        635,
+        143.625,
+        649
+      ],
+      "page_sha256": "299d0bdbe2868216619e8481c1ffccea323454e79d49a6f70bf6e0d9b81fd34e",
+      "run1_prepared_sha256": "59d682751c5c48f6e07d627c5c95dc5ad19f2cfafea8daee9e713892fc7fa1eb",
+      "run2_prepared_sha256": "59d682751c5c48f6e07d627c5c95dc5ad19f2cfafea8daee9e713892fc7fa1eb",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 4372,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-60",
+      "role": "b",
+      "candidate_id": "56476b00fb29c4a3aee09824c4cac0a2",
+      "page": 215,
+      "region_id": "text-0070",
+      "operand_bbox_estimate": [
+        722.719298245614,
+        165,
+        742.6666666666666,
+        179
+      ],
+      "page_sha256": "e2b95ade79b55199b3dc0f5f3686a5ba3773982140b077253d6a5cdfcdec7107",
+      "run1_prepared_sha256": "bdd3c6067b5776b3b97f1ceb7bb386e1b462c119868ac051db360cfe1968a920",
+      "run2_prepared_sha256": "bdd3c6067b5776b3b97f1ceb7bb386e1b462c119868ac051db360cfe1968a920",
+      "equal": true,
+      "width": 512,
+      "height": 512,
+      "prepared_bytes": 5366,
+      "renderer_path": "internal/parrotpresent/prepare.go:Prepare"
+    }
+  ],
+  "composites": [
+    {
+      "workflow_id": "tonal-t1-workflow-COM-13",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "07c045291cbded0024d8a4baf3791d43",
+        "07d95f27efb073bf69b8063e91916b23"
+      ],
+      "operand_sha256": [
+        "bc4ab885aebbe500612849c546ff00f0905926578a6cc62bac4831090b652953",
+        "f85e54560aa6bb71801313ed46a6ad5c20ff130b81d7da4e83abf40e8dd84e15"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "267f088e9f3429f0dd1b7de06ab0ea672b15e0bc16cd9467a4170680d6d9829a",
+      "run2_composite_sha256": "267f088e9f3429f0dd1b7de06ab0ea672b15e0bc16cd9467a4170680d6d9829a",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-14",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "086cc2e907ac3c5eff154a892c03f9b1",
+        "09d9393377808a421288d4631b1a48cd"
+      ],
+      "operand_sha256": [
+        "8d923e56eeb3d2b23416051cde1105bd042bcd11007c81cc2596cec761d32955",
+        "c8af5e7b8e377c65c6fe55704f79031ab1aa6564f304643c68a69451d7724a6b"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "008dd99dde00bad39a0b5bede94fc5f62c584ede605293ebfcb1464e5ed5dd18",
+      "run2_composite_sha256": "008dd99dde00bad39a0b5bede94fc5f62c584ede605293ebfcb1464e5ed5dd18",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-15",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "0a3e98328a43770157ce5c3ed763d495",
+        "0b5c495ccfb9cd57e2f06c3452cfb9ba"
+      ],
+      "operand_sha256": [
+        "c81c4d111ba0a1d67bcf212ff651ca4f05a6e90bbd81f072c321c0e2424d607c",
+        "02212d678981a528f54bac72ab7a86b6b95e5ac9b20f79746c24d39e4875673c"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "ed5b83e9688b480fdf4e183dc9b4793afd1203ca80b18367b52087cabab91089",
+      "run2_composite_sha256": "ed5b83e9688b480fdf4e183dc9b4793afd1203ca80b18367b52087cabab91089",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-16",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "0c89b62364f406a7d63060a36fcb8a52",
+        "0d0b279732dbca6d016a8c56cbee1ece"
+      ],
+      "operand_sha256": [
+        "04445335130e370b0883183e75a757cc5139d7c84a7edc137ce33037d11b3f49",
+        "53110d894c3f7ac7d720d081779f03d1d55284aca41e1e6fd023b66d8a0d078c"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "6c1459c472e185d6776e02a7d32d121b97c665e9a5a228c17591564e401bdb53",
+      "run2_composite_sha256": "6c1459c472e185d6776e02a7d32d121b97c665e9a5a228c17591564e401bdb53",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-17",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "0dbe4ca9cadbd40d3bae567ce1f60722",
+        "0eb66a0920b4109fc0a0d25ea29f6ff1"
+      ],
+      "operand_sha256": [
+        "1adc0f2df4c192e298fbdb577cde17702eb85e70c6d6b7a9f972aa603d8e6af4",
+        "d5195d51d3861eac01507fc4cf42449be162218027643bf7feca53fff6d7b9e0"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "47d296e8293acde4afcd78ef67ad99e0c584dc8b6eebd54627a8caa1c11040ca",
+      "run2_composite_sha256": "47d296e8293acde4afcd78ef67ad99e0c584dc8b6eebd54627a8caa1c11040ca",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-18",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "0ea6e820d333e71d0c2dc0362695e183",
+        "0f91a76f65c4c07cd4a0de690005d553"
+      ],
+      "operand_sha256": [
+        "99960683efbf633203cb489d33987d1970cad75f890ce165c4180b2fffc230a1",
+        "152d15785ecdc37cc7547427a3279870cf03efd9df688cf818218497e35fe6bb"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "0001f8684553f2be138e34d7e53466420dc933c3c2484614c665ff0aef82d4b6",
+      "run2_composite_sha256": "0001f8684553f2be138e34d7e53466420dc933c3c2484614c665ff0aef82d4b6",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-19",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "0fdd29f7a4bd2c6d16d8a01cc37c6213",
+        "101870fa4732e68e98ff63bc6c6c4fcf"
+      ],
+      "operand_sha256": [
+        "c7e5356e3b81ee1ed816db85f6504a5b79bb892fb2378670411504441f1c36aa",
+        "e1a35bb0f40b683696e6601f4320071faaa8f3b6632a6738aad17c3aca6f4da6"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "393d84da0b2dbbe3bf84a90562bba565cd2aa583722ced4216a08ea051550b27",
+      "run2_composite_sha256": "393d84da0b2dbbe3bf84a90562bba565cd2aa583722ced4216a08ea051550b27",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-20",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "10e4b547cbe501f5d8182edc44e202d5",
+        "116f290f632e299a0767175938fe9df2"
+      ],
+      "operand_sha256": [
+        "3b6938ff64fadf6f62ad03332d354588f01effea9a96153d2fb1d61df8587298",
+        "8804d735d22603bba29ec73c377d44f5e013992d8d90846b2d44519dda0f6819"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "df4d319dc6c364fb5c12da14f310c769c977b0a2f7a5ecdf5f00a305c9c6f92e",
+      "run2_composite_sha256": "df4d319dc6c364fb5c12da14f310c769c977b0a2f7a5ecdf5f00a305c9c6f92e",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-21",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "11a1bf2b04ace301e3d3a56ca5df6e73",
+        "11d877cdbeddf1d62d963224619faea8"
+      ],
+      "operand_sha256": [
+        "aa2d0c1a8864ba446b455879a1ee2d5b404c30a40ec40135bd4eed9022d8999c",
+        "6eb2a9a2bbe6682dd211d6f9c23018423d100cbfbc76087a6004fb941935b46a"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "a9e2a67378c8c8adc50b7f58a35eb50463c908967536fdce4e816f3888f404ce",
+      "run2_composite_sha256": "a9e2a67378c8c8adc50b7f58a35eb50463c908967536fdce4e816f3888f404ce",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-22",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "12c7133dfdfeb1ff58b9d331fd2b41fe",
+        "144cb1f5e67cad833d298e3515fcdbab"
+      ],
+      "operand_sha256": [
+        "8b5441da918815721746eb4c8d993ae646129de802a4042d000c9f464a8eb854",
+        "660fa6524fef4445b48eba19318f7986365146b264db097c6e5b8fe4e9938da5"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "b4a4a20ef4762f1b08551b7c12840036ca7091ca162a8c623f48399ce01a6e57",
+      "run2_composite_sha256": "b4a4a20ef4762f1b08551b7c12840036ca7091ca162a8c623f48399ce01a6e57",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-23",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "151abc59f5ddb176582749f217880696",
+        "162d06f3c67bd7f8eef9cb43210264ed"
+      ],
+      "operand_sha256": [
+        "3c872a471488415cb1a53dc7bf37cecdb206e41ae21b03d911ea568570bb6b70",
+        "ae2108fca416bc46de4a9880b16be1d4acd0b5db7c75f07b55b7e67d70d286df"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "867e07af470262b34f12eb730d52916950c62afd26dc08d0c184ef9a9b189b55",
+      "run2_composite_sha256": "867e07af470262b34f12eb730d52916950c62afd26dc08d0c184ef9a9b189b55",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-24",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "163be6e182aec9c08660c4dab0e821ff",
+        "1796a31f7df1fd8a1dfb78dbfbaf4e40"
+      ],
+      "operand_sha256": [
+        "98a150c6d6a691f98361bd3b249507297a2057ece0f18090f513d34a158f8e0f",
+        "3cb4e9b4eeca34b1eec50650f006df24a4edc48044e672d31e6678a17ef88269"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "0ee6dacea6e6df128e4d7247d740ca5661f9f4819c40da8a5e7944352b18d82c",
+      "run2_composite_sha256": "0ee6dacea6e6df128e4d7247d740ca5661f9f4819c40da8a5e7944352b18d82c",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-25",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "18b776f0a5f56acf4485327429e33ad3",
+        "1a4cabfa4dd55d60ab5302f6734102ab"
+      ],
+      "operand_sha256": [
+        "427bdef98dcb17619bf7ce1fd504bc11e597822e5e141b33b9094390d50c7da7",
+        "cc1dbcaebbfc139057df40dfb85715e291f95e0affcc7b4ab20091a39f1229c6"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "4c058cfff3b008b31c732866bcca35b9f163575f90ec8d5b90cbfbdbcfc8afa6",
+      "run2_composite_sha256": "4c058cfff3b008b31c732866bcca35b9f163575f90ec8d5b90cbfbdbcfc8afa6",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-26",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "1a9d63d227384c9adcf48faab2414658",
+        "1acd8913db5a867516b7b6d214e3aa38"
+      ],
+      "operand_sha256": [
+        "4167567bce52bfde78b0a34a92c4028e28b422152d348ffdd867e4f8b3246b21",
+        "dbbd72393a962fbf6225edb31d98b0829a131f1cff2f7230c58523f9a532a8dd"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "ac5b3e4ca3072d0731f018f465d6e64629e80996f844e2803ac85b8802269e6d",
+      "run2_composite_sha256": "ac5b3e4ca3072d0731f018f465d6e64629e80996f844e2803ac85b8802269e6d",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-27",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "1c5f975c8dc4cc3bd0c68078e726c206",
+        "1c8636967abf8a8d6005b4f66025eaf9"
+      ],
+      "operand_sha256": [
+        "370388bd959e1f0bfbc32ee1a0d7c870041a7f4484cefbb0a9c72e031f2dcf8f",
+        "ecf343f6cd308d0278f2157b11292d3edf09c25884c0780120fa2e6c954f8a48"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "6e023c6759b31ca6807ca799b118d5bc39ecaa479030500cddd3302ec2703dcb",
+      "run2_composite_sha256": "6e023c6759b31ca6807ca799b118d5bc39ecaa479030500cddd3302ec2703dcb",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-28",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "1e1a79269b7e24a6a608623cc6a75a0d",
+        "1e1ab031e7bb77a2a5c026996477d3ee"
+      ],
+      "operand_sha256": [
+        "c8b2fd9b64e42a48ee20f6497a08813fb2abe5275c5b238b2c9a3527b748ebf9",
+        "98f4b70c1e774b65d85f8ad18d3f1b08449912a45c329e50e151315a92d96e24"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "5fed03fe32c9860b6fdc27e80a9dbd9c82f3b8e53d37a89c395a64f403e37e34",
+      "run2_composite_sha256": "5fed03fe32c9860b6fdc27e80a9dbd9c82f3b8e53d37a89c395a64f403e37e34",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-29",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "1eb7b95c00f82dc93c824f4d80f0cf6c",
+        "1efc77cd2a82756955ffc79af64d6990"
+      ],
+      "operand_sha256": [
+        "eefd63e0534479f4ac494b32949a1b23762c73386e4716b2ea1b83a658a08bad",
+        "e83b91c28df8e88b8738d5b9774a75a01932116f3cc2009401626d4fcbb3b4c2"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "394adedf276b44b6a6eb607484a9396d5dceeae3717d8c8eaf1d00ecd4aa2da2",
+      "run2_composite_sha256": "394adedf276b44b6a6eb607484a9396d5dceeae3717d8c8eaf1d00ecd4aa2da2",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-30",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "1f7ec5393d5d2778860bd453f25584c4",
+        "1fc2a453be48344a72fd9b5bf677f0c5"
+      ],
+      "operand_sha256": [
+        "8414f4957266792a1a6f6f0cbe0f286fde2e3ac979e729a39bc0571bf3846033",
+        "32d197ddc308a9842a0400694231aff20b6cf4a2cd68d9133b67cd23f61bc147"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "8aa81d9e5245f45059a930597df9a87523b254e4ba203bc03e270ce7fa4842e8",
+      "run2_composite_sha256": "8aa81d9e5245f45059a930597df9a87523b254e4ba203bc03e270ce7fa4842e8",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-31",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "1ff644cf839b75495ab2194344cb8866",
+        "20288c41b638bb2b2870ec7b16eaf8ef"
+      ],
+      "operand_sha256": [
+        "02015dc295c50067ae3b93ccf1dec86e8b640d67e92d8e17c35f3d7e4617cf29",
+        "b4bef9489475bafe17341d8e2e325cd0f568f8b2209690d958c83c2213e982a3"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "21b6f8b5927c11870975ec9245a1ea7b1962ddc778c2ded0b4d1514809af514f",
+      "run2_composite_sha256": "21b6f8b5927c11870975ec9245a1ea7b1962ddc778c2ded0b4d1514809af514f",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-32",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "2069f3b4f4228c125794380f04f23530",
+        "222aa5ac493e379fef789dfb03f7dbf3"
+      ],
+      "operand_sha256": [
+        "d816e68543354d19695a6c1ea9323a26f4d55684d27f4cbd54ded0e2da93a53c",
+        "4fdc3d089d3fd1fdee09d052adba5478ffdb637f1ffa5b35108e887f84ebaf7c"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "f54504fdfdf7f48c870833e299d2b51b67593501d2ea3022740588afa750ce45",
+      "run2_composite_sha256": "f54504fdfdf7f48c870833e299d2b51b67593501d2ea3022740588afa750ce45",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-33",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "2249ac87793fb10d5d78399f8c65242e",
+        "2265a78a75772885c29cfe8d30a281e5"
+      ],
+      "operand_sha256": [
+        "af8a8506b89c1f84a2c0c73eaa4e1970e99af6e9e46eebeadb011ec961b4921a",
+        "2578465865f17a2e1d14ac27b3ad61ade121799ded24c761526e44a8cee45720"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "3caae8385091f84480036df08469e08c5667da531793cdd32484838d2c4d1591",
+      "run2_composite_sha256": "3caae8385091f84480036df08469e08c5667da531793cdd32484838d2c4d1591",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-34",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "23a92f1628073acb03edf70cee500ccc",
+        "23cb058d69f72f1f6923c4ce416ade4b"
+      ],
+      "operand_sha256": [
+        "08eaf87f8976632bd13fa26d01c5675a953917478939549574adb04fc7f13157",
+        "064223a5810c59e2699b908585e42010495fbb788de44448273d0a488ca59566"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "344f6517171fc0f128c87025fd99a2eafdc1930c2903ddd791d49e2f232f405b",
+      "run2_composite_sha256": "344f6517171fc0f128c87025fd99a2eafdc1930c2903ddd791d49e2f232f405b",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-35",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "246173b840cdd9c0ea839d5f82de3b76",
+        "249a8957f80ac4ea06cbf88fc62ed986"
+      ],
+      "operand_sha256": [
+        "8663facaf3e66c54cecf2b374d0f0f0ba8a0df21bfd973472547a939c39be5ec",
+        "aa94f672ca9eab96e9ffcc13a8f016d01b944955538d83f7cf5501df9b1362b9"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "b54ca22742649731f3a85e6148eed26ca1ee131ca4661acadf9ad751ae48b37b",
+      "run2_composite_sha256": "b54ca22742649731f3a85e6148eed26ca1ee131ca4661acadf9ad751ae48b37b",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-DIF-36",
+      "ordered_roles": [
+        "A",
+        "B"
+      ],
+      "ordered_candidate_ids": [
+        "24bbc2fd1c7c7141451777fe03ec8903",
+        "25e99fcd12c90f94837202830402c5f4"
+      ],
+      "operand_sha256": [
+        "eb96051878b0209c784c1edbd854127be7caab07600f47fdeb54788b542222c5",
+        "66d893ed8eb58793ffe4d13508d777dee63edcf6f00775a0744ffbaaba5578ee"
+      ],
+      "width": 512,
+      "height": 1024,
+      "padding_px": 0,
+      "run1_composite_sha256": "fa2898b57a1476e37cd102603ed31dbf6b4d7f5b2e333110a00fa8a7991fd1f9",
+      "run2_composite_sha256": "fa2898b57a1476e37cd102603ed31dbf6b4d7f5b2e333110a00fa8a7991fd1f9",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-37",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "2681397e09234e8720a8f3812e103abf",
+        "269660e56465d1d543fc57c93532057a",
+        "26bd220228613469923698af18537820"
+      ],
+      "operand_sha256": [
+        "6b0b05c97ae1381b759e9effa1fe83776d006d58ac7e7096bca727558b5a649c",
+        "123ddc105c3b438deabe38b4d1c8cf381a1255d09ebf7826b20f4850dde528c8",
+        "442af7fe514acd8c4d0e91303f1382009ff04889b6855285528bce5cf334a4b1"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "run1_composite_sha256": "d343e76a2840219e0dc3492cd2acc909d55b165b4d54250b5396a9cd1917c876",
+      "run2_composite_sha256": "d343e76a2840219e0dc3492cd2acc909d55b165b4d54250b5396a9cd1917c876",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-38",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "26fae9567b790a2ac3f16671cd2c71ba",
+        "279a89daaea4683a18f158d68357211e",
+        "288f47a1102a6cc3758dc3988dfb3978"
+      ],
+      "operand_sha256": [
+        "bc6b157f3fba078364666d49479f6ee54b67156e136bf1aa30335a25b8d26da1",
+        "437f565cd6085458b8ee60ef391b37c888bb6daa175e2e0b7d44634c67b822bb",
+        "e464c45b7c8da64624b14fca73c8df179179a7e7a1494982325f017774a06f7e"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "run1_composite_sha256": "f24ee966949177cce6fc47364cb5cec59bdcbd1dc7869f6e1935806b5666fad7",
+      "run2_composite_sha256": "f24ee966949177cce6fc47364cb5cec59bdcbd1dc7869f6e1935806b5666fad7",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-39",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "2930d18c78b8fe6506584ddcaa2d6d99",
+        "2938df34d1588231d581305c3b52417c",
+        "2a096ec5e130341fa89720187d863e39"
+      ],
+      "operand_sha256": [
+        "8ee3f6516c9d11e2219bd152fbd48571ef0ba9f07a1e0c2fd037d30c4382bb95",
+        "1cd01613c78bcba701609f4a1d17a0120d396a384847e3c7ad292053c4842b79",
+        "08cebcb16cb315c75f7623b42fb8c67745899aab8e5f1a58bc068f3f4029a9e6"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "run1_composite_sha256": "19118cd5f94f7082b49b39120c5fcb8c00cca57b8d0d858a8149c9a6dd6aae00",
+      "run2_composite_sha256": "19118cd5f94f7082b49b39120c5fcb8c00cca57b8d0d858a8149c9a6dd6aae00",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-40",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "2a2f55b16e91e1b356dba2f1415909a1",
+        "2a8df2c03a3bacbbf36f3a6e97d69cb2",
+        "2ae510a7b164d04ee718b0adde5f4309"
+      ],
+      "operand_sha256": [
+        "bbf58e7be8eed1656e56f01347033a851052d9d5068071839a0edb6a7becade9",
+        "a343c70b71b6d55216ecf2603ff89c82bb89c97e99a14d2198b4fb1297b431dc",
+        "23d5ec1b4e1d548ccbbc86e368ceba9446b6a23a75a02a08ab6b083cd881dafc"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "run1_composite_sha256": "009ebb1b71197720f5f692153d62d09bca108977916f60773894e3460c833e8a",
+      "run2_composite_sha256": "009ebb1b71197720f5f692153d62d09bca108977916f60773894e3460c833e8a",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-41",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "2bfd254846717dcb81fe30c0818c2b41",
+        "2c6a97e859260796ebcad8b4de9059c4",
+        "2c80087b5f79453c91463967f301b2b4"
+      ],
+      "operand_sha256": [
+        "af19cf8ddbd952166bc0eca59c0a60839f685568bdc0d0715d1807a39b62a9e6",
+        "119fa06035cf48f644aa3f2066671633a4676a6acf33875b2e36c9e1a113bcc2",
+        "d36dba5586deca85ef6dbd17be2c4891ba18f8e43e955b60612440f67b23096b"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "run1_composite_sha256": "7c90b00605f092793ee8bbd914510a625bce22ee9e69001c830e79a9b0801de2",
+      "run2_composite_sha256": "7c90b00605f092793ee8bbd914510a625bce22ee9e69001c830e79a9b0801de2",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-42",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "2c96074d27cb42a6ca7e7b3fb607e2d6",
+        "2f78254622e01d0054161b38c27c5b08",
+        "2f9b8a6f1cf42dbdb67ab5f61836da9c"
+      ],
+      "operand_sha256": [
+        "d56c1804651a213fa3229258ae7dfde7ef57ec2152e9898c9ef666e72af0ba0b",
+        "bb101909068a64473241a1d09149f6d4930d625d2b2e8821840866f17aa36285",
+        "fc1a4788e05ae174cbd34c5a725d8182013c03afcd4b7f7d13e27edf9c9e1626"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "run1_composite_sha256": "26683d2c0d25126d5f052de06d7fd6f4c4388764e6c70597d1808f1ff86fc5b1",
+      "run2_composite_sha256": "26683d2c0d25126d5f052de06d7fd6f4c4388764e6c70597d1808f1ff86fc5b1",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-43",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "2ff340e0906fa8c01c86045e836635d2",
+        "3059ac3a58f75e32b6d93e88add7992a",
+        "30d35de3c2c9968caac13b9fbba0b385"
+      ],
+      "operand_sha256": [
+        "ad9fdac9f7bc5775891aaefb4e7c0fcf28c9226ddb74eb49e0a126b91453537a",
+        "228a8f55331bd86a8f6018305d12edf1d2459321ad96530d017d3bfc262989c3",
+        "2d1d51b9b8f480c9821cdec98a7cbc9361bee3bd6b5567779c3eb6ff67f443c1"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "run1_composite_sha256": "d0aa87db3d182b93d4617d3e439ccca49a73e1227d252f1b5dca6fc63cf23a09",
+      "run2_composite_sha256": "d0aa87db3d182b93d4617d3e439ccca49a73e1227d252f1b5dca6fc63cf23a09",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-44",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "310b8ffb7ca9871a228ccfea6c112934",
+        "322b44a441351c29847a08814748b8ef",
+        "32dd9eb95dd9bb8cd9173ce83100360a"
+      ],
+      "operand_sha256": [
+        "50b3bc1bb5bdecca678bff0130fee3b04ad0ff13d110755b3e4d22b8791158c6",
+        "d5e145a2148b2b49610ea6f1e331b630af6db01cde358c45d14a2cdc9ccbdb56",
+        "a6ca3b5993336e37c2585703b3e2aeb4a0119cf926fcc6a0d0d715b4c2210366"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "run1_composite_sha256": "cd15f22d607bb7fc5d08cc634c51f4c7147b63e3a04d59a8288744dd123ff6b8",
+      "run2_composite_sha256": "cd15f22d607bb7fc5d08cc634c51f4c7147b63e3a04d59a8288744dd123ff6b8",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-45",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "33a85bb5f9b70de97415ec9689dd6d6e",
+        "33ef946cf1e93a449f238db3716bddec",
+        "342d72b317f415145fd7fee4028ca580"
+      ],
+      "operand_sha256": [
+        "5f36e5a6d7cb1d819519c97fc4aa951218f638f83c9d22a5ecf058b530fa2949",
+        "e9f57c52f2d1cc782d4fc098fe611d3b6f0912eb74889f5030a7b4d4e333a7d6",
+        "3eaf6180facc6cd54755e4e233c076d7ffe46c933539e96d7f8332655ea3d621"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "run1_composite_sha256": "eec6c3ddcb7875007054704bfc7320bf19190a3b18975eb4fbfe87d71ae9a22b",
+      "run2_composite_sha256": "eec6c3ddcb7875007054704bfc7320bf19190a3b18975eb4fbfe87d71ae9a22b",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-46",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "342f6e8c5361128d8112ee49f0bc1dd0",
+        "344d54b10c93de8eaa7b3d61eb7e0081",
+        "34a975f221a99f117d66d86800d7ff2a"
+      ],
+      "operand_sha256": [
+        "399da8819d67de001595d882bfa084a52faa895732e2d8b775ffde40fa85aac9",
+        "f246d448be9aa77abc1249893ff7e74e3de5985f8e871d085e61fd403ad41ecb",
+        "4359a19fe33b7155175b6dcbf1db51558a1eae95ba69d219e39086a65a64a5b6"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "run1_composite_sha256": "aa769e494de30270f8edd7500276360d34b18de2cb8742e9317139913f8fb064",
+      "run2_composite_sha256": "aa769e494de30270f8edd7500276360d34b18de2cb8742e9317139913f8fb064",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-47",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "350bcc0725dfe25dbea98a165d00424e",
+        "353212d6998968ae9e08be6c480907e0",
+        "35348afa7c5284809f377524369b38e6"
+      ],
+      "operand_sha256": [
+        "756d4f897c6722cb5ec95fa9cd26d335a5cf6107d20b8b5640bdfeee4435412f",
+        "cc92a9581fed28f4f5d9b331a1db53c8997b57b1b6e6a41ec905577511f96c16",
+        "b368115192b4bf9c5334d97c0cdabcb1428171df12c19940286a84840935d236"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "run1_composite_sha256": "83d83e769b6bc95dc5a93d78b7744fe255e212264b2fca80f56f8aadace4bd46",
+      "run2_composite_sha256": "83d83e769b6bc95dc5a93d78b7744fe255e212264b2fca80f56f8aadace4bd46",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-RAT-48",
+      "ordered_roles": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ordered_candidate_ids": [
+        "3554018d30b581ea648685304b9d95a1",
+        "377663d09f9e722553f362d653b3b0b5",
+        "3873840d77d8ce7e3b9a73ad8e334fe0"
+      ],
+      "operand_sha256": [
+        "e5ee26c2431d62bbb1aa32e585cd6ec16ad2fa4f7187699fa5309bc8f52610fd",
+        "d21d5c9453bc4dd23cabf195bb66a29f70d344bba5cc28233f175ee10e33f8e7",
+        "201190e2ecbfdbe17ace8d2d4fc2cf95e4554d9dd3fdb03765401a7f55d7be4b"
+      ],
+      "width": 512,
+      "height": 1536,
+      "padding_px": 0,
+      "run1_composite_sha256": "f714f1d3cbc8f68ec4cfc60ecca39f9e0940d89aa1696d96b06f983f4c2a7418",
+      "run2_composite_sha256": "f714f1d3cbc8f68ec4cfc60ecca39f9e0940d89aa1696d96b06f983f4c2a7418",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-01",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "0055ea76c2d9c3b1359ff621263c2853"
+      ],
+      "operand_sha256": [
+        "337f9e46648c38754f35ba895a5c3ba7731a13547949ba3e3c89eee518331227"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "run1_composite_sha256": "337f9e46648c38754f35ba895a5c3ba7731a13547949ba3e3c89eee518331227",
+      "run2_composite_sha256": "337f9e46648c38754f35ba895a5c3ba7731a13547949ba3e3c89eee518331227",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-02",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "0111d38a8384cc11d37799f5309a259b"
+      ],
+      "operand_sha256": [
+        "0c5bee6ad3021e485c83370a32394eab5de0d8ff310b6b8ee47f760881f4df3f"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "run1_composite_sha256": "0c5bee6ad3021e485c83370a32394eab5de0d8ff310b6b8ee47f760881f4df3f",
+      "run2_composite_sha256": "0c5bee6ad3021e485c83370a32394eab5de0d8ff310b6b8ee47f760881f4df3f",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-03",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "0275f92983318166187a1d1e070135b7"
+      ],
+      "operand_sha256": [
+        "92ec59986f5a0afe454d657062710f2e657b81e5a1802235c7377cc10a9519c2"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "run1_composite_sha256": "92ec59986f5a0afe454d657062710f2e657b81e5a1802235c7377cc10a9519c2",
+      "run2_composite_sha256": "92ec59986f5a0afe454d657062710f2e657b81e5a1802235c7377cc10a9519c2",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-04",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "027b3e1ef77418a652e10f1150b68c6d"
+      ],
+      "operand_sha256": [
+        "0605241a5c995f777c17850c8533c8528ced170f24c73b0887df3d790e4752d4"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "run1_composite_sha256": "0605241a5c995f777c17850c8533c8528ced170f24c73b0887df3d790e4752d4",
+      "run2_composite_sha256": "0605241a5c995f777c17850c8533c8528ced170f24c73b0887df3d790e4752d4",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-05",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "030104cc11ece01e29921b47005072ac"
+      ],
+      "operand_sha256": [
+        "b9db23fd205a48d712df75e4ddfa911c0d113c3d7c3eff37f3bfe8b5fb3ff7a2"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "run1_composite_sha256": "b9db23fd205a48d712df75e4ddfa911c0d113c3d7c3eff37f3bfe8b5fb3ff7a2",
+      "run2_composite_sha256": "b9db23fd205a48d712df75e4ddfa911c0d113c3d7c3eff37f3bfe8b5fb3ff7a2",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-06",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "03a121652d66d41eb89f885682907fa9"
+      ],
+      "operand_sha256": [
+        "0010c3be3eea996b26629347b1f40c5bd47e084a8a417ad5153b358ecc091d38"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "run1_composite_sha256": "0010c3be3eea996b26629347b1f40c5bd47e084a8a417ad5153b358ecc091d38",
+      "run2_composite_sha256": "0010c3be3eea996b26629347b1f40c5bd47e084a8a417ad5153b358ecc091d38",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-07",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "03b5ebb725faa7a08322c7d7b4dd3d61"
+      ],
+      "operand_sha256": [
+        "01af9387faf9d7bd5f543701d801a05d5fd6a7334d5a17740bdfd23dfafeb68b"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "run1_composite_sha256": "01af9387faf9d7bd5f543701d801a05d5fd6a7334d5a17740bdfd23dfafeb68b",
+      "run2_composite_sha256": "01af9387faf9d7bd5f543701d801a05d5fd6a7334d5a17740bdfd23dfafeb68b",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-08",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "04a621a5d833cda5fe68e4ad68761383"
+      ],
+      "operand_sha256": [
+        "2e7894e6cc9ceed274b7b544e08e0151bb4af20a99b9a977353e4f7bfb1b5bf3"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "run1_composite_sha256": "2e7894e6cc9ceed274b7b544e08e0151bb4af20a99b9a977353e4f7bfb1b5bf3",
+      "run2_composite_sha256": "2e7894e6cc9ceed274b7b544e08e0151bb4af20a99b9a977353e4f7bfb1b5bf3",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-09",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "0693b58db1bceeaf30bb60317a971fb0"
+      ],
+      "operand_sha256": [
+        "8d53b53857d56fd065043bbb48dbd753cbe8a2fb25ffa05b51847c7826ed334b"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "run1_composite_sha256": "8d53b53857d56fd065043bbb48dbd753cbe8a2fb25ffa05b51847c7826ed334b",
+      "run2_composite_sha256": "8d53b53857d56fd065043bbb48dbd753cbe8a2fb25ffa05b51847c7826ed334b",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-10",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "06f18a0d414e7c0ceff092adc39db7fd"
+      ],
+      "operand_sha256": [
+        "40f0f869ed087bc858b9d9890ace094174f8f4a930f834e661439972569c4838"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "run1_composite_sha256": "40f0f869ed087bc858b9d9890ace094174f8f4a930f834e661439972569c4838",
+      "run2_composite_sha256": "40f0f869ed087bc858b9d9890ace094174f8f4a930f834e661439972569c4838",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-11",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "0760d600ade74b7c31f2e40e34f90a69"
+      ],
+      "operand_sha256": [
+        "d4a3d597ee8aa482827c834a0101c511b1af7a8ec8871d51c0deba6d6317a444"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "run1_composite_sha256": "d4a3d597ee8aa482827c834a0101c511b1af7a8ec8871d51c0deba6d6317a444",
+      "run2_composite_sha256": "d4a3d597ee8aa482827c834a0101c511b1af7a8ec8871d51c0deba6d6317a444",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REA-12",
+      "ordered_roles": [
+        "A"
+      ],
+      "ordered_candidate_ids": [
+        "078bb4b81aff4a66635a8b570614fd18"
+      ],
+      "operand_sha256": [
+        "eba1f718c465f6333d7067bafe80e5e6a7d424fc85c7128a4b83daea601ad5d9"
+      ],
+      "width": 512,
+      "height": 512,
+      "padding_px": 0,
+      "run1_composite_sha256": "eba1f718c465f6333d7067bafe80e5e6a7d424fc85c7128a4b83daea601ad5d9",
+      "run2_composite_sha256": "eba1f718c465f6333d7067bafe80e5e6a7d424fc85c7128a4b83daea601ad5d9",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-49",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "38e33ffc86d19b6d5ff20c475b024e7b",
+        "3a77597ce92fd0103711f8628124c9a2",
+        "396b6a824368959ebaa41b188080a415",
+        "3c095dd44d96adebab6e9c531892a432"
+      ],
+      "operand_sha256": [
+        "28a43e8dbf1a1b5f0011b54bac1f6093ddc5b049e6ccb4b738231c0973f6635c",
+        "e181ad73c6cfcffd184f9e5dac082ead0079deb9a154caa22be5f2b68946f64a",
+        "45a972c1123e01272f6dea47b5e521f1b9cd022d34162ab5c110d66d49292c02",
+        "19246c5857f45bfae3f07da297ade0cdfd42ba85e6cd4308cb1fcb49934063a7"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "run1_composite_sha256": "9d9539bbd2e91bdc8443a97a9cc6ce9ecafde5689090754c733758e96fce2d1e",
+      "run2_composite_sha256": "9d9539bbd2e91bdc8443a97a9cc6ce9ecafde5689090754c733758e96fce2d1e",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-50",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "3c5107c0d831782e8f395209e35117cb",
+        "3d03914521ab699b1ad1a37cb67c07b4",
+        "3c8f4542235678c69b1eaeed6b399d70",
+        "3eee0060d1949e2eec88aa551134a2bb"
+      ],
+      "operand_sha256": [
+        "9b3bc3308c0785125cbd25f135cce3853377bf89c08f0c115b734ccd68bef1d3",
+        "038c1433680644a34c88a72eb712a6207c8994f476760986c62e4abe4779ea33",
+        "d765d13b134e4b51f46808e8a757c2b08a23f427ab92b181148e2f064855b773",
+        "e27052e02ebf99384ba7e435783eee8f5faf40d1b4d1abd03ab9a17bae9d671a"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "run1_composite_sha256": "8ae11bb6a3f356fd90933c81afba17c0361bded687d55c5f2fa072092bb6e683",
+      "run2_composite_sha256": "8ae11bb6a3f356fd90933c81afba17c0361bded687d55c5f2fa072092bb6e683",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-51",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "3fa6f0cc678396b8cac24c9a8dccbf46",
+        "409b9900412f2046cf949b09f58849e0",
+        "40051ceb4568650010bd5780d0d282ec",
+        "41f542593add04b30869759ab6d791a9"
+      ],
+      "operand_sha256": [
+        "d4c253f0a3dcd293359506087419be9a2c86ea4e0f9efa6a8e6113723324f4dd",
+        "fcb710cec2a4ca2e45b0b488315114c5bee87461badd1463f23cf52ab0179248",
+        "0e8dcfeefd64589dddca4864c312e549f4918cbd5898554d020819869a918f30",
+        "2e4e604020969bf5d92b40c6f6cf6d5674c84d4f5a195f0dc5b39fa6169ee643"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "run1_composite_sha256": "e1267c6c0de7d6ab388a0501a1f663404cf0aace84ce6b616841bb99defae8d0",
+      "run2_composite_sha256": "e1267c6c0de7d6ab388a0501a1f663404cf0aace84ce6b616841bb99defae8d0",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-52",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "4249a2e4a698a9d14f80b0399d8807c5",
+        "4322df5db672e1e8278c03a758889959",
+        "425ce822d88b8f46749b4b71dbaf8b07",
+        "433bfe6b387a1e75f21c9a4eb5e848a4"
+      ],
+      "operand_sha256": [
+        "13c4bb3da71f822470cb97d49b85d545645e16f07b36119816a26fe00109cce2",
+        "f37f0dd8c0b219ba39438f8359332f1da0c517c9e3dc3654ef7028d7565cd67e",
+        "6b9ae39843f83f2eeed022f256a29fd0214a73d6cdcc4020e56553be9f103c41",
+        "919a403316fe94aaf6913fa998231b3c2480a7fb7c856d37dd251c66dd5171d0"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "run1_composite_sha256": "44bcb04b10461c2deb02ee6343c057b61d5d6a125f7e5ad9823b97f4d8d945a7",
+      "run2_composite_sha256": "44bcb04b10461c2deb02ee6343c057b61d5d6a125f7e5ad9823b97f4d8d945a7",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-53",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "437ab57154e914fea52feb4170e08557",
+        "4540c67f9df8728c60d954dd32b51cb5",
+        "452b8b3689fa5dac3eca2b7ebfec7e47",
+        "458c4963312272dc425956e4b59ca74b"
+      ],
+      "operand_sha256": [
+        "833c013c11354c82d490a7ead369b7c69646a21f1ce67caceab674088e5545ae",
+        "1a158e6ed4e0f89f8f0fa5269f1b87e7acc5067bc5d79c0c96c79918df0bfd81",
+        "afb30be241f04ed9bb23985f2ee517a319f1b88e75db3f0ad816fd58bf5223ce",
+        "4ff1017e4b1fe0a78d5de7a28b41f0d83e7a274b07a2322d6674894c0fd50c40"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "run1_composite_sha256": "d626edc682730a220927a835c8163347798f8145aecdbaaedf5a1573f3931cc1",
+      "run2_composite_sha256": "d626edc682730a220927a835c8163347798f8145aecdbaaedf5a1573f3931cc1",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-54",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "45bd4b2032d3e0132fba5b8501817eff",
+        "462f70aaae8a65026c0b459504afc9e7",
+        "461aedd4317f2c9395474c3a3ff9cee8",
+        "46bd873a362619e27207041287f7ccd9"
+      ],
+      "operand_sha256": [
+        "b8747784614ff5e75651789482b93fff87a41ac6bbe457b55dba854db673a3a2",
+        "5b235d7559eaf5b64d4a83f5e4221fd5f20d1715fe2115f4590d374cd3b8182d",
+        "2b2258464a4a5c80e1cab0353e16af051dc5d68037a6941d6faef6ec1c41623d",
+        "186623a4c50b238a7521e70d3f3c5c51617eca1fb09a7ac72684785081fb4a66"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "run1_composite_sha256": "deac42a9f8a53d4f0dd05572e372c4e851353b084fba215d70c6a33f36fe289b",
+      "run2_composite_sha256": "deac42a9f8a53d4f0dd05572e372c4e851353b084fba215d70c6a33f36fe289b",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-55",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "46fb266d0d52ee5e6b6893743de5cff5",
+        "479fdcbda0c8c87240736f42f07c31b3",
+        "4737ba865e7b6ea695eb179a89c5211c",
+        "48ba2d688e91fe24519dad9e4bda6f1e"
+      ],
+      "operand_sha256": [
+        "c99899ff601df311f56605a7dc05730bf8459849ef2d77af609a5ac9f07c1ea5",
+        "b473213d152c86c3c842caf79a40376abbeab15b66bdaeb4b1fe4cd8719340e9",
+        "df853e5df361ecf0b4e92ca8ad2ff97e421b5e4f28b28445c83cc53dd43df0a6",
+        "d8193c562b77ef2d694e9cec721da2c0d798f51112d83143207bc1594675393a"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "run1_composite_sha256": "0e1580d80551a677ad84a54694122a8586e28f087ba3b4b5075acb0859310870",
+      "run2_composite_sha256": "0e1580d80551a677ad84a54694122a8586e28f087ba3b4b5075acb0859310870",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-56",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "489087903a86350cd5ed9362743a9936",
+        "48e6e85070ff9d9433d01af9d33f1b33",
+        "48cb4a3d9fb9a9fc72283051f50748db",
+        "4acb556fdcf3d836c82775341e23b2a5"
+      ],
+      "operand_sha256": [
+        "f15edd1aa07e48709fd6ec6ff6d4887ca552f1125db4f2706eab7318bc03cbda",
+        "245fc3a3fab8797ac9bce2f5aff12da1befdd375b616c97dcddc57876aedc2ff",
+        "cdc1c1cc8a4d24a098d46b317c47d967b9095dc5c749d4ab3dc2a6f9dcb379d8",
+        "3a4119ca8809fffc2ae4d46563aa02958b2b7a818d5aa8a78467fa2f36f5efcf"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "run1_composite_sha256": "06035ab08c007999161fc1b8cc66cd275c99cbe5a9a55aa50206fba4267b0dff",
+      "run2_composite_sha256": "06035ab08c007999161fc1b8cc66cd275c99cbe5a9a55aa50206fba4267b0dff",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-57",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "4af0b6eeb086915646739bfe0cb7bacc",
+        "4c062842594afebc8c7ea9e8dea4f204",
+        "4bc305ef0ba2ea247309e2578ac4de2a",
+        "4c1d148b7445257ef375711b9ac3ab83"
+      ],
+      "operand_sha256": [
+        "b83ab68a0f596e08f31ca6942f2130da595e69c99e803def99ff5de7e13dd21b",
+        "55d48e934253348e20e3c5f067a14c02dc0bbf41de0313d075bbe19b7dee2653",
+        "46c00630a6857635a7886e256fe216f6bda824b37a282b7bf512a662e044bbce",
+        "c9f28a1746d6af17fab4da2009d077f162259c9c1cbc173688e241725c767a75"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "run1_composite_sha256": "4472acf8b1b6d44a65e75b5f9ae874f005406ed99d27d9c1d91417fb2a39aaf3",
+      "run2_composite_sha256": "4472acf8b1b6d44a65e75b5f9ae874f005406ed99d27d9c1d91417fb2a39aaf3",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-58",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "4c2eb0677833eff44dcb3d71b4f88c62",
+        "4e96788732356770ad7b1dad2e387e03",
+        "4e4fce82f841d1cb92bfca31aed8c9e5",
+        "5090960eec6ad7c95645ebbd3fbb732e"
+      ],
+      "operand_sha256": [
+        "16a16882de1b239aae7518cccdeab176da1b45adaf123ef1ec4fefb4d8d5004a",
+        "f03d5cee2aa700c1eb023b1e245ca2e9e108d895dc52a3459ca8b64ddc5eaab7",
+        "9e150e5f62da3dfe5a73bb88abc9281697e5215e4c515a5f27d7eacce4858e08",
+        "53ba9e9c5eeafe952614acdb31cfba460264c935eb1d5717b2a67d3052ad7e36"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "run1_composite_sha256": "fac93b63daedd3ed10b5ded805c32968def5e5ca3279e8624f5cc2daa055dd67",
+      "run2_composite_sha256": "fac93b63daedd3ed10b5ded805c32968def5e5ca3279e8624f5cc2daa055dd67",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-59",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "50afa4dcf283a1c8abbef0751f2d3f1b",
+        "52abbe876669a42a08bc34ae1e0e4b2c",
+        "5287ba7f8f0719dd827dddd577ecca32",
+        "53d87571042f563242871a441c6d8cc3"
+      ],
+      "operand_sha256": [
+        "ab96f187a6105caffdb81acf3f8662289bd2ffc386113969c01a99da44e45336",
+        "661819c4d9216bd6fb1ac5749c0de7b329db36f9fea584bd1e2580ebcba82f2e",
+        "1d37d836a9422fbdc61a424a061cb7f98b8e0865a639a8087ae648e8a1c6687a",
+        "63938627113f1d72da1c46d1f654f27b500e462aedf6333ceb96b61908b8222d"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "run1_composite_sha256": "f42276802fcca186b0a4e041288078de9deea8d8ef494c5e4f09192ca65af64c",
+      "run2_composite_sha256": "f42276802fcca186b0a4e041288078de9deea8d8ef494c5e4f09192ca65af64c",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-REC-60",
+      "ordered_roles": [
+        "A",
+        "B",
+        "a",
+        "b"
+      ],
+      "ordered_candidate_ids": [
+        "5476afef2f7b4e60dec271cf6e8cf335",
+        "5620015a8d4fa81ee4ee4e31a5b178fe",
+        "55a9a7ed90a74c26bddc47a9904c86e5",
+        "56476b00fb29c4a3aee09824c4cac0a2"
+      ],
+      "operand_sha256": [
+        "64c0dd013be08544ea7f3f3799163b0dade0aba5c27709ca96e5c43f9f269722",
+        "08aba40fbeb4fb39b7c3922b9badded4b82705e7edbd37e41abd4a9f28f5c0d8",
+        "59d682751c5c48f6e07d627c5c95dc5ad19f2cfafea8daee9e713892fc7fa1eb",
+        "bdd3c6067b5776b3b97f1ceb7bb386e1b462c119868ac051db360cfe1968a920"
+      ],
+      "width": 512,
+      "height": 2048,
+      "padding_px": 0,
+      "run1_composite_sha256": "704be2f857e92986a2eea826bebe50af9850b38e1c5b4cadcb64da01a214517c",
+      "run2_composite_sha256": "704be2f857e92986a2eea826bebe50af9850b38e1c5b4cadcb64da01a214517c",
+      "equal": true
+    }
+  ]
+}

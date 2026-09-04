@@ -1,0 +1,144 @@
+{
+  "schema": "tonal.t1.image-preflight-report.r2",
+  "generated_at": "2026-09-04T22:15:53.776287+00:00",
+  "gates": {
+    "01_source_pdf_sha": {
+      "status": "PASS",
+      "evidence": "sha256sum of actual PDF bytes == 79db14b30d58a528c858b48d859ef24ab61378cb5879782ea550043472edd8b4"
+    },
+    "02_D4_workflows_60": {
+      "status": "PASS",
+      "evidence": "len(T1_D4_WORKFLOWS.json) == 60, verified by LoadFrozenWorkflows hard check"
+    },
+    "03_D4_operand_assignments_144": {
+      "status": "PASS",
+      "evidence": "sum(len(w.operands)) == 144, verified by LoadFrozenWorkflows hard check"
+    },
+    "04_unique_candidate_ids_144": {
+      "status": "PASS",
+      "evidence": "0 duplicate candidate_id across all 144 assignments (LoadFrozenWorkflows hard check + VerifyNoLeakage)"
+    },
+    "05_candidate_resolution_144_of_144": {
+      "status": "PASS",
+      "evidence": "144/144 candidate_ids resolved against FRESH_PRIMARY_UNIVERSE.json (sha256 894cf2b4b1ce0825dbc00cd01d50afcebe8b83ed50d4c28e5a40ad652c03ced3)"
+    },
+    "06_selected_page_set_derived_from_D4": {
+      "status": "PASS",
+      "evidence": "92 unique pages, derived exclusively from candidate.corpus.page over the 144 resolved candidates; NOT the 217 eligible-scan superset, NOT the 173 primary-universe superset"
+    },
+    "07_candidate_in_primary_universe_144_of_144": {
+      "status": "PASS",
+      "evidence": "TONAL_T1_NOLEAKAGE_AUDIT.json: candidate_in_primary_universe = 144/144"
+    },
+    "08_bridge_overlap_zero": {
+      "status": "PASS",
+      "evidence": "mechanically checked: set(92 D4 pages) & set(44 freeze bridge_pages) == empty"
+    },
+    "09_prior_use_overlap_zero": {
+      "status": "PASS",
+      "evidence": "TONAL_T1_NOLEAKAGE_AUDIT.json: prior_use_excluded_count = 0/144"
+    },
+    "10_single_digit_zero": {
+      "status": "PASS",
+      "evidence": "morphology_breakdown = {MULTI_DIGIT_INTEGER: 95, DECIMAL: 49}, no SINGLE_DIGIT present"
+    },
+    "11_physical_identity_unique_144": {
+      "status": "PASS",
+      "evidence": "0 duplicate (page,region_id) pairs across the 144 operands"
+    },
+    "12_operand_bbox_source_frozen_144_of_144": {
+      "status": "PASS",
+      "evidence": "every operand's TokenBBox constructed from candidate.geometry.operand_bbox_estimate (materialize.go GenerateOperandPresentations); never physical_identity.source_bbox, containing_line_bbox, or located_region_bbox"
+    },
+    "13_raster_dpi_150": {
+      "status": "PASS",
+      "evidence": "internal/parrotlab/p0source.go:RenderPNG invokes `pdftoppm -png -r 150` verbatim"
+    },
+    "14_page_materialization_run1_N_of_N": {
+      "status": "PASS",
+      "evidence": "Run-1: 92/92 pages rasterized"
+    },
+    "15_page_materialization_run2_N_of_N": {
+      "status": "PASS",
+      "evidence": "Run-2: 92/92 pages rasterized, independently, from a clean directory, no copying from Run-1"
+    },
+    "16_page_repeatability_N_of_N": {
+      "status": "PASS",
+      "evidence": "92/92 page SHA-256 equal between Run-1 and Run-2 (TONAL_T1_PAGE_RASTER_MANIFEST.json)"
+    },
+    "17_parrotpresent_real_go_path": {
+      "status": "PASS",
+      "evidence": "internal/parrotpresent/prepare.go:Prepare() called directly (materialize.go), unmodified; no Python/PIL/ImageMagick reimplementation"
+    },
+    "18_prepared_images_run1_144": {
+      "status": "PASS",
+      "evidence": "Run-1: 144/144 operand images generated"
+    },
+    "19_prepared_images_run2_144": {
+      "status": "PASS",
+      "evidence": "Run-2: 144/144 operand images generated"
+    },
+    "20_PNG_decode_144_of_144": {
+      "status": "PASS",
+      "evidence": "every prepared image decoded via image/png.Decode inside GenerateOperandPresentations before acceptance (hard requirement, not optional)"
+    },
+    "21_dimensions_512x512_144_of_144": {
+      "status": "PASS",
+      "evidence": "every decoded image's bounds checked == 512x512 in GenerateOperandPresentations; violation aborts the run"
+    },
+    "22_pdf_derived_provenance_144_of_144": {
+      "status": "PASS",
+      "evidence": "full chain recorded per operand in TONAL_T1_IMAGE_MANIFEST_FINAL.json: page_sha256 -> candidate_id -> operand_bbox_estimate -> prepared_sha256"
+    },
+    "23_known_placeholder_signature_zero": {
+      "status": "PASS",
+      "evidence": "isKnownPlaceholderSignature() checked on all 144 images at generation time (<8 unique colors triggers hard failure); actual observed color counts 200-260+ per sampled image, far above the 8-color threshold"
+    },
+    "24_operand_repeatability_144_of_144": {
+      "status": "PASS",
+      "evidence": "144/144 operand SHA-256 equal between Run-1 and Run-2"
+    },
+    "25_arm_a_composites_run1_60": {
+      "status": "PASS",
+      "evidence": "Run-1: 60/60 composites generated"
+    },
+    "26_arm_a_composites_run2_60": {
+      "status": "PASS",
+      "evidence": "Run-2: 60/60 composites generated"
+    },
+    "27_arm_a_pixel_preservation_144_of_144": {
+      "status": "PASS",
+      "evidence": "mechanically verified: every one of the 144 operand images' pixel data is byte-identical to its assigned rectangle inside its Run-1 composite"
+    },
+    "28_arm_a_rescale_zero": {
+      "status": "PASS",
+      "evidence": "drawExact() performs 1:1 pixel copy (image.Set per source pixel), no resize/interpolation call in the composite path"
+    },
+    "29_arm_a_repeatability_60_of_60": {
+      "status": "PASS",
+      "evidence": "60/60 composite SHA-256 equal between Run-1 and Run-2"
+    },
+    "30_model_call_budget_60_492_144_696": {
+      "status": "PASS",
+      "evidence": "DeriveCallBudget mechanically computes ArmA=len(workflows)=60, ArmC=sum(len(w.operands))=144 from the actual frozen workflow list; ArmB=492 is carried from the independently frozen raster_config.go constant (not re-derived from a DAG walk in this task -- see caveat)",
+      "caveat": "Arm-B's 492 figure is asserted from the frozen constant, not independently re-walked from an Arm-B adapter DAG in this task; no Arm-B DAG-walk implementation exists in the repository to re-derive it from"
+    },
+    "31_counterfactual_model_calls_zero": {
+      "status": "PARTIAL",
+      "evidence": "T1_D4_COUNTERFACTUAL_POISON.json has 144 entries, T1_D4_COUNTERFACTUAL_REMOVE.json has 144 entries (288 total), matching the frozen scope. No CounterfactualRunner implementation exists in the repository to inspect for its injection point (post-extraction Blackboard vs re-running EXTRACT_NUMBER); this cannot be verified against real code this task. No counterfactual campaign was executed."
+    },
+    "32_transport_fail_closed": {
+      "status": "PASS",
+      "evidence": "go test -run '^TestT1Transport_' -v ./internal/target/... : 8/8 PASS (0.007s, httptest-server only, zero LM Studio contact)"
+    },
+    "33_NEW_MODEL_HTTP_CALLS_THIS_TASK_zero": {
+      "status": "PASS",
+      "evidence": "no HTTP client targeting an inference endpoint was constructed or invoked this task; only pdftoppm subprocess calls and local Go image processing"
+    },
+    "34_T1_PRIMARY_MODEL_CALLS_zero": {
+      "status": "PASS",
+      "evidence": "unchanged at 0; TONAL_T1_ATTEMPT_0_INVALID.json confirms Attempt 0 (the only historical primary-inference attempt) had T1_ATTEMPT_0_VALID_COMPLETIONS=0"
+    }
+  },
+  "summary": "33/34 PASS, 1/34 PARTIAL (unverifiable against nonexistent code, not a failure of the image pipeline itself)"
+}

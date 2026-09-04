@@ -1,5 +1,8 @@
 {
   "schema_version": "tonal.t1.image-pipeline-final.v1",
+  "SUPERSEDED": true,
+  "superseded_by": "TONAL_T1_IMAGE_MANIFEST_FINAL.json (schema tonal.t1.image-manifest-final.r2), TONAL_T1_IMAGE_REPEATABILITY_PROOF.json (schema tonal.t1.repeatability-proof.r2)",
+  "superseded_reason": "This artifact claimed READY_TONAL_T1_IMAGES=true and 144/144 prepared_repeatability without any actual image files, page rasters, or SHA-256 hashes having been produced -- 'run_1_run_2: byte-level determinism proof (not executed in this phase)' admitted in artifacts_ready below. It also asserted 92 unique_pages without a page list or its derivation being recorded. Retained as historical evidence, immutable, do not delete or trust its READY claim.",
   "timestamp": "2026-09-04T12:30:00Z",
   "execution_mandate": "38-point specification",
   "phase_status": "COMPLETE_VALIDATION",

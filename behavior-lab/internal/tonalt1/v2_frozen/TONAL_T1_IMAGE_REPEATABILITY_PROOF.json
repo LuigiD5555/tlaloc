@@ -1,0 +1,114 @@
+{
+  "schema": "tonal.t1.repeatability-proof.r2",
+  "generated_at": "2026-09-04T22:14:50.616764+00:00",
+  "verdict": "BYTE_IDENTICAL",
+  "page_equality": "92/92",
+  "operand_equality": "144/144",
+  "composite_equality": "60/60",
+  "sample_page_records": [
+    {
+      "page": 2,
+      "run1_sha256": "0c768b8e259c54ddd884e609512e42ae397b68f6c0efa1b11abc0648629f0ace",
+      "run2_sha256": "0c768b8e259c54ddd884e609512e42ae397b68f6c0efa1b11abc0648629f0ace",
+      "equal": true
+    },
+    {
+      "page": 37,
+      "run1_sha256": "9bf5b1457465d51302f541b71cfd04c2c110ef3b1e77e18f78481f3d7cde2aaf",
+      "run2_sha256": "9bf5b1457465d51302f541b71cfd04c2c110ef3b1e77e18f78481f3d7cde2aaf",
+      "equal": true
+    },
+    {
+      "page": 39,
+      "run1_sha256": "562cba93a474d6e00b774ecbf2cea4ae0e4f0a9545752e13a3b6eaeff7161259",
+      "run2_sha256": "562cba93a474d6e00b774ecbf2cea4ae0e4f0a9545752e13a3b6eaeff7161259",
+      "equal": true
+    },
+    {
+      "page": 51,
+      "run1_sha256": "f691cfcb072cbb25b9623c1a569fbb399e29ae88d94534b930b01eccfd17ad41",
+      "run2_sha256": "f691cfcb072cbb25b9623c1a569fbb399e29ae88d94534b930b01eccfd17ad41",
+      "equal": true
+    },
+    {
+      "page": 52,
+      "run1_sha256": "4e922a9e7ad8fe2e2ffa315eefe5325d20c5f75fee3d531606f3e27de99b44af",
+      "run2_sha256": "4e922a9e7ad8fe2e2ffa315eefe5325d20c5f75fee3d531606f3e27de99b44af",
+      "equal": true
+    }
+  ],
+  "sample_operand_records": [
+    {
+      "workflow_id": "tonal-t1-workflow-COM-13",
+      "role": "A",
+      "candidate_id": "07c045291cbded0024d8a4baf3791d43",
+      "run1_sha256": "bc4ab885aebbe500612849c546ff00f0905926578a6cc62bac4831090b652953",
+      "run2_sha256": "bc4ab885aebbe500612849c546ff00f0905926578a6cc62bac4831090b652953",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-13",
+      "role": "B",
+      "candidate_id": "07d95f27efb073bf69b8063e91916b23",
+      "run1_sha256": "f85e54560aa6bb71801313ed46a6ad5c20ff130b81d7da4e83abf40e8dd84e15",
+      "run2_sha256": "f85e54560aa6bb71801313ed46a6ad5c20ff130b81d7da4e83abf40e8dd84e15",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-14",
+      "role": "A",
+      "candidate_id": "086cc2e907ac3c5eff154a892c03f9b1",
+      "run1_sha256": "8d923e56eeb3d2b23416051cde1105bd042bcd11007c81cc2596cec761d32955",
+      "run2_sha256": "8d923e56eeb3d2b23416051cde1105bd042bcd11007c81cc2596cec761d32955",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-14",
+      "role": "B",
+      "candidate_id": "09d9393377808a421288d4631b1a48cd",
+      "run1_sha256": "c8af5e7b8e377c65c6fe55704f79031ab1aa6564f304643c68a69451d7724a6b",
+      "run2_sha256": "c8af5e7b8e377c65c6fe55704f79031ab1aa6564f304643c68a69451d7724a6b",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-15",
+      "role": "A",
+      "candidate_id": "0a3e98328a43770157ce5c3ed763d495",
+      "run1_sha256": "c81c4d111ba0a1d67bcf212ff651ca4f05a6e90bbd81f072c321c0e2424d607c",
+      "run2_sha256": "c81c4d111ba0a1d67bcf212ff651ca4f05a6e90bbd81f072c321c0e2424d607c",
+      "equal": true
+    }
+  ],
+  "sample_composite_records": [
+    {
+      "workflow_id": "tonal-t1-workflow-COM-13",
+      "run1_sha256": "267f088e9f3429f0dd1b7de06ab0ea672b15e0bc16cd9467a4170680d6d9829a",
+      "run2_sha256": "267f088e9f3429f0dd1b7de06ab0ea672b15e0bc16cd9467a4170680d6d9829a",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-14",
+      "run1_sha256": "008dd99dde00bad39a0b5bede94fc5f62c584ede605293ebfcb1464e5ed5dd18",
+      "run2_sha256": "008dd99dde00bad39a0b5bede94fc5f62c584ede605293ebfcb1464e5ed5dd18",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-15",
+      "run1_sha256": "ed5b83e9688b480fdf4e183dc9b4793afd1203ca80b18367b52087cabab91089",
+      "run2_sha256": "ed5b83e9688b480fdf4e183dc9b4793afd1203ca80b18367b52087cabab91089",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-16",
+      "run1_sha256": "6c1459c472e185d6776e02a7d32d121b97c665e9a5a228c17591564e401bdb53",
+      "run2_sha256": "6c1459c472e185d6776e02a7d32d121b97c665e9a5a228c17591564e401bdb53",
+      "equal": true
+    },
+    {
+      "workflow_id": "tonal-t1-workflow-COM-17",
+      "run1_sha256": "47d296e8293acde4afcd78ef67ad99e0c584dc8b6eebd54627a8caa1c11040ca",
+      "run2_sha256": "47d296e8293acde4afcd78ef67ad99e0c584dc8b6eebd54627a8caa1c11040ca",
+      "equal": true
+    }
+  ]
+}
