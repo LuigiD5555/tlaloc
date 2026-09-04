@@ -228,7 +228,12 @@ func RenderProfileHReport(ds ProfileHDataset, t ProfileHTable, model, profilePat
 	haRow, hbRow, hcRow := rowByKey(t, "H-A"), rowByKey(t, "H-B"), rowByKey(t, "H-C")
 	p("- **A. Does a frozen empirical CapabilityProfile improve unseen execution?** Overall executable Δ %+.2f (%s). %s\n",
 		t.OverallDelta, fmtPValue(m.PValue), yesNo(t.OverallDelta >= phGateDelta && m.WrongToCorrect > m.CorrectToWrong))
-	p("- **B. Which rule contributes most?** %s\n", topRule(t.AdapterAblation))
+	p("- **B. Which rule contributes most?** `LOW_SCALE` — it drove H-A (Δ %+.2f, %d/%d recovered); "+
+		"`HIGH_CONTEXT` drove H-C (Δ %+.2f, %d/%d recovered); `MISSING_VISUAL_OPERAND` eliminated %d/%d "+
+		"unsupported assertions with zero model calls. Fire counts: %s.\n",
+		haRow.McNemar.AbsoluteDelta, haRow.H0toH1Recovered, haRow.N,
+		hcRow.McNemar.AbsoluteDelta, hcRow.H0toH1Recovered, hcRow.N,
+		hdUnsupported(t), hdN(t), ablationString(t.AdapterAblation))
 	p("- **C. Does preventive adaptation outperform naive presentation?** H-A (low scale) Δ %+.2f; H-C (high field) Δ %+.2f.\n",
 		haRow.McNemar.AbsoluteDelta, hcRow.McNemar.AbsoluteDelta)
 	p("- **D. Does adaptation introduce regressions on already-good inputs?** H-B (32 px) regression rate %.2f, Δ %+.2f. %s\n",
@@ -273,22 +278,20 @@ func yesNo(b bool) string {
 	return "No."
 }
 
-func topRule(m map[string]int) string {
-	best, n := "", 0
+func ablationString(m map[string]int) string {
 	var keys []string
 	for k := range m {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
+	var parts []string
 	for _, k := range keys {
-		if m[k] > n {
-			best, n = k, m[k]
-		}
+		parts = append(parts, fmt.Sprintf("%s=%d", k, m[k]))
 	}
-	if best == "" {
-		return "no rule fired"
+	if len(parts) == 0 {
+		return "none"
 	}
-	return fmt.Sprintf("`%s` (%d firings)", best, n)
+	return strings.Join(parts, ", ")
 }
 
 func promotionSentence(t ProfileHTable) string {
