@@ -106,6 +106,14 @@ func main() {
 		runR1F(ctx, os.Args[2:])
 	case "report-r1f":
 		reportR1F(os.Args[2:])
+	case "prepare-r1g":
+		prepareR1G(os.Args[2:])
+	case "doctor-r1g":
+		doctorR1G(ctx, os.Args[2:])
+	case "run-r1g":
+		runR1G(ctx, os.Args[2:])
+	case "report-r1g":
+		reportR1G(os.Args[2:])
 	default:
 		fmt.Fprintln(os.Stderr, "unknown subcommand:", os.Args[1])
 		os.Exit(2)
@@ -1877,5 +1885,261 @@ func finalizeR1F(expDir, runDir, model string, ds perceptenvelope.R1FDataset, re
 		"records": len(records), "table_sha256": tableSHA, "summary_sha256": summarySHA,
 		"checkpoint_sha256": cpSHA, "BLIND_RETRY_NOT_USEFUL": summary.BlindRetryNotUseful,
 		"semantic_invariant_5of5": summary.SemanticInvariant5of5,
+	}))
+}
+
+// ---- R1-G: evidence-based recovery policy ---------------------------------
+
+func loadR1GDataset(expDir string) perceptenvelope.R1GDataset {
+	body, err := os.ReadFile(filepath.Join(expDir, "datasets", "R1G_DATASET.json"))
+	die(err)
+	var ds perceptenvelope.R1GDataset
+	die(json.Unmarshal(body, &ds))
+	return ds
+}
+
+func prepareR1G(args []string) {
+	fs := flag.NewFlagSet("prepare-r1g", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	temp := fs.Float64("temperature", 0, "sampling temperature")
+	maxTokens := fs.Int("max-tokens", 32, "max output tokens")
+	fs.Parse(args)
+
+	ds, err := perceptenvelope.SelectR1GDataset(*expDir, *temp, *maxTokens)
+	die(err)
+
+	saSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1G_SCALE_BASES.json"), ds.ScaleBases)
+	die(err)
+	cbSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1G_CONTEXT_BASES.json"), ds.ContextBases)
+	die(err)
+	raSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1G_REAL_ASSOC_BASES.json"), ds.RealAssoc)
+	die(err)
+	sySHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1G_SYN_ASSOC_BASES.json"), ds.SynAssoc)
+	die(err)
+	cuSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1G_CUE_BASES.json"), ds.CueBases)
+	die(err)
+	dsSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1G_DATASET.json"), ds)
+	die(err)
+
+	r1fCheckpointSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "R1F_CHECKPOINT.json"))
+	miSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "MODEL_IDENTITY.json"))
+	poolSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "datasets", "SOURCE_POOL_R1.json"))
+
+	addendum := map[string]any{
+		"schema":      "tlaloc.parrot-perceptual-envelope-r1.protocol-addendum.08",
+		"title":       "R1-G_RECOVERY — evidence-based recovery policy for LFM2-VL (final characterisation stage)",
+		"recorded_at": time.Now().UTC().Format(time.RFC3339),
+		"authored":    "BEFORE any R1-G model output existed. R1-A0/A1/B/C/D/E/F artifacts immutable and untouched.",
+		"NO_R1G_MODEL_OUTPUT_EXISTED_WHEN_RECOVERY_POLICIES_AND_THRESHOLDS_WERE_FROZEN": true,
+		"EXACT_IDENTICAL_RETRY":            perceptenvelope.R1GExactRetryStatus,
+		"exact_retry_imported_from":        "R1-F (G_NEGATIVE_CONTROL_EXACT_RETRY, 0/16 recovered, no new calls)",
+		"families":                         []string{"GA_SCALE", "GB_CONTEXT", "GC_ASSOC_REAL", "GC_ASSOC_SYN", "GD_CUE"},
+		"real_synthetic_never_pooled":      true,
+		"GC_ASSOC_REAL_independent_accuracy_estimate": false,
+		"CROSS_RECOVERY_FAMILY_BASE_REUSE":  ds.CrossRecoveryFamilyBaseReuse,
+		"n_available_fresh_pool":            ds.NAvailableFreshPool,
+		"r1d_geometric_coincidence_excluded": ds.R1DGeometricCoincidenceExcluded,
+		"frozen_recovery_verdict_thresholds": ds.Thresholds,
+		"OCR_FALLBACK_AVAILABLE":            ds.OCRFallbackAvailable,
+		"ocr_engine":                        ds.OCREngine,
+		"no_new_model_for_exact_retry":      true,
+		"no_no_image_recovery":              "R1-E already conclusive; runtime rule = reject visual opcode with no visual operand before invocation",
+		"inputs_hashed": map[string]string{
+			"R1F_CHECKPOINT.json":        r1fCheckpointSHA,
+			"MODEL_IDENTITY.json":        miSHA,
+			"SOURCE_POOL_R1.json":        poolSHA,
+			"R1G_SCALE_BASES.json":       saSHA,
+			"R1G_CONTEXT_BASES.json":     cbSHA,
+			"R1G_REAL_ASSOC_BASES.json":  raSHA,
+			"R1G_SYN_ASSOC_BASES.json":   sySHA,
+			"R1G_CUE_BASES.json":         cuSHA,
+			"R1G_DATASET.json":           dsSHA,
+		},
+	}
+	addSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "R1_PROTOCOL_ADDENDUM_08.json"), addendum)
+	die(err)
+
+	total := len(ds.ScaleBases) + len(ds.ContextBases) + len(ds.RealAssoc) + len(ds.SynAssoc) + len(ds.CueBases)
+	manifest := map[string]any{
+		"schema":        "tlaloc.parrot-perceptual-envelope-r1.r1g-prepare-manifest.r1",
+		"experiment_id": perceptenvelope.ExperimentID,
+		"prepared_at":   time.Now().UTC().Format(time.RFC3339),
+		"bases_per_family": map[string]int{
+			"GA_SCALE": len(ds.ScaleBases), "GB_CONTEXT": len(ds.ContextBases),
+			"GC_ASSOC_REAL": len(ds.RealAssoc), "GC_ASSOC_SYN": len(ds.SynAssoc), "GD_CUE": len(ds.CueBases),
+		},
+		"total_bases":       total,
+		"expected_records":  total * 3,
+		"dataset_sha256":    dsSHA,
+		"protocol_addendum_08_sha256": addSHA,
+	}
+	mSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "manifests", "R1G_PREPARE_MANIFEST.json"), manifest)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"bases_per_family":  manifest["bases_per_family"],
+		"expected_records":  total * 3,
+		"CROSS_RECOVERY_FAMILY_BASE_REUSE": ds.CrossRecoveryFamilyBaseReuse,
+		"OCR_FALLBACK_AVAILABLE":           ds.OCRFallbackAvailable,
+		"dataset_sha256":    dsSHA,
+		"addendum_08_sha256": addSHA,
+		"manifest_sha256":   mSHA,
+	}))
+}
+
+func doctorR1G(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("doctor-r1g", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	fs.Parse(args)
+	bank := r1cBank(*expDir, *storeDir, *pdfPath)
+	rep := perceptenvelope.DoctorR1G(ctx, perceptenvelope.DoctorR1GInput{
+		ExpDir: *expDir, Endpoint: *endpoint, Model: *model, StoreDir: *storeDir, Bank: bank,
+	})
+	_, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "R1G_DOCTOR.json"), rep)
+	die(err)
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(rep))
+	if !rep.ReadyR1G {
+		os.Exit(1)
+	}
+}
+
+func runR1G(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("run-r1g", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	temp := fs.Float64("temperature", 0, "sampling temperature")
+	maxTokens := fs.Int("max-tokens", 32, "max output tokens")
+	runID := fs.String("run-id", "r1g-r0", "run id")
+	fs.Parse(args)
+
+	doctorR1G(ctx, []string{"-exp-dir", *expDir, "-endpoint", *endpoint, "-model", *model, "-store-dir", *storeDir, "-pdf", *pdfPath})
+
+	ds := loadR1GDataset(*expDir)
+	bank := r1cBank(*expDir, *storeDir, *pdfPath)
+	rd := loadR1DAlloc(*expDir)
+	runDir := filepath.Join(*expDir, "runs", *runID)
+	cfg := perceptenvelope.RunConfig{
+		StoreDir: *storeDir, PDFPath: *pdfPath, Endpoint: *endpoint, Model: *model,
+		Temperature: *temp, MaxTokens: *maxTokens, RunDir: runDir,
+	}
+	records, err := perceptenvelope.RunR1G(ctx, cfg, ds, bank, rd)
+	die(err)
+	structErrs := 0
+	for _, r := range records {
+		if r.Error != "" {
+			structErrs++
+		}
+	}
+	if structErrs > 0 {
+		die(fmt.Errorf("R1-G integrity: %d records errored", structErrs))
+	}
+	ocr := perceptenvelope.RunR1GOCRFallback(records)
+	finalizeR1G(*expDir, runDir, *model, ds, records, ocr)
+}
+
+func reportR1G(args []string) {
+	fs := flag.NewFlagSet("report-r1g", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	runID := fs.String("run-id", "r1g-r0", "run id")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	fs.Parse(args)
+	body, err := os.ReadFile(filepath.Join(*expDir, "results", "R1G_RECORDS.json"))
+	die(err)
+	var records []perceptenvelope.R1GRecord
+	die(json.Unmarshal(body, &records))
+	var ocr []perceptenvelope.R1GOCRRecord
+	if ob, e := os.ReadFile(filepath.Join(*expDir, "results", "R1G_OCR_RECORDS.json")); e == nil {
+		_ = json.Unmarshal(ob, &ocr)
+	}
+	ds := loadR1GDataset(*expDir)
+	finalizeR1G(*expDir, filepath.Join(*expDir, "runs", *runID), *model, ds, records, ocr)
+}
+
+func finalizeR1G(expDir, runDir, model string, ds perceptenvelope.R1GDataset, records []perceptenvelope.R1GRecord, ocr []perceptenvelope.R1GOCRRecord) {
+	recSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1G_RECORDS.json"), records)
+	die(err)
+	_, err = perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1G_OCR_RECORDS.json"), ocr)
+	die(err)
+	table, trans := perceptenvelope.AggregateR1G(records, ds, ocr)
+	tableSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1G_RECOVERY_TABLE.json"), table)
+	die(err)
+	transSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1G_FAILURE_TRANSITIONS.json"), trans)
+	die(err)
+	policy := perceptenvelope.BuildR1GRecoveryPolicy(perceptenvelope.R1GRecoveryPolicySource{Table: table})
+	policySHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1G_RECOVERY_POLICY.json"), policy)
+	die(err)
+	answers := perceptenvelope.R1GScientificAnswers(table)
+
+	rawTreeSHA, rawFiles, err := perceptenvelope.SHA256OfTree(runDir)
+	die(err)
+	dsSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "datasets", "R1G_DATASET.json"))
+	addSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "R1_PROTOCOL_ADDENDUM_08.json"))
+	miSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "MODEL_IDENTITY.json"))
+	commit := gitCommitShort()
+
+	report := perceptenvelope.RenderR1GReport(perceptenvelope.R1GReportInput{
+		Dataset: ds, Table: table, Policy: policy, Answers: answers, Model: model,
+		RecordsSHA: recSHA, TableSHA: tableSHA, TransSHA: transSHA, PolicySHA: policySHA,
+		DatasetSHA: dsSHA, AddendumSHA: addSHA, RawTreeSHA: rawTreeSHA, ModelIDSHA: miSHA, TlalocCommit: commit,
+	})
+	die(os.WriteFile(filepath.Join(expDir, "results", "R1G_REPORT.md"), []byte(report), 0o644))
+
+	earned, promising := 0, 0
+	for _, r := range table.Rows {
+		switch r.Verdict {
+		case "EARNED_RECOVERY":
+			earned++
+		case "PROMISING_RECOVERY":
+			promising++
+		}
+	}
+	checkpoint := map[string]any{
+		"schema":        "tlaloc.parrot-perceptual-envelope-r1.r1g-checkpoint.r1",
+		"experiment_id": perceptenvelope.ExperimentID,
+		"stage":         "R1-G",
+		"status":        "R1-G_RECOVERY_COMPLETE_FROZEN",
+		"frozen_at":     time.Now().UTC().Format(time.RFC3339),
+		"tlaloc_commit": commit,
+		"records":       len(records),
+		"raw_files":     rawFiles,
+		"NO_R1G_MODEL_OUTPUT_EXISTED_WHEN_RECOVERY_POLICIES_AND_THRESHOLDS_WERE_FROZEN": true,
+		"EXACT_IDENTICAL_RETRY":              perceptenvelope.R1GExactRetryStatus,
+		"CROSS_RECOVERY_FAMILY_BASE_REUSE":   ds.CrossRecoveryFamilyBaseReuse,
+		"earned_recovery_conditions":         earned,
+		"promising_recovery_conditions":      promising,
+		"unresolved_failure_families":        policy.UnresolvedFailureFamilies,
+		"ocr_baseline_crop_accuracy":         table.OCR.OverallAcc,
+		"hashes": map[string]string{
+			"R1G_RECORDS.json":            recSHA,
+			"R1G_RECOVERY_TABLE.json":     tableSHA,
+			"R1G_FAILURE_TRANSITIONS.json": transSHA,
+			"R1G_RECOVERY_POLICY.json":    policySHA,
+			"R1G_DATASET.json":            dsSHA,
+			"R1_PROTOCOL_ADDENDUM_08.json": addSHA,
+			"MODEL_IDENTITY.json":         miSHA,
+			"raw_tree_sha256":             rawTreeSHA,
+		},
+		"FINAL_HARD_STOP": "Do not begin another executor, T1, or Grounding R1. Return recovery table + policy for review.",
+	}
+	cpSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "R1G_CHECKPOINT.json"), checkpoint)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"records": len(records), "table_sha256": tableSHA, "policy_sha256": policySHA,
+		"checkpoint_sha256": cpSHA, "earned_recovery": earned, "promising_recovery": promising,
+		"unresolved_failure_families": policy.UnresolvedFailureFamilies,
 	}))
 }
