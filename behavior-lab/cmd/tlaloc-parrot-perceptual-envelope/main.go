@@ -98,6 +98,14 @@ func main() {
 		runR1E(ctx, os.Args[2:])
 	case "report-r1e":
 		reportR1E(os.Args[2:])
+	case "prepare-r1f":
+		prepareR1F(os.Args[2:])
+	case "doctor-r1f":
+		doctorR1F(ctx, os.Args[2:])
+	case "run-r1f":
+		runR1F(ctx, os.Args[2:])
+	case "report-r1f":
+		reportR1F(os.Args[2:])
 	default:
 		fmt.Fprintln(os.Stderr, "unknown subcommand:", os.Args[1])
 		os.Exit(2)
@@ -1655,5 +1663,219 @@ func finalizeR1E(expDir, runDir, model string, ds perceptenvelope.R1EDataset, re
 		"checkpoint_sha256": cpSHA,
 		"classifications":   classes,
 		"disposition":       disp,
+	}))
+}
+
+// ---- R1-F: exact-input repeatability / stability ---------------------------
+
+func loadR1FDataset(expDir string) perceptenvelope.R1FDataset {
+	body, err := os.ReadFile(filepath.Join(expDir, "datasets", "R1F_DATASET.json"))
+	die(err)
+	var ds perceptenvelope.R1FDataset
+	die(json.Unmarshal(body, &ds))
+	return ds
+}
+
+func prepareR1F(args []string) {
+	fs := flag.NewFlagSet("prepare-r1f", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	temp := fs.Float64("temperature", 0, "sampling temperature")
+	maxTokens := fs.Int("max-tokens", 32, "max output tokens")
+	fs.Parse(args)
+
+	sentinels, err := perceptenvelope.SelectR1FSentinels(*expDir)
+	die(err)
+	die(perceptenvelope.FreezeR1FImages(*expDir, sentinels))
+	ds := perceptenvelope.BuildR1FDataset(sentinels, *temp, *maxTokens)
+
+	sentSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1F_SENTINELS.json"), sentinels)
+	die(err)
+	dsSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1F_DATASET.json"), ds)
+	die(err)
+
+	r1eCheckpointSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "R1E_CHECKPOINT.json"))
+	miSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "MODEL_IDENTITY.json"))
+	b1SHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "results", "R1B_RECORDS.json"))
+	a1SHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "results", "R1A1_RECORDS.json"))
+	ddSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "results", "R1D_DISTRACTOR_RECORDS.json"))
+	eeSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "results", "R1E_RECORDS.json"))
+
+	addendum := map[string]any{
+		"schema":      "tlaloc.parrot-perceptual-envelope-r1.protocol-addendum.07",
+		"title":       "R1-F_REPEATABILITY — exact-input stability of LFM2-VL at temperature 0",
+		"recorded_at": time.Now().UTC().Format(time.RFC3339),
+		"authored":    "BEFORE any R1-F repeat output existed. R1-A0/A1/B/C/D/E artifacts immutable and untouched.",
+		"NO_R1F_REPEAT_OUTPUT_EXISTED_WHEN_SENTINELS_AND_DECISION_RULE_WERE_FROZEN": true,
+		"SENTINEL_POSTHOC_SELECTION_FOR_STABILITY":                                 true,
+		"repeats_per_sentinel":                                                     5,
+		"repeat_ids":                                                               ds.RepeatIDs,
+		"sampling_seed_status":                                                     ds.SamplingSeed,
+		"sentinel_selection_rule": "5 strata x 4 sentinels; rank eligible frozen records by " +
+			"sha256(\"R1F\"||stratum||base_id||source_condition), take first 4; stratum B prefers " +
+			"digit-substitution/truncation, stratum C prefers commentary-contamination (priority key, then hash).",
+		"blind_retry_decision_rule": ds.DecisionRule,
+		"decision_thresholds":       map[string]float64{"wrong_stay_wrong": 0.90, "semantic_invariant": 0.90},
+		"inputs_hashed": map[string]string{
+			"R1E_CHECKPOINT.json":          r1eCheckpointSHA,
+			"MODEL_IDENTITY.json":          miSHA,
+			"R1B_RECORDS.json":             b1SHA,
+			"R1A1_RECORDS.json":            a1SHA,
+			"R1D_DISTRACTOR_RECORDS.json":  ddSHA,
+			"R1E_RECORDS.json":             eeSHA,
+			"R1F_SENTINELS.json":           sentSHA,
+			"R1F_DATASET.json":             dsSHA,
+		},
+	}
+	addSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "R1_PROTOCOL_ADDENDUM_07.json"), addendum)
+	die(err)
+
+	manifest := map[string]any{
+		"schema":              "tlaloc.parrot-perceptual-envelope-r1.r1f-prepare-manifest.r1",
+		"experiment_id":       perceptenvelope.ExperimentID,
+		"prepared_at":         time.Now().UTC().Format(time.RFC3339),
+		"sentinels":           len(sentinels),
+		"repeats_per_sentinel": 5,
+		"expected_records":    len(sentinels) * 5,
+		"r1f_sentinels_sha256": sentSHA,
+		"r1f_dataset_sha256":   dsSHA,
+		"protocol_addendum_07_sha256": addSHA,
+	}
+	mSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "manifests", "R1F_PREPARE_MANIFEST.json"), manifest)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"sentinels": len(sentinels), "expected_records": len(sentinels) * 5,
+		"sentinels_sha256": sentSHA, "dataset_sha256": dsSHA,
+		"addendum_07_sha256": addSHA, "manifest_sha256": mSHA,
+	}))
+}
+
+func doctorR1F(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("doctor-r1f", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	fs.Parse(args)
+	rep := perceptenvelope.DoctorR1F(ctx, perceptenvelope.DoctorR1FInput{
+		ExpDir: *expDir, Endpoint: *endpoint, Model: *model,
+	})
+	_, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "R1F_DOCTOR.json"), rep)
+	die(err)
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(rep))
+	if !rep.ReadyR1F {
+		os.Exit(1)
+	}
+}
+
+func runR1F(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("run-r1f", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	temp := fs.Float64("temperature", 0, "sampling temperature")
+	maxTokens := fs.Int("max-tokens", 32, "max output tokens")
+	runID := fs.String("run-id", "r1f-r0", "run id")
+	fs.Parse(args)
+
+	doctorR1F(ctx, []string{"-exp-dir", *expDir, "-endpoint", *endpoint, "-model", *model})
+
+	ds := loadR1FDataset(*expDir)
+	runDir := filepath.Join(*expDir, "runs", *runID)
+	cfg := perceptenvelope.RunConfig{
+		Endpoint: *endpoint, Model: *model, Temperature: *temp, MaxTokens: *maxTokens, RunDir: runDir,
+	}
+	records, err := perceptenvelope.RunR1F(ctx, cfg, ds)
+	die(err)
+	structErrs := 0
+	for _, r := range records {
+		if r.Error != "" {
+			structErrs++
+		}
+	}
+	if structErrs > 0 {
+		die(fmt.Errorf("R1-F integrity: %d records errored", structErrs))
+	}
+	finalizeR1F(*expDir, runDir, *model, ds, records)
+}
+
+func reportR1F(args []string) {
+	fs := flag.NewFlagSet("report-r1f", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	runID := fs.String("run-id", "r1f-r0", "run id")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	fs.Parse(args)
+	body, err := os.ReadFile(filepath.Join(*expDir, "results", "R1F_RECORDS.json"))
+	die(err)
+	var records []perceptenvelope.R1FRecord
+	die(json.Unmarshal(body, &records))
+	ds := loadR1FDataset(*expDir)
+	finalizeR1F(*expDir, filepath.Join(*expDir, "runs", *runID), *model, ds, records)
+}
+
+func finalizeR1F(expDir, runDir, model string, ds perceptenvelope.R1FDataset, records []perceptenvelope.R1FRecord) {
+	recSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1F_RECORDS.json"), records)
+	die(err)
+	table, summary := perceptenvelope.AggregateR1F(records, ds)
+	tableSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1F_SENTINEL_TABLE.json"), table)
+	die(err)
+	summarySHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1F_STABILITY_SUMMARY.json"), summary)
+	die(err)
+
+	rawTreeSHA, rawFiles, err := perceptenvelope.SHA256OfTree(runDir)
+	die(err)
+	sentSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "datasets", "R1F_SENTINELS.json"))
+	dsSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "datasets", "R1F_DATASET.json"))
+	addSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "R1_PROTOCOL_ADDENDUM_07.json"))
+	miSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "MODEL_IDENTITY.json"))
+	commit := gitCommitShort()
+
+	report := perceptenvelope.RenderR1FReport(perceptenvelope.R1FReportInput{
+		Dataset: ds, Table: table, Summary: summary, Model: model,
+		RecordsSHA: recSHA, TableSHA: tableSHA, SummarySHA: summarySHA, SentinelsSHA: sentSHA,
+		DatasetSHA: dsSHA, AddendumSHA: addSHA, RawTreeSHA: rawTreeSHA, ModelIDSHA: miSHA,
+		TlalocCommit: commit,
+	})
+	die(os.WriteFile(filepath.Join(expDir, "results", "R1F_REPORT.md"), []byte(report), 0o644))
+
+	checkpoint := map[string]any{
+		"schema":        "tlaloc.parrot-perceptual-envelope-r1.r1f-checkpoint.r1",
+		"experiment_id": perceptenvelope.ExperimentID,
+		"stage":         "R1-F",
+		"status":        "R1-F_REPEATABILITY_COMPLETE_FROZEN",
+		"frozen_at":     time.Now().UTC().Format(time.RFC3339),
+		"tlaloc_commit": commit,
+		"records":       len(records),
+		"raw_files":     rawFiles,
+		"SENTINEL_POSTHOC_SELECTION_FOR_STABILITY":                                 true,
+		"NO_R1F_REPEAT_OUTPUT_EXISTED_WHEN_SENTINELS_AND_DECISION_RULE_WERE_FROZEN": true,
+		"BLIND_RETRY_NOT_USEFUL":                                                   summary.BlindRetryNotUseful,
+		"semantic_invariant_5of5":                                                  summary.SemanticInvariant5of5,
+		"byte_identical_within_sentinel_pair_rate":                                 summary.ByteIdenticalWithinSentinelPairRate,
+		"any_exact_retry_recoveries":                                               summary.AnyExactRetryRecoveries,
+		"hashes": map[string]string{
+			"R1F_RECORDS.json":            recSHA,
+			"R1F_SENTINEL_TABLE.json":     tableSHA,
+			"R1F_STABILITY_SUMMARY.json":  summarySHA,
+			"R1F_SENTINELS.json":          sentSHA,
+			"R1F_DATASET.json":            dsSHA,
+			"R1_PROTOCOL_ADDENDUM_07.json": addSHA,
+			"MODEL_IDENTITY.json":         miSHA,
+			"raw_tree_sha256":             rawTreeSHA,
+		},
+		"HARD_STOP": "Do not run R1-G. Return the complete repeatability/stability report for review.",
+	}
+	cpSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "R1F_CHECKPOINT.json"), checkpoint)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"records": len(records), "table_sha256": tableSHA, "summary_sha256": summarySHA,
+		"checkpoint_sha256": cpSHA, "BLIND_RETRY_NOT_USEFUL": summary.BlindRetryNotUseful,
+		"semantic_invariant_5of5": summary.SemanticInvariant5of5,
 	}))
 }
