@@ -1,0 +1,12 @@
+{
+  "CAPABILITY_PROFILE_R1_VALID": true,
+  "deterministic_hash_stable": true,
+  "poison_detect_if_rejected": true,
+  "problems": null,
+  "profile_hash_sha256": "8acc959ba72334e64704c9f5b114bfb5230ca1f58375421c17a956e26b9ba729",
+  "profile_path": "profiles/parrot-lfm2-vl-1.6b-r1.json",
+  "reloaded_through_validator": true,
+  "schema": "tlaloc.capability-profile-r1-validation.r1",
+  "structural_semantic_valid": true,
+  "validated_at": "2026-09-04T02:50:07Z"
+}

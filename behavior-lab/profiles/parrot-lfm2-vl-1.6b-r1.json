@@ -1,0 +1,613 @@
+{
+  "schema": "tlaloc.capability-profile.r1",
+  "profile_id": "parrot-lfm2-vl-1.6b@r1.0.0",
+  "profile_version": "r1.0.0",
+  "compiled_at": "2026-09-04T02:50:07Z",
+  "preserves_r0": "the R0 CapabilityProfile (tlaloc.exocortex-capability-profile.r0) and the R0 behaviour profile are preserved and NOT overwritten; this is a distinct .r1 document at a new path",
+  "executor": {
+    "model_id": "lfm2-vl-1.6b",
+    "family": "LFM2-VL",
+    "publisher": "LiquidAI",
+    "quantization": "F16",
+    "architecture": "lfm2",
+    "weights_gguf_sha256": "0a82498edc354b50247fee78081c8954ae7f4deee9068f8464a5ee774e82118a",
+    "mmproj_gguf_sha256": "b637bfa6060be2bc7503ec23ba48b407843d08c2ca83f52be206ea8563ccbae2",
+    "lm_studio_version": "LM Studio 0.3.36 (build 1)",
+    "inference_backend_version": "llama.cpp-linux-x86_64-nvidia-cuda-avx2 1.104.2",
+    "runtime_binary_hashes": {
+      "libllama.so": "32bf3d00889d028e68a2e66cec7f834dd6e0f2cbf6c9919c8affb775ee0e4fb0",
+      "liblmstudio_bindings_cuda.node": "e8d47afbfb2bef164e56476eb005ad447605a1f3e8d73ba83712993980619d46",
+      "llm_engine_cuda.node": "993ec8c07f68871ce72287523f354b4f3caa2ddd5ee4dcc5c401c61b9c98f88b"
+    },
+    "context_length_loaded": 4096,
+    "endpoint": "http://127.0.0.1:1234 (OpenAI-compatible; /v1/chat/completions)",
+    "temperature": 0,
+    "max_output_tokens": 32,
+    "model_identity_artifact_sha256": "bcf1fa0ecb38046fa0da5b137b1bd41863d7ef43717a1dec7e53bd7826adf315"
+  },
+  "source_experiments": [
+    {
+      "id": "parrot-microisa-r0 (P1/P2)",
+      "artifact_path": "../parrot-microisa-r0/FREEZE.json",
+      "artifact_sha256": "70c9c008d9599418930ccfebb5cbdf2f9676ac749a6494619c4e03bfc17ba8a5",
+      "frozen": true,
+      "status": "FROZEN"
+    },
+    {
+      "id": "parrot-microisa-r0.1 (P2-A)",
+      "artifact_path": "../parrot-microisa-r0.1/FREEZE.json",
+      "artifact_sha256": "147e0442946a601fbffef75c0e169221f657dfe809a83f0ea9f1cfa850449f86",
+      "frozen": true,
+      "status": "FROZEN"
+    },
+    {
+      "id": "exocortex-t0a-r0 (T0-A)",
+      "artifact_path": "../exocortex-t0a-r0/FREEZE.json",
+      "artifact_sha256": "214180a0378a32ec2afe349d2259f995f89a85ab5362485af07c25491ff6c543",
+      "frozen": true,
+      "status": "FROZEN"
+    },
+    {
+      "id": "exocortex-decomposition-r0 (T0-B)",
+      "artifact_path": "../exocortex-decomposition-r0/T0B_CHECKPOINT.json",
+      "artifact_sha256": "f8a92a0e5b6f4a03e8861a3a1e509b1c8d107eb4c199cb2d7ac87aaef942d60a",
+      "frozen": true,
+      "status": "FROZEN"
+    },
+    {
+      "id": "R1-A0",
+      "artifact_path": "R1A_CHECKPOINT.json",
+      "artifact_sha256": "10d70deb9db5f77c115a2d086a5fbab38ff2eb2de63419698368cea9b2325dfb",
+      "frozen": true,
+      "status": "R1-A0_CONTEXT_ENVELOPE_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-A1",
+      "artifact_path": "R1A1_CHECKPOINT.json",
+      "artifact_sha256": "36cb49fd822c0af951c338426950a2e0e41af5874462d61ad9c210f502da8909",
+      "frozen": true,
+      "status": "R1-A1_FIXED_SCALE_CONTEXT_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-B",
+      "artifact_path": "R1B_CHECKPOINT.json",
+      "artifact_sha256": "c435c55f13ae95b0b47be5e480af306bf83af6c4b504a430a91d57eb8a9833e7",
+      "records": 180,
+      "frozen": true,
+      "status": "R1-B_SCALE_ENVELOPE_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-C",
+      "artifact_path": "R1C_CHECKPOINT.json",
+      "artifact_sha256": "455011831eec50825534aa42428ab14752de1beda16998d7495b6f775f8ba800",
+      "records": 132,
+      "frozen": true,
+      "status": "R1-C_NUMERIC_MORPHOLOGY_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-D",
+      "artifact_path": "R1D_CHECKPOINT.json",
+      "artifact_sha256": "4046fac809dad281735277351be487d60b8a2a850e6da74564cb679325775c41",
+      "frozen": true,
+      "status": "R1-D_ASSOCIATION_DISTRACTOR_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-E",
+      "artifact_path": "R1E_CHECKPOINT.json",
+      "artifact_sha256": "14286eebf45306b0af703dc44152fb79f77e74cd32873b75ef72f66ccebce1e9",
+      "records": 132,
+      "frozen": true,
+      "status": "R1-E_VISUAL_DEPENDENCE_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-F",
+      "artifact_path": "R1F_CHECKPOINT.json",
+      "artifact_sha256": "54820cd26413fb737190b364d8368adbb50c052185e7de5c9d4f7a724150d1ef",
+      "records": 100,
+      "frozen": true,
+      "status": "R1-F_REPEATABILITY_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-G",
+      "artifact_path": "R1G_CHECKPOINT.json",
+      "artifact_sha256": "6ae9d3c41a3506196dd397218d5d6f2ea7b0cc4f103f9201e8813ffe13c53996",
+      "records": 294,
+      "frozen": true,
+      "status": "R1-G_RECOVERY_COMPLETE_FROZEN"
+    }
+  ],
+  "global_executor_rules": {
+    "max_cognitive_transformations_per_call": 1,
+    "rule": "ONE model invocation handles AT MOST ONE cognitive opcode; formatting / normalization / serialization are external deterministic operations; sequence and working memory are Tlaloc's responsibility; the model result is an Observation, never an authoritative Fact.",
+    "formatting_normalization_serialization_is_external_deterministic": true,
+    "sequence_and_working_memory_is_tlaloc_responsibility": true,
+    "model_result_is_observation_never_authoritative_fact": true,
+    "evidence": {
+      "source_experiment": "parrot-microisa-r0 (P1/P2)",
+      "artifact_path": "../parrot-microisa-r0/FREEZE.json",
+      "artifact_sha256": "70c9c008d9599418930ccfebb5cbdf2f9676ac749a6494619c4e03bfc17ba8a5",
+      "sample_size": 1,
+      "evidence_class": "EARNED",
+      "measured_metric": "P1: formal_safe max_cognitive_transformations_per_call = 1",
+      "limitations": "measured on the P1 opcode battery"
+    }
+  },
+  "extract_number": {
+    "scale_rungs": [
+      {
+        "line_height_px": 8,
+        "accuracy": 0.26666666666666666,
+        "verdict": "TOO_SMALL"
+      },
+      {
+        "line_height_px": 12,
+        "accuracy": 0.8666666666666667,
+        "verdict": "TRANSITION"
+      },
+      {
+        "line_height_px": 16,
+        "accuracy": 0.9,
+        "verdict": "OPERATING_REGION"
+      },
+      {
+        "line_height_px": 24,
+        "accuracy": 0.9333333333333333,
+        "verdict": "OPERATING_REGION"
+      },
+      {
+        "line_height_px": 32,
+        "accuracy": 0.9666666666666667,
+        "verdict": "OPERATING_REGION"
+      },
+      {
+        "line_height_px": 48,
+        "accuracy": 0.9666666666666667,
+        "verdict": "OPERATING_REGION"
+      }
+    ],
+    "formal_safe_scale_px": 16,
+    "preferred_scale_px": 32,
+    "observed_operating_region_px": [
+      16,
+      48
+    ],
+    "scope": "scoped to the tested LFM2-VL 1.6B F16 runtime (LM Studio + llama.cpp CUDA), the tested numeric presentation family (plain 2-4 digit MULTI_DIGIT_INTEGER on prose lines), and the tested fixed-canvas bilinear renderer. NOT a universal visual threshold.",
+    "evidence": {
+      "source_experiment": "R1-B",
+      "artifact_path": "results/R1B_SCALE_CURVE.json",
+      "artifact_sha256": "642c4f0cfb9b76799051f24c20e403995a02667db31d90bdd171cdde684cc86e",
+      "sample_size": 30,
+      "evidence_class": "EARNED",
+      "measured_metric": "EXTRACT_NUMBER semantic accuracy vs submitted containing-line height (8/12/16/24/32/48 px), 30 bases x 6 rungs",
+      "limitations": "formal_safe_scale derived by the preregistered conservative Wilson rule; overscale not degrading within [16,48]; one renderer / one numeric family only"
+    }
+  },
+  "context": {
+    "natural_visual_field": {
+      "name": "NATURAL_VISUAL_FIELD (R1-A0)",
+      "points": {
+        "A0_TARGET_ONLY": 0.8,
+        "A1_TARGET_PLUS_LINE": 0.5666666666666667,
+        "A2_LOCAL_BLOCK": 0.7,
+        "A3_BLOCK_PLUS_NEIGHBOR": 0.6,
+        "A4_QUARTER_PAGE": 0.43333333333333335,
+        "A5_HALF_PAGE": 0.3,
+        "A6_FULL_PAGE": 0.1
+      },
+      "pipeline": "natural crop, target scale not held constant across levels"
+    },
+    "fixed_scale_local_context": {
+      "name": "FIXED_SCALE_LOCAL_CONTEXT (R1-A1)",
+      "points": {
+        "A1C0_TARGET": 1,
+        "A1C1_LINE": 1,
+        "A1C2_BLOCK": 0.9,
+        "A1C3_BLOCK_PLUS_NEIGHBOR": 0.9,
+        "A1C4_LOCAL_256": 0.9,
+        "A1C5_LOCAL_384": 0.8666666666666667,
+        "A1C6_FULL_VIEWPORT": 0.8
+      },
+      "pipeline": "one per-base 512x512 viewport at a fixed 32 px line height, nested reveal masks"
+    },
+    "allowed_conclusion": "controlling target scale dramatically reduces the observed context collapse (A0 target-only 0.80 -\u003e full-page 0.10; A1 fixed-scale target 1.00 -\u003e viewport 0.80).",
+    "forbidden_causal_decomposition": "the two tracks use different samples and pipelines; do NOT claim an exact causal split such as '50 pp scale + 20 pp context'.",
+    "runtime_context_preference": "minimum sufficient working set",
+    "aggressive_context_reduction_class": "PREVENTIVE_PRACTICE",
+    "evidence": [
+      {
+        "source_experiment": "R1-A0",
+        "artifact_path": "results/R1A_CONTEXT_CURVE.json",
+        "artifact_sha256": "43cf35107e9aeaaf0caff3439c408592f0572b58f8953d213449dd45ad96107d",
+        "sample_size": 30,
+        "evidence_class": "OBSERVED_EXPLORATORY",
+        "measured_metric": "EXTRACT_NUMBER semantic accuracy vs natural visual field size (target-only .. full-page)",
+        "limitations": "target scale confounded with field size; superseded by R1-A1 for the causal reading"
+      },
+      {
+        "source_experiment": "R1-A1",
+        "artifact_path": "results/R1A1_CONTEXT_CURVE.json",
+        "artifact_sha256": "765d27277a3b0892dfbc0c27f2eb04803b6ce93b03208da1c269169819443dc3",
+        "sample_size": 30,
+        "evidence_class": "PREVENTIVE_PRACTICE",
+        "measured_metric": "EXTRACT_NUMBER semantic accuracy vs revealed context at a fixed 32 px scale (7 nested levels)",
+        "limitations": "R1-G context recovery on a fresh sample was NO_MEASURED_BENEFIT (baseline not adverse); reduction is a practice, not an earned recovery"
+      }
+    ]
+  },
+  "read_associated_number": {
+    "opcode": "READ_ASSOCIATED_NUMBER",
+    "micro_isa_promoted": false,
+    "visual_dependence": true,
+    "visual_dependence_evidence": {
+      "correct_image": "22/22 task-gold",
+      "mcnemar": "E2-\u003eE0 and E2-\u003eE1 both delta -1.00, exact p 4.77e-07",
+      "no_image": "0/22 task-gold (degenerate 12345)",
+      "wrong_image": "0/22 task-gold, 22/22 wrong-visible-operand"
+    },
+    "verdict": "USABLE_WITH_CONSTRAINTS",
+    "tested_envelope": [
+      "MULTI_DIGIT_INTEGER operand",
+      "32 px containing-line height",
+      "single-line label/value layout",
+      "zero competing visible numeric operands"
+    ],
+    "observed_exploratory_exit_k": 1,
+    "formal_max_distractors": "UNKNOWN",
+    "competitor_removal_provenance": "R1-G GC_ASSOC_REAL supports competitor removal as an EARNED preventive intervention, but the real bases were R1-D intervention reuse (INDEPENDENT_ACCURACY_ESTIMATE=false), not a fresh independent capability estimate; the fresh synthetic proxy did not confirm because the glyph-bank abstract label could not anchor association (SYNTHETIC_PROXY_LIMITATION).",
+    "evidence_refs": [
+      {
+        "source_experiment": "R1-E",
+        "artifact_path": "results/R1E_VISUAL_DEPENDENCE_TABLE.json",
+        "artifact_sha256": "24b766de1264fd3ef8350e02a76919ce9da2257c2658f587bab8b7a00bfd9598",
+        "sample_size": 22,
+        "evidence_class": "EARNED",
+        "measured_metric": "task-gold vs image-consistent accuracy across NO_IMAGE / WRONG_IMAGE / CORRECT_IMAGE",
+        "limitations": "intervention reuse of the 22 R1-D bases; not a fresh accuracy estimate"
+      },
+      {
+        "source_experiment": "R1-D",
+        "artifact_path": "results/R1D_ASSOCIATION_TABLE.json",
+        "artifact_sha256": "3645a6bb92fa7603073ef4309bbdfc159b2a160f4b1e3af42947d6cb6769a0fb",
+        "sample_size": 22,
+        "evidence_class": "OBSERVED_EXPLORATORY",
+        "measured_metric": "D0L association 22/22; D1 distractor ladder K0..K8 (exploratory: geometry gate failed)",
+        "limitations": "D1 exploratory; formal_max_distractors stays UNKNOWN"
+      },
+      {
+        "source_experiment": "R1-G",
+        "artifact_path": "results/R1G_RECOVERY_TABLE.json",
+        "artifact_sha256": "0050a271148970fefc9cfbaca163d76542d982649123751d9e3c799b50f36cc7",
+        "sample_size": 22,
+        "evidence_class": "EARNED",
+        "measured_metric": "GC_ASSOC_REAL competitor removal 0.41 -\u003e 1.00 (delta +0.59, W-\u003eC 13, C-\u003eW 0)",
+        "limitations": "real intervention reuse; synthetic proxy NOT_CONFIRMED"
+      }
+    ]
+  },
+  "morphology": [
+    {
+      "family": "PERCENTAGE",
+      "real_document_n": 12,
+      "synthetic_realistic_n": 0,
+      "real_value_accuracy": 0.8333333333333334,
+      "real_surface_accuracy": 0.8333333333333334,
+      "real_value_ci95": [
+        0.5519636426153274,
+        0.9530358523851776
+      ],
+      "provisional_verdict": "FRAGILE",
+      "failure_modes": [
+        "PERCENT_SIGN_DROPPED"
+      ],
+      "real_and_synthetic_never_pooled": true
+    },
+    {
+      "family": "RANGE",
+      "real_document_n": 12,
+      "synthetic_realistic_n": 0,
+      "real_value_accuracy": 0.3333333333333333,
+      "real_surface_accuracy": 0.25,
+      "real_value_ci95": [
+        0.13811783989736134,
+        0.609382412602386
+      ],
+      "provisional_verdict": "DO_NOT_DEPLOY",
+      "failure_modes": [
+        "RANGE_SEPARATOR_ERROR",
+        "SURFACE_FORM_ONLY"
+      ],
+      "real_and_synthetic_never_pooled": true
+    },
+    {
+      "family": "COORDINATE_OR_TUPLE",
+      "real_document_n": 0,
+      "synthetic_realistic_n": 12,
+      "synthetic_value_accuracy": 0,
+      "synthetic_surface_accuracy": 0,
+      "provisional_verdict": "INSUFFICIENT_REAL_EVIDENCE",
+      "failure_modes": [
+        "TUPLE_ARITY_ERROR",
+        "WRONG_NUMBER"
+      ],
+      "real_and_synthetic_never_pooled": true
+    },
+    {
+      "family": "EQUATION_EMBEDDED",
+      "real_document_n": 2,
+      "synthetic_realistic_n": 12,
+      "real_value_accuracy": 1,
+      "real_surface_accuracy": 0,
+      "real_value_ci95": [
+        0.3423719528896193,
+        1
+      ],
+      "synthetic_value_accuracy": 0.3333333333333333,
+      "synthetic_surface_accuracy": 0.3333333333333333,
+      "provisional_verdict": "INSUFFICIENT_REAL_EVIDENCE",
+      "failure_modes": [
+        "SEPARATOR_OR_FORMAT_ONLY",
+        "SURFACE_FORM_ONLY",
+        "SUFFIX_TRUNCATION",
+        "DIGIT_INSERTION",
+        "PREFIX_TRUNCATION"
+      ],
+      "real_and_synthetic_never_pooled": true
+    },
+    {
+      "family": "SINGLE_DIGIT",
+      "real_document_n": 12,
+      "synthetic_realistic_n": 0,
+      "real_value_accuracy": 0.9166666666666666,
+      "real_surface_accuracy": 0.75,
+      "real_value_ci95": [
+        0.6461140782014047,
+        0.9851352905492264
+      ],
+      "provisional_verdict": "FRAGILE",
+      "failure_modes": [
+        "DIGIT_INSERTION",
+        "SURFACE_FORM_ONLY"
+      ],
+      "real_and_synthetic_never_pooled": true
+    },
+    {
+      "family": "MULTI_DIGIT_INTEGER",
+      "real_document_n": 12,
+      "synthetic_realistic_n": 0,
+      "real_value_accuracy": 1,
+      "real_surface_accuracy": 1,
+      "real_value_ci95": [
+        0.7574992425007574,
+        0.9999999999999998
+      ],
+      "provisional_verdict": "USABLE_WITH_CONSTRAINTS",
+      "real_and_synthetic_never_pooled": true
+    },
+    {
+      "family": "THOUSANDS_SEPARATOR",
+      "real_document_n": 12,
+      "synthetic_realistic_n": 0,
+      "real_value_accuracy": 0.8333333333333334,
+      "real_surface_accuracy": 0.25,
+      "real_value_ci95": [
+        0.5519636426153274,
+        0.9530358523851776
+      ],
+      "provisional_verdict": "FRAGILE",
+      "failure_modes": [
+        "SUFFIX_TRUNCATION",
+        "THOUSANDS_SEPARATOR_DROPPED",
+        "DIGIT_SUBSTITUTION"
+      ],
+      "real_and_synthetic_never_pooled": true
+    },
+    {
+      "family": "DECIMAL",
+      "real_document_n": 12,
+      "synthetic_realistic_n": 0,
+      "real_value_accuracy": 1,
+      "real_surface_accuracy": 1,
+      "real_value_ci95": [
+        0.7574992425007574,
+        0.9999999999999998
+      ],
+      "provisional_verdict": "USABLE_WITH_CONSTRAINTS",
+      "real_and_synthetic_never_pooled": true
+    },
+    {
+      "family": "SIGNED_NUMBER",
+      "real_document_n": 8,
+      "synthetic_realistic_n": 0,
+      "real_value_accuracy": 0.375,
+      "real_surface_accuracy": 0.375,
+      "real_value_ci95": [
+        0.13684175946152105,
+        0.6942621454161982
+      ],
+      "provisional_verdict": "DO_NOT_DEPLOY",
+      "failure_modes": [
+        "SIGN_DROPPED"
+      ],
+      "real_and_synthetic_never_pooled": true
+    },
+    {
+      "family": "SCIENTIFIC_NOTATION",
+      "real_document_n": 2,
+      "synthetic_realistic_n": 12,
+      "real_value_accuracy": 0,
+      "real_surface_accuracy": 0,
+      "real_value_ci95": [
+        0,
+        0.6576280471103807
+      ],
+      "synthetic_value_accuracy": 0.08333333333333333,
+      "synthetic_surface_accuracy": 0,
+      "provisional_verdict": "INSUFFICIENT_REAL_EVIDENCE",
+      "failure_modes": [
+        "EXPONENT_DROPPED",
+        "EXPONENT_VALUE_ERROR"
+      ],
+      "real_and_synthetic_never_pooled": true
+    },
+    {
+      "family": "TABLE_CELL",
+      "real_document_n": 12,
+      "synthetic_realistic_n": 0,
+      "real_value_accuracy": 0.9166666666666666,
+      "real_surface_accuracy": 0.8333333333333334,
+      "real_value_ci95": [
+        0.6461140782014047,
+        0.9851352905492264
+      ],
+      "provisional_verdict": "FRAGILE",
+      "failure_modes": [
+        "SURFACE_FORM_ONLY",
+        "DIGIT_INSERTION"
+      ],
+      "real_and_synthetic_never_pooled": true
+    }
+  ],
+  "morphology_evidence": {
+    "source_experiment": "R1-C",
+    "artifact_path": "results/R1C_MORPHOLOGY_TABLE.json",
+    "artifact_sha256": "4534c5f4fafda71ce278c21fd2cf8d44a0b779ee125dd8db06a9c38d193ac438",
+    "sample_size": 12,
+    "evidence_class": "OBSERVED_EXPLORATORY",
+    "measured_metric": "per-family VALUE_CORRECT and SURFACE_FORM_CORRECT accuracy, REAL_DOCUMENT and SYNTHETIC_REALISTIC scored separately (never pooled)",
+    "limitations": "real n\u003c=12 per family; synthetic strata cannot promote real-document reliability"
+  },
+  "repeatability": {
+    "sentinels": 20,
+    "repeats_per_sentinel": 5,
+    "byte_stable": "20/20",
+    "semantic_stable": "20/20",
+    "failed_sentinels": 16,
+    "exact_retry_recoveries": 0,
+    "runtime_rule": "DO_NOT_RETRY_IDENTICAL_INPUT",
+    "evidence_scope": "temperature 0, byte-identical input, tested LFM2-VL runtime; no claim about non-zero temperature",
+    "evidence": {
+      "source_experiment": "R1-F",
+      "artifact_path": "results/R1F_STABILITY_SUMMARY.json",
+      "artifact_sha256": "4c4e90695fc3dd4f599bb423b8c0680be7b1775326cc90b54905f70e0cb934ce",
+      "sample_size": 20,
+      "evidence_class": "EARNED",
+      "measured_metric": "20 sentinels x 5 exact repeats: byte-stable 20/20, semantic-invariant 20/20, 0/16 failed sentinels recovered",
+      "limitations": "post-hoc sentinel selection; temperature 0 only"
+    }
+  },
+  "recovery_rules": [
+    {
+      "id": "LOW_SCALE",
+      "detect_if": "measured containing-line / target height \u003c 16 px",
+      "preferred_action": "upscale to 32 px BEFORE the model call",
+      "classification": "PREVENTIVE+EARNED",
+      "model_calls_after_action": -1,
+      "evidence": {
+        "source_experiment": "R1-G",
+        "artifact_path": "results/R1G_RECOVERY_TABLE.json",
+        "artifact_sha256": "0050a271148970fefc9cfbaca163d76542d982649123751d9e3c799b50f36cc7",
+        "sample_size": 20,
+        "evidence_class": "EARNED",
+        "measured_metric": "GA_SCALE 8px-\u003e32px: 0.20 -\u003e 0.95, delta +0.75, W-\u003eC 15, C-\u003eW 0, exact p 6.103515625e-05",
+        "limitations": "fresh held-out EXTRACT_NUMBER bases; one renderer / one numeric family"
+      }
+    },
+    {
+      "id": "NUMERIC_COMPETITORS",
+      "detect_if": "the working-set builder detects competing numeric operands near a READ_ASSOCIATED_NUMBER operand",
+      "preferred_action": "isolate / remove the competitor before the model call",
+      "classification": "PREVENTIVE+EARNED_REAL_INTERVENTION",
+      "model_calls_after_action": -1,
+      "evidence": {
+        "source_experiment": "R1-G",
+        "artifact_path": "results/R1G_RECOVERY_TABLE.json",
+        "artifact_sha256": "0050a271148970fefc9cfbaca163d76542d982649123751d9e3c799b50f36cc7",
+        "sample_size": 22,
+        "evidence_class": "EARNED",
+        "measured_metric": "GC_ASSOC_REAL competitor removed: 0.41 -\u003e 1.00, delta +0.59, W-\u003eC 13, C-\u003eW 0, exact p 0.000244140625",
+        "limitations": "R1-D intervention reuse (not a fresh independent estimate); fresh synthetic proxy NOT_CONFIRMED (glyph-bank label anchor inadequate)"
+      }
+    },
+    {
+      "id": "HIGH_CONTEXT",
+      "detect_if": "the visible working set is much larger than the operand line",
+      "preferred_action": "prefer the smallest sufficient working set (crop to the operand line)",
+      "classification": "PREVENTIVE_PRACTICE_NOT_EARNED",
+      "model_calls_after_action": -1,
+      "evidence": {
+        "source_experiment": "R1-G",
+        "artifact_path": "results/R1G_RECOVERY_TABLE.json",
+        "artifact_sha256": "0050a271148970fefc9cfbaca163d76542d982649123751d9e3c799b50f36cc7",
+        "sample_size": 20,
+        "evidence_class": "NO_MEASURED_BENEFIT",
+        "measured_metric": "GB_CONTEXT full-\u003eline/target: 0.90 -\u003e 0.95 (delta +0.05, p=1.0)",
+        "limitations": "fresh-sample baseline was not adverse (0.90); R1-A1 measured 0.80 at FULL_VIEWPORT. Practice, not an earned recovery"
+      }
+    },
+    {
+      "id": "VALUE_CUE",
+      "detect_if": "the renderer would emit a value cue tighter than the frozen padded rule",
+      "preferred_action": "always use the frozen padded value cue (or no cue on an already-isolated operand)",
+      "classification": "SAFE_ENGINEERING_DEFAULT",
+      "model_calls_after_action": -1,
+      "evidence": {
+        "source_experiment": "R1-G",
+        "artifact_path": "results/R1G_RECOVERY_TABLE.json",
+        "artifact_sha256": "0050a271148970fefc9cfbaca163d76542d982649123751d9e3c799b50f36cc7",
+        "sample_size": 12,
+        "evidence_class": "SAFE_ENGINEERING_DEFAULT",
+        "measured_metric": "GD_CUE tight-\u003epadded/no-cue: 0.92 -\u003e 1.00 (delta +0.08, NO_MEASURED_BENEFIT); R1-D D0V proved the truncation real for short 2-digit values",
+        "limitations": "artifact barely reproduced on 12 longer-digit fresh bases; padded cue is free and never hurt"
+      }
+    },
+    {
+      "id": "MISSING_VISUAL_OPERAND",
+      "detect_if": "a visual opcode is invoked with no visual operand",
+      "preferred_action": "RETURN_UNSUPPORTED_OR_UNKNOWN without calling the model",
+      "classification": "REJECT_BEFORE_CALL",
+      "model_calls_after_action": 0,
+      "evidence": {
+        "source_experiment": "R1-E",
+        "artifact_path": "results/R1E_VISUAL_DEPENDENCE_TABLE.json",
+        "artifact_sha256": "24b766de1264fd3ef8350e02a76919ce9da2257c2658f587bab8b7a00bfd9598",
+        "sample_size": 0,
+        "evidence_class": "REJECT_BEFORE_CALL",
+        "measured_metric": "NO_IMAGE 0/22 task-gold, degenerate 12345 every time",
+        "limitations": "adding the missing modality changes the task; runtime must reject, not hope"
+      }
+    },
+    {
+      "id": "EXACT_RETRY",
+      "detect_if": "the prepared input is byte-identical to a prior failed call",
+      "preferred_action": "REJECT — never repeat an identical failed call",
+      "classification": "REJECT",
+      "model_calls_after_action": 0,
+      "evidence": {
+        "source_experiment": "R1-F",
+        "artifact_path": "results/R1F_STABILITY_SUMMARY.json",
+        "artifact_sha256": "4c4e90695fc3dd4f599bb423b8c0680be7b1775326cc90b54905f70e0cb934ce",
+        "sample_size": 0,
+        "evidence_class": "DO_NOT_USE",
+        "measured_metric": "20/20 byte-stable, 0/16 failed sentinels recovered by 5 exact retries",
+        "limitations": "temperature 0 only"
+      }
+    },
+    {
+      "id": "CURRENT_TESSERACT_OCR",
+      "detect_if": "a caller proposes routing a failed crop to the current tesseract OCR path",
+      "preferred_action": "DO_NOT_ROUTE_AS_RECOVERY",
+      "classification": "DO_NOT_USE",
+      "model_calls_after_action": 0,
+      "evidence": {
+        "source_experiment": "R1-G",
+        "artifact_path": "results/R1G_RECOVERY_TABLE.json",
+        "artifact_sha256": "0050a271148970fefc9cfbaca163d76542d982649123751d9e3c799b50f36cc7",
+        "sample_size": 0,
+        "evidence_class": "DO_NOT_USE",
+        "measured_metric": "tesseract 5.5.3 over baseline crops: ~0.04 overall (2/98)",
+        "limitations": "the current crops are small/masked/low-res; a different OCR facility is untested"
+      }
+    }
+  ],
+  "profile_hash_sha256": "8acc959ba72334e64704c9f5b114bfb5230ca1f58375421c17a956e26b9ba729"
+}

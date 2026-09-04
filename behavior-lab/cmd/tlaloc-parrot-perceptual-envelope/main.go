@@ -21,6 +21,7 @@ import (
 	"syscall"
 	"time"
 
+	"tlaloc.local/behaviorlab/internal/exocortex"
 	"tlaloc.local/behaviorlab/internal/perceptenvelope"
 )
 
@@ -114,6 +115,16 @@ func main() {
 		runR1G(ctx, os.Args[2:])
 	case "report-r1g":
 		reportR1G(os.Args[2:])
+	case "compile-profile-r1":
+		compileProfileR1(os.Args[2:])
+	case "prepare-profile-h":
+		prepareProfileH(os.Args[2:])
+	case "doctor-profile-h":
+		doctorProfileH(ctx, os.Args[2:])
+	case "run-profile-h":
+		runProfileH(ctx, os.Args[2:])
+	case "report-profile-h":
+		reportProfileH(os.Args[2:])
 	default:
 		fmt.Fprintln(os.Stderr, "unknown subcommand:", os.Args[1])
 		os.Exit(2)
@@ -2141,5 +2152,275 @@ func finalizeR1G(expDir, runDir, model string, ds perceptenvelope.R1GDataset, re
 		"records": len(records), "table_sha256": tableSHA, "policy_sha256": policySHA,
 		"checkpoint_sha256": cpSHA, "earned_recovery": earned, "promising_recovery": promising,
 		"unresolved_failure_families": policy.UnresolvedFailureFamilies,
+	}))
+}
+
+// ---- CapabilityProfile R1 compilation --------------------------------------
+
+func compileProfileR1(args []string) {
+	fs := flag.NewFlagSet("compile-profile-r1", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	outDir := fs.String("out-dir", "profiles", "profile output directory")
+	version := fs.String("version", "r1.0.0", "profile version")
+	fs.Parse(args)
+
+	profile, err := perceptenvelope.CompileCapabilityProfileR1(*expDir, *version)
+	die(err)
+	profilePath := filepath.Join(*outDir, "parrot-lfm2-vl-1.6b-r1.json")
+	die(os.MkdirAll(*outDir, 0o755))
+	hash, err := exocortex.WriteCapabilityProfileR1(profilePath, profile)
+	die(err)
+	die(os.WriteFile(profilePath+".sha256", []byte(hash+"  parrot-lfm2-vl-1.6b-r1.json\n"), 0o644))
+
+	// re-load through the validator to prove the on-disk document is valid
+	loaded, lerr := exocortex.LoadCapabilityProfileR1(profilePath)
+	valid := lerr == nil
+	var validationProblems []string
+	if lerr != nil {
+		validationProblems = append(validationProblems, lerr.Error())
+	}
+	// poison test: a rule detect_if that references ground truth must be rejected
+	poisoned := profile
+	poisoned.RecoveryRules = append([]exocortex.RecoveryRule(nil), profile.RecoveryRules...)
+	poisoned.RecoveryRules[0].DetectIf = "base_id == r1g-scale-01 OR expected answer known"
+	poisonRejected := exocortex.ValidateCapabilityProfileR1(poisoned) != nil
+
+	provenance := map[string]any{
+		"schema":              "tlaloc.capability-profile-r1-provenance.r1",
+		"compiled_at":         time.Now().UTC().Format(time.RFC3339),
+		"profile_version":     *version,
+		"profile_hash_sha256": hash,
+		"executor":            profile.Executor,
+		"source_experiments":  profile.SourceExperiments,
+	}
+	provSHA, err := perceptenvelope.WriteJSON(filepath.Join(*outDir, "PROFILE_R1_PROVENANCE.json"), provenance)
+	die(err)
+
+	validation := map[string]any{
+		"schema":                     "tlaloc.capability-profile-r1-validation.r1",
+		"validated_at":               time.Now().UTC().Format(time.RFC3339),
+		"profile_path":               profilePath,
+		"profile_hash_sha256":        hash,
+		"structural_semantic_valid":  valid,
+		"reloaded_through_validator": lerr == nil,
+		"deterministic_hash_stable":  loaded.ProfileHash == hash,
+		"poison_detect_if_rejected":  poisonRejected,
+		"problems":                   validationProblems,
+		"CAPABILITY_PROFILE_R1_VALID": valid && poisonRejected && loaded.ProfileHash == hash,
+	}
+	valSHA, err := perceptenvelope.WriteJSON(filepath.Join(*outDir, "PROFILE_R1_VALIDATION.json"), validation)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"profile_path":                profilePath,
+		"profile_hash_sha256":         hash,
+		"provenance_sha256":           provSHA,
+		"validation_sha256":           valSHA,
+		"CAPABILITY_PROFILE_R1_VALID":  valid && poisonRejected && loaded.ProfileHash == hash,
+		"recovery_rules":              len(profile.RecoveryRules),
+		"source_experiments":          len(profile.SourceExperiments),
+	}))
+	if !(valid && poisonRejected) {
+		os.Exit(1)
+	}
+}
+
+// ---- PHASE H — held-out profile-adaptation validation ---------------------
+
+const defaultProfilePath = "profiles/parrot-lfm2-vl-1.6b-r1.json"
+
+func loadProfileHDataset(expDir string) perceptenvelope.ProfileHDataset {
+	body, err := os.ReadFile(filepath.Join(expDir, "datasets", "PROFILE_VALIDATION_H_R0.json"))
+	die(err)
+	var ds perceptenvelope.ProfileHDataset
+	die(json.Unmarshal(body, &ds))
+	return ds
+}
+
+func prepareProfileH(args []string) {
+	fs := flag.NewFlagSet("prepare-profile-h", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	profilePath := fs.String("profile", defaultProfilePath, "frozen CapabilityProfile R1 path")
+	temp := fs.Int("temperature", 0, "sampling temperature")
+	maxTokens := fs.Int("max-tokens", 32, "max output tokens")
+	fs.Parse(args)
+
+	ds, err := perceptenvelope.SelectProfileHDataset(*expDir, *storeDir, *profilePath, *temp, *maxTokens)
+	die(err)
+	dsSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "PROFILE_VALIDATION_H_R0.json"), ds)
+	die(err)
+
+	profSHA, _ := perceptenvelope.SHA256OfFile(*profilePath)
+	addendum := map[string]any{
+		"schema":      "tlaloc.capability-profile-r1.phase-h-freeze.r1",
+		"recorded_at": time.Now().UTC().Format(time.RFC3339),
+		"NO_H_MODEL_OUTPUT_EXISTED_WHEN_DATASET_AND_GATE_WERE_FROZEN": true,
+		"frozen_promotion_gate_thresholds": ds.GateThresholds,
+		"profile_path":                     *profilePath,
+		"profile_file_sha256":              profSHA,
+		"profile_hash_sha256":              ds.ProfileHash,
+		"heldout_pool_size":                ds.HeldoutPoolSize,
+		"shared_heldout_bases":             len(ds.SharedHeldoutBases),
+		"missing_operand_bases":            len(ds.MissingOperandBases),
+		"n_available_per_stratum":          ds.NAvailablePerStratum,
+		"h_dataset_sha256":                 dsSHA,
+	}
+	addSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "PROFILE_VALIDATION_H_FREEZE.json"), addendum)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"heldout_pool_size":     ds.HeldoutPoolSize,
+		"shared_heldout_bases":  len(ds.SharedHeldoutBases),
+		"missing_operand_bases": len(ds.MissingOperandBases),
+		"expected_records":      len(ds.SharedHeldoutBases)*2*3 + len(ds.MissingOperandBases)*2,
+		"n_available_per_stratum": ds.NAvailablePerStratum,
+		"dataset_sha256":        dsSHA,
+		"freeze_sha256":         addSHA,
+	}))
+}
+
+func doctorProfileH(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("doctor-profile-h", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	profilePath := fs.String("profile", defaultProfilePath, "frozen profile path")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	fs.Parse(args)
+	rep := perceptenvelope.DoctorProfileH(ctx, *expDir, *storeDir, *profilePath, *endpoint, *model)
+	_, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "PROFILE_VALIDATION_H_DOCTOR.json"), rep)
+	die(err)
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(rep))
+	if !rep.ReadyProfileH {
+		os.Exit(1)
+	}
+}
+
+func runProfileH(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("run-profile-h", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	profilePath := fs.String("profile", defaultProfilePath, "frozen profile path")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	temp := fs.Float64("temperature", 0, "sampling temperature")
+	maxTokens := fs.Int("max-tokens", 32, "max output tokens")
+	runID := fs.String("run-id", "profile-h-r0", "run id")
+	fs.Parse(args)
+
+	doctorProfileH(ctx, []string{"-exp-dir", *expDir, "-store-dir", *storeDir, "-profile", *profilePath, "-endpoint", *endpoint, "-model", *model})
+
+	profile, err := exocortex.LoadCapabilityProfileR1(*profilePath)
+	die(err)
+	ds := loadProfileHDataset(*expDir)
+	runDir := filepath.Join(*expDir, "runs", *runID)
+	cfg := perceptenvelope.RunConfig{
+		StoreDir: *storeDir, PDFPath: *pdfPath, Endpoint: *endpoint, Model: *model,
+		Temperature: *temp, MaxTokens: *maxTokens, RunDir: runDir,
+	}
+	records, err := perceptenvelope.RunProfileH(ctx, cfg, ds, profile)
+	die(err)
+	structErrs := 0
+	for _, r := range records {
+		if r.Error != "" {
+			structErrs++
+		}
+	}
+	if structErrs > 0 {
+		die(fmt.Errorf("PROFILE-H integrity: %d records errored", structErrs))
+	}
+	finalizeProfileH(*expDir, runDir, *model, *profilePath, ds, records)
+}
+
+func reportProfileH(args []string) {
+	fs := flag.NewFlagSet("report-profile-h", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	runID := fs.String("run-id", "profile-h-r0", "run id")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	profilePath := fs.String("profile", defaultProfilePath, "frozen profile path")
+	fs.Parse(args)
+	body, err := os.ReadFile(filepath.Join(*expDir, "results", "PROFILE_VALIDATION_H_RECORDS.json"))
+	die(err)
+	var records []perceptenvelope.ProfileHRecord
+	die(json.Unmarshal(body, &records))
+	ds := loadProfileHDataset(*expDir)
+	finalizeProfileH(*expDir, filepath.Join(*expDir, "runs", *runID), *model, *profilePath, ds, records)
+}
+
+func finalizeProfileH(expDir, runDir, model, profilePath string, ds perceptenvelope.ProfileHDataset, records []perceptenvelope.ProfileHRecord) {
+	recSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "PROFILE_VALIDATION_H_RECORDS.json"), records)
+	die(err)
+	table := perceptenvelope.AggregateProfileH(records, ds)
+	tableSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "PROFILE_VALIDATION_H_TABLE.json"), table)
+	die(err)
+	var traces []any
+	for _, r := range records {
+		if r.Arm == "H1_PROFILE_ADAPTED" && r.AdapterDecision != nil {
+			traces = append(traces, map[string]any{"stratum": r.Stratum, "base_id": r.BaseID, "decision": r.AdapterDecision})
+		}
+	}
+	traceSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "PROFILE_VALIDATION_H_ADAPTER_TRACE.json"), traces)
+	die(err)
+
+	rawTreeSHA, rawFiles, err := perceptenvelope.SHA256OfTree(runDir)
+	die(err)
+	dsSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "datasets", "PROFILE_VALIDATION_H_R0.json"))
+	profSHA, _ := perceptenvelope.SHA256OfFile(profilePath)
+	miSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "MODEL_IDENTITY.json"))
+	commit := gitCommitShort()
+
+	hashes := map[string]string{
+		"PROFILE_VALIDATION_H_RECORDS.json":       recSHA,
+		"PROFILE_VALIDATION_H_TABLE.json":         tableSHA,
+		"PROFILE_VALIDATION_H_ADAPTER_TRACE.json": traceSHA,
+		"PROFILE_VALIDATION_H_R0.json":            dsSHA,
+		"profile_file":                            profSHA,
+		"profile_hash":                            table.ProfileHash,
+		"MODEL_IDENTITY.json":                     miSHA,
+		"raw_tree":                                rawTreeSHA,
+	}
+	report := perceptenvelope.RenderProfileHReport(ds, table, model, profilePath, hashes)
+	die(os.WriteFile(filepath.Join(expDir, "results", "PROFILE_VALIDATION_H_REPORT.md"), []byte(report), 0o644))
+
+	checkpoint := map[string]any{
+		"schema":        "tlaloc.capability-profile-r1.phase-h-checkpoint.r1",
+		"experiment_id": perceptenvelope.ExperimentID,
+		"status":        "PROFILE_ADAPTATION_VALIDATION_COMPLETE_FROZEN",
+		"frozen_at":     time.Now().UTC().Format(time.RFC3339),
+		"tlaloc_commit": commit,
+		"records":       len(records),
+		"raw_files":     rawFiles,
+		"profile_hash_sha256":         table.ProfileHash,
+		"profile_file_sha256":         profSHA,
+		"overall_executable_delta":    table.OverallDelta,
+		"overall_h0_accuracy":         table.OverallH0Accuracy,
+		"overall_h1_accuracy":         table.OverallH1Accuracy,
+		"missing_operand_rejected":    table.MissingOperandRejected,
+		"adapter_rule_fire_counts":    table.AdapterAblation,
+		"promotion_gate_checks":       table.GateChecks,
+		"PROFILE_R1_RUNTIME_PROMOTED": table.ProfileR1RuntimePromoted,
+		"promotion_basis":             table.PromotionBasis,
+		"hashes":                      hashes,
+		"HARD_STOP":                   "Do not start the deep multi-step workflow demo, another executor, or Origami.",
+	}
+	cpSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "PROFILE_VALIDATION_H_CHECKPOINT.json"), checkpoint)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"records": len(records), "table_sha256": tableSHA, "checkpoint_sha256": cpSHA,
+		"overall_executable_delta":    table.OverallDelta,
+		"missing_operand_rejected":    table.MissingOperandRejected,
+		"PROFILE_R1_RUNTIME_PROMOTED": table.ProfileR1RuntimePromoted,
+		"promotion_basis":             table.PromotionBasis,
 	}))
 }

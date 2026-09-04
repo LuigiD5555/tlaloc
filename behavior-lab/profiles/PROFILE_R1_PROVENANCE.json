@@ -1,0 +1,118 @@
+{
+  "compiled_at": "2026-09-04T02:50:07Z",
+  "executor": {
+    "model_id": "lfm2-vl-1.6b",
+    "family": "LFM2-VL",
+    "publisher": "LiquidAI",
+    "quantization": "F16",
+    "architecture": "lfm2",
+    "weights_gguf_sha256": "0a82498edc354b50247fee78081c8954ae7f4deee9068f8464a5ee774e82118a",
+    "mmproj_gguf_sha256": "b637bfa6060be2bc7503ec23ba48b407843d08c2ca83f52be206ea8563ccbae2",
+    "lm_studio_version": "LM Studio 0.3.36 (build 1)",
+    "inference_backend_version": "llama.cpp-linux-x86_64-nvidia-cuda-avx2 1.104.2",
+    "runtime_binary_hashes": {
+      "libllama.so": "32bf3d00889d028e68a2e66cec7f834dd6e0f2cbf6c9919c8affb775ee0e4fb0",
+      "liblmstudio_bindings_cuda.node": "e8d47afbfb2bef164e56476eb005ad447605a1f3e8d73ba83712993980619d46",
+      "llm_engine_cuda.node": "993ec8c07f68871ce72287523f354b4f3caa2ddd5ee4dcc5c401c61b9c98f88b"
+    },
+    "context_length_loaded": 4096,
+    "endpoint": "http://127.0.0.1:1234 (OpenAI-compatible; /v1/chat/completions)",
+    "temperature": 0,
+    "max_output_tokens": 32,
+    "model_identity_artifact_sha256": "bcf1fa0ecb38046fa0da5b137b1bd41863d7ef43717a1dec7e53bd7826adf315"
+  },
+  "profile_hash_sha256": "8acc959ba72334e64704c9f5b114bfb5230ca1f58375421c17a956e26b9ba729",
+  "profile_version": "r1.0.0",
+  "schema": "tlaloc.capability-profile-r1-provenance.r1",
+  "source_experiments": [
+    {
+      "id": "parrot-microisa-r0 (P1/P2)",
+      "artifact_path": "../parrot-microisa-r0/FREEZE.json",
+      "artifact_sha256": "70c9c008d9599418930ccfebb5cbdf2f9676ac749a6494619c4e03bfc17ba8a5",
+      "frozen": true,
+      "status": "FROZEN"
+    },
+    {
+      "id": "parrot-microisa-r0.1 (P2-A)",
+      "artifact_path": "../parrot-microisa-r0.1/FREEZE.json",
+      "artifact_sha256": "147e0442946a601fbffef75c0e169221f657dfe809a83f0ea9f1cfa850449f86",
+      "frozen": true,
+      "status": "FROZEN"
+    },
+    {
+      "id": "exocortex-t0a-r0 (T0-A)",
+      "artifact_path": "../exocortex-t0a-r0/FREEZE.json",
+      "artifact_sha256": "214180a0378a32ec2afe349d2259f995f89a85ab5362485af07c25491ff6c543",
+      "frozen": true,
+      "status": "FROZEN"
+    },
+    {
+      "id": "exocortex-decomposition-r0 (T0-B)",
+      "artifact_path": "../exocortex-decomposition-r0/T0B_CHECKPOINT.json",
+      "artifact_sha256": "f8a92a0e5b6f4a03e8861a3a1e509b1c8d107eb4c199cb2d7ac87aaef942d60a",
+      "frozen": true,
+      "status": "FROZEN"
+    },
+    {
+      "id": "R1-A0",
+      "artifact_path": "R1A_CHECKPOINT.json",
+      "artifact_sha256": "10d70deb9db5f77c115a2d086a5fbab38ff2eb2de63419698368cea9b2325dfb",
+      "frozen": true,
+      "status": "R1-A0_CONTEXT_ENVELOPE_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-A1",
+      "artifact_path": "R1A1_CHECKPOINT.json",
+      "artifact_sha256": "36cb49fd822c0af951c338426950a2e0e41af5874462d61ad9c210f502da8909",
+      "frozen": true,
+      "status": "R1-A1_FIXED_SCALE_CONTEXT_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-B",
+      "artifact_path": "R1B_CHECKPOINT.json",
+      "artifact_sha256": "c435c55f13ae95b0b47be5e480af306bf83af6c4b504a430a91d57eb8a9833e7",
+      "records": 180,
+      "frozen": true,
+      "status": "R1-B_SCALE_ENVELOPE_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-C",
+      "artifact_path": "R1C_CHECKPOINT.json",
+      "artifact_sha256": "455011831eec50825534aa42428ab14752de1beda16998d7495b6f775f8ba800",
+      "records": 132,
+      "frozen": true,
+      "status": "R1-C_NUMERIC_MORPHOLOGY_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-D",
+      "artifact_path": "R1D_CHECKPOINT.json",
+      "artifact_sha256": "4046fac809dad281735277351be487d60b8a2a850e6da74564cb679325775c41",
+      "frozen": true,
+      "status": "R1-D_ASSOCIATION_DISTRACTOR_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-E",
+      "artifact_path": "R1E_CHECKPOINT.json",
+      "artifact_sha256": "14286eebf45306b0af703dc44152fb79f77e74cd32873b75ef72f66ccebce1e9",
+      "records": 132,
+      "frozen": true,
+      "status": "R1-E_VISUAL_DEPENDENCE_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-F",
+      "artifact_path": "R1F_CHECKPOINT.json",
+      "artifact_sha256": "54820cd26413fb737190b364d8368adbb50c052185e7de5c9d4f7a724150d1ef",
+      "records": 100,
+      "frozen": true,
+      "status": "R1-F_REPEATABILITY_COMPLETE_FROZEN"
+    },
+    {
+      "id": "R1-G",
+      "artifact_path": "R1G_CHECKPOINT.json",
+      "artifact_sha256": "6ae9d3c41a3506196dd397218d5d6f2ea7b0cc4f103f9201e8813ffe13c53996",
+      "records": 294,
+      "frozen": true,
+      "status": "R1-G_RECOVERY_COMPLETE_FROZEN"
+    }
+  ]
+}
