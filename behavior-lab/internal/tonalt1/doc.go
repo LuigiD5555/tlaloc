@@ -33,7 +33,7 @@ package tonalt1
 // identity / eligibility logic changes in a way that could move which
 // candidates are selected or how they are identified. Frozen artifacts
 // record it and the D3 freeze manifest hashes it.
-const SelectorVersion = "tonalt1.d3.selector.r2.0.0"
+const SelectorVersion = "tonalt1.d3.selector.r2.1.0"
 
 // RuleAuditVersion versions the D3 v2 rule-provenance classification
 // (types.go ruleClassOf): which selector rules are CAPABILITY /
@@ -52,7 +52,7 @@ const EnvelopeVersion = "tonalt1.envelope.r1.0.0"
 
 // GeometryRuleVersion versions the frozen geometry / ambiguity rule set
 // (geometry.go).
-const GeometryRuleVersion = "tonalt1.geometry.r2.0.0"
+const GeometryRuleVersion = "tonalt1.geometry.r3.0.0"
 
 // PriorUseInventoryVersion versions the set of prior experiments and the
 // extractors that reconstruct their consumed physical instances

@@ -187,7 +187,7 @@ func hasAnyGeometryReject(codes []RejectionCode) bool {
 			return true
 		}
 		switch code {
-		case RejectNumberLeadingLine, RejectLoneNumberLine, RejectPageHeaderFooter, RejectRunningHeader:
+		case RejectNumberLeadingLine, RejectLoneNumberLine, RejectPageHeaderFooter, RejectRunningHeader, RejectCaptionOrIndex:
 			return true
 		}
 	}

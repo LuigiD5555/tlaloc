@@ -29,26 +29,85 @@ var bibliographyCue = regexp.MustCompile(`(?i)\bet al\b|\bpp\.|\bvol\.|\beds?\.|
 // R1 pool filters already reject "section numbers" and "equation tags";
 // this extends the same principle to decimal N.M references that survive
 // the number-leading check.
-var crossReferenceCue = regexp.MustCompile(`(?i)^(sec|section|sections|subsection|ch|chap|chapter|chapters|fig|figure|figures|figs|tbl|table|tables|eq|eqn|equation|equations|appendix|app|part|algorithm|alg|theorem|thm|lemma|corollary|proposition|prop|definition|def|example|exercise|problem|listing|step|page|pp|no|№)\.?$`)
+// The cue lists are multilingual (English + Spanish); the fresh-corpus
+// candidates include Spanish-language technical books.
+var crossReferenceCue = regexp.MustCompile(`(?i)^(` +
+	`sec|section|sections|subsection|secc|seccion|secciones|` +
+	`ch|chap|chapter|chapters|cap|capitulo|capitulos|` +
+	`fig|figure|figures|figs|figura|figuras|` +
+	`tbl|table|tables|tabla|tablas|cuadro|cuadros|` +
+	`eq|eqn|equation|equations|ec|ecuacion|ecuaciones|` +
+	`appendix|app|apendice|apendices|` +
+	`part|parte|algorithm|alg|algoritmo|` +
+	`theorem|thm|teorema|lemma|lema|corollary|corolario|proposition|prop|proposicion|` +
+	`definition|def|definicion|example|ejemplo|exercise|ejercicio|problem|problema|` +
+	`listing|listado|program|programa|step|paso|line|linea|` +
+	`page|pag|pagina|paginas|pp|no|num|nro|` + "№" +
+	`)\.?$`)
 
 // versionCue marks a software / library / format version number: the word
 // immediately before the token names a versioned technology. The number is
 // an identifier, not a quantity.
-var versionCue = regexp.MustCompile(`(?i)^(version|ver|v|release|rev|cuda|cudnn|python|python2|python3|tensorflow|tf|pytorch|torch|keras|mxnet|numpy|scipy|pandas|jax|onnx|java|c\+\+|gcc|clang|glibc|ubuntu|debian|windows|macos|ios|android|opengl|opencl|http|https|api|sdk|bert|gpt|resnet|vgg|yolo|efficientnet|mobilenet|densenet)$`)
+var versionCue = regexp.MustCompile(`(?i)^(version|ver|v|vers|release|rev|` +
+	`cuda|cudnn|python|python2|python3|tensorflow|tf|pytorch|torch|keras|mxnet|numpy|scipy|pandas|jax|onnx|` +
+	`java|javase|jdk|jre|jsp|sql|c\+\+|gcc|clang|glibc|ubuntu|debian|windows|macos|ios|android|` +
+	`opengl|opencl|http|https|api|sdk|bert|gpt|resnet|vgg|yolo|efficientnet|mobilenet|densenet|` +
+	`unicode|utf|ascii|iso|rfc|jsr|jls)$`)
 
 // wrappedFragmentFirst marks a containing line whose first whitespace
 // token is a broken suffix of a reference word (e.g. "Sec-\ntion 16.2" ->
-// line starts "tion 16.2"). Deliberately tiny and specific.
+// line starts "tion 16.2" / "cion 9.4"). Deliberately tiny and specific.
 var wrappedFragmentFirst = map[string]bool{
-	"tion": true, "tions": true, "ure": true, "ures": true, "dix": true,
-	"rithm": true, "rithms": true, "ple": true, "ples": true, "orem": true,
-	"ction": true, "ctions": true,
+	"tion": true, "tions": true, "cion": true, "ciones": true, "sion": true,
+	"ure": true, "ures": true, "dix": true, "dice": true,
+	"rithm": true, "rithms": true, "ritmo": true,
+	"ple": true, "ples": true, "plo": true, "orem": true, "rema": true,
+	"ction": true, "ctions": true, "gura": true, "guras": true, "bla": true,
 }
+
+// captionOrIndexLine marks a figure/table caption line or an index/TOC
+// entry, in which any embedded number is a locator: a leading
+// "Figura N" / "Tabla N" / "Figure N", or a trailing ", <number>" index
+// reference, or a dotted-leader TOC line.
+var captionLeader = regexp.MustCompile(`(?i)^(figura|figure|fig|tabla|table|cuadro|listado|listing|programa|program|ejemplo|example|ecuacion|equation|grafica|graph|diagrama|diagram)\b`)
+var indexEntryTail = regexp.MustCompile(`[a-zA-Z\)\]]\s*,\s*[0-9]{1,4}\s*$`)
+var dottedLeader = regexp.MustCompile(`\.{4,}|(?:\. ){4,}`)
 
 // stripEdgePunct removes surrounding punctuation before morphology tests.
 func stripEdgePunct(token string) string {
 	return strings.Trim(token, ".,;:()[]%\"'")
 }
+
+// ligatureSplit matches a Latin ligature code point that pdftohtml often
+// emits followed by a spurious space before the rest of the word
+// (e.g. "ﬁ gura" for "figura", "especiﬁ ca" for "especifica").
+var ligatureSplit = regexp.MustCompile(`[\x{FB00}-\x{FB06}] ?`)
+
+var ligatureExpand = map[rune]string{
+	'ﬀ': "ff", 'ﬁ': "fi", 'ﬂ': "fl", 'ﬃ': "ffi",
+	'ﬄ': "ffl", 'ﬅ': "st", 'ﬆ': "st",
+}
+
+// fixExtractionArtifacts repairs ligature-split words in a line so that
+// tokenization and reference-word detection work on Spanish/Latin text
+// extracted by pdftohtml.
+func fixExtractionArtifacts(text string) string {
+	if !strings.ContainsAny(text, "ﬀﬁﬂﬃﬄﬅﬆ") {
+		return text
+	}
+	return ligatureSplit.ReplaceAllStringFunc(text, func(match string) string {
+		return ligatureExpand[[]rune(match)[0]]
+	})
+}
+
+// accentFold lower-cases and strips common Spanish/Latin diacritics for
+// case- and accent-insensitive reference-word matching.
+var accentFold = strings.NewReplacer(
+	"á", "a", "é", "e", "í", "i", "ó", "o", "ú", "u", "ü", "u", "ñ", "n",
+	"Á", "a", "É", "e", "Í", "i", "Ó", "o", "Ú", "u", "Ü", "u", "Ñ", "n",
+)
+
+func foldForCue(s string) string { return accentFold.Replace(strings.ToLower(s)) }
 
 // numericLiteral matches the broad shape of a numeric literal token after
 // edge punctuation is stripped: an optional sign, digits, and optional
@@ -127,7 +186,7 @@ func Scan(storeDir string, priorIndex *PriorUseIndex) (ScanResult, error) {
 
 func scanPage(result *ScanResult, page canonicaldoc.Page, layoutPath, sourceSHA string, manifest pdfmemory.Manifest, priorIndex *PriorUseIndex) {
 	for _, region := range page.Regions {
-		text := strings.TrimSpace(region.Text)
+		text := fixExtractionArtifacts(strings.TrimSpace(region.Text))
 		if text == "" {
 			continue
 		}
@@ -189,7 +248,12 @@ func scanPage(result *ScanResult, page canonicaldoc.Page, layoutPath, sourceSHA 
 		if isVersionString(fields, primaryVerbatim) {
 			codes = append(codes, RejectVersionString)
 		}
-		if len(fields) > 0 && wrappedFragmentFirst[strings.ToLower(stripEdgePunct(fields[0]))] {
+		// DOMAIN: figure/table caption or index/TOC entry — the number is a
+		// locator, not a quantity.
+		if captionLeader.MatchString(foldForCue(text)) || indexEntryTail.MatchString(text) || dottedLeader.MatchString(text) {
+			codes = append(codes, RejectCaptionOrIndex)
+		}
+		if len(fields) > 0 && wrappedFragmentFirst[foldForCue(stripEdgePunct(fields[0]))] {
 			codes = append(codes, RejectWrappedFragment)
 		}
 		if region.FontSize > 0 && region.FontSize < 10 {
@@ -320,7 +384,7 @@ func precededByCue(fields []string, token string, match func(string) bool) bool 
 		if index == 0 {
 			return false
 		}
-		return match(strings.Trim(fields[index-1], ".,;:()[]\"'"))
+		return match(foldForCue(strings.Trim(fields[index-1], ".,;:()[]\"'")))
 	}
 	return false
 }

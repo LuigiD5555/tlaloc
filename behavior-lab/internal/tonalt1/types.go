@@ -43,6 +43,7 @@ const (
 	RejectWrappedFragment  RejectionCode = "REJECT_WRAPPED_REFERENCE_FRAGMENT"
 	RejectPageHeaderFooter RejectionCode = "REJECT_PAGE_HEADER_OR_FOOTER"
 	RejectLoneNumberLine   RejectionCode = "REJECT_LONE_NUMBER_NO_CONTEXT"
+	RejectCaptionOrIndex   RejectionCode = "REJECT_CAPTION_OR_INDEX_ENTRY"
 )
 
 // RuleClass classifies why a selector rule exists (D3 v2 audit, protocol
@@ -88,6 +89,7 @@ var ruleClassOf = map[RejectionCode]RuleClass{
 	RejectWrappedFragment:   ClassDomain,
 	RejectPageHeaderFooter:  ClassDomain,
 	RejectLoneNumberLine:    ClassDomain,
+	RejectCaptionOrIndex:    ClassDomain,
 
 	RejectLineInPageMargin:      ClassAuthoring,
 	RejectLineTooNarrow:         ClassAuthoring,
