@@ -57,11 +57,11 @@ func RenderR1EReport(in R1EReportInput) string {
 				r.ContractSuccess, r.Abstained, r.UnsupportedAssertion, r.MeanLatencyMS)
 		}
 		m1, m2 := c.McNemarCorrectVsNoImage, c.McNemarCorrectVsWrongImage
-		p("\n**Paired McNemar** (task gold):\n\n")
-		p("- E2_CORRECT → E0_NO_IMAGE: Δ %+.3f, exact p %.4f · C→C %d, C→W %d, W→C %d, W→W %d\n",
-			m1.AbsoluteDelta, m1.PValue, m1.CorrectToCorrect, m1.CorrectToWrong, m1.WrongToCorrect, m1.WrongToWrong)
-		p("- E2_CORRECT → E1_WRONG_IMAGE: Δ %+.3f, exact p %.4f · C→C %d, C→W %d, W→C %d, W→W %d\n\n",
-			m2.AbsoluteDelta, m2.PValue, m2.CorrectToCorrect, m2.CorrectToWrong, m2.WrongToCorrect, m2.WrongToWrong)
+		p("\n**Paired McNemar** (task gold, exact two-sided binomial on the discordant pairs):\n\n")
+		p("- E2_CORRECT → E0_NO_IMAGE: Δ %+.3f, exact p %s · C→C %d, C→W %d, W→C %d, W→W %d\n",
+			m1.AbsoluteDelta, fmtPValue(m1.PValue), m1.CorrectToCorrect, m1.CorrectToWrong, m1.WrongToCorrect, m1.WrongToWrong)
+		p("- E2_CORRECT → E1_WRONG_IMAGE: Δ %+.3f, exact p %s · C→C %d, C→W %d, W→C %d, W→W %d\n\n",
+			m2.AbsoluteDelta, fmtPValue(m2.PValue), m2.CorrectToCorrect, m2.CorrectToWrong, m2.WrongToCorrect, m2.WrongToWrong)
 		p("**Classification:** %s — %s\n\n", c.Classification, c.ClassificationBasis)
 		for _, r := range c.Rows {
 			if len(r.FailureClasses) == 0 {
@@ -81,9 +81,9 @@ func RenderR1EReport(in R1EReportInput) string {
 	}
 	disp, why := R1EReadAssocDisposition(in.Table)
 	p("## 2. READ_ASSOCIATED_NUMBER — protocol §13\n\n")
-	p("- **A. Does the 22/22 R1-D association result collapse with NO_IMAGE?** no-image task-gold accuracy = %.2f (correct-image %.2f; drop %+.2f, McNemar p %.4f). %s\n",
+	p("- **A. Does the 22/22 R1-D association result collapse with NO_IMAGE?** no-image task-gold accuracy = %.2f (correct-image %.2f; drop %+.2f, McNemar exact p %s). %s\n",
 		prim.NoImageAccuracy, prim.CorrectImageAccuracy, prim.CorrectImageAccuracy-prim.NoImageAccuracy,
-		prim.McNemarCorrectVsNoImage.PValue, collapseNote(prim))
+		fmtPValue(prim.McNemarCorrectVsNoImage.PValue), collapseNote(prim))
 	p("- **B. With a plausible WRONG_IMAGE, does the model follow the original task gold or the value in the wrong image?** task-gold %.2f vs visible-operand %.2f (gap %+.2f). %s\n",
 		prim.WrongImageTaskGoldAccuracy, prim.WrongImageVisibleOperandAccuracy,
 		prim.WrongImageVisibleOperandAccuracy-prim.WrongImageTaskGoldAccuracy, followNote(prim))
@@ -110,6 +110,20 @@ func RenderR1EReport(in R1EReportInput) string {
 	p("## 5. HARD STOP\n\n")
 	p("R1-E is complete and frozen. **Do NOT run R1-F or R1-G.** Return the complete visual-dependence table for review.\n")
 	return b.String()
+}
+
+// fmtPValue renders an exact p-value without collapsing a tiny-but-nonzero
+// value to "0.0000". For 22 one-directional discordant pairs the exact
+// two-sided binomial value is 2 * 0.5^22 ≈ 4.77e-07, not zero.
+func fmtPValue(p float64) string {
+	switch {
+	case p <= 0:
+		return "0"
+	case p >= 1e-4:
+		return fmt.Sprintf("%.4f", p)
+	default:
+		return fmt.Sprintf("%.2e", p)
+	}
 }
 
 func collapseNote(c R1ECapabilityTable) string {
