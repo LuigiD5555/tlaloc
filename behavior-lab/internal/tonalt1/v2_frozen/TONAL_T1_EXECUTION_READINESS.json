@@ -1,0 +1,84 @@
+{
+  "schema": "tonal.t1.execution-readiness.r1",
+  "generated_at": "2026-09-04T22:36:35.232298+00:00",
+  "READY_TONAL_T1_IMAGES": true,
+  "READY_TONAL_T1_EXECUTION": false,
+  "T1_PRIMARY_MODEL_CALLS": 0,
+  "NEW_MODEL_HTTP_CALLS_THIS_TASK": 0,
+  "gates": {
+    "READY_TONAL_T1_IMAGES": {
+      "status": "PASS",
+      "evidence": "accepted, unmodified this session; TONAL_T1_IMAGE_MANIFEST_FINAL.json 144/144 operand + 60/60 composite equality re-verified from file"
+    },
+    "D4_WORKFLOWS_60": {
+      "status": "PASS",
+      "evidence": "unchanged, LoadWorkflows(T1_D4_WORKFLOWS.json) == 60"
+    },
+    "D4_OPERANDS_144": {
+      "status": "PASS",
+      "evidence": "unchanged, 144 operand-role assignments"
+    },
+    "ARM_A_CALLS_60_DERIVED": {
+      "status": "PASS",
+      "evidence": "TestArmACallBudget_Real: 60 workflows x T1_D5_ARM_A_POLICY.json.model_call_count_per_workflow(1) = 60"
+    },
+    "ARM_B_CALLS_492_DERIVED": {
+      "status": "PASS",
+      "evidence": "TestDeriveArmBCallBudget_Real: mechanical DAG walk of all 5 frozen shapes (internal/tonalt1arms/callbudget.go DeriveArmBCallBudget) against T1_D5_ARM_B_POLICY.json's parrot_adapters/deterministic_nodes classification = 492 (36+60+72+120+204), independently matching the frozen constant -- not accepted on faith"
+    },
+    "ARM_C_CALLS_144_DERIVED": {
+      "status": "PASS",
+      "evidence": "TestArmCCallBudget_Real: sum(len(w.Operands)) over the 60 frozen D4 workflows = 144"
+    },
+    "PRIMARY_CALLS_696_DERIVED": {
+      "status": "PASS",
+      "evidence": "TestPrimaryCallBudgetTotal_Real: 60+492+144=696"
+    },
+    "COUNTERFACTUAL_RUNNER_PRESENT": {
+      "status": "PASS",
+      "evidence": "internal/tonalt1arms/counterfactual.go: RunPoison/RunRemove implemented this session (did not exist anywhere in either repository before this task -- confirmed by repo-wide grep)"
+    },
+    "COUNTERFACTUAL_INJECTION_POINT": {
+      "status": "PASS",
+      "evidence": "POST_EXTRACTION_BLACKBOARD -- RunPoison/RunRemove take an already-completed ArmCState (post-EXTRACT_NUMBER role->value map) and mutate/remove one stored value, then replay only the deterministic terminal recomputation (ComputeGold). Neither function imports internal/target or internal/exocortex; there is no code path to a Parrot/model call."
+    },
+    "COUNTERFACTUAL_MODEL_CALLS": {
+      "status": "PASS",
+      "evidence": "0 -- TestModelTransportCallCountRemainsZero exercises POISON+REMOVE across all 5 shapes x all required roles (18 trials), asserts aggregate ModelCallCount==0; TestExtractNumberCannotExecute + 9 other offline tests, all passing under go test -race"
+    },
+    "ARM_POLICY_A": {
+      "status": "VERIFIED_POLICY_ONLY",
+      "evidence": "T1_D5_ARM_A_POLICY.json loaded and its model_call_count_per_workflow=1 confirmed. NOT verified against a live executor: no ArmAExecutor class exists in the repository; internal/tonalt1/t1_executor.go's executeArmA is a stub whose stackOperands 'returns first operand' rather than compositing (Simplified comment, own source)."
+    },
+    "ARM_POLICY_B": {
+      "status": "VERIFIED_POLICY_ONLY",
+      "evidence": "T1_D5_ARM_B_POLICY.json loaded and its deterministic_nodes/parrot_adapters split mechanically drove the 492 derivation above. NOT verified against a live executor: no ArmBExecutor class exists; t1_executor.go's executeArmB routes every operand through one generic prompt, not the frozen per-capability adapter set (EXTRACT_NUMBER/NORMALIZE/COMPARE_NUMBERS/ARITHMETIC each with their own frozen prompt_template/max_tokens)."
+    },
+    "ARM_POLICY_C": {
+      "status": "VERIFIED_POLICY_ONLY",
+      "evidence": "T1_D5_ARM_C_POLICY.json loaded: executor_routing confirms EXTRACT_NUMBER=parrot_required, all else deterministic_preferred/required. NOT verified against a live executor: no ArmCExecutor class exists; t1_executor.go's executeArmC is structurally identical to executeArmB (same per-operand generic prompt loop) -- there is currently NO code-level isolation between Arm B's private adapters and Arm C's routing, because neither is really implemented yet, only stubbed identically."
+    },
+    "ARM_B_C_ADAPTER_ISOLATION": {
+      "status": "FAIL",
+      "evidence": "Cannot verify isolation between something and nothing: t1_executor.go's executeArmB and executeArmC are the same code path (loop calling a generic 'Read the number for %s' prompt per operand, then shared computeShapeResult). There is no adapter registry, no per-capability routing, and therefore no demonstrated isolation. This is a real, unresolved gap, not a false negative."
+    },
+    "LIVE_RUNTIME_PATH": {
+      "status": "NOT_PRESENT",
+      "evidence": "Repo-wide search: no cmd/*/main.go references T1Executor or tonalt1arms. The only T1-touching executable is cmd/tonalt1-rasterize, which materializes images only and makes zero model calls. There is currently NO command that would perform a live T1 run at all -- Attempt 0's ad-hoc-script bypass is not currently repeatable, but only because there is no live path of any kind yet, not because a correct one is guarded against a bypass."
+    },
+    "IMAGE_HASH_GUARD": {
+      "status": "NOT_PRESENT",
+      "evidence": "TONAL_T1_IMAGE_MANIFEST_FINAL.json's own internal Run-1/Run-2 hash equality was re-verified (144/144 operands, 60/60 composites, both true). No executor exists yet to enforce fail-closed behavior if a live run's image bytes diverged from these hashes at execution time -- the guard itself is unimplemented because there is nothing to guard."
+    },
+    "TRANSPORT_FAIL_CLOSED": {
+      "status": "PASS",
+      "evidence": "go test -run '^TestT1Transport_' -v ./internal/target/... : 8/8 PASS, re-run this session, zero LM Studio contact"
+    },
+    "T1_PRIMARY_MODEL_CALLS": {
+      "status": "PASS",
+      "evidence": "0, unchanged"
+    }
+  },
+  "summary": "12 PASS, 3 VERIFIED_POLICY_ONLY (frozen policy loaded but no live executor exists to enforce it), 2 NOT_PRESENT (component does not exist), 1 FAIL (verified absence of required isolation)",
+  "closure_verdict": "READY_TONAL_T1_EXECUTION remains false. Call-budget derivation (60/492/144/696) is now independently proven by mechanical DAG traversal, and a real, tested, zero-model-call CounterfactualRunner now exists at internal/tonalt1arms/counterfactual.go. However no live executor (ArmA/B/C) exists anywhere in either repository, no command wires one up, Arm-B/Arm-C adapter isolation cannot be demonstrated because neither is implemented beyond an identical stub, and the image-hash fail-closed guard has nothing to guard. These are the actual, honestly-reported blockers to setting READY_TONAL_T1_EXECUTION=true -- not a formality, but real missing runtime."
+}
