@@ -1,0 +1,10 @@
+{
+  "primary_workflows": 60,
+  "arms": 3,
+  "total_primary_trials": 180,
+  "counterfactual_poison": 144,
+  "counterfactual_remove": 144,
+  "total_experimental_trials": 468,
+  "model_calls": 180,
+  "timestamp": "2026-09-04T12:25:24.804316"
+}

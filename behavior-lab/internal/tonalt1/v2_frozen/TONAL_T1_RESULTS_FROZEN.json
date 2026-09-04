@@ -1,0 +1,9 @@
+{
+  "TONAL_T1_RESULTS_FROZEN": true,
+  "timestamp": "2026-09-04T12:25:24.804710",
+  "primary_records_frozen": true,
+  "counterfactual_frozen": true,
+  "analysis_frozen": true,
+  "model": "lfm2-vl-1.6b",
+  "total_calls": 180
+}

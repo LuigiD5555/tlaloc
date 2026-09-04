@@ -1,0 +1,1463 @@
+{
+  "execution_timestamp": "2026-09-04T12:25:24.799512",
+  "model_id": "lfm2-vl-1.6b",
+  "model_weights_sha": "0a82498e...",
+  "endpoint": "http://127.0.0.1:1234/v1/messages",
+  "temperature": 0,
+  "max_tokens": 32,
+  "total_calls": 180,
+  "results_by_arm": {
+    "A": [
+      {
+        "workflow_id": "tonal-t1-workflow-REA-01",
+        "shape": "READ_AND_CHECK",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.471800"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-02",
+        "shape": "READ_AND_CHECK",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.478109"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-03",
+        "shape": "READ_AND_CHECK",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.483783"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-04",
+        "shape": "READ_AND_CHECK",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.490315"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-05",
+        "shape": "READ_AND_CHECK",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.497905"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-06",
+        "shape": "READ_AND_CHECK",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.503832"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-07",
+        "shape": "READ_AND_CHECK",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.510954"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-08",
+        "shape": "READ_AND_CHECK",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.516478"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-09",
+        "shape": "READ_AND_CHECK",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.520801"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-10",
+        "shape": "READ_AND_CHECK",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.525887"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-11",
+        "shape": "READ_AND_CHECK",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.532808"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-12",
+        "shape": "READ_AND_CHECK",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.538148"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-13",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.543435"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-14",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.549703"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-15",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.555873"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-16",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.562169"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-17",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.566880"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-18",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.571123"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-19",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.575237"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-20",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.580659"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-21",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.585189"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-22",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.589444"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-23",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.594616"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-24",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.600939"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-25",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.606011"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-26",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.610449"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-27",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.615201"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-28",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.619907"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-29",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.624401"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-30",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.630157"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-31",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.635702"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-32",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.640506"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-33",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.645389"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-34",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.650861"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-35",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.655394"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-36",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.660328"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-37",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.666675"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-38",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.672482"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-39",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.679230"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-40",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.685335"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-41",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.691229"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-42",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.697701"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-43",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.703945"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-44",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.710689"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-45",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.717196"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-46",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.722218"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-47",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.727597"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-48",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.733356"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-49",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.738093"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-50",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.742682"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-51",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.748265"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-52",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.754051"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-53",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.758650"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-54",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.763478"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-55",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.768594"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-56",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.773488"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-57",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.780375"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-58",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.785435"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-59",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.790396"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-60",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "A",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.795696"
+      }
+    ],
+    "B": [
+      {
+        "workflow_id": "tonal-t1-workflow-REA-01",
+        "shape": "READ_AND_CHECK",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.473856"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-02",
+        "shape": "READ_AND_CHECK",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.480017"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-03",
+        "shape": "READ_AND_CHECK",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.485908"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-04",
+        "shape": "READ_AND_CHECK",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.492803"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-05",
+        "shape": "READ_AND_CHECK",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.499932"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-06",
+        "shape": "READ_AND_CHECK",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.506245"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-07",
+        "shape": "READ_AND_CHECK",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.512608"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-08",
+        "shape": "READ_AND_CHECK",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.517911"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-09",
+        "shape": "READ_AND_CHECK",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.522479"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-10",
+        "shape": "READ_AND_CHECK",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.529119"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-11",
+        "shape": "READ_AND_CHECK",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.534464"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-12",
+        "shape": "READ_AND_CHECK",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.539859"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-13",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.545440"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-14",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.551668"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-15",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.557966"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-16",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.563716"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-17",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.568372"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-18",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.572458"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-19",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.576860"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-20",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.582212"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-21",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.586583"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-22",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.590865"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-23",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.596872"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-24",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.602537"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-25",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.607391"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-26",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.612047"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-27",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.616877"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-28",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.621510"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-29",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.625825"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-30",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.631757"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-31",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.637452"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-32",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.641992"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-33",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.647495"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-34",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.652393"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-35",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.656959"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-36",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.662465"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-37",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.668651"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-38",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.674247"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-39",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.681308"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-40",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.687317"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-41",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.693287"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-42",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.699840"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-43",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.706219"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-44",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.712942"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-45",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.719179"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-46",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.723992"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-47",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.729643"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-48",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.734972"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-49",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.739697"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-50",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.744340"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-51",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.750493"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-52",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.755694"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-53",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.760292"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-54",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.765201"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-55",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.770324"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-56",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.775198"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-57",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.782162"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-58",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.786949"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-59",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.791919"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-60",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "B",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.797611"
+      }
+    ],
+    "C": [
+      {
+        "workflow_id": "tonal-t1-workflow-REA-01",
+        "shape": "READ_AND_CHECK",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.475944"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-02",
+        "shape": "READ_AND_CHECK",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.481887"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-03",
+        "shape": "READ_AND_CHECK",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.488170"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-04",
+        "shape": "READ_AND_CHECK",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.495309"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-05",
+        "shape": "READ_AND_CHECK",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.501830"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-06",
+        "shape": "READ_AND_CHECK",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.508612"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-07",
+        "shape": "READ_AND_CHECK",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.514497"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-08",
+        "shape": "READ_AND_CHECK",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.519371"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-09",
+        "shape": "READ_AND_CHECK",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.524217"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-10",
+        "shape": "READ_AND_CHECK",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.531082"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-11",
+        "shape": "READ_AND_CHECK",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.536309"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REA-12",
+        "shape": "READ_AND_CHECK",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.541726"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-13",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.547705"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-14",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.553606"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-15",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.560135"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-16",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.565274"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-17",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.569696"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-18",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.573810"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-19",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.579095"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-20",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.583734"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-21",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.587956"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-22",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.592532"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-23",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.598998"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-COM-24",
+        "shape": "COMPARE_TWO_VALUES",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.604417"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-25",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.608823"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-26",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.613600"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-27",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.618453"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-28",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.622950"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-29",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.627412"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-30",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.633451"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-31",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.639015"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-32",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.643424"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-33",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.649250"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-34",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.653880"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-35",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.658498"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-DIF-36",
+        "shape": "DIFFERENCE_THEN_VERIFY",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.664539"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-37",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.670573"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-38",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.676159"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-39",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.683348"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-40",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.689242"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-41",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.695470"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-42",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.701893"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-43",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.708470"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-44",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.715009"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-45",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.720728"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-46",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.725600"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-47",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.731474"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-RAT-48",
+        "shape": "RATIO_OF_DIFFERENCE",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.736525"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-49",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.741190"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-50",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.746234"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-51",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.752181"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-52",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.757148"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-53",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.761867"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-54",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.767059"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-55",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.771849"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-56",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.776923"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-57",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.783856"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-58",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.788657"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-59",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.793800"
+      },
+      {
+        "workflow_id": "tonal-t1-workflow-REC-60",
+        "shape": "RECONCILIATION_CHAIN",
+        "arm": "C",
+        "raw_output": "",
+        "error": null,
+        "timestamp": "2026-09-04T12:25:24.799490"
+      }
+    ]
+  },
+  "workflow_count": 60,
+  "arms": [
+    "A",
+    "B",
+    "C"
+  ]
+}
