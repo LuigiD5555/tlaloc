@@ -41,6 +41,7 @@ func main() {
 	endpoint := flag.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
 	model := flag.String("model", "lfm2-vl-1.6b", "model id")
 	bridgeN := flag.Int("bridge-n", 60, "target bridge instances per morphology")
+	scanOnly := flag.Bool("scan-only", false, "build store + D3 v2 scan + partition feasibility, then stop (no model calls) — for deterministic re-ranking")
 	flag.Parse()
 
 	if *pdf == "" {
@@ -100,6 +101,35 @@ func main() {
 	// 3. FREEZE the bridge/primary page partition BEFORE inference.
 	partition := tonalt1.PartitionPages(sourceSHA, pages, tonalt1.FreshBridgeFraction)
 	writeJSON(filepath.Join(outDir, "FRESH_PAGE_PARTITION.json"), partition)
+
+	if *scanOnly {
+		// Primary universe assuming BOTH morphologies qualify (upper bound
+		// for re-ranking); real qualification happens in the full run.
+		universe := tonalt1.BuildPrimaryUniverse(scan, partition, tonalt1.BridgeSpec{},
+			[]tonalt1.MorphologyFamily{tonalt1.MorphMultiDigitInteger, tonalt1.MorphDecimal})
+		capacity := tonalt1.CheckAllocationFeasible(universe)
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		_ = enc.Encode(map[string]any{
+			"scan_only":              true,
+			"source":                 *pdf,
+			"source_sha256":          sourceSHA,
+			"pages":                  manifest.PageCount,
+			"regions":                manifest.RegionCount,
+			"scan_total":             len(scan.Candidates),
+			"eligible_total":         eligibleTotal,
+			"eligible_pages":         len(pages),
+			"eligible_by_morphology": scanMorphCounts(scan),
+			"bridge_pages":           len(partition.BridgePages),
+			"primary_pages":          len(partition.PrimaryPages),
+			"primary_universe_upper": universe.N,
+			"primary_by_morphology":  universe.ByMorphology,
+			"primary_distinct_pages": universe.DistinctPages,
+			"allocation_feasible_ub": capacity.AllocationFeasible,
+			"headroom_ub":            capacity.HeadroomRatio,
+		})
+		return
+	}
 
 	identity := loadWeightsSHA(*root)
 
@@ -354,4 +384,14 @@ func writeJSON(path string, value any) {
 func fail(err error) {
 	fmt.Fprintln(os.Stderr, "tlaloc-tonalt1-freshcorpus:", err)
 	os.Exit(1)
+}
+
+func scanMorphCounts(scan tonalt1.ScanResult) map[string]int {
+	out := map[string]int{}
+	for _, c := range scan.Candidates {
+		if c.Eligibility.Eligible {
+			out[string(c.Presentation.MorphologyFamily)]++
+		}
+	}
+	return out
 }
