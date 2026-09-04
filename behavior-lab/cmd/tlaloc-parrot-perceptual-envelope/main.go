@@ -90,6 +90,14 @@ func main() {
 		runR1D(ctx, os.Args[2:])
 	case "report-r1d":
 		reportR1D(os.Args[2:])
+	case "prepare-r1e":
+		prepareR1E(os.Args[2:])
+	case "doctor-r1e":
+		doctorR1E(ctx, os.Args[2:])
+	case "run-r1e":
+		runR1E(ctx, os.Args[2:])
+	case "report-r1e":
+		reportR1E(os.Args[2:])
 	default:
 		fmt.Fprintln(os.Stderr, "unknown subcommand:", os.Args[1])
 		os.Exit(2)
@@ -1416,5 +1424,236 @@ func finalizeR1D(expDir, runDir, model string, alloc perceptenvelope.R1DAllocati
 		"assoc_table_sha256": assocTblSHA, "distractor_curve_sha256": distCurveSHA,
 		"checkpoint_sha256": cpSHA, "geometry_valid": d0Table.RealAssocGeometryValid,
 		"verdict": verdict,
+	}))
+}
+
+// ---- R1-E: visual dependence / shortcut controls ----------------------------
+
+func loadR1EDataset(expDir string) perceptenvelope.R1EDataset {
+	body, err := os.ReadFile(filepath.Join(expDir, "datasets", "R1E_DATASET.json"))
+	die(err)
+	var ds perceptenvelope.R1EDataset
+	die(json.Unmarshal(body, &ds))
+	return ds
+}
+
+func prepareR1E(args []string) {
+	fs := flag.NewFlagSet("prepare-r1e", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	fs.Parse(args)
+
+	alloc := loadR1DAlloc(*expDir)
+	elig := perceptenvelope.EligibleR1DBases(alloc)
+	if len(elig) < 6 {
+		die(fmt.Errorf("only %d eligible R1-D bases (<6); cannot run R1-E", len(elig)))
+	}
+	ds, err := perceptenvelope.BuildR1EDataset(elig)
+	die(err)
+
+	basesSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1E_BASES.json"), elig)
+	die(err)
+	wrongSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1E_WRONG_IMAGE_MAP.json"), ds.WrongMap)
+	die(err)
+	dsSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1E_DATASET.json"), ds)
+	die(err)
+
+	r1dDatasetSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "datasets", "R1D_ASSOCIATION_DATASET.json"))
+	r1dCheckpointSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "R1D_CHECKPOINT.json"))
+	miSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "MODEL_IDENTITY.json"))
+
+	addendum := map[string]any{
+		"schema":       "tlaloc.parrot-perceptual-envelope-r1.protocol-addendum.06",
+		"title":        "R1-E_VISUAL_DEPENDENCE — no-image / wrong-image / correct-image shortcut controls",
+		"recorded_at":  time.Now().UTC().Format(time.RFC3339),
+		"authored":     "BEFORE any R1-E model output existed. R1-A0/A1/B/C/D artifacts immutable and untouched.",
+		"NO_R1E_MODEL_OUTPUT_EXISTED_WHEN_INTERVENTIONS_WERE_FROZEN": true,
+		"INTERVENTION_REUSE_OF_R1D_BASES":                            true,
+		"primary_capability":                                        "READ_ASSOCIATED_NUMBER",
+		"positive_calibration_control":                              string(perceptenvelope.FrozenOpcode),
+		"conditions":                                                perceptenvelope.R1EConditions,
+		"wrong_image_pairing_rule":                                  ds.WrongMap.Rule,
+		"scoring": map[string]string{
+			"TASK_GOLD_CORRECT": "model returned the base's own associated value Y",
+			"IMAGE_CONSISTENT":  "model returned the value Y2 actually visible in the (wrong) image, Y2 != Y",
+		},
+		"secondary_capabilities_note": "SELECT_ONE / READ_SHORT_LABEL / EXTRACT_ENTITY have no frozen suitable stimulus " +
+			"set in the R1 perceptual-envelope experiment; per protocol §9 R1-E does not manufacture one. " +
+			"The T0-B SELECT_ONE shortcut check is deferred to a dedicated stage.",
+		"inputs_hashed": map[string]string{
+			"R1D_ASSOCIATION_DATASET.json": r1dDatasetSHA,
+			"R1D_CHECKPOINT.json":          r1dCheckpointSHA,
+			"MODEL_IDENTITY.json":          miSHA,
+			"R1E_BASES.json":               basesSHA,
+			"R1E_WRONG_IMAGE_MAP.json":     wrongSHA,
+			"R1E_DATASET.json":             dsSHA,
+		},
+	}
+	addSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "R1_PROTOCOL_ADDENDUM_06.json"), addendum)
+	die(err)
+
+	matched := 0
+	for _, p := range ds.WrongMap.Pairs {
+		if p.DigitLenMatched {
+			matched++
+		}
+	}
+	manifest := map[string]any{
+		"schema":                     "tlaloc.parrot-perceptual-envelope-r1.r1e-prepare-manifest.r1",
+		"experiment_id":              perceptenvelope.ExperimentID,
+		"prepared_at":                time.Now().UTC().Format(time.RFC3339),
+		"eligible_intervention_bases": len(elig),
+		"capabilities":               len(perceptenvelope.R1ECapabilities),
+		"conditions":                 len(perceptenvelope.R1EConditions),
+		"expected_records":           len(elig) * len(perceptenvelope.R1ECapabilities) * len(perceptenvelope.R1EConditions),
+		"digit_length_matched_pairs": matched,
+		"r1e_bases_sha256":           basesSHA,
+		"r1e_wrong_image_map_sha256": wrongSHA,
+		"r1e_dataset_sha256":         dsSHA,
+		"protocol_addendum_06_sha256": addSHA,
+	}
+	mSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "manifests", "R1E_PREPARE_MANIFEST.json"), manifest)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"eligible_intervention_bases": len(elig),
+		"expected_records":            manifest["expected_records"],
+		"digit_length_matched_pairs":  matched,
+		"dataset_sha256":              dsSHA,
+		"wrong_image_map_sha256":      wrongSHA,
+		"addendum_06_sha256":          addSHA,
+		"manifest_sha256":             mSHA,
+	}))
+}
+
+func doctorR1E(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("doctor-r1e", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	fs.Parse(args)
+	rep := perceptenvelope.DoctorR1E(ctx, perceptenvelope.DoctorR1EInput{
+		ExpDir: *expDir, Endpoint: *endpoint, Model: *model, StoreDir: *storeDir,
+	})
+	_, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "R1E_DOCTOR.json"), rep)
+	die(err)
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(rep))
+	if !rep.ReadyR1E {
+		os.Exit(1)
+	}
+}
+
+func runR1E(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("run-r1e", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	temp := fs.Float64("temperature", 0, "sampling temperature")
+	maxTokens := fs.Int("max-tokens", 32, "max output tokens")
+	runID := fs.String("run-id", "r1e-r0", "run id")
+	fs.Parse(args)
+
+	doctorR1E(ctx, []string{"-exp-dir", *expDir, "-endpoint", *endpoint, "-model", *model, "-store-dir", *storeDir})
+
+	ds := loadR1EDataset(*expDir)
+	runDir := filepath.Join(*expDir, "runs", *runID)
+	cfg := perceptenvelope.RunConfig{
+		StoreDir: *storeDir, PDFPath: *pdfPath, Endpoint: *endpoint, Model: *model,
+		Temperature: *temp, MaxTokens: *maxTokens, RunDir: runDir,
+	}
+	records, err := perceptenvelope.RunR1E(ctx, cfg, ds)
+	die(err)
+	structErrs := 0
+	for _, r := range records {
+		if r.Error != "" {
+			structErrs++
+		}
+	}
+	if structErrs > 0 {
+		die(fmt.Errorf("R1-E integrity: %d records errored", structErrs))
+	}
+	finalizeR1E(*expDir, runDir, *model, ds, records)
+}
+
+func reportR1E(args []string) {
+	fs := flag.NewFlagSet("report-r1e", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	runID := fs.String("run-id", "r1e-r0", "run id")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	fs.Parse(args)
+	body, err := os.ReadFile(filepath.Join(*expDir, "results", "R1E_RECORDS.json"))
+	die(err)
+	var records []perceptenvelope.R1ERecord
+	die(json.Unmarshal(body, &records))
+	ds := loadR1EDataset(*expDir)
+	finalizeR1E(*expDir, filepath.Join(*expDir, "runs", *runID), *model, ds, records)
+}
+
+func finalizeR1E(expDir, runDir, model string, ds perceptenvelope.R1EDataset, records []perceptenvelope.R1ERecord) {
+	recSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1E_RECORDS.json"), records)
+	die(err)
+	table := perceptenvelope.AggregateR1E(records, ds)
+	tableSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1E_VISUAL_DEPENDENCE_TABLE.json"), table)
+	die(err)
+
+	rawTreeSHA, rawFiles, err := perceptenvelope.SHA256OfTree(runDir)
+	die(err)
+	dsSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "datasets", "R1E_DATASET.json"))
+	wrongSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "datasets", "R1E_WRONG_IMAGE_MAP.json"))
+	addSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "R1_PROTOCOL_ADDENDUM_06.json"))
+	commit := gitCommitShort()
+
+	report := perceptenvelope.RenderR1EReport(perceptenvelope.R1EReportInput{
+		Dataset: ds, Table: table, Model: model,
+		RecordsSHA: recSHA, TableSHA: tableSHA, DatasetSHA: dsSHA, WrongMapSHA: wrongSHA,
+		AddendumSHA: addSHA, RawTreeSHA: rawTreeSHA, TlalocCommit: commit,
+	})
+	die(os.WriteFile(filepath.Join(expDir, "results", "R1E_REPORT.md"), []byte(report), 0o644))
+
+	disp, why := perceptenvelope.R1EReadAssocDisposition(table)
+	classes := map[string]string{}
+	for _, c := range table.Capabilities {
+		classes[c.Capability] = c.Classification
+	}
+	checkpoint := map[string]any{
+		"schema":        "tlaloc.parrot-perceptual-envelope-r1.r1e-checkpoint.r1",
+		"experiment_id": perceptenvelope.ExperimentID,
+		"stage":         "R1-E",
+		"status":        "R1-E_VISUAL_DEPENDENCE_COMPLETE_FROZEN",
+		"frozen_at":     time.Now().UTC().Format(time.RFC3339),
+		"tlaloc_commit": commit,
+		"records":       len(records),
+		"raw_files":     rawFiles,
+		"INTERVENTION_REUSE_OF_R1D_BASES":                   true,
+		"NO_R1E_MODEL_OUTPUT_EXISTED_WHEN_INTERVENTIONS_WERE_FROZEN": true,
+		"classifications":            classes,
+		"read_associated_number_disposition": map[string]string{"disposition": disp, "basis": why},
+		"hashes": map[string]string{
+			"R1E_RECORDS.json":                  recSHA,
+			"R1E_VISUAL_DEPENDENCE_TABLE.json":  tableSHA,
+			"R1E_DATASET.json":                  dsSHA,
+			"R1E_WRONG_IMAGE_MAP.json":          wrongSHA,
+			"R1_PROTOCOL_ADDENDUM_06.json":      addSHA,
+			"raw_tree_sha256":                   rawTreeSHA,
+		},
+		"HARD_STOP": "Do not run R1-F or R1-G. Return the complete visual-dependence table for review.",
+	}
+	cpSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "R1E_CHECKPOINT.json"), checkpoint)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"records":           len(records),
+		"table_sha256":      tableSHA,
+		"checkpoint_sha256": cpSHA,
+		"classifications":   classes,
+		"disposition":       disp,
 	}))
 }
