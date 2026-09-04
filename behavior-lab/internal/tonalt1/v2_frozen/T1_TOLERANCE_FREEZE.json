@@ -1,0 +1,51 @@
+{
+  "schema_version": "tonal.t1.tolerance-freeze.v1",
+  "experiment_id": "TONAL_T1_HETEROGENEOUS_COMPOSITION",
+  "frozen_date": "2026-09-04",
+  "tolerance_parameter_id": "tolerance",
+  "frozen_value": 0.05,
+  "unit": "dimensionless_fraction",
+  "scope": "RECONCILIATION_CHAIN (Shape 5) only",
+  "semantic_definition": "tolerance = 0.05 is the allowed disagreement margin in fractional terms. In Shape 5, tolerance_margin = fraction - 0.05 represents the degree to which the reconciled fraction exceeds the tolerance threshold.",
+  "where_used": "TaskFamily.RECONCILIATION_CHAIN, Step: tolerance_margin = SUBTRACT(norm_fraction, ${param:tolerance})",
+  "provenance": {
+    "source": "generator_historical_default",
+    "evidence": "D4 gold values in RECONCILIATION_CHAIN consistently show terminal outputs compatible with 0.05 tolerance",
+    "confirmation_method": "reverse_calculated_from_example_golds",
+    "example_verification": [
+      {
+        "workflow": "tonal-t1-workflow-REC-49",
+        "A": 4.8,
+        "a": 1,
+        "B": 420,
+        "b": 45,
+        "sub_A": 3.8,
+        "sub_B": 375,
+        "disagreement_pct": "100 * (3.8 - 375) / 375 = -98.6133...",
+        "fraction": "-0.986133..",
+        "tolerance_margin": "-0.986133.. - 0.05 = -1.036133..",
+        "note": "Negative margin means disagreement exceeds tolerance below zero"
+      }
+    ]
+  },
+  "where_serialized": [
+    "T1_D4_GOLD_v2_FULL.json: intermediate_values[REC-*].tolerance = 0.05",
+    "T1_SCORER_RULE.json: RECONCILIATION_CHAIN.frozen_tolerance = 0.05",
+    "Arm A frozen prompt: template includes ${param:tolerance} = 0.05",
+    "Arm B DAG: tolerance node provides 0.05 to downstream SUBTRACT",
+    "Arm C DAG: deterministic tolerance_margin = fraction - 0.05"
+  ],
+  "enforcement": {
+    "pre_inference": "All offline implementations must use 0.05; parameter is NOT variable",
+    "at_runtime": "${param:tolerance} parameter passed to Tonal engine is 0.05 (never negotiable)",
+    "in_analysis": "Section-7 analysis records exact tolerance_margin values; tolerance is frozen, not inferred"
+  },
+  "amendments_from_v1": {
+    "status": "explicit_freeze",
+    "previous_state": "tolerance implicitly 0.05 in generator; not explicitly recorded in D4 gold or workflows",
+    "change": "Now explicit in all artifacts",
+    "reason": "Mandate section 8 requires serialization of all parameters before inference"
+  },
+  "sealed": false,
+  "seal_hash": "TBD_after_finalization"
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": "tonal.t1.shape-resolutions.v1",
+  "resolution_date": "2026-09-04",
+  "critical_resolutions": [
+    {
+      "shape": "READ_AND_CHECK",
+      "issue": "Ambiguous threshold handling in family definition",
+      "resolution": "Canonical Shape 1 DAG: locate_A → read_A → norm_A → check(COMPARE_NUMBERS). Terminal output is the numeric A value. Threshold parameter exists but does not modify numeric output (comparison result is internal check/validation, not terminal numeric value).",
+      "canonical_terminal_output": "A (numeric)",
+      "d4_gold_consistency": "CONSISTENT - all Shape 1 golds show A values as final_expected_value",
+      "threshold_parameter": "PRESENT (${param:threshold}) but DOES NOT affect terminal numeric output",
+      "semantic_consistent": true
+    },
+    {
+      "shape": "RATIO_OF_DIFFERENCE",
+      "issue": "Alleged 'threshold t' in Shape 4",
+      "resolution": "RESOLVED: Shape 4 contains NO threshold comparison. Final canonical DAG is: acquire(A,B,C) → diff(A-B) → norm_diff → ratio(diff/C) → norm_ratio → verify(norm_ratio). No COMPARE_NUMBERS(fraction, t) node exists in frozen family definition.",
+      "provenance": "families.go shapeRatioOfDifference() lines 188-199 show exact node sequence. No threshold t anywhere.",
+      "threshold_t_status": "DOES NOT EXIST",
+      "canonical_terminal_output": "(A - B) / C (verified)",
+      "semantic_consistent": true
+    },
+    {
+      "shape": "COMPARE_TWO_VALUES",
+      "issue": "D4 v1 gold computed A-B instead of max(A,B)",
+      "resolution": "CORRECTED: All 12 Shape 2 workflows updated from A-B to max(A, B). Approved semantics: 'Which is larger? Answer with the larger value.' Terminal output: max(A, B).",
+      "canonical_terminal_output": "max(A, B)",
+      "v1_gold_correction_applied": "APPROVED by user",
+      "v2_gold_hash": "TBD_after_repo_integration",
+      "semantic_consistent": true
+    },
+    {
+      "shape": "RECONCILIATION_CHAIN",
+      "issue": "Tolerance value not explicitly frozen",
+      "resolution": "APPROVED: Tolerance frozen at 0.05. Terminal output: tolerance_margin = fraction - 0.05. Serialized in all downstream artifacts (D4 gold, Arm prompts, DAGs, scorer).",
+      "tolerance_value": 0.05,
+      "tolerance_frozen": true,
+      "canonical_terminal_output": "tolerance_margin (fraction - 0.05)",
+      "semantic_consistent": true
+    },
+    {
+      "shape": "DIFFERENCE_THEN_VERIFY",
+      "issue": "None",
+      "resolution": "CONSISTENT: Terminal output A - B, verified. No changes needed.",
+      "canonical_terminal_output": "A - B (verified)",
+      "semantic_consistent": true
+    }
+  ],
+  "all_five_shapes_now_frozen": true,
+  "all_five_shapes_semantically_consistent": true,
+  "ready_for_executor_implementation": true
+}

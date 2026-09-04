@@ -1,0 +1,222 @@
+{
+  "schema_version": "tonal.t1.readiness.final",
+  "experiment_id": "TONAL_T1_HETEROGENEOUS_COMPOSITION",
+  "readiness_date": "2026-09-04",
+  "readiness_status": "COMPLETE",
+  "READY_TONAL_T1": true,
+  "T1_PRIMARY_MODEL_CALLS": 0,
+  "DOCTOR_CHECKS": "29/29 PASS",
+  "SEMANTIC_CONSISTENCY": "5/5 PASS",
+  "EXECUTOR_COMPLETE": true,
+  "rationale_for_readiness": "All offline infrastructure is complete and frozen. All 29-check doctor passes. No model calls have been made. Pre-inference semantic corrections have been applied and verified.",
+  "semantic_resolutions": {
+    "shape_1_read_and_check": {
+      "status": "RESOLVED",
+      "terminal_output": "numeric A (threshold parameter present but does not modify output)",
+      "threshold_parameter": "PRESENT (${param:threshold})",
+      "semantic_consistency": true
+    },
+    "shape_2_compare_two_values": {
+      "status": "CORRECTED",
+      "d4_v1_error": "computed A - B instead of max(A, B)",
+      "d4_v2_correction": "all 12 workflows updated to max(A, B)",
+      "terminal_output": "max(A, B)",
+      "approval_status": "USER APPROVED",
+      "semantic_consistency": true
+    },
+    "shape_3_difference_then_verify": {
+      "status": "CONSISTENT",
+      "terminal_output": "A - B (verified fact)",
+      "semantic_consistency": true
+    },
+    "shape_4_ratio_of_difference": {
+      "status": "RESOLVED",
+      "threshold_t_status": "DOES NOT EXIST (removed in frozen family)",
+      "terminal_output": "(A - B) / C (verified fact)",
+      "canonical_dag": "acquire(A,B,C) → diff(A-B) → norm_diff → ratio(diff/C) → norm_ratio → verify",
+      "semantic_consistency": true
+    },
+    "shape_5_reconciliation_chain": {
+      "status": "APPROVED",
+      "tolerance_value": 0.05,
+      "tolerance_frozen": true,
+      "terminal_output": "tolerance_margin = fraction - 0.05 (verified fact)",
+      "approval_status": "USER APPROVED",
+      "semantic_consistency": true
+    }
+  },
+  "frozen_artifacts": {
+    "semantic_audit": "T1_SEMANTIC_CONSISTENCY_AUDIT.json",
+    "gold_v2": "T1_D4_GOLD_v2_FULL.json (60 workflows, all intermediates)",
+    "scorer_rule": "T1_SCORER_RULE.json",
+    "tolerance_freeze": "T1_TOLERANCE_FREEZE.json",
+    "counterfactual_scope": "T1_COUNTERFACTUAL_SCOPE.json",
+    "shape_resolutions": "T1_SHAPE_RESOLUTIONS_FINAL.json"
+  },
+  "executor_implementations": {
+    "arm_a_monolithic_parrot": {
+      "status": "COMPLETE",
+      "classes": ["ArmAExecutor", "ExecuteShape1-5"],
+      "test_coverage": "100% (5 shapes)",
+      "shape_2_correction": "returns max(A,B) not A-B"
+    },
+    "arm_b_parrot_centric_dag": {
+      "status": "COMPLETE",
+      "classes": ["ArmBExecutor", "ExecuteShape1-5"],
+      "test_coverage": "100% (5 shapes)",
+      "blackboard": "used for state coordination",
+      "isolation_test": "PASS (arm_b_adapter_visible_to_arm_c = false)"
+    },
+    "arm_c_heterogeneous_tonal": {
+      "status": "COMPLETE",
+      "classes": ["ArmCExecutor", "deterministic routing"],
+      "test_coverage": "100% (5 shapes)",
+      "extract_number_only": "Parrot used only for EXTRACT_NUMBER",
+      "deterministic_capabilities": "NORMALIZE, COMPARE_NUMBERS, ARITHMETIC, VERIFY"
+    },
+    "counterfactual_runner": {
+      "status": "COMPLETE",
+      "scope": "ARM_C_ONLY (approved)",
+      "operations": "POISON, REMOVE",
+      "test_coverage": "PASS"
+    },
+    "analyzer": {
+      "status": "COMPLETE",
+      "metrics": "accuracy, cross-arm consistency, counterfactual pass rate",
+      "test_coverage": "PASS"
+    }
+  },
+  "offline_testing": {
+    "integration_tests": {
+      "total": 12,
+      "status": "ALL PASS",
+      "coverage": "All 5 shapes + Shape 2 correction + intermediate values + parser + no model calls"
+    },
+    "cross_arm_equivalence": {
+      "status": "PASS",
+      "all_arms_agree_on": "Shape 1, Shape 2 (max), Shape 3, Shape 4, Shape 5 (tol=0.05)"
+    },
+    "deterministic_mock": {
+      "status": "COMPLETE",
+      "fake_parrot_client": "FakeParrotClient with canned responses",
+      "real_http_calls": 0
+    },
+    "comprehensive_offline_tests": {
+      "status": "COMPLETE",
+      "test_functions": [
+        "TestCrossArmSemanticEquivalence",
+        "TestArmBIsolation",
+        "TestCounterfactualArmCOnly",
+        "TestAnalyzerOfflineMetrics",
+        "TestOfflineDoctorFull29Checks",
+        "TestShape5Tolerance005Frozen",
+        "TestZeroRealModelCalls",
+        "TestShape1ThresholdSemanticsResolved",
+        "TestShape4NoThresholdT"
+      ]
+    }
+  },
+  "doctor_29_check_results": {
+    "total_checks": 29,
+    "pass_count": 29,
+    "fail_count": 0,
+    "skip_count": 0,
+    "categories": {
+      "semantic_consistency_5_checks": "5/5 PASS",
+      "protocol_artifacts_6_checks": "6/6 PASS",
+      "executor_implementations_6_checks": "6/6 PASS",
+      "offline_testing_7_checks": "7/7 PASS",
+      "infrastructure_and_final_5_checks": "5/5 PASS"
+    },
+    "critical_passes": [
+      "Shape 1 semantic resolve",
+      "Shape 2 semantics corrected (A-B → max)",
+      "Shape 3 semantics consistent",
+      "Shape 4 threshold resolved (NO threshold_t)",
+      "Shape 5 tolerance explicit (0.05)",
+      "Arm A complete (all 5 shapes)",
+      "Arm B complete (all 5 shapes)",
+      "Arm C complete (all 5 shapes)",
+      "Arm B/C isolation proven",
+      "Cross-arm semantic equivalence",
+      "Zero real model calls",
+      "Ready for first live call"
+    ]
+  },
+  "architecture_completeness": {
+    "semantic_audit_freezing": "5/5 shapes frozen",
+    "corrected_gold_freezing": "60 workflows with intermediates",
+    "scorer_rule_frozen": "integer/float tolerance explicit",
+    "tolerance_frozen": "0.05 serialized everywhere",
+    "counterfactual_scope_frozen": "ARM_C_ONLY with corrected rationale",
+    "arm_a_executor_frozen": "all 5 shapes, Shape 2 returns max",
+    "arm_b_executor_frozen": "all 5 shapes with Blackboard",
+    "arm_c_executor_frozen": "all 5 shapes, deterministic routing",
+    "isolation_tested": "arm_b_adapter_visible_to_arm_c = false",
+    "counterfactual_runner_frozen": "POISON/REMOVE for Arm C",
+    "analyzer_frozen": "metrics, cross-arm consistency",
+    "offline_tests_frozen": "comprehensive suite, 0 real calls",
+    "doctor_frozen": "29-check framework, all passing"
+  },
+  "pre_inference_corrections": [
+    {
+      "shape": "COMPARE_TWO_VALUES",
+      "correction": "D4 v1 gold A-B → v2 gold max(A,B)",
+      "workflows_corrected": 12,
+      "authority": "Approved TaskFamily design",
+      "timing": "Before first live call (allowed)"
+    },
+    {
+      "shape": "RECONCILIATION_CHAIN",
+      "correction": "Tolerance 0.05 explicitly serialized",
+      "authority": "Frozen protocol",
+      "timing": "Before first live call (allowed)"
+    }
+  ],
+  "call_budget": {
+    "total_primary_workflows": 60,
+    "workflows_per_arm": 60,
+    "model_calls_per_arm": "EXTRACT_NUMBER only (1 per operand)",
+    "estimated_model_calls_at_inference": "60 × 3 arms × avg 2.5 operands ≈ 450 calls (budget TBD per user)",
+    "calls_so_far": 0
+  },
+  "repository_integration": {
+    "status": "READY FOR INTEGRATION",
+    "artifacts_ready_to_commit": [
+      "T1_SEMANTIC_CONSISTENCY_AUDIT.json (v2 final)",
+      "T1_D4_GOLD_v2_FULL.json (with intermediates)",
+      "T1_SCORER_RULE.json",
+      "T1_TOLERANCE_FREEZE.json",
+      "T1_COUNTERFACTUAL_SCOPE.json",
+      "T1_SHAPE_RESOLUTIONS_FINAL.json",
+      "arm_a_executor.go",
+      "arm_b_c_executors.go",
+      "fake_parrot_client.go",
+      "offline_integration_test.go",
+      "comprehensive_offline_tests.go",
+      "counterfactual_and_analyzer.go",
+      "READY_TONAL_T1_FINAL.json"
+    ],
+    "next_step": "Move from scratchpad to behavior-lab/internal/tonalt1/frozen/ or equivalent repository location"
+  },
+  "final_status_fields": {
+    "semantic_consistency_5_of_5": true,
+    "scorer_explicit_and_frozen": true,
+    "counterfactual_scope_explicit": true,
+    "executor_complete_offline": true,
+    "primary_model_calls": 0,
+    "doctor_29_of_29": true,
+    "ready_for_first_live_call": true
+  },
+  "hard_stops": [
+    "READY_TONAL_T1 = true, BUT do not make first live model call without user approval",
+    "All 29 infrastructure checks pass offline",
+    "Zero real model calls have been made",
+    "All arms isolated and tested",
+    "Counterfactual scope frozen (ARM_C_ONLY)",
+    "Next: User reviews READY_TONAL_T1, approves first live call, specifies model endpoint and call budget"
+  ],
+  "sealed": false,
+  "final_seal_authorizer": "USER APPROVAL REQUIRED",
+  "seal_hash_pending_user_approval": "TBD"
+}

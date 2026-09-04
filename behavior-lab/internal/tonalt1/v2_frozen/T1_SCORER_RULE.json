@@ -1,0 +1,108 @@
+{
+  "schema_version": "tonal.t1.scorer-rule.v1",
+  "experiment_id": "TONAL_T1_HETEROGENEOUS_COMPOSITION",
+  "frozen_date": "2026-09-04",
+  "canonical_scoring_rule": "Numeric Equivalence with Finite Tolerance",
+  "rule_description": "Every workflow's final_expected_value is a floating-point number. Model output must parse to a finite numeric value. Scoring then applies numeric equivalence with tolerance.",
+  "scoring_steps": [
+    {
+      "step": 1,
+      "name": "parse_output",
+      "requirement": "Model output must parse unambiguously to a single finite floating-point number",
+      "failure_mode": "PARSE_FAILURE if: not a string, multiple numbers, non-finite (inf/nan), unparseable format",
+      "consequence": "exact_correct = false, terminates scoring"
+    },
+    {
+      "step": 2,
+      "name": "check_gold_type",
+      "requirement": "Determine if final_expected_value is integer or float",
+      "test": "gold % 1 == 0 (integer) or contains decimal point (float)",
+      "consequence": "selects tolerance rule for step 3"
+    },
+    {
+      "step": 3,
+      "name": "numeric_equivalence",
+      "requirement": "Apply tolerance based on gold type",
+      "integer_rule": "exact equality: parsed_value == final_expected_value (exactly)",
+      "float_rule": "relative tolerance: math.IsClose(parsed_value, expected, rel_tol=1e-4, abs_tol=1e-6)",
+      "consequence": "exact_correct = true OR false"
+    }
+  ],
+  "numeric_tolerance": {
+    "integer_gold": {
+      "rule": "exact equality",
+      "rel_tol": 0,
+      "abs_tol": 0,
+      "description": "If gold is an integer (or integer-valued float), parsed output must equal exactly"
+    },
+    "float_gold": {
+      "rule": "relative + absolute",
+      "rel_tol": 1e-4,
+      "abs_tol": 1e-6,
+      "description": "If gold is a true float, use math.IsClose with both tolerances. Passes if abs(parsed - gold) <= max(rel_tol * abs(gold), abs_tol)",
+      "definition": "equivalent to Python: math.isclose(parsed, gold, rel_tol=1e-4, abs_tol=1e-6)"
+    }
+  },
+  "failure_taxonomy": {
+    "parse_failure": "model output not parseable as finite number",
+    "exact_wrong": "parsed number does not match gold (outside tolerance)",
+    "contract_failure": "workflow protocol violated (e.g., non-VERIFY node emits Fact; unexpected node count)",
+    "verification": "VERIFY node promoted fact but status != VERIFIED (e.g., UNSUPPORTED)"
+  },
+  "scoring_contract_per_shape": {
+    "READ_AND_CHECK": {
+      "terminal_output_kind": "evaluable_terminal_output",
+      "has_verify": false,
+      "fact_required": false,
+      "scoring_input": "RunRecord.FinalValue (from last node observation)",
+      "exact_correct_rule": "numeric_equivalence applied to FinalValue",
+      "notes": "No Fact promotion; VERIFY node should not appear"
+    },
+    "COMPARE_TWO_VALUES": {
+      "terminal_output_kind": "evaluable_terminal_output",
+      "has_verify": false,
+      "fact_required": false,
+      "scoring_input": "RunRecord.FinalValue (from last node observation)",
+      "exact_correct_rule": "numeric_equivalence applied to FinalValue; expected = max(A, B)",
+      "notes": "Corrected from A-B (v1 D4 gold) to max(A, B) (v2 corrected gold)"
+    },
+    "DIFFERENCE_THEN_VERIFY": {
+      "terminal_output_kind": "promoted_fact",
+      "has_verify": true,
+      "fact_required": true,
+      "scoring_input": "VERIFY node's Fact, field: numeric_value",
+      "fact_status_handling": "Status must be VERIFIED; UNSUPPORTED counts as contract_failure",
+      "exact_correct_rule": "numeric_equivalence applied to Fact.numeric_value; expected = A - B",
+      "notes": "VERIFY is single-target; must read normalized difference"
+    },
+    "RATIO_OF_DIFFERENCE": {
+      "terminal_output_kind": "promoted_fact",
+      "has_verify": true,
+      "fact_required": true,
+      "scoring_input": "VERIFY node's Fact, field: numeric_value",
+      "fact_status_handling": "Status must be VERIFIED; UNSUPPORTED counts as contract_failure",
+      "exact_correct_rule": "numeric_equivalence applied to Fact.numeric_value; expected = (A - B) / C",
+      "notes": "VERIFY is single-target; must read normalized ratio. Note: C is denominator, div-by-zero handled by ARITHMETIC Tlaloque"
+    },
+    "RECONCILIATION_CHAIN": {
+      "terminal_output_kind": "promoted_fact",
+      "has_verify": true,
+      "fact_required": true,
+      "scoring_input": "VERIFY node's Fact, field: numeric_value",
+      "fact_status_handling": "Status must be VERIFIED; UNSUPPORTED counts as contract_failure",
+      "exact_correct_rule": "numeric_equivalence applied to Fact.numeric_value; expected = fraction - tolerance",
+      "frozen_tolerance": 0.05,
+      "tolerance_source": "TaskFamily parameter ${param:tolerance}; frozen at 0.05",
+      "terminal_numeric_definition": "tolerance_margin = (disagreement_percent / 100) - 0.05, where disagreement_percent = 100 * (sub_A - sub_B) / sub_B",
+      "notes": "VERIFY single-target on norm_margin; cmp_zero verdict lives on Blackboard but not promoted"
+    }
+  },
+  "implementation_notes": {
+    "parse_step": "Use strconv.ParseFloat in Go; handle NaN/Inf explicitly as parse failures",
+    "tolerance_application": "Use math.Abs and math.Max as specified; never round or truncate gold",
+    "fact_handling": "All VERIFY facts must have Status == VERIFIED; no abstention allowed in primary scoring",
+    "error_recording": "Every non-exact_correct output is recorded with failure class; used in section-7 analysis"
+  },
+  "frozen_hash": "TBD_after_seal",
+  "sealed": false
+}

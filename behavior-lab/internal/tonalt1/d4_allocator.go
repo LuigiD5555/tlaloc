@@ -49,55 +49,55 @@ var D4CriticalPathDepth = map[D4WorkflowShape]int{
 // D4Operand represents one allocated operand in a workflow.
 type D4Operand struct {
 	CandidateID     string  `json:"candidate_id"`
-	Role            string  `json:"role"`                 // A, B, C, etc.
+	Role            string  `json:"role"` // A, B, C, etc.
 	NumericValue    float64 `json:"numeric_value"`
 	MorphologyFam   string  `json:"morphology_family"`
 	Page            int     `json:"page"`
 	RegionID        string  `json:"region_id,omitempty"`
-	OperandHash     string  `json:"operand_hash"`         // sha256 of candidate_id
+	OperandHash     string  `json:"operand_hash"` // sha256 of candidate_id
 	EligibleAsDenom bool    `json:"eligible_as_denominator"`
 }
 
 // D4Workflow represents one complete task instance in the primary benchmark.
 type D4Workflow struct {
-	WorkflowID       string       `json:"workflow_id"`
-	Shape            D4WorkflowShape `json:"shape"`
-	NaturalDepth     int          `json:"natural_depth"`
-	CriticalPathDepth int         `json:"critical_path_depth"`
-	Operands         []D4Operand  `json:"operands"`
-	DistinctPages    []int        `json:"distinct_pages"`
-	WorkflowHash     string       `json:"workflow_hash"`
+	WorkflowID        string          `json:"workflow_id"`
+	Shape             D4WorkflowShape `json:"shape"`
+	NaturalDepth      int             `json:"natural_depth"`
+	CriticalPathDepth int             `json:"critical_path_depth"`
+	Operands          []D4Operand     `json:"operands"`
+	DistinctPages     []int           `json:"distinct_pages"`
+	WorkflowHash      string          `json:"workflow_hash"`
 }
 
 // D4Allocation is the frozen result of deterministic allocation.
 type D4Allocation struct {
-	SchemaVersion       string         `json:"schema_version"`
-	ExperimentID        string         `json:"experiment_id"`
-	AllocationMethod    string         `json:"allocation_method"`
-	Seed                string         `json:"seed"`
-	PrimaryUniverseHash string         `json:"primary_universe_hash"`
-	WorkflowCount       int            `json:"workflow_count"`
-	UniqueOperandCount  int            `json:"unique_operand_count"`
-	Workflows           []D4Workflow   `json:"workflows"`
-	AllocationHash      string         `json:"allocation_hash"`
-	AllocationRunCount  int            `json:"allocation_rerun_count"`
-	AllocationConsistent bool          `json:"allocation_rerun_consistent"`
+	SchemaVersion        string       `json:"schema_version"`
+	ExperimentID         string       `json:"experiment_id"`
+	AllocationMethod     string       `json:"allocation_method"`
+	Seed                 string       `json:"seed"`
+	PrimaryUniverseHash  string       `json:"primary_universe_hash"`
+	WorkflowCount        int          `json:"workflow_count"`
+	UniqueOperandCount   int          `json:"unique_operand_count"`
+	Workflows            []D4Workflow `json:"workflows"`
+	AllocationHash       string       `json:"allocation_hash"`
+	AllocationRunCount   int          `json:"allocation_rerun_count"`
+	AllocationConsistent bool         `json:"allocation_rerun_consistent"`
 }
 
 // D4AllocatorConfig configures the deterministic allocator.
 type D4AllocatorConfig struct {
-	Seed               string
+	Seed                string
 	PrimaryUniverseJSON []byte
-	ExperimentID       string
+	ExperimentID        string
 }
 
 // D4Allocator handles deterministic workflow allocation.
 type D4Allocator struct {
-	config    D4AllocatorConfig
+	config     D4AllocatorConfig
 	candidates map[string]*Candidate
-	eligible  []*Candidate
-	allocated map[string]bool // candidate_id -> true if allocated
-	perPage   map[int][]*Candidate // page -> candidates for page-distribution tracking
+	eligible   []*Candidate
+	allocated  map[string]bool      // candidate_id -> true if allocated
+	perPage    map[int][]*Candidate // page -> candidates for page-distribution tracking
 }
 
 // NewD4Allocator creates a new allocator from frozen primary universe.
@@ -111,10 +111,10 @@ func NewD4Allocator(cfg D4AllocatorConfig) (*D4Allocator, error) {
 	}
 
 	alloc := &D4Allocator{
-		config:      cfg,
-		candidates:  make(map[string]*Candidate),
-		allocated:   make(map[string]bool),
-		perPage:     make(map[int][]*Candidate),
+		config:     cfg,
+		candidates: make(map[string]*Candidate),
+		allocated:  make(map[string]bool),
+		perPage:    make(map[int][]*Candidate),
 	}
 
 	// Index and filter candidates
@@ -170,15 +170,15 @@ func (a *D4Allocator) Allocate() (*D4Allocation, error) {
 	allocHash := hex.EncodeToString(allocHasher[:])
 
 	return &D4Allocation{
-		SchemaVersion:       "tonal.t1.d4.allocation.r1",
-		ExperimentID:        a.config.ExperimentID,
-		AllocationMethod:    "deterministic-greedy",
-		Seed:                a.config.Seed,
-		WorkflowCount:       60,
-		UniqueOperandCount:  len(uniqueOperands),
-		Workflows:           workflows,
-		AllocationHash:      allocHash,
-		AllocationRunCount:  1,
+		SchemaVersion:        "tonal.t1.d4.allocation.r1",
+		ExperimentID:         a.config.ExperimentID,
+		AllocationMethod:     "deterministic-greedy",
+		Seed:                 a.config.Seed,
+		WorkflowCount:        60,
+		UniqueOperandCount:   len(uniqueOperands),
+		Workflows:            workflows,
+		AllocationHash:       allocHash,
+		AllocationRunCount:   1,
 		AllocationConsistent: true,
 	}, nil
 }
@@ -209,6 +209,7 @@ func (a *D4Allocator) allocateWorkflow(shape D4WorkflowShape, operandCount int, 
 		constraintPages = 4
 		constraintDistinct = true // required
 	}
+	_ = constraintPages // unused but kept for reference
 
 	// Allocate operands
 	for role_idx := 0; role_idx < operandCount; role_idx++ {

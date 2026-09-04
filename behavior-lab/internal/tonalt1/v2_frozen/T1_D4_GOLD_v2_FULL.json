@@ -1,0 +1,1154 @@
+[
+  {
+    "workflow_id": "tonal-t1-workflow-REA-01",
+    "shape": "READ_AND_CHECK",
+    "operand_values": {
+      "A": 95
+    },
+    "intermediate_values": {
+      "norm_A": 95
+    },
+    "final_expected_value": 95,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REA-02",
+    "shape": "READ_AND_CHECK",
+    "operand_values": {
+      "A": 0.01
+    },
+    "intermediate_values": {
+      "norm_A": 0.01
+    },
+    "final_expected_value": 0.01,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REA-03",
+    "shape": "READ_AND_CHECK",
+    "operand_values": {
+      "A": 0.85
+    },
+    "intermediate_values": {
+      "norm_A": 0.85
+    },
+    "final_expected_value": 0.85,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REA-04",
+    "shape": "READ_AND_CHECK",
+    "operand_values": {
+      "A": 15
+    },
+    "intermediate_values": {
+      "norm_A": 15
+    },
+    "final_expected_value": 15,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REA-05",
+    "shape": "READ_AND_CHECK",
+    "operand_values": {
+      "A": 0.75
+    },
+    "intermediate_values": {
+      "norm_A": 0.75
+    },
+    "final_expected_value": 0.75,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REA-06",
+    "shape": "READ_AND_CHECK",
+    "operand_values": {
+      "A": 482
+    },
+    "intermediate_values": {
+      "norm_A": 482
+    },
+    "final_expected_value": 482,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REA-07",
+    "shape": "READ_AND_CHECK",
+    "operand_values": {
+      "A": 100
+    },
+    "intermediate_values": {
+      "norm_A": 100
+    },
+    "final_expected_value": 100,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REA-08",
+    "shape": "READ_AND_CHECK",
+    "operand_values": {
+      "A": 16
+    },
+    "intermediate_values": {
+      "norm_A": 16
+    },
+    "final_expected_value": 16,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REA-09",
+    "shape": "READ_AND_CHECK",
+    "operand_values": {
+      "A": 300
+    },
+    "intermediate_values": {
+      "norm_A": 300
+    },
+    "final_expected_value": 300,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REA-10",
+    "shape": "READ_AND_CHECK",
+    "operand_values": {
+      "A": 0.9
+    },
+    "intermediate_values": {
+      "norm_A": 0.9
+    },
+    "final_expected_value": 0.9,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REA-11",
+    "shape": "READ_AND_CHECK",
+    "operand_values": {
+      "A": 24
+    },
+    "intermediate_values": {
+      "norm_A": 24
+    },
+    "final_expected_value": 24,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REA-12",
+    "shape": "READ_AND_CHECK",
+    "operand_values": {
+      "A": 350
+    },
+    "intermediate_values": {
+      "norm_A": 350
+    },
+    "final_expected_value": 350,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-COM-13",
+    "shape": "COMPARE_TWO_VALUES",
+    "operand_values": {
+      "A": 60,
+      "B": 420
+    },
+    "intermediate_values": {
+      "norm_A": 60,
+      "norm_B": 420,
+      "comparison_verdict": "LESS"
+    },
+    "final_expected_value": 420,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-COM-14",
+    "shape": "COMPARE_TWO_VALUES",
+    "operand_values": {
+      "A": 420,
+      "B": 300
+    },
+    "intermediate_values": {
+      "norm_A": 420,
+      "norm_B": 300,
+      "comparison_verdict": "GREATER"
+    },
+    "final_expected_value": 420,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-COM-15",
+    "shape": "COMPARE_TWO_VALUES",
+    "operand_values": {
+      "A": 420,
+      "B": 21.1
+    },
+    "intermediate_values": {
+      "norm_A": 420,
+      "norm_B": 21.1,
+      "comparison_verdict": "GREATER"
+    },
+    "final_expected_value": 420,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-COM-16",
+    "shape": "COMPARE_TWO_VALUES",
+    "operand_values": {
+      "A": 0.0012,
+      "B": 600
+    },
+    "intermediate_values": {
+      "norm_A": 0.0012,
+      "norm_B": 600,
+      "comparison_verdict": "LESS"
+    },
+    "final_expected_value": 600,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-COM-17",
+    "shape": "COMPARE_TWO_VALUES",
+    "operand_values": {
+      "A": 0.08,
+      "B": 1.25
+    },
+    "intermediate_values": {
+      "norm_A": 0.08,
+      "norm_B": 1.25,
+      "comparison_verdict": "LESS"
+    },
+    "final_expected_value": 1.25,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-COM-18",
+    "shape": "COMPARE_TWO_VALUES",
+    "operand_values": {
+      "A": 16,
+      "B": 3.6
+    },
+    "intermediate_values": {
+      "norm_A": 16,
+      "norm_B": 3.6,
+      "comparison_verdict": "GREATER"
+    },
+    "final_expected_value": 16,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-COM-19",
+    "shape": "COMPARE_TWO_VALUES",
+    "operand_values": {
+      "A": 40,
+      "B": 50
+    },
+    "intermediate_values": {
+      "norm_A": 40,
+      "norm_B": 50,
+      "comparison_verdict": "LESS"
+    },
+    "final_expected_value": 50,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-COM-20",
+    "shape": "COMPARE_TWO_VALUES",
+    "operand_values": {
+      "A": 150,
+      "B": 420
+    },
+    "intermediate_values": {
+      "norm_A": 150,
+      "norm_B": 420,
+      "comparison_verdict": "LESS"
+    },
+    "final_expected_value": 420,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-COM-21",
+    "shape": "COMPARE_TWO_VALUES",
+    "operand_values": {
+      "A": 35,
+      "B": 4.5
+    },
+    "intermediate_values": {
+      "norm_A": 35,
+      "norm_B": 4.5,
+      "comparison_verdict": "GREATER"
+    },
+    "final_expected_value": 35,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-COM-22",
+    "shape": "COMPARE_TWO_VALUES",
+    "operand_values": {
+      "A": 300,
+      "B": 125
+    },
+    "intermediate_values": {
+      "norm_A": 300,
+      "norm_B": 125,
+      "comparison_verdict": "GREATER"
+    },
+    "final_expected_value": 300,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-COM-23",
+    "shape": "COMPARE_TWO_VALUES",
+    "operand_values": {
+      "A": 18,
+      "B": 0.4
+    },
+    "intermediate_values": {
+      "norm_A": 18,
+      "norm_B": 0.4,
+      "comparison_verdict": "GREATER"
+    },
+    "final_expected_value": 18,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-COM-24",
+    "shape": "COMPARE_TWO_VALUES",
+    "operand_values": {
+      "A": 420,
+      "B": 560
+    },
+    "intermediate_values": {
+      "norm_A": 420,
+      "norm_B": 560,
+      "comparison_verdict": "LESS"
+    },
+    "final_expected_value": 560,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-DIF-25",
+    "shape": "DIFFERENCE_THEN_VERIFY",
+    "operand_values": {
+      "A": 989,
+      "B": 50
+    },
+    "intermediate_values": {
+      "norm_A": 989,
+      "norm_B": 50,
+      "diff_result": 939,
+      "norm_diff": 939
+    },
+    "final_expected_value": 939,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-DIF-26",
+    "shape": "DIFFERENCE_THEN_VERIFY",
+    "operand_values": {
+      "A": 105,
+      "B": 2.5
+    },
+    "intermediate_values": {
+      "norm_A": 105,
+      "norm_B": 2.5,
+      "diff_result": 102.5,
+      "norm_diff": 102.5
+    },
+    "final_expected_value": 102.5,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-DIF-27",
+    "shape": "DIFFERENCE_THEN_VERIFY",
+    "operand_values": {
+      "A": 9094,
+      "B": 0.75
+    },
+    "intermediate_values": {
+      "norm_A": 9094,
+      "norm_B": 0.75,
+      "diff_result": 9093.25,
+      "norm_diff": 9093.25
+    },
+    "final_expected_value": 9093.25,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-DIF-28",
+    "shape": "DIFFERENCE_THEN_VERIFY",
+    "operand_values": {
+      "A": 100,
+      "B": 150
+    },
+    "intermediate_values": {
+      "norm_A": 100,
+      "norm_B": 150,
+      "diff_result": -50,
+      "norm_diff": -50
+    },
+    "final_expected_value": -50,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-DIF-29",
+    "shape": "DIFFERENCE_THEN_VERIFY",
+    "operand_values": {
+      "A": 50,
+      "B": 70
+    },
+    "intermediate_values": {
+      "norm_A": 50,
+      "norm_B": 70,
+      "diff_result": -20,
+      "norm_diff": -20
+    },
+    "final_expected_value": -20,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-DIF-30",
+    "shape": "DIFFERENCE_THEN_VERIFY",
+    "operand_values": {
+      "A": 50,
+      "B": 28
+    },
+    "intermediate_values": {
+      "norm_A": 50,
+      "norm_B": 28,
+      "diff_result": 22,
+      "norm_diff": 22
+    },
+    "final_expected_value": 22,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-DIF-31",
+    "shape": "DIFFERENCE_THEN_VERIFY",
+    "operand_values": {
+      "A": 16,
+      "B": 420
+    },
+    "intermediate_values": {
+      "norm_A": 16,
+      "norm_B": 420,
+      "diff_result": -404,
+      "norm_diff": -404
+    },
+    "final_expected_value": -404,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-DIF-32",
+    "shape": "DIFFERENCE_THEN_VERIFY",
+    "operand_values": {
+      "A": 1.5,
+      "B": 3665
+    },
+    "intermediate_values": {
+      "norm_A": 1.5,
+      "norm_B": 3665,
+      "diff_result": -3663.5,
+      "norm_diff": -3663.5
+    },
+    "final_expected_value": -3663.5,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-DIF-33",
+    "shape": "DIFFERENCE_THEN_VERIFY",
+    "operand_values": {
+      "A": 1.5,
+      "B": 1.5
+    },
+    "intermediate_values": {
+      "norm_A": 1.5,
+      "norm_B": 1.5,
+      "diff_result": 0.0,
+      "norm_diff": 0.0
+    },
+    "final_expected_value": 0.0,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-DIF-34",
+    "shape": "DIFFERENCE_THEN_VERIFY",
+    "operand_values": {
+      "A": 70,
+      "B": 200
+    },
+    "intermediate_values": {
+      "norm_A": 70,
+      "norm_B": 200,
+      "diff_result": -130,
+      "norm_diff": -130
+    },
+    "final_expected_value": -130,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-DIF-35",
+    "shape": "DIFFERENCE_THEN_VERIFY",
+    "operand_values": {
+      "A": 0.45,
+      "B": 100
+    },
+    "intermediate_values": {
+      "norm_A": 0.45,
+      "norm_B": 100,
+      "diff_result": -99.55,
+      "norm_diff": -99.55
+    },
+    "final_expected_value": -99.55,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-DIF-36",
+    "shape": "DIFFERENCE_THEN_VERIFY",
+    "operand_values": {
+      "A": 0.0025,
+      "B": 37.5
+    },
+    "intermediate_values": {
+      "norm_A": 0.0025,
+      "norm_B": 37.5,
+      "diff_result": -37.4975,
+      "norm_diff": -37.4975
+    },
+    "final_expected_value": -37.4975,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-RAT-37",
+    "shape": "RATIO_OF_DIFFERENCE",
+    "operand_values": {
+      "A": 0.5,
+      "B": 420,
+      "C": 0.85
+    },
+    "intermediate_values": {
+      "norm_A": 0.5,
+      "norm_B": 420,
+      "norm_C": 0.85,
+      "diff_result": -419.5,
+      "norm_diff": -419.5,
+      "ratio_result": -493.5294117647059,
+      "norm_ratio": -493.5294117647059
+    },
+    "final_expected_value": -493.5294117647059,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-RAT-38",
+    "shape": "RATIO_OF_DIFFERENCE",
+    "operand_values": {
+      "A": 1.2,
+      "B": 50,
+      "C": 420
+    },
+    "intermediate_values": {
+      "norm_A": 1.2,
+      "norm_B": 50,
+      "norm_C": 420,
+      "diff_result": -48.8,
+      "norm_diff": -48.8,
+      "ratio_result": -0.11619047619047618,
+      "norm_ratio": -0.11619047619047618
+    },
+    "final_expected_value": -0.11619047619047618,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-RAT-39",
+    "shape": "RATIO_OF_DIFFERENCE",
+    "operand_values": {
+      "A": 600,
+      "B": 12.2,
+      "C": 420
+    },
+    "intermediate_values": {
+      "norm_A": 600,
+      "norm_B": 12.2,
+      "norm_C": 420,
+      "diff_result": 587.8,
+      "norm_diff": 587.8,
+      "ratio_result": 1.3995238095238094,
+      "norm_ratio": 1.3995238095238094
+    },
+    "final_expected_value": 1.3995238095238094,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-RAT-40",
+    "shape": "RATIO_OF_DIFFERENCE",
+    "operand_values": {
+      "A": 450,
+      "B": 100,
+      "C": 300
+    },
+    "intermediate_values": {
+      "norm_A": 450,
+      "norm_B": 100,
+      "norm_C": 300,
+      "diff_result": 350,
+      "norm_diff": 350,
+      "ratio_result": 1.1666666666666667,
+      "norm_ratio": 1.1666666666666667
+    },
+    "final_expected_value": 1.1666666666666667,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-RAT-41",
+    "shape": "RATIO_OF_DIFFERENCE",
+    "operand_values": {
+      "A": 30,
+      "B": 300,
+      "C": 60
+    },
+    "intermediate_values": {
+      "norm_A": 30,
+      "norm_B": 300,
+      "norm_C": 60,
+      "diff_result": -270,
+      "norm_diff": -270,
+      "ratio_result": -4.5,
+      "norm_ratio": -4.5
+    },
+    "final_expected_value": -4.5,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-RAT-42",
+    "shape": "RATIO_OF_DIFFERENCE",
+    "operand_values": {
+      "A": 24,
+      "B": 420,
+      "C": 40
+    },
+    "intermediate_values": {
+      "norm_A": 24,
+      "norm_B": 420,
+      "norm_C": 40,
+      "diff_result": -396,
+      "norm_diff": -396,
+      "ratio_result": -9.9,
+      "norm_ratio": -9.9
+    },
+    "final_expected_value": -9.9,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-RAT-43",
+    "shape": "RATIO_OF_DIFFERENCE",
+    "operand_values": {
+      "A": 6.4,
+      "B": 1.3,
+      "C": 33
+    },
+    "intermediate_values": {
+      "norm_A": 6.4,
+      "norm_B": 1.3,
+      "norm_C": 33,
+      "diff_result": 5.1000000000000005,
+      "norm_diff": 5.1000000000000005,
+      "ratio_result": 0.15454545454545457,
+      "norm_ratio": 0.15454545454545457
+    },
+    "final_expected_value": 0.15454545454545457,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-RAT-44",
+    "shape": "RATIO_OF_DIFFERENCE",
+    "operand_values": {
+      "A": 150,
+      "B": 200,
+      "C": 20
+    },
+    "intermediate_values": {
+      "norm_A": 150,
+      "norm_B": 200,
+      "norm_C": 20,
+      "diff_result": -50,
+      "norm_diff": -50,
+      "ratio_result": -2.5,
+      "norm_ratio": -2.5
+    },
+    "final_expected_value": -2.5,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-RAT-45",
+    "shape": "RATIO_OF_DIFFERENCE",
+    "operand_values": {
+      "A": 300,
+      "B": 1.5,
+      "C": 16
+    },
+    "intermediate_values": {
+      "norm_A": 300,
+      "norm_B": 1.5,
+      "norm_C": 16,
+      "diff_result": 298.5,
+      "norm_diff": 298.5,
+      "ratio_result": 18.65625,
+      "norm_ratio": 18.65625
+    },
+    "final_expected_value": 18.65625,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-RAT-46",
+    "shape": "RATIO_OF_DIFFERENCE",
+    "operand_values": {
+      "A": 9.2,
+      "B": 55,
+      "C": 50
+    },
+    "intermediate_values": {
+      "norm_A": 9.2,
+      "norm_B": 55,
+      "norm_C": 50,
+      "diff_result": -45.8,
+      "norm_diff": -45.8,
+      "ratio_result": -0.9159999999999999,
+      "norm_ratio": -0.9159999999999999
+    },
+    "final_expected_value": -0.9159999999999999,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-RAT-47",
+    "shape": "RATIO_OF_DIFFERENCE",
+    "operand_values": {
+      "A": 25,
+      "B": 10.13,
+      "C": 525
+    },
+    "intermediate_values": {
+      "norm_A": 25,
+      "norm_B": 10.13,
+      "norm_C": 525,
+      "diff_result": 14.87,
+      "norm_diff": 14.87,
+      "ratio_result": 0.028323809523809522,
+      "norm_ratio": 0.028323809523809522
+    },
+    "final_expected_value": 0.028323809523809522,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-RAT-48",
+    "shape": "RATIO_OF_DIFFERENCE",
+    "operand_values": {
+      "A": 300,
+      "B": 40,
+      "C": 300
+    },
+    "intermediate_values": {
+      "norm_A": 300,
+      "norm_B": 40,
+      "norm_C": 300,
+      "diff_result": 260,
+      "norm_diff": 260,
+      "ratio_result": 0.8666666666666667,
+      "norm_ratio": 0.8666666666666667
+    },
+    "final_expected_value": 0.8666666666666667,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REC-49",
+    "shape": "RECONCILIATION_CHAIN",
+    "operand_values": {
+      "A": 4.8,
+      "a": 1,
+      "B": 420,
+      "b": 45
+    },
+    "intermediate_values": {
+      "norm_A": 4.8,
+      "norm_a": 1,
+      "norm_B": 420,
+      "norm_b": 45,
+      "sub_A": 3.8,
+      "sub_B": 375,
+      "disagreement_pct": -98.98666666666666,
+      "norm_pct": -98.98666666666666,
+      "fraction_result": -0.9898666666666667,
+      "norm_fraction": -0.9898666666666667,
+      "tolerance": 0.05,
+      "tolerance_margin": -1.0398666666666667,
+      "norm_margin": -1.0398666666666667,
+      "cmp_zero": "LESS"
+    },
+    "final_expected_value": 1.9098732840549102,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REC-50",
+    "shape": "RECONCILIATION_CHAIN",
+    "operand_values": {
+      "A": 12.2,
+      "a": 0.0012,
+      "B": 10,
+      "b": 15
+    },
+    "intermediate_values": {
+      "norm_A": 12.2,
+      "norm_a": 0.0012,
+      "norm_B": 10,
+      "norm_b": 15,
+      "sub_A": 12.198799999999999,
+      "sub_B": -5,
+      "disagreement_pct": -343.976,
+      "norm_pct": -343.976,
+      "fraction_result": -3.43976,
+      "norm_fraction": -3.43976,
+      "tolerance": 0.05,
+      "tolerance_margin": -3.48976,
+      "norm_margin": -3.48976,
+      "cmp_zero": "LESS"
+    },
+    "final_expected_value": 1.95,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REC-51",
+    "shape": "RECONCILIATION_CHAIN",
+    "operand_values": {
+      "A": 420,
+      "a": 1120,
+      "B": 8.5,
+      "b": 0.9
+    },
+    "intermediate_values": {
+      "norm_A": 420,
+      "norm_a": 1120,
+      "norm_B": 8.5,
+      "norm_b": 0.9,
+      "sub_A": -700,
+      "sub_B": 7.6,
+      "disagreement_pct": -9310.526315789473,
+      "norm_pct": -9310.526315789473,
+      "fraction_result": -93.10526315789474,
+      "norm_fraction": -93.10526315789474,
+      "tolerance": 0.05,
+      "tolerance_margin": -93.15526315789474,
+      "norm_margin": -93.15526315789474,
+      "cmp_zero": "LESS"
+    },
+    "final_expected_value": 1.95,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REC-52",
+    "shape": "RECONCILIATION_CHAIN",
+    "operand_values": {
+      "A": 150,
+      "a": 0.4,
+      "B": 1.43,
+      "b": 0.6
+    },
+    "intermediate_values": {
+      "norm_A": 150,
+      "norm_a": 0.4,
+      "norm_B": 1.43,
+      "norm_b": 0.6,
+      "sub_A": 149.6,
+      "sub_B": 0.83,
+      "disagreement_pct": 17924.09638554217,
+      "norm_pct": 17924.09638554217,
+      "fraction_result": 179.24096385542168,
+      "norm_fraction": 179.24096385542168,
+      "tolerance": 0.05,
+      "tolerance_margin": 179.19096385542167,
+      "norm_margin": 179.19096385542167,
+      "cmp_zero": "GREATER"
+    },
+    "final_expected_value": 1.927929934188659,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REC-53",
+    "shape": "RECONCILIATION_CHAIN",
+    "operand_values": {
+      "A": 0.35,
+      "a": 8.3,
+      "B": 20,
+      "b": 60
+    },
+    "intermediate_values": {
+      "norm_A": 0.35,
+      "norm_a": 8.3,
+      "norm_B": 20,
+      "norm_b": 60,
+      "sub_A": -7.950000000000001,
+      "sub_B": -40,
+      "disagreement_pct": -80.12499999999999,
+      "norm_pct": -80.12499999999999,
+      "fraction_result": -0.8012499999999999,
+      "norm_fraction": -0.8012499999999999,
+      "tolerance": 0.05,
+      "tolerance_margin": -0.85125,
+      "norm_margin": -0.85125,
+      "cmp_zero": "LESS"
+    },
+    "final_expected_value": 1.2868091762252343,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REC-54",
+    "shape": "RECONCILIATION_CHAIN",
+    "operand_values": {
+      "A": 420,
+      "a": 12.5,
+      "B": 10.6,
+      "b": 14.3
+    },
+    "intermediate_values": {
+      "norm_A": 420,
+      "norm_a": 12.5,
+      "norm_B": 10.6,
+      "norm_b": 14.3,
+      "sub_A": 407.5,
+      "sub_B": -3.700000000000001,
+      "disagreement_pct": -11113.51351351351,
+      "norm_pct": -11113.51351351351,
+      "fraction_result": -111.1351351351351,
+      "norm_fraction": -111.1351351351351,
+      "tolerance": 0.05,
+      "tolerance_margin": -111.1851351351351,
+      "norm_margin": -111.1851351351351,
+      "cmp_zero": "LESS"
+    },
+    "final_expected_value": 1.95,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REC-55",
+    "shape": "RECONCILIATION_CHAIN",
+    "operand_values": {
+      "A": 300,
+      "a": 600,
+      "B": 420,
+      "b": 550
+    },
+    "intermediate_values": {
+      "norm_A": 300,
+      "norm_a": 600,
+      "norm_B": 420,
+      "norm_b": 550,
+      "sub_A": -300,
+      "sub_B": -130,
+      "disagreement_pct": 130.76923076923077,
+      "norm_pct": 130.76923076923077,
+      "fraction_result": 1.3076923076923077,
+      "norm_fraction": 1.3076923076923077,
+      "tolerance": 0.05,
+      "tolerance_margin": 1.2576923076923077,
+      "norm_margin": 1.2576923076923077,
+      "cmp_zero": "GREATER"
+    },
+    "final_expected_value": 0.7406976744186046,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REC-56",
+    "shape": "RECONCILIATION_CHAIN",
+    "operand_values": {
+      "A": 450,
+      "a": 0.6,
+      "B": 1.5,
+      "b": 100
+    },
+    "intermediate_values": {
+      "norm_A": 450,
+      "norm_a": 0.6,
+      "norm_B": 1.5,
+      "norm_b": 100,
+      "sub_A": 449.4,
+      "sub_B": -98.5,
+      "disagreement_pct": -556.243654822335,
+      "norm_pct": -556.243654822335,
+      "fraction_result": -5.562436548223349,
+      "norm_fraction": -5.562436548223349,
+      "tolerance": 0.05,
+      "tolerance_margin": -5.612436548223349,
+      "norm_margin": -5.612436548223349,
+      "cmp_zero": "LESS"
+    },
+    "final_expected_value": 1.95,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REC-57",
+    "shape": "RECONCILIATION_CHAIN",
+    "operand_values": {
+      "A": 1.5,
+      "a": 600,
+      "B": 28,
+      "b": 420
+    },
+    "intermediate_values": {
+      "norm_A": 1.5,
+      "norm_a": 600,
+      "norm_B": 28,
+      "norm_b": 420,
+      "sub_A": -598.5,
+      "sub_B": -392,
+      "disagreement_pct": 52.67857142857143,
+      "norm_pct": 52.67857142857143,
+      "fraction_result": 0.5267857142857143,
+      "norm_fraction": 0.5267857142857143,
+      "tolerance": 0.05,
+      "tolerance_margin": 0.4767857142857143,
+      "norm_margin": 0.4767857142857143,
+      "cmp_zero": "GREATER"
+    },
+    "final_expected_value": 0.36696113074204956,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REC-58",
+    "shape": "RECONCILIATION_CHAIN",
+    "operand_values": {
+      "A": 2.5,
+      "a": 420,
+      "B": 18.9,
+      "b": 0.9
+    },
+    "intermediate_values": {
+      "norm_A": 2.5,
+      "norm_a": 420,
+      "norm_B": 18.9,
+      "norm_b": 0.9,
+      "sub_A": -417.5,
+      "sub_B": 18.0,
+      "disagreement_pct": -2419.4444444444443,
+      "norm_pct": -2419.4444444444443,
+      "fraction_result": -24.194444444444443,
+      "norm_fraction": -24.194444444444443,
+      "tolerance": 0.05,
+      "tolerance_margin": -24.244444444444444,
+      "norm_margin": -24.244444444444444,
+      "cmp_zero": "LESS"
+    },
+    "final_expected_value": 1.95,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REC-59",
+    "shape": "RECONCILIATION_CHAIN",
+    "operand_values": {
+      "A": 16,
+      "a": 3.6,
+      "B": 400,
+      "b": 45
+    },
+    "intermediate_values": {
+      "norm_A": 16,
+      "norm_a": 3.6,
+      "norm_B": 400,
+      "norm_b": 45,
+      "sub_A": 12.4,
+      "sub_B": 355,
+      "disagreement_pct": -96.50704225352112,
+      "norm_pct": -96.50704225352112,
+      "fraction_result": -0.9650704225352112,
+      "norm_fraction": -0.9650704225352112,
+      "tolerance": 0.05,
+      "tolerance_margin": -1.0150704225352112,
+      "norm_margin": -1.0150704225352112,
+      "cmp_zero": "LESS"
+    },
+    "final_expected_value": 1.8149972781709311,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  },
+  {
+    "workflow_id": "tonal-t1-workflow-REC-60",
+    "shape": "RECONCILIATION_CHAIN",
+    "operand_values": {
+      "A": 420,
+      "a": 24,
+      "B": 1074,
+      "b": 200
+    },
+    "intermediate_values": {
+      "norm_A": 420,
+      "norm_a": 24,
+      "norm_B": 1074,
+      "norm_b": 200,
+      "sub_A": 396,
+      "sub_B": 874,
+      "disagreement_pct": -54.69107551487414,
+      "norm_pct": -54.69107551487414,
+      "fraction_result": -0.5469107551487414,
+      "norm_fraction": -0.5469107551487414,
+      "tolerance": 0.05,
+      "tolerance_margin": -0.5969107551487415,
+      "norm_margin": -0.5969107551487415,
+      "cmp_zero": "LESS"
+    },
+    "final_expected_value": 0.7027559055118111,
+    "final_status": "SUCCESS",
+    "intermediate_steps": null
+  }
+]

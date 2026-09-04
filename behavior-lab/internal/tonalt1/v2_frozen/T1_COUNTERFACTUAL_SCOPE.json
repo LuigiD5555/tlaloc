@@ -1,0 +1,58 @@
+{
+  "schema_version": "tonal.t1.counterfactual-scope.v1",
+  "experiment_id": "TONAL_T1_HETEROGENEOUS_COMPOSITION",
+  "frozen_date": "2026-09-04",
+  "counterfactual_campaign_scope": "ARM_C_ONLY",
+  "rationale": "Counterfactual campaign tests causal necessity of Blackboard/DAG state in the heterogeneous (Arm C) architecture. Arm A (monolithic Parrot) has no Blackboard or internal DAG, so poison/remove operations are meaningless. Arm B (Parrot-centric DAG) is a bridge architecture; counterfactual experiments on it risk confusing the heterogeneity analysis by mixing architectural effects with causal effects. Arm C represents the full heterogeneous system where Blackboard state, node dependencies, and DAG routing are all present and causal.",
+  "what_is_counterfactual": "Two integrity tests: (1) POISON: flip a discovered fact on the Blackboard (e.g., change a reading from 60 to 61, or a verification status from VERIFIED to UNSUPPORTED); verify that downstream nodes notice and terminal output changes. (2) REMOVE: delete a node from the DAG (or its output from Blackboard); verify that the run fails or produces a different output (or explicit MISSING_DEPENDENCY error).",
+  "why_arm_c_only": [
+    "Arm C's heterogeneous composition depends on coordinated node state on the Blackboard. Causal necessity tests must perturb that state.",
+    "Arm A has no Blackboard; perturbation has nowhere to go.",
+    "Arm B has a Blackboard but it is the 'bridge' arm, mixing monolithic-Parrot cognition (via adapters) with shallow internal DAG structure. Confounding risk is high.",
+    "Arm C is the scientific target: do heterogeneous microservices really work better? Counterfactuals on Arm C directly test whether coordination and state-sharing are necessary."
+  ],
+  "excluded_arms": {
+    "ARM_A": {
+      "reason": "Monolithic architecture",
+      "detail": "No internal DAG nodes; no Blackboard coordination. Poison/remove experiments undefined."
+    },
+    "ARM_B": {
+      "reason": "Bridge architecture (confound risk)",
+      "detail": "Mixes Parrot cognition with local DAG structure. Unclear whether effects come from heterogeneity or from Parrot's inherent properties."
+    }
+  },
+  "counterfactual_manifest_specification": {
+    "file": "T1_D4_COUNTERFACTUAL_POISON.json and T1_D4_COUNTERFACTUAL_REMOVE.json (already generated)",
+    "structure": "One workflow per primary example, modified for Arm C only",
+    "poison_operations": [
+      "Replace a reading (e.g., A from 60 to 61)",
+      "Flip a verification status (VERIFIED -> UNSUPPORTED, or vice versa)",
+      "Negate an intermediate result (e.g., diff from 100 to -100)"
+    ],
+    "remove_operations": [
+      "Delete a node from the DAG (e.g., remove NORMALIZE step)",
+      "Delete a Blackboard entry (Observation or Fact)",
+      "Simulate missing dependency (e.g., marked as MISSING_DEPENDENCY)"
+    ]
+  },
+  "expected_outcomes": {
+    "poison_test": "If causal necessity holds, terminal output or verification status should differ from primary",
+    "remove_test": "If causal necessity holds, run should fail with dependency error or produce a different output"
+  },
+  "recording_and_analysis": {
+    "counterfactual_results": "Recorded in Section-7 analysis as integrity-test-passing (did perturbation cause expected change?) vs integrity-test-failing (did not change or changed unexpectedly)",
+    "threshold": "Arm C counterfactual passing rate >= 95% qualifies as 'causal necessity confirmed' (with caveats)"
+  },
+  "scope_enforcement": {
+    "implementation": "Counterfactual runner loops only over workflows tagged with arm='C'",
+    "error_on_other_arms": "If a counterfactual configuration names Arm A or B, runner logs CONFIGURATION_ERROR and skips",
+    "no_mixed_runs": "Never run the same counterfactual (same poison/remove spec) against multiple arms in one experiment"
+  },
+  "sealed": false,
+  "seal_hash": "TBD_after_finalization",
+  "reference_artifacts": [
+    "T1_D4_COUNTERFACTUAL_POISON.json",
+    "T1_D4_COUNTERFACTUAL_REMOVE.json",
+    "TONAL_T1_HETEROGENEOUS_COMPOSITION experiment_id in T1_D7_PROTOCOL.json"
+  ]
+}
