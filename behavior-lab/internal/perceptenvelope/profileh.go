@@ -560,19 +560,22 @@ type ProfileHTable struct {
 const profileHTableSchema = "tlaloc.parrot-perceptual-envelope-r1.profile-h-table.r1"
 
 func phPair(h0, h1 []ProfileHRecord) (AdjacentTransition, int, int, int) {
+	// key by stratum|base so the shared held-out base set does not collide
+	// when H-A/H-B/H-C records are concatenated for the overall pairing.
+	key := func(r ProfileHRecord) string { return r.Stratum + "|" + r.BaseID }
 	m := map[string]ProfileHRecord{}
 	for _, r := range h0 {
 		if r.Error == "" {
-			m[r.BaseID] = r
+			m[key(r)] = r
 		}
 	}
 	tr := AdjacentTransition{From: "H0_RAW", To: "H1_PROFILE_ADAPTED", Metric: "semantic"}
 	var pairs []decompositionlab.PairedOutcome
 	h1s := append([]ProfileHRecord(nil), h1...)
-	sort.Slice(h1s, func(i, j int) bool { return h1s[i].BaseID < h1s[j].BaseID })
+	sort.Slice(h1s, func(i, j int) bool { return key(h1s[i]) < key(h1s[j]) })
 	recovered, regressed, h0correct := 0, 0, 0
 	for _, r1 := range h1s {
-		r0, ok := m[r1.BaseID]
+		r0, ok := m[key(r1)]
 		if !ok || r1.Error != "" {
 			continue
 		}
