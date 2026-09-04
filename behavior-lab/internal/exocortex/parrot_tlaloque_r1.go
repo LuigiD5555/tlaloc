@@ -144,14 +144,18 @@ func (p *ParrotTlaloqueR1) Execute(ctx context.Context, req tlaloque.CapabilityR
 	// --- observable runtime properties only ---
 	hasVisualOperand := in.PageImagePath != "" && in.Region != nil && in.Region.BBox != nil && in.Region.PageWidth > 0 && in.Region.PageHeight > 0
 	var lineHeightPx float64
-	var imageHeightPx int
+	var imageWidthPx int
 	if hasVisualOperand {
 		if _, err := os.Stat(in.PageImagePath); err != nil {
 			hasVisualOperand = false
 		} else if file, err := os.Open(in.PageImagePath); err == nil {
 			if cfg, _, err := image.DecodeConfig(file); err == nil {
-				imageHeightPx = cfg.Height
-				lineHeightPx = (in.Region.BBox.Y2 - in.Region.BBox.Y1) / in.Region.PageHeight * float64(cfg.Height)
+				imageWidthPx = cfg.Width
+				// natural containing-line height in submitted image px,
+				// using the audited store->image mapping (k = image_w /
+				// store_page_w); store coords are not image pixels.
+				k := float64(cfg.Width) / in.Region.PageWidth
+				lineHeightPx = (in.Region.BBox.Y2 - in.Region.BBox.Y1) * k
 			}
 			_ = file.Close()
 		}
@@ -160,6 +164,7 @@ func (p *ParrotTlaloqueR1) Execute(ctx context.Context, req tlaloque.CapabilityR
 	if !hasVisualOperand {
 		visualField = ""
 	}
+	_ = imageWidthPx
 
 	adapter := AdapterR1{Profile: p.profile}
 	decision, err := adapter.Prepare(AdaptRequestR1{
@@ -190,36 +195,30 @@ func (p *ParrotTlaloqueR1) Execute(ctx context.Context, req tlaloque.CapabilityR
 	}
 
 	// --- profile-earned preventive presentation BEFORE the call ---
-	plan := parrotpresent.Plan{
-		CropToLine:     transformApplied(decision, "CROP_TO_OPERAND_LINE"),
-		Upscale:        transformApplied(decision, "UPSCALE_TO_PREFERRED"),
-		IsolateOperand: transformApplied(decision, "ISOLATE_OPERAND"),
-	}
+	// AdapterR1 always resolves target_line_height_px: the current line
+	// height when it left the scale alone, or the profile preferred scale
+	// when LOW_SCALE fired. parrotpresent renders the frozen R1/H
+	// presentation (512 canvas, target-centred, bilinear inverse-map,
+	// masked source crop, magenta cue) at s = target / line_height_store.
+	targetLinePx := 0
 	if value, ok := decision.ResultingWorkingSet["target_line_height_px"].(float64); ok {
-		plan.TargetLineHeightPx = int(value)
+		targetLinePx = int(value)
 	}
-	// The submitted visual field is the operand line; if the profile did
-	// not ask for a crop but we hold only a full page, cropping to the
-	// line is still the honest minimum working set.
-	if !plan.CropToLine {
-		plan.CropToLine = true
-	}
-
-	region := parrotpresent.Region{
-		Line: parrotpresent.BBox{
+	operand := parrotpresent.Operand{
+		TokenBBox: parrotpresent.BBox{
 			X1: in.Region.BBox.X1, Y1: in.Region.BBox.Y1,
 			X2: in.Region.BBox.X2, Y2: in.Region.BBox.Y2,
 		},
-		PageWidth: in.Region.PageWidth, PageHeight: in.Region.PageHeight,
+		LineHeight:     in.Region.BBox.Y2 - in.Region.BBox.Y1,
+		PageWidthStore: in.Region.PageWidth,
 	}
 	outPath := filepath.Join(p.workDir, "parrot-r1-"+sanitize(req.NodeID)+".png")
-	prepared, err := parrotpresent.Prepare(in.PageImagePath, region, plan, outPath)
+	prepared, err := parrotpresent.Prepare(in.PageImagePath, operand, parrotpresent.Plan{TargetLineHeightPx: targetLinePx, DrawCue: true}, outPath)
 	if err != nil {
 		return tlaloque.CapabilityResponse{}, fmt.Errorf("parrot r1 tlaloque: prepare working set: %w", err)
 	}
 	out.SubmittedLineHeightPx = prepared.SubmittedLineHeightPx
 	out.PreparedImageSHA256 = prepared.SHA256
-	_ = imageHeightPx
 
 	// --- exactly one cognitive model call ---
 	result, err := p.client.CompletePerception(ctx, target.PerceptionInput{

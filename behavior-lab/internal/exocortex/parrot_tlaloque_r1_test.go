@@ -122,12 +122,45 @@ func TestAdapterR1_HighContext_CropsToOperandLine(t *testing.T) {
 
 func parrotInput(t *testing.T, pageImage string, bbox *canonicaldoc.BBox) json.RawMessage {
 	t.Helper()
+	return parrotInputWithPage(t, pageImage, bbox, 200, 300)
+}
+
+func parrotInputWithPage(t *testing.T, pageImage string, bbox *canonicaldoc.BBox, storeW, storeH float64) json.RawMessage {
+	t.Helper()
 	in := ParrotR1Input{Opcode: OpExtractNumber, PageImagePath: pageImage}
 	if bbox != nil {
-		in.Region = &ParrotR1Region{Page: 1, BBox: bbox, PageWidth: 200, PageHeight: 300}
+		in.Region = &ParrotR1Region{Page: 1, BBox: bbox, PageWidth: storeW, PageHeight: storeH}
 	}
 	body, _ := json.Marshal(in)
 	return body
+}
+
+// Requirement 3: the Tlaloque must not assume canonical store coordinates
+// equal rendered-image pixels. The fixture page is 200 px wide; a store
+// page width of 100 means k = 2 image px per store unit.
+func TestParrotR1_StoreCoordinatesAreNotImagePixels(t *testing.T) {
+	fake := &fakePerception{reply: "314"}
+	worker := newTestParrotR1(t, fake)
+	// operand line ~5 store units tall -> 10 image px -> below the 16 px
+	// safe scale -> upscale to the profile preferred 32
+	bbox := &canonicaldoc.BBox{X1: 10, Y1: 50, X2: 90, Y2: 55}
+	resp, err := worker.Execute(context.Background(), tlaloque.CapabilityRequest{
+		NodeID: "wf::coord", Input: parrotInputWithPage(t, fixturePagePath, bbox, 100, 150),
+	})
+	if err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	if fake.calls != 1 {
+		t.Fatalf("expected exactly one model call, got %d", fake.calls)
+	}
+	var out ParrotR1Output
+	_ = json.Unmarshal(resp.Output, &out)
+	if out.SubmittedLineHeightPx < 31 || out.SubmittedLineHeightPx > 33 {
+		t.Fatalf("submitted line height = %d, want ~32 (5 store units * 32/5 affine scale)", out.SubmittedLineHeightPx)
+	}
+	if !transformApplied(*out.AdapterDecision, "UPSCALE_TO_PREFERRED") {
+		t.Fatalf("a 10 image-px line should trigger the profile upscale: %+v", out.AdapterDecision.Transformations)
+	}
 }
 
 func TestParrotR1_MissingVisualOperand_MakesZeroModelCalls(t *testing.T) {
