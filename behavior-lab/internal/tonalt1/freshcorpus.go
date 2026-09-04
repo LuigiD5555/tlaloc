@@ -138,17 +138,17 @@ type BridgeMorphologyResult struct {
 
 // PrimaryUniverse is the fresh primary held-out operand universe.
 type PrimaryUniverse struct {
-	QualifiedMorphologies []MorphologyFamily       `json:"qualified_morphologies"`
-	N                     int                      `json:"n_primary_available"`
-	ByMorphology          map[MorphologyFamily]int `json:"by_morphology"`
-	DistinctPages         int                      `json:"distinct_pages"`
-	PagesWithGE2          int                      `json:"pages_with_ge2"`
-	PagesWithGE3          int                      `json:"pages_with_ge3"`
-	PagesWithGE4          int                      `json:"pages_with_ge4"`
-	DuplicatePhysical     int                      `json:"duplicate_physical_instances"`
-	BridgeLeakage         int                      `json:"bridge_physical_leakage"`
-	BridgePageLeakage     int                      `json:"bridge_page_leakage"`
-	Operands              []Candidate              `json:"operands"`
+	QualifiedMorphologies    []MorphologyFamily       `json:"qualified_morphologies"`
+	N                        int                      `json:"n_primary_available"`
+	ByMorphology             map[MorphologyFamily]int `json:"by_morphology"`
+	DistinctPages            int                      `json:"distinct_pages"`
+	PagesWithGE2             int                      `json:"pages_with_ge2"`
+	PagesWithGE3             int                      `json:"pages_with_ge3"`
+	PagesWithGE4             int                      `json:"pages_with_ge4"`
+	DuplicateSpanExcluded    int                      `json:"duplicate_span_candidates_excluded"` // repeated store regions, correctly dropped
+	BridgeLeakage            int                      `json:"bridge_physical_leakage"`            // MUST be 0 — bridge instance reached primary
+	BridgePageCandidatesExcl int                      `json:"bridge_page_candidates_excluded"`    // eligible candidates on bridge pages, correctly dropped
+	Operands                 []Candidate              `json:"operands"`
 }
 
 // CapacityCheck is the constructive allocation feasibility proof.
@@ -356,7 +356,7 @@ func BuildPrimaryUniverse(scan ScanResult, partition PagePartition, bridge Bridg
 			continue
 		}
 		if bridgePageSet[cand.Corpus.Page] {
-			universe.BridgePageLeakage++
+			universe.BridgePageCandidatesExcl++
 			continue
 		}
 		if !primarySet[cand.Corpus.Page] {
@@ -371,7 +371,7 @@ func BuildPrimaryUniverse(scan ScanResult, partition PagePartition, bridge Bridg
 			continue
 		}
 		if seen[key] {
-			universe.DuplicatePhysical++
+			universe.DuplicateSpanExcluded++
 			continue
 		}
 		seen[key] = true
@@ -546,14 +546,34 @@ func FreshCorpusFreeze(source SourceDoc, store StoreIdentity, scan ScanResult, p
 		}
 	}
 
+	// Verify the FINAL operand slice (not the skip counters, which are
+	// expected to be non-zero: bridge pages carry eligible candidates that
+	// are correctly excluded, and the store may repeat identical regions).
+	bridgePageSet := map[int]bool{}
+	for _, page := range partition.BridgePages {
+		bridgePageSet[page] = true
+	}
+	bridgeOperandInPrimary := false
+	seenOperandID := map[string]bool{}
+	dupOperandInPrimary := false
+	for _, cand := range universe.Operands {
+		if bridgePageSet[cand.Corpus.Page] {
+			bridgeOperandInPrimary = true
+		}
+		if seenOperandID[cand.Identity.NormalizedSpanHash] {
+			dupOperandInPrimary = true
+		}
+		seenOperandID[cand.Identity.NormalizedSpanHash] = true
+	}
+
 	invariants := map[string]bool{
 		"bridge_partition_frozen_before_inference":  partition.FrozenBeforeInference,
-		"bridge_pages_in_primary_zero":              universe.BridgePageLeakage == 0,
+		"bridge_pages_in_primary_zero":              !bridgeOperandInPrimary,
 		"bridge_instances_in_primary_zero":          universe.BridgeLeakage == 0,
 		"primary_model_calls_zero":                  true,
 		"t1_arm_calls_zero":                         true,
 		"unsupported_morphologies_in_primary_zero":  onlyMorphologies(universe, capacity),
-		"duplicate_primary_physical_instances_zero": universe.DuplicatePhysical == 0,
+		"duplicate_primary_physical_instances_zero": !dupOperandInPrimary,
 		"prior_used_instances_in_primary_zero":      true, // fresh document, disjoint source sha
 		"single_digit_in_primary_zero":              noSingleDigit(universe),
 		"primary_target_reuse_false":                !capacity.PrimaryTargetReuse,

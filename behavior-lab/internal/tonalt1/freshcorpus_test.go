@@ -140,4 +140,28 @@ func TestFresh_FreezeGate(t *testing.T) {
 	if man2.TONALT1FreshCorpusFrozen {
 		t.Error("freeze gate must fail when N < 144")
 	}
+
+	// Break it: an operand sits on a bridge page.
+	man3 := FreshCorpusFreeze(SourceDoc{}, StoreIdentity{}, ScanResult{Candidates: ops},
+		PagePartition{FrozenBeforeInference: true, ZeroPageOverlap: true, BridgePages: []int{7}},
+		BridgeSpec{}, []BridgeMorphologyResult{{Morphology: MorphMultiDigitInteger, Qualified: true}}, universe, capacity)
+	if man3.HardInvariants["bridge_pages_in_primary_zero"] {
+		t.Error("bridge_pages_in_primary_zero must be false when an operand is on a bridge page (page 7)")
+	}
+	if man3.TONALT1FreshCorpusFrozen {
+		t.Error("freeze gate must fail when a primary operand is on a bridge page")
+	}
+
+	// Break it: a duplicate physical instance in the operand slice.
+	dupOps := append(append([]Candidate(nil), ops...), ops[0])
+	dupUniverse := universe
+	dupUniverse.Operands = dupOps
+	dupUniverse.N = len(dupOps)
+	man4 := FreshCorpusFreeze(SourceDoc{}, StoreIdentity{}, ScanResult{Candidates: dupOps},
+		PagePartition{FrozenBeforeInference: true, ZeroPageOverlap: true},
+		BridgeSpec{}, []BridgeMorphologyResult{{Morphology: MorphMultiDigitInteger, Qualified: true}},
+		dupUniverse, CheckAllocationFeasible(dupUniverse))
+	if man4.HardInvariants["duplicate_primary_physical_instances_zero"] {
+		t.Error("duplicate_primary_physical_instances_zero must be false with a repeated span hash in Operands")
+	}
 }

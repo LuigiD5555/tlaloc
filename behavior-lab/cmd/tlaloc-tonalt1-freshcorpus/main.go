@@ -43,6 +43,7 @@ func main() {
 	model := flag.String("model", "lfm2-vl-1.6b", "model id")
 	bridgeN := flag.Int("bridge-n", 60, "target bridge instances per morphology")
 	scanOnly := flag.Bool("scan-only", false, "build store + D3 v2 scan + partition feasibility, then stop (no model calls) — for deterministic re-ranking")
+	fromRecords := flag.Bool("from-records", false, "reuse FRESH_BRIDGE_RECORDS.json instead of running the bridge (pure re-freeze, no model calls)")
 	flag.Parse()
 
 	if *pdf == "" {
@@ -162,29 +163,43 @@ func main() {
 		fail(fmt.Errorf("bridge dataset empty: no eligible MULTI_DIGIT_INTEGER/DECIMAL candidates on bridge pages — document unsuitable"))
 	}
 
-	// 5. Endpoint guard + bridge inference (isolated capability, NOT T1).
-	if err := guardEndpoint(*endpoint, *model); err != nil {
-		fail(fmt.Errorf("endpoint guard: %w", err))
-	}
-	alloc := perceptenvelope.R1CAllocation{
-		Schema: "tlaloc.parrot-perceptual-envelope-r1.r1c-allocation.r1", ExperimentID: "tonal-t1-fresh-corpus-bridge",
-		Seed: tonalt1.Seed, RankRule: "sha256(seed || candidate_id) ascending",
-		LineHeightPx: perceptenvelope.R1CLineHeightPx, ContextLevel: perceptenvelope.R1CContextLevel, CanvasPx: 512,
-		Families: bridgeFamilies(bridge),
-	}
-	writeJSON(filepath.Join(outDir, "FRESH_BRIDGE_ALLOCATION.json"), alloc)
+	// 5. Bridge inference (isolated capability, NOT T1) — or reuse the
+	//    already-frozen bridge records for a pure re-freeze.
+	var records []perceptenvelope.R1CRecord
+	if *fromRecords {
+		body, rerr := os.ReadFile(filepath.Join(outDir, "FRESH_BRIDGE_RECORDS.json"))
+		if rerr != nil {
+			fail(fmt.Errorf("-from-records: %w", rerr))
+		}
+		if jerr := json.Unmarshal(body, &records); jerr != nil {
+			fail(fmt.Errorf("-from-records decode: %w", jerr))
+		}
+		fmt.Fprintf(os.Stderr, "re-freeze from %d frozen bridge records; no model calls\n", len(records))
+	} else {
+		if err := guardEndpoint(*endpoint, *model); err != nil {
+			fail(fmt.Errorf("endpoint guard: %w", err))
+		}
+		alloc := perceptenvelope.R1CAllocation{
+			Schema: "tlaloc.parrot-perceptual-envelope-r1.r1c-allocation.r1", ExperimentID: "tonal-t1-fresh-corpus-bridge",
+			Seed: tonalt1.Seed, RankRule: "sha256(seed || candidate_id) ascending",
+			LineHeightPx: perceptenvelope.R1CLineHeightPx, ContextLevel: perceptenvelope.R1CContextLevel, CanvasPx: 512,
+			Families: bridgeFamilies(bridge),
+		}
+		writeJSON(filepath.Join(outDir, "FRESH_BRIDGE_ALLOCATION.json"), alloc)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 90*time.Minute)
-	defer cancel()
-	cfg := perceptenvelope.RunConfig{
-		StoreDir: storeDir, Endpoint: *endpoint, Model: *model,
-		Temperature: 0.0, MaxTokens: 32, RunDir: filepath.Join(outDir, "run"),
+		ctx, cancel := context.WithTimeout(context.Background(), 90*time.Minute)
+		defer cancel()
+		cfg := perceptenvelope.RunConfig{
+			StoreDir: storeDir, Endpoint: *endpoint, Model: *model,
+			Temperature: 0.0, MaxTokens: 32, RunDir: filepath.Join(outDir, "run"),
+		}
+		var runErr error
+		records, runErr = perceptenvelope.RunR1C(ctx, cfg, alloc, nil)
+		if runErr != nil {
+			fail(fmt.Errorf("bridge run: %w", runErr))
+		}
+		writeJSON(filepath.Join(outDir, "FRESH_BRIDGE_RECORDS.json"), records)
 	}
-	records, err := perceptenvelope.RunR1C(ctx, cfg, alloc, nil)
-	if err != nil {
-		fail(fmt.Errorf("bridge run: %w", err))
-	}
-	writeJSON(filepath.Join(outDir, "FRESH_BRIDGE_RECORDS.json"), records)
 
 	// 6. Aggregate per morphology with the frozen R1-C verdict logic.
 	table := perceptenvelope.AggregateR1C(records)
@@ -255,8 +270,8 @@ func freezeAndReport(outDir string, man tonalt1.FreshCorpusManifest) {
 		"n_primary_available":          man.Primary.N,
 		"primary_by_morphology":        man.Primary.ByMorphology,
 		"distinct_primary_pages":       man.Primary.DistinctPages,
-		"bridge_leakage":               man.Primary.BridgeLeakage,
-		"bridge_page_leakage":          man.Primary.BridgePageLeakage,
+		"bridge_physical_leakage":      man.Primary.BridgeLeakage,
+		"bridge_page_candidates_excl":  man.Primary.BridgePageCandidatesExcl,
 		"headroom_ratio":               man.Capacity.HeadroomRatio,
 		"allocation_feasible":          man.Capacity.AllocationFeasible,
 		"hard_invariants":              man.HardInvariants,
