@@ -15,6 +15,7 @@ const (
 	OpSelectOne      = "SELECT_ONE"
 	OpCompareNumbers = "COMPARE_NUMBERS"
 	OpSameDifferent  = "SAME_DIFFERENT"
+	OpArithmetic     = "ARITHMETIC"
 	OpNormalize      = "NORMALIZE"
 	OpVerify         = "VERIFY"
 	OpStore          = "STORE"
@@ -34,7 +35,7 @@ func Opcodes() []string {
 	return []string{
 		OpLocateRegion, OpCropRegion, OpReadShortText, OpReadShortLabel,
 		OpExtractNumber, OpExtractEntity, OpSelectOne, OpCompareNumbers,
-		OpSameDifferent, OpNormalize, OpVerify, OpStore,
+		OpSameDifferent, OpArithmetic, OpNormalize, OpVerify, OpStore,
 		OpFollowReference, OpVisualIdentify, OpVisualLocate,
 	}
 }
