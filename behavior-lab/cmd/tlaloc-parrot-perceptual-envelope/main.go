@@ -80,6 +80,16 @@ func main() {
 		runR1C(ctx, os.Args[2:])
 	case "report-r1c":
 		reportR1C(os.Args[2:])
+	case "prepare-r1d":
+		prepareR1D(os.Args[2:])
+	case "sanity-r1d":
+		sanityR1D(os.Args[2:])
+	case "doctor-r1d":
+		doctorR1D(ctx, os.Args[2:])
+	case "run-r1d":
+		runR1D(ctx, os.Args[2:])
+	case "report-r1d":
+		reportR1D(os.Args[2:])
 	default:
 		fmt.Fprintln(os.Stderr, "unknown subcommand:", os.Args[1])
 		os.Exit(2)
@@ -1069,5 +1079,342 @@ func finalizeR1C(expDir, runDir, model string, records []perceptenvelope.R1CReco
 		"records": len(records), "errors": table.Errors,
 		"records_sha256": recSHA, "table_sha256": tableSHA, "checkpoint_sha256": cpSHA,
 		"verdicts": table.Verdicts, "answers": table.Answers,
+	}))
+}
+
+// ---------------------------------------------------------------------------
+// R1-D — LABEL/VALUE ASSOCIATION + DISTRACTOR DENSITY
+// ---------------------------------------------------------------------------
+
+func loadLVPool(expDir string) perceptenvelope.LabelValuePool {
+	body, err := os.ReadFile(filepath.Join(expDir, "datasets", "R1D_POOL.json"))
+	die(err)
+	var p perceptenvelope.LabelValuePool
+	die(json.Unmarshal(body, &p))
+	return p
+}
+
+func loadR1DAlloc(expDir string) perceptenvelope.R1DAllocation {
+	body, err := os.ReadFile(filepath.Join(expDir, "datasets", "R1D_ASSOCIATION_DATASET.json"))
+	die(err)
+	var a perceptenvelope.R1DAllocation
+	die(json.Unmarshal(body, &a))
+	return a
+}
+
+func prepareR1D(args []string) {
+	fs := flag.NewFlagSet("prepare-r1d", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	fs.Parse(args)
+
+	_ = *storeDir
+	_ = *pdfPath
+	pool := loadLVPool(*expDir)
+	alloc := perceptenvelope.AllocateR1D(pool)
+
+	var geos []perceptenvelope.R1DGeometry
+	for _, b := range alloc.Bases {
+		if !b.Eligible {
+			continue
+		}
+		g, err := perceptenvelope.DeriveR1DGeometry(b)
+		die(err)
+		geos = append(geos, g)
+	}
+
+	realBases := []perceptenvelope.R1DBase{}
+	for _, b := range alloc.Bases {
+		if b.Eligible {
+			realBases = append(realBases, b)
+		}
+	}
+	_, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1D_REAL_BASES.json"), realBases)
+	die(err)
+	datasetSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1D_ASSOCIATION_DATASET.json"), alloc)
+	die(err)
+	distDump := map[string]any{}
+	for _, b := range realBases {
+		distDump[b.BaseID] = b.DistractorValues
+	}
+	distSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "datasets", "R1D_DISTRACTOR_DATASET.json"), map[string]any{
+		"seed":            perceptenvelope.R1DSeed,
+		"ladder":          []int{0, 1, 2, 4, 8},
+		"rule":            "plain 2-4 digit integers, != answer, distinct, digit-length balanced, deterministic from sha256(seed||'distractor'||candidate_id)",
+		"placement":       "frozen ring of 12 candidate slots (2 distance bands) around the label/value pair; first K non-overlapping in fixed order; pair never moves",
+		"per_base_values": distDump,
+	})
+	die(err)
+	auditSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "R1D_GEOMETRY_AUDIT.json"), map[string]any{
+		"schema":         "tlaloc.parrot-perceptual-envelope-r1.r1d-geometry-audit.r1",
+		"eligible_bases": alloc.EligibleCount,
+		"pool_count":     alloc.PoolCount,
+		"proceed":        alloc.Proceed,
+		"per_base":       geos,
+		"ineligible":     ineligibleR1D(alloc),
+	})
+	die(err)
+
+	poolSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "datasets", "R1D_POOL.json"))
+	identitySHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "MODEL_IDENTITY.json"))
+	r1cCkptSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(*expDir, "R1C_CHECKPOINT.json"))
+
+	addendum := map[string]any{
+		"schema":      "tlaloc.parrot-perceptual-envelope-r1.protocol-addendum.05",
+		"title":       "R1-D_ASSOCIATION_DISTRACTOR — label/value association + controlled distractor density",
+		"recorded_at": time.Now().UTC().Format(time.RFC3339),
+		"authored":    "BEFORE any R1-D model output existed. R1-A0/A1/B/C artifacts immutable and untouched.",
+		"NO_R1D_MODEL_OUTPUT_EXISTED_WHEN_DATASET_AND_DISTRACTOR_RULES_WERE_FROZEN": true,
+		"assoc_opcode":       perceptenvelope.R1DAssocOpcode,
+		"assoc_instruction":  perceptenvelope.R1DAssocInstruction,
+		"microisa_promotion": "READ_ASSOCIATED_NUMBER is defined in the behaviour lab only; promotion to the T0 Micro-ISA vocabulary is a separate decision, deferred pending this evidence.",
+		"presentation": map[string]any{
+			"line_height_px": perceptenvelope.R1DLineHeightPx, "canvas_px": 512,
+			"viewport":                   "single containing text line; other-line pixels masked to RGB(200,200,200)",
+			"primary_operand_morphology": "MULTI_DIGIT_INTEGER only (fragile R1-C morphologies excluded from D0/D1 primary aggregate)",
+			"temperature":                0, "max_tokens": 32,
+		},
+		"d0_conditions": map[string]string{
+			"D0V_VALUE_CUED": "cue the value token; instruction EXTRACT_NUMBER; per-base atomic-read control",
+			"D0L_LABEL_CUED": "cue the label token; instruction READ_ASSOCIATED_NUMBER; requires association",
+		},
+		"d0_shared_pixels": "both D0 conditions render from ONE per-base viewport; only the cue rectangle differs",
+		"d1_track":         "CONTROLLED_COMPOSITE — never pooled with D0; base = D0L viewport; distractor ladder K=0/1/2/4/8; original line pixels + cue byte-identical across K",
+		"distractor_rules": "plain 2-4 digit integers, deterministic seed " + perceptenvelope.R1DSeed + ", all != answer + distinct + digit-length balanced; frozen 12-slot placement ring, no overlap with label/value/cue",
+		"geometry_gate":    "D1 is canonical only if D0V value accuracy >= 0.90 AND Wilson 95% lower bound >= 0.70; otherwise D1 is exploratory",
+		"eligibility_rule": "value is a 2-5 digit plain integer; value unique in line; label precedes value and has a >=3-letter non-stopword token; label-value span at 32px <= 480 canvas px. >=18 eligible -> proceed with all eligible; <18 -> STOP.",
+		"eligible_count":   alloc.EligibleCount,
+		"proceed":          alloc.Proceed,
+		"inputs_hashed": map[string]string{
+			"R1D_POOL.json":                poolSHA,
+			"R1D_ASSOCIATION_DATASET.json": datasetSHA,
+			"R1D_DISTRACTOR_DATASET.json":  distSHA,
+			"R1D_GEOMETRY_AUDIT.json":      auditSHA,
+			"MODEL_IDENTITY.json":          identitySHA,
+			"R1C_CHECKPOINT.json":          r1cCkptSHA,
+		},
+	}
+	addSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "R1_PROTOCOL_ADDENDUM_05.json"), addendum)
+	die(err)
+
+	manifest := map[string]any{
+		"schema":                         "tlaloc.parrot-perceptual-envelope-r1.r1d-prepare-manifest.r1",
+		"experiment_id":                  perceptenvelope.ExperimentID,
+		"r1d_pool_sha256":                poolSHA,
+		"r1d_association_dataset_sha256": datasetSHA,
+		"r1d_distractor_dataset_sha256":  distSHA,
+		"r1d_geometry_audit_sha256":      auditSHA,
+		"protocol_addendum_05_sha256":    addSHA,
+		"eligible_bases":                 alloc.EligibleCount,
+		"pool_candidates":                alloc.PoolCount,
+		"proceed":                        alloc.Proceed,
+		"expected_d0_records":            alloc.EligibleCount * 2,
+		"expected_d1_records":            alloc.EligibleCount * 5,
+	}
+	mSHA, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "manifests", "R1D_PREPARE_MANIFEST.json"), manifest)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"eligible_bases": alloc.EligibleCount, "pool_candidates": alloc.PoolCount,
+		"proceed": alloc.Proceed, "min_required": alloc.MinRequired,
+		"ineligible":      ineligibleR1D(alloc),
+		"manifest_sha256": mSHA, "addendum_05_sha256": addSHA,
+		"expected_d0_records": alloc.EligibleCount * 2, "expected_d1_records": alloc.EligibleCount * 5,
+	}))
+	if !alloc.Proceed {
+		fmt.Fprintln(os.Stderr, "STOP: fewer than 18 eligible label/value bases; R1-D not started")
+		os.Exit(1)
+	}
+}
+
+func ineligibleR1D(alloc perceptenvelope.R1DAllocation) []map[string]string {
+	var out []map[string]string
+	for _, b := range alloc.Bases {
+		if !b.Eligible {
+			out = append(out, map[string]string{"base_id": b.BaseID, "label": b.Label, "value": b.Value, "reason": b.IneligibleReason})
+		}
+	}
+	return out
+}
+
+func sanityR1D(args []string) {
+	fs := flag.NewFlagSet("sanity-r1d", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	n := fs.Int("bases", 3, "eligible bases to render")
+	fs.Parse(args)
+	alloc := loadR1DAlloc(*expDir)
+	bank := r1cBank(*expDir, *storeDir, *pdfPath)
+	outDir := filepath.Join(*expDir, "runs", "r1d-sanity", "crops")
+	die(os.MkdirAll(outDir, 0o755))
+	rendered := 0
+	done := 0
+	for _, base := range alloc.Bases {
+		if !base.Eligible || done >= *n {
+			continue
+		}
+		done++
+		imgs, err := perceptenvelope.RenderR1DSanity(*storeDir, *pdfPath, base, bank)
+		die(err)
+		for name, img := range imgs {
+			die(perceptenvelope.WriteRGBA(filepath.Join(outDir, base.BaseID+"_"+name+".png"), img))
+			rendered++
+		}
+	}
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{"bases": done, "rendered": rendered, "out_dir": outDir}))
+}
+
+func doctorR1D(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("doctor-r1d", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	fs.Parse(args)
+	rep := perceptenvelope.DoctorR1D(ctx, perceptenvelope.DoctorR1DInput{
+		ExpDir: *expDir, Endpoint: *endpoint, Model: *model, StoreDir: *storeDir,
+	})
+	_, err := perceptenvelope.WriteJSON(filepath.Join(*expDir, "results", "R1D_DOCTOR.json"), rep)
+	die(err)
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(rep))
+	if !rep.ReadyR1D {
+		os.Exit(1)
+	}
+}
+
+func runR1D(ctx context.Context, args []string) {
+	fs := flag.NewFlagSet("run-r1d", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	storeDir := fs.String("store-dir", defaultStore, "reconstructed pdfmemory store root")
+	pdfPath := fs.String("pdf", "", "source PDF override")
+	endpoint := fs.String("endpoint", "http://127.0.0.1:1234", "model endpoint")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	temp := fs.Float64("temperature", 0, "sampling temperature")
+	maxTokens := fs.Int("max-tokens", 32, "max output tokens")
+	runID := fs.String("run-id", "r1d-r0", "run id")
+	fs.Parse(args)
+
+	doctorR1D(ctx, []string{"-exp-dir", *expDir, "-endpoint", *endpoint, "-model", *model, "-store-dir", *storeDir})
+
+	alloc := loadR1DAlloc(*expDir)
+	bank := r1cBank(*expDir, *storeDir, *pdfPath)
+	runDir := filepath.Join(*expDir, "runs", *runID)
+	cfg := perceptenvelope.RunConfig{
+		StoreDir: *storeDir, PDFPath: *pdfPath, Endpoint: *endpoint, Model: *model,
+		Temperature: *temp, MaxTokens: *maxTokens, RunDir: runDir,
+	}
+	d0, err := perceptenvelope.RunR1D0(ctx, cfg, alloc)
+	die(err)
+	d0Table := perceptenvelope.AggregateR1D0(d0)
+	// D0 integrity: only structural errors are integrity failures, not accuracy.
+	d0Errs := 0
+	for _, r := range d0 {
+		if r.Error != "" {
+			d0Errs++
+		}
+	}
+	if d0Errs > 0 {
+		die(fmt.Errorf("D0 integrity: %d records errored; STOP before D1", d0Errs))
+	}
+	d1, err := perceptenvelope.RunR1D1(ctx, cfg, alloc, bank)
+	die(err)
+	finalizeR1D(*expDir, runDir, *model, alloc, d0, d0Table, d1)
+}
+
+func reportR1D(args []string) {
+	fs := flag.NewFlagSet("report-r1d", flag.ExitOnError)
+	expDir := fs.String("exp-dir", defaultExpDir, "experiment directory")
+	runID := fs.String("run-id", "r1d-r0", "run id")
+	model := fs.String("model", "lfm2-vl-1.6b", "model id")
+	fs.Parse(args)
+	var d0, d1 []perceptenvelope.R1DRecord
+	b0, err := os.ReadFile(filepath.Join(*expDir, "results", "R1D_ASSOCIATION_RECORDS.json"))
+	die(err)
+	die(json.Unmarshal(b0, &d0))
+	b1, err := os.ReadFile(filepath.Join(*expDir, "results", "R1D_DISTRACTOR_RECORDS.json"))
+	die(err)
+	die(json.Unmarshal(b1, &d1))
+	alloc := loadR1DAlloc(*expDir)
+	finalizeR1D(*expDir, filepath.Join(*expDir, "runs", *runID), *model, alloc, d0, perceptenvelope.AggregateR1D0(d0), d1)
+}
+
+func finalizeR1D(expDir, runDir, model string, alloc perceptenvelope.R1DAllocation, d0 []perceptenvelope.R1DRecord, d0Table perceptenvelope.R1D0Table, d1 []perceptenvelope.R1DRecord) {
+	assocRecSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1D_ASSOCIATION_RECORDS.json"), d0)
+	die(err)
+	assocTblSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1D_ASSOCIATION_TABLE.json"), d0Table)
+	die(err)
+	distRecSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1D_DISTRACTOR_RECORDS.json"), d1)
+	die(err)
+	d1Curve := perceptenvelope.AggregateR1D1(d1, d0Table.RealAssocGeometryValid)
+	distCurveSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1D_DISTRACTOR_CURVE.json"), d1Curve)
+	die(err)
+	verdict := perceptenvelope.R1DProvisionalVerdict(d0Table, d1Curve)
+
+	tax := map[string]any{}
+	for _, r := range d0Table.Rows {
+		tax["D0|"+r.Condition] = r.FailureClasses
+	}
+	for _, r := range d1Curve.Rows {
+		tax["D1|"+r.Condition] = r.FailureClasses
+	}
+	taxSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "results", "R1D_FAILURE_TAXONOMY.json"), tax)
+	die(err)
+
+	rawTreeSHA, rawFiles, err := perceptenvelope.SHA256OfTree(runDir)
+	die(err)
+	datasetSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "datasets", "R1D_ASSOCIATION_DATASET.json"))
+	addSHA, _ := perceptenvelope.SHA256OfFile(filepath.Join(expDir, "R1_PROTOCOL_ADDENDUM_05.json"))
+	commit := gitCommitShort()
+
+	report := perceptenvelope.RenderR1DReport(perceptenvelope.R1DReportInput{
+		Alloc: alloc, D0: d0Table, D1: d1Curve, Verdict: verdict, Model: model,
+		AssocRecSHA: assocRecSHA, AssocTblSHA: assocTblSHA, DistRecSHA: distRecSHA,
+		DistCurveSHA: distCurveSHA, TaxonomySHA: taxSHA, DatasetSHA: datasetSHA,
+		AddendumSHA: addSHA, RawTreeSHA: rawTreeSHA, TlalocCommit: commit,
+	})
+	die(os.WriteFile(filepath.Join(expDir, "results", "R1D_REPORT.md"), []byte(report), 0o644))
+
+	checkpoint := map[string]any{
+		"schema":                          "tlaloc.parrot-perceptual-envelope-r1.r1d-checkpoint.r1",
+		"experiment_id":                   perceptenvelope.ExperimentID,
+		"stage":                           "R1-D",
+		"status":                          "R1-D_ASSOCIATION_DISTRACTOR_COMPLETE_FROZEN",
+		"frozen_at":                       time.Now().UTC().Format(time.RFC3339),
+		"tlaloc_commit":                   commit,
+		"d0_records":                      len(d0),
+		"d1_records":                      len(d1),
+		"raw_files":                       rawFiles,
+		"real_association_geometry_valid": d0Table.RealAssocGeometryValid,
+		"provisional_verdict":             verdict,
+		"hashes": map[string]string{
+			"R1D_ASSOCIATION_RECORDS.json": assocRecSHA,
+			"R1D_ASSOCIATION_TABLE.json":   assocTblSHA,
+			"R1D_DISTRACTOR_RECORDS.json":  distRecSHA,
+			"R1D_DISTRACTOR_CURVE.json":    distCurveSHA,
+			"R1D_FAILURE_TAXONOMY.json":    taxSHA,
+			"R1D_ASSOCIATION_DATASET.json": datasetSHA,
+			"R1_PROTOCOL_ADDENDUM_05.json": addSHA,
+			"raw_tree_sha256":              rawTreeSHA,
+		},
+		"HARD_STOP": "Do not run R1-E/F/G. Return the full R1-D report for review.",
+	}
+	cpSHA, err := perceptenvelope.WriteJSON(filepath.Join(expDir, "R1D_CHECKPOINT.json"), checkpoint)
+	die(err)
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	die(enc.Encode(map[string]any{
+		"d0_records": len(d0), "d1_records": len(d1),
+		"assoc_table_sha256": assocTblSHA, "distractor_curve_sha256": distCurveSHA,
+		"checkpoint_sha256": cpSHA, "geometry_valid": d0Table.RealAssocGeometryValid,
+		"verdict": verdict,
 	}))
 }
