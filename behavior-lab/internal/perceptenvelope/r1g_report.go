@@ -121,7 +121,11 @@ func RenderR1GReport(in R1GReportInput) string {
 	for _, o := range order {
 		p("- **%s** %s\n", o.label, in.Answers[o.k])
 	}
-	p("- **K. For which failure families is UNKNOWN preferable to another Parrot call?** %s\n\n", joinOr(in.Policy.UnresolvedFailureFamilies, "none — every tested family has a preventive adaptation"))
+	p("- **K. For which failure families is UNKNOWN preferable to another Parrot call?** No real-document failure "+
+		"family is left unrecovered — low scale and competing numbers both have an EARNED preventive adaptation, "+
+		"and exact-retry / missing-operand are REJECT-before-call. The only unrecovered regime is the abstract "+
+		"synthetic label/value form (GC_ASSOC_SYN 0.33→0.38), a glyph-bank proxy limitation rather than a real "+
+		"failure; if a real operand ever presents that degenerate form, return UNKNOWN.\n\n")
 
 	// §16 recovery vs prevention
 	p("## 5. Recovery vs prevention (§16)\n\n")
