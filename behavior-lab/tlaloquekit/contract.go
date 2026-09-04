@@ -52,6 +52,41 @@ type Descriptor struct {
 	EvidenceRef string `json:"evidence_ref,omitempty"`
 }
 
+// BBox is a rectangle in a page's own coordinate space.
+type BBox struct {
+	X1 float64 `json:"x1"`
+	Y1 float64 `json:"y1"`
+	X2 float64 `json:"x2"`
+	Y2 float64 `json:"y2"`
+}
+
+// LocatedRegion is the documented output shape of the LOCATE_REGION
+// capability: located document evidence, described as evidence — not as
+// any executor's preprocessing recipe. A downstream Tlaloque (e.g. the
+// R1-aware Parrot Tlaloque) uses it to prepare its own working set; TONAL
+// only passes it along.
+type LocatedRegion struct {
+	DocumentID    string            `json:"document_id,omitempty"`
+	Page          int               `json:"page"`
+	PageImagePath string            `json:"page_image_path,omitempty"`
+	SourceBBox    *BBox             `json:"source_bbox,omitempty"`
+	LineBBox      *BBox             `json:"line_bbox,omitempty"`
+	PageWidth     float64           `json:"page_width,omitempty"`
+	PageHeight    float64           `json:"page_height,omitempty"`
+	LayoutPath    string            `json:"layout_path,omitempty"`
+	Provenance    map[string]string `json:"provenance,omitempty"`
+}
+
+// ParrotEndpoint is the OpenAI-compatible transport for a generative
+// Tlaloque. It is supplied by the consuming runtime's wiring, never
+// invented at execution time.
+type ParrotEndpoint struct {
+	BaseURL     string  `json:"base_url"`
+	Model       string  `json:"model"`
+	Temperature float64 `json:"temperature"`
+	MaxTokens   int     `json:"max_tokens"`
+}
+
 // Goal asks for a capability, never for a particular executor.
 type Goal struct {
 	Capability          string   `json:"capability"`
@@ -131,12 +166,12 @@ type Usage struct {
 
 // ExecutionResult is one node's typed output.
 type ExecutionResult struct {
-	WorkerID     string        `json:"worker_id"`
+	WorkerID     string          `json:"worker_id"`
 	Output       json.RawMessage `json:"output"`
-	Confidence   float64       `json:"confidence,omitempty"`
-	Notes        string        `json:"notes,omitempty"`
-	Observations []Observation  `json:"observations,omitempty"`
-	Usage        *Usage         `json:"usage,omitempty"`
+	Confidence   float64         `json:"confidence,omitempty"`
+	Notes        string          `json:"notes,omitempty"`
+	Observations []Observation   `json:"observations,omitempty"`
+	Usage        *Usage          `json:"usage,omitempty"`
 }
 
 // QualifiedRegistry is the consuming runtime's whole view of Tlaloc. It

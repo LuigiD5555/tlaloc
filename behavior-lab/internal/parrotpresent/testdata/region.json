@@ -1,0 +1,6 @@
+{
+  "note": "Synthetic geometry-only fixture for parrotpresent. Verifies crop/upscale math, nothing about model capability. page.png is 200x300 px; page coordinates are 1:1 with pixels. The operand line is the black bar at y in [100,120], x in [20,180]. A distractor bar sits at y in [200,210].",
+  "page_width": 200,
+  "page_height": 300,
+  "line_bbox": {"x1": 20, "y1": 100, "x2": 180, "y2": 120}
+}
