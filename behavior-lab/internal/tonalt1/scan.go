@@ -42,7 +42,11 @@ var crossReferenceCue = regexp.MustCompile(`(?i)^(` +
 	`theorem|thm|teorema|lemma|lema|corollary|corolario|proposition|prop|proposicion|` +
 	`definition|def|definicion|example|ejemplo|exercise|ejercicio|problem|problema|` +
 	`listing|listado|program|programa|step|paso|line|linea|` +
-	`page|pag|pagina|paginas|pp|no|num|nro|` + "№" +
+	`page|pag|pagina|paginas|pp|no|num|nro|` + "№" + `|` +
+	`reference|references|referencia|referencias|ref|` +
+	`clause|clausula|inciso|articulo|art|parrafo|nota|notas|item|` +
+	`requisito|requisitos|disposicion|disposiciones|` +
+	`comite|committee|aci|astm|iso|norma|` +
 	`)\.?$`)
 
 // versionCue marks a software / library / format version number: the word
@@ -70,7 +74,7 @@ var wrappedFragmentFirst = map[string]bool{
 // "Figura N" / "Tabla N" / "Figure N", or a trailing ", <number>" index
 // reference, or a dotted-leader TOC line.
 var captionLeader = regexp.MustCompile(`(?i)^(figura|figure|fig|tabla|table|cuadro|listado|listing|programa|program|ejemplo|example|ecuacion|equation|grafica|graph|diagrama|diagram)\b`)
-var indexEntryTail = regexp.MustCompile(`[a-zA-Z\)\]]\s*,\s*[0-9]{1,4}\s*$`)
+var indexEntryTail = regexp.MustCompile(`[a-zA-Z\)\]]\s*[,—-]\s*[0-9]{1,4}(?:\.[0-9]{1,4})?\s*$`)
 var dottedLeader = regexp.MustCompile(`\.{4,}|(?:\. ){4,}`)
 
 // stripEdgePunct removes surrounding punctuation before morphology tests.
@@ -376,6 +380,14 @@ func isVersionString(fields []string, token string) bool {
 	return precededByCue(fields, token, versionCue.MatchString)
 }
 
+// shortConnector is a preposition/article that can sit between a reference
+// word and its number ("disposiciones de 5.9", "provisions of 5.9").
+var shortConnector = map[string]bool{
+	"de": true, "del": true, "en": true, "y": true, "o": true, "a": true,
+	"of": true, "in": true, "the": true, "and": true, "or": true, "to": true,
+	"la": true, "el": true, "los": true, "las": true,
+}
+
 func precededByCue(fields []string, token string, match func(string) bool) bool {
 	for index, field := range fields {
 		if field != token {
@@ -384,7 +396,21 @@ func precededByCue(fields []string, token string, match func(string) bool) bool 
 		if index == 0 {
 			return false
 		}
-		return match(foldForCue(strings.Trim(fields[index-1], ".,;:()[]\"'")))
+		prev := foldForCue(strings.Trim(fields[index-1], ".,;:()[]\"'"))
+		if match(prev) {
+			return true
+		}
+		if index >= 2 {
+			prev2 := foldForCue(strings.Trim(fields[index-2], ".,;:()[]\"'"))
+			// ligature-split word rejoined ("fi" + "gura" -> "figura").
+			if match(prev2 + prev) {
+				return true
+			}
+			if shortConnector[prev] && match(prev2) {
+				return true
+			}
+		}
+		return false
 	}
 	return false
 }

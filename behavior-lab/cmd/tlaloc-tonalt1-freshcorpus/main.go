@@ -35,6 +35,7 @@ import (
 func main() {
 	root := flag.String("root", ".", "behavior-lab repo root")
 	pdf := flag.String("pdf", "", "fresh born-digital source PDF (absolute path)")
+	sourceName := flag.String("source-name", "", "canonical source path to record (defaults to -pdf); use when -pdf is a working copy")
 	rank := flag.Int("rank", 1, "deterministic selection rank of this document")
 	proxy := flag.Int("proxy", 0, "prefilter eligible_operand_proxy for this document")
 	out := flag.String("out", "experiments/tonal-t1/fresh-corpus", "output dir (relative to root)")
@@ -156,7 +157,7 @@ func main() {
 
 	if bridge.CallBudget == 0 {
 		freezeAndReport(outDir, tonalt1.FreshCorpusFreeze(
-			sourceDoc(*pdf, sourceSHA, manifest.PageCount, *rank, *proxy, scan),
+			sourceDoc(recordPath(*sourceName, *pdf), sourceSHA, manifest.PageCount, *rank, *proxy, scan),
 			store, scan, partition, bridge, nil, tonalt1.PrimaryUniverse{}, tonalt1.CapacityCheck{NRequired: 144}))
 		fail(fmt.Errorf("bridge dataset empty: no eligible MULTI_DIGIT_INTEGER/DECIMAL candidates on bridge pages — document unsuitable"))
 	}
@@ -231,7 +232,7 @@ func main() {
 
 	// 9. Freeze.
 	man := tonalt1.FreshCorpusFreeze(
-		sourceDoc(*pdf, sourceSHA, manifest.PageCount, *rank, *proxy, scan),
+		sourceDoc(recordPath(*sourceName, *pdf), sourceSHA, manifest.PageCount, *rank, *proxy, scan),
 		store, scan, partition, bridge, results, universe, capacity)
 	freezeAndReport(outDir, man)
 }
@@ -394,4 +395,11 @@ func scanMorphCounts(scan tonalt1.ScanResult) map[string]int {
 		}
 	}
 	return out
+}
+
+func recordPath(name, fallback string) string {
+	if strings.TrimSpace(name) != "" {
+		return name
+	}
+	return fallback
 }
