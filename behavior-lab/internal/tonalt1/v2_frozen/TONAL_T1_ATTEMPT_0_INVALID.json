@@ -1,0 +1,25 @@
+{
+  "schema_version": "tonal.t1.attempt-lineage.v1",
+  "attempt_id": "ATTEMPT_0",
+  "commit": "4c3f4f5",
+  "status": "INVALID_HISTORICAL_EVIDENCE",
+  "T1_ATTEMPT_0_VALID": false,
+  "T1_ATTEMPT_0_VALID_COMPLETIONS": 0,
+  "T1_ATTEMPT_0_ARM_B_POLICY_VIOLATION": true,
+  "T1_ATTEMPT_0_ARM_C_POLICY_VIOLATION": true,
+  "T1_ATTEMPT_0_COUNTERFACTUAL_VALID": false,
+  "root_causes": [
+    "Wrong API endpoint used (/v1/messages, Anthropic-style) instead of LM Studio's /v1/chat/completions",
+    "Wrong response schema parsing (Anthropic content[0].text) instead of OpenAI choices[0].message.content",
+    "Error responses (HTTP 200 with {\"error\":...} body) silently coerced to empty-string success",
+    "Arm B executed as single generic call per workflow instead of per-capability Parrot-adapter DAG walk",
+    "Arm C executed as single generic call per workflow instead of per-operand EXTRACT_NUMBER-only routing",
+    "No image bytes ever attached to any request (text-only prompts)",
+    "Counterfactual campaign (288 entries) was fabricated placeholder data with zero computation",
+    "Ad-hoc Python script bypassed all previously-built Go executor infrastructure entirely"
+  ],
+  "audit_reference": "Full read-only audit performed and reported in conversation prior to this record",
+  "disposition": "Immutable historical evidence of an invalid execution attempt. Superseded by TONAL_T1_RUN_001.",
+  "superseded_by": "TONAL_T1_RUN_001",
+  "do_not_delete_or_rewrite": true
+}

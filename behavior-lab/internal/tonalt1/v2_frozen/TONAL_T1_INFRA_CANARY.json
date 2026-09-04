@@ -1,0 +1,17 @@
+{
+  "T1_INFRA_CANARY_CALLS": 1,
+  "purpose": "infrastructure_only_non_T1",
+  "endpoint": "http://127.0.0.1:1234/v1/chat/completions",
+  "model": "lfm2-vl-1.6b",
+  "image_source": "synthetic_non_primary_non_gold",
+  "image_bytes_len": 574,
+  "elapsed_ms": 7719,
+  "timestamp": "2026-09-04T18:43:12Z",
+  "status": "PASS",
+  "raw_content": "7",
+  "prompt_tokens_reported": 24,
+  "completion_tokens_reported": 2,
+  "non_empty_valid_response": true,
+  "not_part_of_T1_primary_or_counterfactual_budget": true,
+  "verification": "Model correctly read synthetic digit through real target.OpenAICompat -> CompletePerception -> /chat/completions pipeline, confirming transport repair is functional."
+}
