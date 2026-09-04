@@ -1,6 +1,10 @@
 package tonalt1
 
-import "tlaloc.local/behaviorlab/internal/canonicaldoc"
+import (
+	"sort"
+
+	"tlaloc.local/behaviorlab/internal/canonicaldoc"
+)
 
 // RejectionCode is a stable enum for why a scanned location is not a
 // legitimate held-out T1 operand. Every rejection carries at least one.
@@ -34,8 +38,81 @@ const (
 	RejectPriorUsed RejectionCode = "REJECT_PRIOR_USED"
 
 	// Domain.
-	RejectDomainInvalid RejectionCode = "REJECT_DOMAIN_INVALID"
+	RejectDomainInvalid    RejectionCode = "REJECT_DOMAIN_INVALID"
+	RejectVersionString    RejectionCode = "REJECT_VERSION_STRING"
+	RejectWrappedFragment  RejectionCode = "REJECT_WRAPPED_REFERENCE_FRAGMENT"
+	RejectPageHeaderFooter RejectionCode = "REJECT_PAGE_HEADER_OR_FOOTER"
+	RejectLoneNumberLine   RejectionCode = "REJECT_LONE_NUMBER_NO_CONTEXT"
 )
+
+// RuleClass classifies why a selector rule exists (D3 v2 audit, protocol
+// section 4). Only CAPABILITY, PRESENTATION_INTEGRITY and DOMAIN_VALIDITY
+// rules block eligibility; AUTHORING_HEURISTIC rules are recorded as
+// advisory tags but do not exclude a candidate.
+type RuleClass string
+
+const (
+	ClassCapability   RuleClass = "CAPABILITY_EVIDENCE_REQUIRED"
+	ClassPresentation RuleClass = "PRESENTATION_INTEGRITY_REQUIRED"
+	ClassDomain       RuleClass = "DOMAIN_VALIDITY_REQUIRED"
+	ClassAuthoring    RuleClass = "DATASET_AUTHORING_HEURISTIC"
+)
+
+// ruleClassOf is the frozen rule-provenance classification (D3 v2). The
+// four AUTHORING_HEURISTIC rules were introduced by the R1-A/R1-B pool
+// author to build a clean prose-context dataset; R1-C then demonstrated
+// MULTI_DIGIT_INTEGER / DECIMAL extraction is USABLE_WITH_CONSTRAINTS on
+// bare-number, margin, small-font and heading lines under the same
+// presentation core — so they are not capability requirements.
+var ruleClassOf = map[RejectionCode]RuleClass{
+	RejectUnsupportedMorphology: ClassCapability,
+	RejectParseFailure:          ClassCapability,
+
+	RejectMultipleNumericTokens: ClassPresentation,
+	RejectOperandNotIncluded:    ClassPresentation,
+	RejectGeometryAmbiguous:     ClassPresentation,
+	RejectGeometryMalformed:     ClassPresentation,
+	RejectCueImplausible:        ClassPresentation,
+	RejectPaddedBoxClipped:      ClassPresentation,
+	RejectTokenOffsetNotUnique:  ClassPresentation,
+	RejectRegionKind:            ClassPresentation,
+
+	RejectPriorUsed:         ClassDomain,
+	RejectDomainInvalid:     ClassDomain,
+	RejectCrossReference:    ClassDomain,
+	RejectBibliographyLine:  ClassDomain,
+	RejectRunningHeader:     ClassDomain,
+	RejectYearOrDateToken:   ClassDomain,
+	RejectNumberLeadingLine: ClassDomain,
+	RejectVersionString:     ClassDomain,
+	RejectWrappedFragment:   ClassDomain,
+	RejectPageHeaderFooter:  ClassDomain,
+	RejectLoneNumberLine:    ClassDomain,
+
+	RejectLineInPageMargin:      ClassAuthoring,
+	RejectLineTooNarrow:         ClassAuthoring,
+	RejectBareOrShortNumberLine: ClassAuthoring,
+	RejectFontBelowBody:         ClassAuthoring,
+}
+
+// blocks reports whether a rejection code excludes a candidate from the
+// eligible universe (everything except AUTHORING_HEURISTIC).
+func blocks(code RejectionCode) bool {
+	return ruleClassOf[code] != ClassAuthoring
+}
+
+// ruleProvenanceTable groups every rejection code by its audited class for
+// the selector manifest.
+func ruleProvenanceTable() map[string][]string {
+	table := map[string][]string{}
+	for code, class := range ruleClassOf {
+		table[string(class)] = append(table[string(class)], string(code))
+	}
+	for class := range table {
+		sort.Strings(table[class])
+	}
+	return table
+}
 
 // MorphologyFamily is the frozen presentation family a candidate token
 // belongs to. Only families with sufficient frozen real-document R1/R1-C
@@ -153,10 +230,13 @@ type CandidatePriorUse struct {
 	Matches  []PriorUseMatch `json:"matches,omitempty"`
 }
 
-// CandidateEligibility is the final verdict.
+// CandidateEligibility is the final verdict. RejectionCodes lists every
+// rule the candidate tripped; AdvisoryTags is the AUTHORING_HEURISTIC
+// subset that does NOT block eligibility (D3 v2).
 type CandidateEligibility struct {
 	Eligible       bool            `json:"eligible"`
 	RejectionCodes []RejectionCode `json:"rejection_codes,omitempty"`
+	AdvisoryTags   []RejectionCode `json:"advisory_tags,omitempty"`
 }
 
 // CandidateProvenance records exactly how the candidate was derived.

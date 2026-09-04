@@ -31,6 +31,20 @@ var bibliographyCue = regexp.MustCompile(`(?i)\bet al\b|\bpp\.|\bvol\.|\beds?\.|
 // the number-leading check.
 var crossReferenceCue = regexp.MustCompile(`(?i)^(sec|section|sections|subsection|ch|chap|chapter|chapters|fig|figure|figures|figs|tbl|table|tables|eq|eqn|equation|equations|appendix|app|part|algorithm|alg|theorem|thm|lemma|corollary|proposition|prop|definition|def|example|exercise|problem|listing|step|page|pp|no|№)\.?$`)
 
+// versionCue marks a software / library / format version number: the word
+// immediately before the token names a versioned technology. The number is
+// an identifier, not a quantity.
+var versionCue = regexp.MustCompile(`(?i)^(version|ver|v|release|rev|cuda|cudnn|python|python2|python3|tensorflow|tf|pytorch|torch|keras|mxnet|numpy|scipy|pandas|jax|onnx|java|c\+\+|gcc|clang|glibc|ubuntu|debian|windows|macos|ios|android|opengl|opencl|http|https|api|sdk|bert|gpt|resnet|vgg|yolo|efficientnet|mobilenet|densenet)$`)
+
+// wrappedFragmentFirst marks a containing line whose first whitespace
+// token is a broken suffix of a reference word (e.g. "Sec-\ntion 16.2" ->
+// line starts "tion 16.2"). Deliberately tiny and specific.
+var wrappedFragmentFirst = map[string]bool{
+	"tion": true, "tions": true, "ure": true, "ures": true, "dix": true,
+	"rithm": true, "rithms": true, "ple": true, "ples": true, "orem": true,
+	"ction": true, "ctions": true,
+}
+
 // stripEdgePunct removes surrounding punctuation before morphology tests.
 func stripEdgePunct(token string) string {
 	return strings.Trim(token, ".,;:()[]%\"'")
@@ -172,11 +186,35 @@ func scanPage(result *ScanResult, page canonicaldoc.Page, layoutPath, sourceSHA 
 		if isCrossReference(fields, primaryVerbatim) {
 			codes = append(codes, RejectCrossReference)
 		}
+		if isVersionString(fields, primaryVerbatim) {
+			codes = append(codes, RejectVersionString)
+		}
+		if len(fields) > 0 && wrappedFragmentFirst[strings.ToLower(stripEdgePunct(fields[0]))] {
+			codes = append(codes, RejectWrappedFragment)
+		}
 		if region.FontSize > 0 && region.FontSize < 10 {
 			codes = append(codes, RejectFontBelowBody)
 		}
 		if runningHeaderCaps.MatchString(text) {
 			codes = append(codes, RejectRunningHeader)
+		}
+		// DOMAIN: a lone number with no textual context is not a
+		// contextualised quantity (page/line/figure/equation number).
+		if len(fields) < 2 {
+			codes = append(codes, RejectLoneNumberLine)
+		}
+		// DOMAIN: bare number alone in the top or bottom 6% of the page is
+		// a running header/footer page number.
+		if len(fields) < 3 && page.Height > 0 {
+			midY := (region.BBox.Y1 + region.BBox.Y2) / 2
+			if midY < 0.06*page.Height || midY > 0.94*page.Height {
+				codes = append(codes, RejectPageHeaderFooter)
+			}
+		}
+		// AUTHORING (advisory): the frozen R1-A/R1-B pool prose-context
+		// heuristics. R1-C proved the capability without them.
+		if len(fields) < 4 {
+			codes = append(codes, RejectBareOrShortNumberLine)
 		}
 
 		// --- token offsets (rune) ---
@@ -227,7 +265,20 @@ func scanPage(result *ScanResult, page canonicaldoc.Page, layoutPath, sourceSHA 
 
 		codes = dedupeSortCodes(codes)
 		cand.Eligibility.RejectionCodes = codes
-		cand.Eligibility.Eligible = len(codes) == 0
+		// D3 v2: only CAPABILITY / PRESENTATION_INTEGRITY / DOMAIN_VALIDITY
+		// rules exclude a candidate. AUTHORING_HEURISTIC codes are recorded
+		// as advisory tags (see types.go ruleClassOf).
+		blocking := 0
+		var advisory []RejectionCode
+		for _, code := range codes {
+			if blocks(code) {
+				blocking++
+			} else {
+				advisory = append(advisory, code)
+			}
+		}
+		cand.Eligibility.AdvisoryTags = advisory
+		cand.Eligibility.Eligible = blocking == 0
 
 		result.Candidates = append(result.Candidates, cand)
 	}
@@ -252,6 +303,16 @@ func runeSpan(text, token string) (start, end int, ok bool) {
 // preceded on the line by a reference word ("Section", "Fig.", ...),
 // making it a locator rather than a quantity.
 func isCrossReference(fields []string, token string) bool {
+	return precededByCue(fields, token, crossReferenceCue.MatchString)
+}
+
+// isVersionString reports whether the token is preceded by a versioned
+// technology name ("CUDA 12.1", "TensorFlow 2.0").
+func isVersionString(fields []string, token string) bool {
+	return precededByCue(fields, token, versionCue.MatchString)
+}
+
+func precededByCue(fields []string, token string, match func(string) bool) bool {
 	for index, field := range fields {
 		if field != token {
 			continue
@@ -259,8 +320,7 @@ func isCrossReference(fields []string, token string) bool {
 		if index == 0 {
 			return false
 		}
-		previous := strings.Trim(fields[index-1], ".,;:()[]\"'")
-		return crossReferenceCue.MatchString(previous)
+		return match(strings.Trim(fields[index-1], ".,;:()[]\"'"))
 	}
 	return false
 }

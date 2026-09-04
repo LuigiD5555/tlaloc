@@ -48,6 +48,19 @@ var rawMultiDigitToken = regexp.MustCompile(`^[0-9]{2,4}$`)
 // rawDecimalToken is the admissible verbatim decimal shape.
 var rawDecimalToken = regexp.MustCompile(`^[0-9]{1,3}\.[0-9]{1,4}$`)
 
+// MorphSingleDigit is the FRAGILE (R1-C) single-digit family. It is NOT
+// admitted for the T1 primary benchmark; the SINGLE_DIGIT qualification
+// experiment sets admitSingleDigit to enumerate a fresh held-out sample.
+const MorphSingleDigit MorphologyFamily = "SINGLE_DIGIT"
+
+var admissibleSingleDigit = regexp.MustCompile(`^[0-9]$`)
+
+// admitSingleDigit, when true, makes classifyMorphology also return
+// SINGLE_DIGIT. Package-level and only flipped by the qualification
+// enumerator (ScanForSingleDigitQual); the default D3 pipeline never sets
+// it.
+var admitSingleDigit = false
+
 // classifyMorphology returns the frozen morphology family for a token
 // whose surrounding edge punctuation has already been stripped, plus
 // whether the VERBATIM token shape is admissible. An empty family means
@@ -58,6 +71,8 @@ func classifyMorphology(verbatim, stripped string) (MorphologyFamily, bool) {
 		return MorphMultiDigitInteger, rawMultiDigitToken.MatchString(verbatim)
 	case admissibleDecimal.MatchString(stripped):
 		return MorphDecimal, rawDecimalToken.MatchString(verbatim)
+	case admitSingleDigit && admissibleSingleDigit.MatchString(stripped):
+		return MorphSingleDigit, admissibleSingleDigit.MatchString(verbatim)
 	default:
 		return "", false
 	}

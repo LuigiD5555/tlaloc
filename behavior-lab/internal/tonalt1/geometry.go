@@ -32,7 +32,6 @@ const (
 	marginYHi = 0.91
 
 	minLineWidthFraction = 0.30
-	minWhitespaceFields  = 4
 	maxCueLineFraction   = 0.85
 )
 
@@ -62,19 +61,16 @@ func auditGeometry(page canonicaldoc.Page, line canonicaldoc.Region, verbatimTok
 		add(RejectGeometryMalformed)
 		return verdict
 	}
-	// Not in the page margin.
+	// AUTHORING_HEURISTIC (advisory, not blocking): page-margin and
+	// prose-width line preferences from the R1-A/R1-B pool author.
 	if !(box.X1 >= marginXLo*width && box.X2 <= marginXHi*width && box.Y1 >= marginYLo*height && box.Y2 <= marginYHi*height) {
 		add(RejectLineInPageMargin)
 	}
-	// Prose-width line.
 	if (box.X2 - box.X1) < minLineWidthFraction*width {
 		add(RejectLineTooNarrow)
 	}
-	// Embedded prose (target + >= 3 other words).
-	if len(fields) < minWhitespaceFields {
-		add(RejectBareOrShortNumberLine)
-	}
-	// Not number-leading (TOC / numbered list / wrapped fragment).
+	// DOMAIN: number-leading line — overwhelmingly a TOC / section-heading
+	// / numbered-list entry where the number is a locator, not a quantity.
 	if len(fields) > 0 && fields[0] == verbatimToken {
 		add(RejectNumberLeadingLine)
 	}

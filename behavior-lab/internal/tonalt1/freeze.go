@@ -52,14 +52,16 @@ type SelectorManifest struct {
 
 	Store StoreIdentity `json:"store"`
 
-	SpanNormVersion          string   `json:"span_norm_version"`
-	EnvelopeVersion          string   `json:"envelope_version"`
-	GeometryRuleVersion      string   `json:"geometry_rule_version"`
-	PriorUseInventoryVersion string   `json:"prior_use_inventory_version"`
-	EnvelopeRules            []string `json:"envelope_rules"`
-	GeometryRules            []string `json:"geometry_rules"`
-	PaddingPolicy            string   `json:"padding_policy"`
-	TokenBoxMethod           string   `json:"token_box_method"`
+	SpanNormVersion          string              `json:"span_norm_version"`
+	EnvelopeVersion          string              `json:"envelope_version"`
+	GeometryRuleVersion      string              `json:"geometry_rule_version"`
+	PriorUseInventoryVersion string              `json:"prior_use_inventory_version"`
+	RuleAuditVersion         string              `json:"rule_audit_version"`
+	RuleProvenance           map[string][]string `json:"rule_provenance"` // class -> [rejection codes]
+	EnvelopeRules            []string            `json:"envelope_rules"`
+	GeometryRules            []string            `json:"geometry_rules"`
+	PaddingPolicy            string              `json:"padding_policy"`
+	TokenBoxMethod           string              `json:"token_box_method"`
 
 	ExpectedPrimaryUniqueOperandDemand int    `json:"expected_primary_unique_operand_demand"`
 	DemandProvenance                   string `json:"expected_primary_unique_operand_demand_provenance"`
@@ -261,6 +263,8 @@ func RunD3(root, storeDir string) (D3Result, error) {
 		EnvelopeVersion:                    EnvelopeVersion,
 		GeometryRuleVersion:                GeometryRuleVersion,
 		PriorUseInventoryVersion:           PriorUseInventoryVersion,
+		RuleAuditVersion:                   RuleAuditVersion,
+		RuleProvenance:                     ruleProvenanceTable(),
 		EnvelopeRules:                      EnvelopeRuleSummary,
 		GeometryRules:                      GeometryRuleSummary,
 		PaddingPolicy:                      paddingPolicy,
@@ -423,11 +427,11 @@ func buildFreeze(result D3Result, store StoreIdentity) FreezeManifest {
 			Blocker:                "INSUFFICIENT_UNIQUE_HELD_OUT_OPERANDS",
 			NAvailable:             stats.AvailableUniqueOperands,
 			NRequired:              stats.RequiredUniqueOperandDemand,
-			FamilyDerivedNRequired: 156,
+			FamilyDerivedNRequired: 144,
 			Deficit:                stats.RequiredUniqueOperandDemand - stats.AvailableUniqueOperands,
 			AvailableByMorphology:  stats.EligibleByMorphology,
 			AffectedStrata:         affected,
-			WhyInvalidating:        "T1 requires 60 primary workflows (12 per family) over UNIQUE source operand instances that are instance-level held-out from every prior Parrot experiment and inside the earned R1 envelope (R1-C: MULTI_DIGIT_INTEGER and DECIMAL USABLE_WITH_CONSTRAINTS; SINGLE_DIGIT/THOUSANDS/PERCENTAGE FRAGILE; RANGE/SIGNED DO_NOT_DEPLOY). The isolated-prose MULTI_DIGIT_INTEGER presentation is fully exhausted by R1-A/A1/B/C/D/G + Profile-H (0 fresh). Only DECIMAL quantity operands remain, and after rejecting cross-references / version strings only a single-digit count survives. Building T1 from this pool would force operand reuse across workflows (PRIMARY_WORKFLOW_TARGET_REUSE=true) or reuse of prior-inferred instances — either destroys the held-out claim and the workflow-composition difficulty axis.",
+			WhyInvalidating:        "T1 requires 60 primary workflows (12 per family) over UNIQUE source operand instances that are instance-level held-out from every prior Parrot experiment and inside the earned R1 envelope (R1-C: MULTI_DIGIT_INTEGER and DECIMAL USABLE_WITH_CONSTRAINTS; SINGLE_DIGIT/THOUSANDS/PERCENTAGE/TABLE_CELL FRAGILE; RANGE/SIGNED DO_NOT_DEPLOY). D3 v2 reclassified the R1-A/R1-B prose-context pool rules (margin / narrow-line / small-font / bare-line-4-fields) as DATASET_AUTHORING_HEURISTIC and stopped blocking on them; even so, after prior-use exclusion and DOMAIN validity (number-leading TOC/heading, cross-reference, version string, page header/footer) the corpus yields only a low-double-digit count of MULTI_DIGIT_INTEGER + DECIMAL quantity operands. Building T1 from this pool would force operand reuse across workflows (PRIMARY_WORKFLOW_TARGET_REUSE=true) or reuse of prior-inferred instances — either destroys the held-out claim and the workflow-composition difficulty axis.",
 			SafeNextActions: []string{
 				"escalate to protocol review: the frozen T1 design (5 families x 12 x no-reuse, in-envelope, instance-held-out, single canonical document) is not satisfiable by this corpus",
 				"option A (needs review): reduce n per family and/or family count / depth strata so demand <= available",
@@ -507,7 +511,7 @@ func hardInvariants(result D3Result) map[string]bool {
 		if !cand.Presentation.R1EnvelopeSupported {
 			unsupportedInEligible = true
 		}
-		if hasAnyGeometryReject(cand.Eligibility.RejectionCodes) {
+		if hasBlockingPresentationReject(cand.Eligibility.RejectionCodes) {
 			ambiguousGeometryInEligible = true
 		}
 	}

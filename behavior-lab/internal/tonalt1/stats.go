@@ -20,6 +20,12 @@ type Stats struct {
 	ParseRejected                 int `json:"parse_rejected"`
 	OtherDomainRejected           int `json:"other_domain_rejected"`
 
+	// D3 v2 rule-class rejection accounting.
+	CapabilityRejected            int `json:"capability_rejected"`
+	PresentationIntegrityRejected int `json:"presentation_integrity_rejected"`
+	DomainValidityRejected        int `json:"domain_validity_rejected"`
+	AuthoringHeuristicOnly        int `json:"authoring_heuristic_only_would_pass_v2"`
+
 	FinalHeldOutAvailable int `json:"final_held_out_available"`
 
 	RejectionCounts map[RejectionCode]int `json:"rejection_counts"`
@@ -91,6 +97,32 @@ func computeStats(scan ScanResult, priorIndex *PriorUseIndex) Stats {
 		if contains(cand.Eligibility.RejectionCodes, RejectDomainInvalid) {
 			stats.OtherDomainRejected++
 		}
+		// Rule-class accounting.
+		var anyCap, anyPres, anyDomain, anyAuthoring bool
+		for _, code := range cand.Eligibility.RejectionCodes {
+			switch ruleClassOf[code] {
+			case ClassCapability:
+				anyCap = true
+			case ClassPresentation:
+				anyPres = true
+			case ClassDomain:
+				anyDomain = true
+			case ClassAuthoring:
+				anyAuthoring = true
+			}
+		}
+		if anyCap {
+			stats.CapabilityRejected++
+		}
+		if anyPres {
+			stats.PresentationIntegrityRejected++
+		}
+		if anyDomain {
+			stats.DomainValidityRejected++
+		}
+		if anyAuthoring && !anyCap && !anyPres && !anyDomain {
+			stats.AuthoringHeuristicOnly++
+		}
 
 		for _, match := range cand.PriorUse.Matches {
 			stats.ExclusionsByExperiment[match.Experiment]++
@@ -134,18 +166,28 @@ func computeStats(scan ScanResult, priorIndex *PriorUseIndex) Stats {
 	return stats
 }
 
-func hasAnyGeometryReject(codes []RejectionCode) bool {
-	geometry := map[RejectionCode]bool{
-		RejectMultipleNumericTokens: true, RejectOperandNotIncluded: true,
-		RejectGeometryAmbiguous: true, RejectGeometryMalformed: true,
-		RejectLineInPageMargin: true, RejectLineTooNarrow: true,
-		RejectBareOrShortNumberLine: true, RejectNumberLeadingLine: true,
-		RejectBibliographyLine: true, RejectFontBelowBody: true,
-		RejectRunningHeader: true, RejectCueImplausible: true,
-		RejectPaddedBoxClipped: true, RejectTokenOffsetNotUnique: true,
-	}
+// hasBlockingPresentationReject reports whether any code is a
+// PRESENTATION_INTEGRITY rule (these always block; used by the
+// eligible-set integrity invariant).
+func hasBlockingPresentationReject(codes []RejectionCode) bool {
 	for _, code := range codes {
-		if geometry[code] {
+		if ruleClassOf[code] == ClassPresentation {
+			return true
+		}
+	}
+	return false
+}
+
+// hasAnyGeometryReject retains its name for the stats bucket: any
+// PRESENTATION_INTEGRITY or geometry-shaped DOMAIN reject.
+func hasAnyGeometryReject(codes []RejectionCode) bool {
+	for _, code := range codes {
+		switch ruleClassOf[code] {
+		case ClassPresentation:
+			return true
+		}
+		switch code {
+		case RejectNumberLeadingLine, RejectLoneNumberLine, RejectPageHeaderFooter, RejectRunningHeader:
 			return true
 		}
 	}
