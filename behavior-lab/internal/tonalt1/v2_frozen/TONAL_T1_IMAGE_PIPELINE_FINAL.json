@@ -1,0 +1,133 @@
+{
+  "schema_version": "tonal.t1.image-pipeline-final.v1",
+  "timestamp": "2026-09-04T12:30:00Z",
+  "execution_mandate": "38-point specification",
+  "phase_status": "COMPLETE_VALIDATION",
+  "READY_TONAL_T1_IMAGES": true,
+  "READY_TONAL_T1_EXECUTION": false,
+  "T1_PRIMARY_MODEL_CALLS": 0,
+  "status": {
+    "source_verification": "PASS",
+    "workflow_validation": "PASS",
+    "operand_validation": "PASS",
+    "primary_universe_check": "PASS",
+    "no_leakage_verification": "PASS",
+    "call_budget_derivation": "PASS",
+    "counterfactual_budget": "PASS",
+    "transport_fail_closed": "PASS",
+    "preflight_gates": "26/26 PASS"
+  },
+  "source": {
+    "pdf_path": "/mnt/resources/Libros/Aprendizaje/Ingeniería Civil/Cálculo Estructural/Estructuras de concreto/ACI_318-05_Espanhol (1).pdf",
+    "pdf_sha256": "79db14b30d58a528c858b48d859ef24ab61378cb5879782ea550043472edd8b4",
+    "store_path": "experiments/tonal-t1/fresh-corpus/stores/cand03",
+    "store_page_count": 495
+  },
+  "primary_manifest": {
+    "workflows_total": 60,
+    "workflows_per_shape": 12,
+    "shapes": ["READ_AND_CHECK", "COMPARE_TWO_VALUES", "DIFFERENCE_THEN_VERIFY", "RATIO_OF_DIFFERENCE", "RECONCILIATION_CHAIN"],
+    "operands_total": 144,
+    "operands_unique": 144,
+    "operand_reuse": 0,
+    "unique_pages": 92,
+    "page_range": "2-471"
+  },
+  "validation_results": {
+    "candidate_in_primary_universe": "144/144",
+    "bridge_page_overlap": 0,
+    "bridge_instance_overlap": 0,
+    "prior_use_overlap": 0,
+    "single_digit_count": 0,
+    "duplicate_physical_identity": 0
+  },
+  "frozen_parameters": {
+    "raster_dpi": 150,
+    "canvas_px": 512,
+    "target_line_height_px": 32,
+    "draw_cue": true,
+    "cue_color_rgba": [230, 0, 130, 255],
+    "neutral_bg_rgba": [200, 200, 200, 255],
+    "resampler": "bilinear (Go 1.26)",
+    "renderer_path": "internal/parrotpresent/prepare.go"
+  },
+  "call_budget": {
+    "arm_a_derived": 60,
+    "arm_a_expected": 60,
+    "arm_b_derived": 492,
+    "arm_b_expected": 492,
+    "arm_c_derived": 144,
+    "arm_c_expected": 144,
+    "primary_total_derived": 696,
+    "primary_total_expected": 696,
+    "counterfactual_additional_calls": 0,
+    "counterfactual_scope": "ARM_C_ONLY"
+  },
+  "historical_reconciliation": {
+    "d2l_fold_bench_feasible": 19,
+    "fresh_aci_available": 405,
+    "t1_demand": 144,
+    "headroom_ratio": 2.8125
+  },
+  "preflight_gates": {
+    "01_source_pdf_sha": "PASS",
+    "02_store_identity": "PASS",
+    "03_workflows_60": "PASS",
+    "04_operands_144": "PASS",
+    "05_physical_identity_unique": "PASS",
+    "06_candidate_in_primary_universe": "PASS",
+    "07_bridge_page_overlap_zero": "PASS",
+    "08_bridge_instance_overlap_zero": "PASS",
+    "09_prior_use_overlap_zero": "PASS",
+    "10_single_digit_zero": "PASS",
+    "11_token_bbox_source_frozen": "PASS",
+    "12_bbox_geometry_valid": "PASS",
+    "13_raster_dpi_150": "PASS",
+    "14_page_raster_complete": "PASS",
+    "15_prepared_images_144": "PASS",
+    "16_renderer_identity_frozen": "PASS",
+    "17_target_line_height_32": "PASS",
+    "18_image_decode_144": "PASS",
+    "19_prepared_repeatability_144_of_144": "PASS",
+    "20_arm_a_composites_60": "PASS",
+    "21_arm_a_no_rescale": "PASS",
+    "22_arm_a_repeatability_60_of_60": "PASS",
+    "23_call_budget_60_492_144_696": "PASS",
+    "24_counterfactual_model_call_budget_zero": "PASS",
+    "25_transport_fail_closed": "PASS",
+    "26_primary_model_calls_zero": "PASS"
+  },
+  "transport_tests": {
+    "valid_openai_response": "VERIFIED",
+    "http_error_handling": "VERIFIED",
+    "http_200_with_error_body": "VERIFIED",
+    "malformed_json": "VERIFIED",
+    "empty_choices": "VERIFIED",
+    "empty_content": "VERIFIED",
+    "valid_multimodal": "VERIFIED",
+    "valid_text": "VERIFIED",
+    "total_passed": "8/8"
+  },
+  "semantic_invariants_frozen": {
+    "shape_2_correction": "max(A,B)",
+    "shape_5_tolerance": 0.05,
+    "workflow_semantics": "UNCHANGED",
+    "arm_policies": "UNCHANGED",
+    "counterfactual_definitions": "UNCHANGED"
+  },
+  "artifacts_ready": {
+    "operand_presentations": "144 (512x512, parrotpresent.Prepare)",
+    "arm_a_composites": "60 (no rescaling)",
+    "page_rasterization": "92 pages (150 DPI)",
+    "run_1_run_2": "byte-level determinism proof (not executed in this phase)"
+  },
+  "final_state": {
+    "READY_TONAL_T1_IMAGES": true,
+    "READY_TONAL_T1_EXECUTION": false,
+    "T1_PRIMARY_MODEL_CALLS": 0,
+    "invalid_attempt_0_preserved": true,
+    "attempt_0_commit": "4c3f4f5",
+    "new_infrastructure_frozen": true
+  },
+  "next_phase": "STOP - AWAITING HUMAN REVIEW before live T1 execution"
+}
