@@ -36,7 +36,8 @@ type Summary struct {
 
 type CostSummary struct {
 	PlannedModelCallSlots int   `json:"planned_model_call_slots,omitempty"`
-	CompletedTransports   int   `json:"completed_transports"`
+	ModelCalls            int   `json:"model_calls"`
+	CompletedTransports   int   `json:"completed_transports,omitempty"`
 	HTTPRequestAttempts   int   `json:"http_request_attempts"`
 	ValidCompletions      int   `json:"valid_completions"`
 	TransportFailures     int   `json:"transport_failures"`
@@ -112,7 +113,7 @@ func Summarize(manifest RunManifest, episodes []episode.Episode) Summary {
 		accumulateEpisodeBreakdown(armCounts, ep.Arm, ep.Success, ep.SemanticCorrect)
 		accumulateEpisodeBreakdown(familyCounts, ep.Family, ep.Success, ep.SemanticCorrect)
 
-		summary.Cost.CompletedTransports += ep.Cost.ModelCalls
+		summary.Cost.ModelCalls += ep.Cost.ModelCalls
 		summary.Cost.HTTPRequestAttempts += ep.Cost.HTTPRequestAttempts
 		summary.Cost.ValidCompletions += ep.Cost.ValidCompletions
 		summary.Cost.TransportFailures += ep.Cost.TransportFailures
