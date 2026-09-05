@@ -27,8 +27,11 @@ func TestSummarizeFindsFailureFrontier(t *testing.T) {
 			Schema: episode.Schema, EpisodeID: "ep-2", SourceExperiment: "PROTO_X", RunID: "run-1",
 			TaskID: "task-2", Arm: "B", Family: "F1", Success: false, SemanticCorrect: false, ExactCorrect: false,
 			FailureRootCause: "MODEL_CONTRACT_FAILURE",
-			Cost: episode.Cost{ModelCalls: 1, HTTPRequestAttempts: 1, ModelContractFailures: 1, LatencyMS: 30},
-			Steps: []episode.Step{{SelectedCapability: "COMPARE", TransportStatus: "OK", SchemaStatus: "OK", ContractStatus: "BAD_OUTPUT", LatencyMS: 30}},
+			Cost: episode.Cost{ModelCalls: 1, HTTPRequestAttempts: 1, ModelContractFailures: 1, BlockedByDependency: 1, LatencyMS: 30},
+			Steps: []episode.Step{
+				{SelectedCapability: "COMPARE", TransportStatus: "OK", SchemaStatus: "OK", ContractStatus: "BAD_OUTPUT", LatencyMS: 30},
+				{SelectedCapability: "ARITHMETIC", TransportStatus: "NOT_ATTEMPTED", ContractStatus: "BLOCKED_BY_DEPENDENCY", LatencyMS: 0},
+			},
 		},
 	}
 
@@ -39,11 +42,18 @@ func TestSummarizeFindsFailureFrontier(t *testing.T) {
 	if got.SemanticAccuracy != 0.5 || got.ExactAccuracy != 0.5 {
 		t.Errorf("accuracy semantic/exact = %v/%v, want 0.5/0.5", got.SemanticAccuracy, got.ExactAccuracy)
 	}
-	if got.Cost.HTTPRequestAttempts != 2 || got.Cost.ValidCompletions != 1 || got.Cost.ModelContractFailures != 1 {
+	if got.Cost.HTTPRequestAttempts != 2 || got.Cost.ValidCompletions != 1 || got.Cost.ModelContractFailures != 1 || got.Cost.BlockedByDependency != 1 {
 		t.Errorf("cost = %+v", got.Cost)
 	}
 	if got.MostFailedCapability != "COMPARE" || got.NextDebugTarget != "capability:COMPARE" {
 		t.Errorf("debug target = %q/%q, want COMPARE/capability:COMPARE", got.MostFailedCapability, got.NextDebugTarget)
+	}
+	for _, capability := range got.ByCapability {
+		if capability.Capability == "ARITHMETIC" {
+			if capability.FailedSteps != 0 || capability.BlockedSteps != 1 {
+				t.Errorf("blocked ARITHMETIC = %+v, want failed=0 blocked=1", capability)
+			}
+		}
 	}
 	if got.Latency.P50MS != 10 || got.Latency.P95MS != 30 || got.Latency.MaxMS != 30 {
 		t.Errorf("latency = %+v, want p50=10 p95=30 max=30", got.Latency)
