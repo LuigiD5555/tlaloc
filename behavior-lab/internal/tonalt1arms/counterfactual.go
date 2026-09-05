@@ -5,6 +5,17 @@ import (
 	"math"
 )
 
+// HISTORICAL/REFERENCE CODE (v1): ArmCState, NewArmCState, RunPoison,
+// RunRemove below are preserved UNMODIFIED as a semantic reference/oracle
+// (per task instruction) and remain covered by their existing tests. They
+// call the historical v1 ComputeGold (A-B for COMPARE_TWO_VALUES) and are
+// NOT used by the live T1_V2 runtime. The final scientific counterfactual
+// implementation is RunPoisonOnBlackboard/RunRemoveOnBlackboard, further
+// down this file, which operates on a completed v2 Arm-C *Blackboard* (not
+// ArmCState) and replays via the shared ShapeDAG's Operation functions
+// (v2semantics.go) -- never ComputeGold, never the avg/sub_B-style
+// intermediate formulas, only T1_V2 semantics throughout.
+
 // ArmCState is a completed Arm-C Blackboard snapshot for one workflow: the
 // post-extraction role -> numeric-value map produced by EXTRACT_NUMBER
 // calls, plus the deterministic terminal result computed from it. It is the
@@ -235,4 +246,306 @@ func valuesEqual(a, b float64) bool {
 		return math.IsNaN(a) && math.IsNaN(b)
 	}
 	return a == b
+}
+
+// --- V2 Blackboard counterfactual implementation (the real, scientific
+// implementation; see the historical-code note at the top of this file) ---
+
+// BlackboardCounterfactualOutcome is RunPoisonOnBlackboard/
+// RunRemoveOnBlackboard's result: identical in spirit to
+// CounterfactualOutcome above, but computed entirely from a v2 Blackboard
+// and the shared ShapeDAG's Operation functions -- never ComputeGold.
+type BlackboardCounterfactualOutcome struct {
+	Operation                     string // "POISON" | "REMOVE"
+	WorkflowID                    string
+	TargetNodeID                  string
+	OriginalValue                 float64
+	MutatedValue                  float64 // POISON only
+	OriginalFinal                 float64
+	ResultingFinal                float64
+	TerminalChanged               bool
+	FailedClosed                  bool
+	FailureReason                 string
+	PrimaryObservationUnavailable bool // true iff the target's primary EXTRACT_NUMBER observation was never DONE in the input Blackboard
+	ModelCallCount                int  // must always be 0
+	ReplayedNodeIDs               []string
+	SemanticsVersion              string
+}
+
+// requirePrimaryObservation checks that targetNodeID (an EXTRACT_NUMBER/READ
+// node) exists and is DONE in bb. Per task correction D, if it is not, the
+// runner does not manufacture a value from gold -- it reports
+// PRIMARY_OBSERVATION_UNAVAILABLE and makes zero model calls to fetch one.
+func requirePrimaryObservation(bb *Blackboard, targetNodeID string) (*NodeRecord, bool) {
+	rec, ok := bb.Nodes[targetNodeID]
+	if !ok || rec.Status != NodeStatusDone || rec.Operation != OpRead {
+		return nil, false
+	}
+	return rec, true
+}
+
+// replayDescendants recomputes every descendant of targetNodeID (per the
+// shared ShapeDAG's real DependsOn-edge graph walk, ShapeDAG.Descendants --
+// not a hardcoded per-shape table) using each node's Operation function from
+// v2semantics.go. It never touches EXTRACT_NUMBER/LOCATE_REGION/CROP_REGION
+// nodes (those are never descendants of a value mutation in these frozen
+// DAGs, but this is asserted explicitly rather than assumed) and never
+// invokes any model transport.
+func replayDescendants(bb *Blackboard, dag ShapeDAG, targetNodeID string) ([]string, error) {
+	descendants := dag.Descendants(targetNodeID)
+	values := make(map[string]float64)
+	verdicts := make(map[string]string)
+
+	// Seed `values`/`verdicts` from every non-descendant DONE node's
+	// Outputs/OutputVerdict, so a descendant that depends on an untouched
+	// sibling (e.g. RECONCILIATION_CHAIN's sub_A depends on norm_A AND
+	// norm_a, but only norm_A might be downstream of the mutated node) can
+	// still resolve its inputs.
+	descendantSet := make(map[string]bool, len(descendants))
+	for _, id := range descendants {
+		descendantSet[id] = true
+	}
+	for id, rec := range bb.Nodes {
+		if descendantSet[id] {
+			continue
+		}
+		if rec.Status != NodeStatusDone {
+			continue
+		}
+		for k, v := range rec.Outputs {
+			values[k] = v
+		}
+		if rec.OutputVerdict != "" {
+			step, ok := dag.StepByID(id)
+			if ok {
+				verdicts[step.OutputKey] = rec.OutputVerdict
+			}
+		}
+	}
+	// Seed the mutated target node's own (already-updated) output too.
+	if targetRec, ok := bb.Nodes[targetNodeID]; ok {
+		for k, v := range targetRec.Outputs {
+			values[k] = v
+		}
+	}
+
+	for _, nodeID := range descendants {
+		step, ok := dag.StepByID(nodeID)
+		if !ok {
+			return nil, fmt.Errorf("tonalt1arms: replayDescendants: node %q not found in shape %s's DAG", nodeID, dag.Shape)
+		}
+		if step.Capability == "EXTRACT_NUMBER" || step.Operation == OpRead {
+			return nil, fmt.Errorf("tonalt1arms: replayDescendants: refusing to replay EXTRACT_NUMBER node %q -- descendant replay must never re-invoke a model call", nodeID)
+		}
+
+		switch step.Operation {
+		case "":
+			continue
+		case OpNormalize:
+			in, ok := values[step.InputKeys[0]]
+			if !ok {
+				return nil, fmt.Errorf("tonalt1arms: replayDescendants: node %q missing upstream %q", nodeID, step.InputKeys[0])
+			}
+			values[step.OutputKey] = opNormalize(in)
+		case OpMax:
+			a, b, err := twoInputs(step, values)
+			if err != nil {
+				return nil, err
+			}
+			values[step.OutputKey] = opMax(a, b)
+			verdicts["comparison_verdict"] = opCompareNumbers(a, b)
+		case OpSubtract:
+			a, b, err := twoInputs(step, values)
+			if err != nil {
+				return nil, err
+			}
+			values[step.OutputKey] = opSubtract(a, b)
+		case OpDivide:
+			a, b, err := twoInputs(step, values)
+			if err != nil {
+				return nil, err
+			}
+			result, divErr := opDivide(a, b)
+			if divErr != nil {
+				values[step.OutputKey] = math.NaN()
+				continue
+			}
+			values[step.OutputKey] = result
+		case OpPercentDifference:
+			a, b, err := twoInputs(step, values)
+			if err != nil {
+				return nil, err
+			}
+			values[step.OutputKey] = opPercentDifference(a, b)
+		case OpPercentToFraction:
+			in, ok := values[step.InputKeys[0]]
+			if !ok {
+				return nil, fmt.Errorf("tonalt1arms: replayDescendants: node %q missing upstream %q", nodeID, step.InputKeys[0])
+			}
+			values[step.OutputKey] = opPercentToFraction(in)
+		case OpSubtractTolerance:
+			in, ok := values[step.InputKeys[0]]
+			if !ok {
+				return nil, fmt.Errorf("tonalt1arms: replayDescendants: node %q missing upstream %q", nodeID, step.InputKeys[0])
+			}
+			values[step.OutputKey] = opSubtractTolerance(in)
+		case OpCompareZero:
+			in, ok := values[step.InputKeys[0]]
+			if !ok {
+				return nil, fmt.Errorf("tonalt1arms: replayDescendants: node %q missing upstream %q", nodeID, step.InputKeys[0])
+			}
+			verdicts[step.OutputKey] = opCompareZero(in)
+		case OpThresholdCheck:
+			// side-observation, nothing to propagate
+		case OpVerify:
+			in, ok := values[step.InputKeys[0]]
+			if !ok {
+				return nil, fmt.Errorf("tonalt1arms: replayDescendants: node %q missing upstream %q", nodeID, step.InputKeys[0])
+			}
+			values[step.OutputKey] = in
+		default:
+			return nil, fmt.Errorf("tonalt1arms: replayDescendants: unknown Operation %q on node %q", step.Operation, nodeID)
+		}
+
+		rec := NodeRecord{
+			NodeID:     nodeID,
+			Capability: step.Capability,
+			Operation:  step.Operation,
+			ExecutorID: "counterfactual-replay",
+			DependsOn:  step.DependsOn,
+			Outputs:    map[string]float64{step.OutputKey: values[step.OutputKey]},
+			Status:     NodeStatusDone,
+		}
+		if v, ok := verdicts[step.OutputKey]; ok {
+			rec.OutputVerdict = v
+			rec.Outputs = nil
+		}
+		bb.Nodes[nodeID] = &rec
+	}
+
+	terminalStep, ok := dag.StepByID(dag.TerminalNodeID)
+	if !ok {
+		return descendants, fmt.Errorf("tonalt1arms: replayDescendants: terminal node %q not found", dag.TerminalNodeID)
+	}
+	if _, ok := values[terminalStep.OutputKey]; !ok {
+		return descendants, fmt.Errorf("tonalt1arms: replayDescendants: terminal value %q was not recomputed", terminalStep.OutputKey)
+	}
+	return descendants, nil
+}
+
+// RunPoisonOnBlackboard is the final scientific POISON implementation: it
+// clones a completed v2 Arm-C Blackboard, replaces exactly the target node's
+// observed value, invalidates and replays only its causal descendants via
+// the shared DAG's Operation functions, and never invokes any model
+// transport (ModelCallCount is always 0). If the target's primary
+// EXTRACT_NUMBER observation was never completed in the input Blackboard,
+// this reports PRIMARY_OBSERVATION_UNAVAILABLE and returns without
+// mutating/replaying anything or fabricating a value from gold.
+func RunPoisonOnBlackboard(bb *Blackboard, dag ShapeDAG, targetNodeID string, poisonValue float64) (BlackboardCounterfactualOutcome, *Blackboard, error) {
+	targetRec, available := requirePrimaryObservation(bb, targetNodeID)
+	if !available {
+		return BlackboardCounterfactualOutcome{
+			Operation: "POISON", WorkflowID: bb.WorkflowID, TargetNodeID: targetNodeID,
+			PrimaryObservationUnavailable: true, ModelCallCount: 0, SemanticsVersion: CounterfactualSemanticsVersion,
+		}, bb, nil
+	}
+	targetStep, ok := dag.StepByID(targetNodeID)
+	if !ok {
+		return BlackboardCounterfactualOutcome{}, bb, fmt.Errorf("tonalt1arms: RunPoisonOnBlackboard: node %q not found in shape %s's DAG", targetNodeID, dag.Shape)
+	}
+
+	role := targetStep.OutputKey
+	original := targetRec.Outputs[role]
+	originalFinalVal, _, originalPromoted := bb.Promoted()
+	if !originalPromoted {
+		if terminalStep, ok := dag.StepByID(dag.TerminalNodeID); ok {
+			if rec, ok := bb.Nodes[dag.TerminalNodeID]; ok && rec.Status == NodeStatusDone {
+				originalFinalVal = rec.Outputs[terminalStep.OutputKey]
+			}
+		}
+	}
+
+	clone := bb.Clone()
+	mutated := *clone.Nodes[targetNodeID]
+	mutated.Outputs = map[string]float64{role: poisonValue}
+	clone.Nodes[targetNodeID] = &mutated
+
+	replayed, err := replayDescendants(clone, dag, targetNodeID)
+	if err != nil {
+		return BlackboardCounterfactualOutcome{}, bb, err
+	}
+
+	newFinalVal := readTerminal(clone, dag)
+	if dag.HasVerify {
+		if terminalRec, ok := clone.Nodes[dag.TerminalNodeID]; ok && terminalRec.Status == NodeStatusDone {
+			_ = clone.PromoteFinal(dag.TerminalNodeID)
+		}
+	}
+
+	return BlackboardCounterfactualOutcome{
+		Operation: "POISON", WorkflowID: bb.WorkflowID, TargetNodeID: targetNodeID,
+		OriginalValue: original, MutatedValue: poisonValue,
+		OriginalFinal: originalFinalVal, ResultingFinal: newFinalVal,
+		TerminalChanged:  !valuesEqual(originalFinalVal, newFinalVal),
+		ModelCallCount:   0,
+		ReplayedNodeIDs:  replayed,
+		SemanticsVersion: CounterfactualSemanticsVersion,
+	}, clone, nil
+}
+
+// RunRemoveOnBlackboard is the final scientific REMOVE implementation:
+// identical setup to RunPoisonOnBlackboard, but deletes the target node's
+// record entirely (rather than mutating its value) and requires the
+// replay to fail closed, since every frozen T1 shape's terminal value
+// causally requires every one of its acquire-chain roles.
+func RunRemoveOnBlackboard(bb *Blackboard, dag ShapeDAG, targetNodeID string) (BlackboardCounterfactualOutcome, *Blackboard, error) {
+	targetRec, available := requirePrimaryObservation(bb, targetNodeID)
+	if !available {
+		return BlackboardCounterfactualOutcome{
+			Operation: "REMOVE", WorkflowID: bb.WorkflowID, TargetNodeID: targetNodeID,
+			PrimaryObservationUnavailable: true, ModelCallCount: 0, SemanticsVersion: CounterfactualSemanticsVersion,
+		}, bb, nil
+	}
+	targetStep, ok := dag.StepByID(targetNodeID)
+	if !ok {
+		return BlackboardCounterfactualOutcome{}, bb, fmt.Errorf("tonalt1arms: RunRemoveOnBlackboard: node %q not found in shape %s's DAG", targetNodeID, dag.Shape)
+	}
+	role := targetStep.OutputKey
+	original := targetRec.Outputs[role]
+	originalFinalVal := readTerminal(bb, dag)
+
+	clone := bb.Clone()
+	delete(clone.Nodes, targetNodeID)
+
+	replayed, err := replayDescendants(clone, dag, targetNodeID)
+	if err == nil {
+		return BlackboardCounterfactualOutcome{}, bb, fmt.Errorf("tonalt1arms: RunRemoveOnBlackboard: expected fail-closed behavior removing required node %q, but replay succeeded -- this shape does not actually require this node", targetNodeID)
+	}
+
+	return BlackboardCounterfactualOutcome{
+		Operation: "REMOVE", WorkflowID: bb.WorkflowID, TargetNodeID: targetNodeID,
+		OriginalValue: original, OriginalFinal: originalFinalVal,
+		TerminalChanged:  true,
+		FailedClosed:     true,
+		FailureReason:    err.Error(),
+		ModelCallCount:   0,
+		ReplayedNodeIDs:  replayed,
+		SemanticsVersion: CounterfactualSemanticsVersion,
+	}, clone, nil
+}
+
+// readTerminal reads the shape's terminal value straight off its terminal
+// node's own Outputs (for has_verify=false shapes) -- callers needing the
+// VERIFY-promoted value specifically should use Blackboard.Promoted after
+// promotion instead.
+func readTerminal(bb *Blackboard, dag ShapeDAG) float64 {
+	terminalStep, ok := dag.StepByID(dag.TerminalNodeID)
+	if !ok {
+		return math.NaN()
+	}
+	rec, ok := bb.Nodes[dag.TerminalNodeID]
+	if !ok || rec.Status != NodeStatusDone {
+		return math.NaN()
+	}
+	return rec.Outputs[terminalStep.OutputKey]
 }
