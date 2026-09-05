@@ -32,10 +32,23 @@ func WriteBundle(outDir string, manifest RunManifest, episodes []episode.Episode
 	return writePreparedBundle(outDir, manifest, episodes, Summarize(manifest, episodes), observedAt)
 }
 
+// FreezePrimaryT1Run is the intended T1 primary-run persistence boundary:
+// first freeze the experiment-native scientific records, then immediately
+// write the common experience projection beside them. It never changes T1's
+// frozen raw formats. If projection fails, the raw freeze remains available
+// for repair/backfill without repeating model calls.
+func FreezePrimaryT1Run(outDir string, manifest RunManifest, result tonalt1arms.RunResult, observedAt time.Time) (BundlePaths, error) {
+	if err := result.Freeze(outDir); err != nil {
+		return BundlePaths{}, err
+	}
+	return WriteT1Bundle(outDir, manifest, result, observedAt)
+}
+
 // WriteT1Bundle adapts a T1 CrossArmRunner result into the same common bundle
 // while preserving T1's frozen raw records as the source of truth. It also
 // proves that the Episode projection reproduces T1's dynamic accounting before
-// writing anything.
+// writing anything. This function can be used to backfill experience from an
+// already-frozen in-memory T1 result without refreezing raw evidence.
 func WriteT1Bundle(outDir string, manifest RunManifest, result tonalt1arms.RunResult, observedAt time.Time) (BundlePaths, error) {
 	if manifest.SourceExperiment != episode.SourceT1 {
 		return BundlePaths{}, fmt.Errorf("experimentalspine: T1 source_experiment = %q, want %q", manifest.SourceExperiment, episode.SourceT1)
@@ -71,6 +84,9 @@ func validateBundleInput(outDir string, manifest RunManifest, episodes []episode
 	}
 	if err := manifest.Validate(); err != nil {
 		return err
+	}
+	if len(episodes) == 0 {
+		return errors.New("experimentalspine: refusing to publish an experience bundle with zero episodes")
 	}
 	for index, ep := range episodes {
 		if ep.Schema != episode.Schema {
