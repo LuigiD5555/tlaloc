@@ -42,6 +42,9 @@ func TestSummarizeFindsFailureFrontier(t *testing.T) {
 	if got.SemanticAccuracy != 0.5 || got.ExactAccuracy != 0.5 {
 		t.Errorf("accuracy semantic/exact = %v/%v, want 0.5/0.5", got.SemanticAccuracy, got.ExactAccuracy)
 	}
+	if got.Cost.ModelCalls != 2 || got.Cost.CompletedTransports != 0 {
+		t.Errorf("generic model/transport summary = %d/%d, want model_calls=2 and completed_transports unknown/0", got.Cost.ModelCalls, got.Cost.CompletedTransports)
+	}
 	if got.Cost.HTTPRequestAttempts != 2 || got.Cost.ValidCompletions != 1 || got.Cost.ModelContractFailures != 1 || got.Cost.BlockedByDependency != 1 {
 		t.Errorf("cost = %+v", got.Cost)
 	}
@@ -124,7 +127,7 @@ func TestWriteT1BundleMatchesRawAccounting(t *testing.T) {
 	if err := json.Unmarshal(body, &summary); err != nil {
 		t.Fatal(err)
 	}
-	if summary.Cost.PlannedModelCallSlots != 1 || summary.Cost.HTTPRequestAttempts != 1 || summary.Cost.ValidCompletions != 1 {
+	if summary.Cost.PlannedModelCallSlots != 1 || summary.Cost.ModelCalls != 1 || summary.Cost.CompletedTransports != 1 || summary.Cost.HTTPRequestAttempts != 1 || summary.Cost.ValidCompletions != 1 {
 		t.Errorf("T1 summary cost = %+v", summary.Cost)
 	}
 }
