@@ -67,12 +67,14 @@ type Step struct {
 
 // Cost is the episode-level execution-accounting rollup.
 //
-// ModelCalls is retained for backwards compatibility with the first Episode
-// producer and means completed transport calls (TransportStatus == OK). New
-// analysis should prefer the explicit counters below. HTTPRequestAttempts
-// counts both successful and failed transport attempts, matching T1's frozen
-// RunAccounting semantics; pre-call refusals and dependency-blocked nodes do
-// not count as attempts.
+// ModelCalls is the number of model calls reported by the source experiment;
+// its exact transport semantics remain source-specific. T1's historical
+// adapter counts completed transports here, while a TONAL runtime adapter can
+// report its native generative-call count. Cross-prototype analysis that needs
+// transport semantics must use the explicit counters below, and producers must
+// leave counters they cannot observe at zero rather than inventing them.
+// HTTPRequestAttempts counts both successful and failed transport attempts
+// only when the source experiment actually observes that boundary.
 type Cost struct {
 	ModelCalls            int   `json:"model_calls"`
 	HTTPRequestAttempts   int   `json:"http_request_attempts"`
