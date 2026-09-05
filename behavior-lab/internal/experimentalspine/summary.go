@@ -10,7 +10,11 @@ import (
 type Summary struct {
 	Schema           string `json:"schema"`
 	RunID            string `json:"run_id"`
+	ParentRunID      string `json:"parent_run_id,omitempty"`
 	SourceExperiment string `json:"source_experiment"`
+	PrototypeID      string `json:"prototype_id"`
+	PrototypeVersion string `json:"prototype_version,omitempty"`
+	ParentVersion    string `json:"parent_version,omitempty"`
 
 	Episodes         int     `json:"episodes"`
 	Successful       int     `json:"successful"`
@@ -75,7 +79,11 @@ func Summarize(manifest RunManifest, episodes []episode.Episode) Summary {
 	summary := Summary{
 		Schema:           SummarySchema,
 		RunID:            manifest.RunID,
+		ParentRunID:      manifest.ParentRunID,
 		SourceExperiment: manifest.SourceExperiment,
+		PrototypeID:      manifest.Prototype.ID,
+		PrototypeVersion: manifest.Prototype.Version,
+		ParentVersion:    manifest.Prototype.ParentVersion,
 		Episodes:         len(episodes),
 	}
 
