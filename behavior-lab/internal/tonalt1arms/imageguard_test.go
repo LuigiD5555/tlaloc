@@ -156,3 +156,33 @@ func TestVerifyComposite_MissingRecord(t *testing.T) {
 		t.Fatal("expected error for missing manifest record")
 	}
 }
+
+// TestStartupSweepResult_Bundle confirms Bundle() extracts exactly the
+// verified byte maps on a passing sweep.
+func TestStartupSweepResult_Bundle(t *testing.T) {
+	data := []byte("operand bytes")
+	hash := sha256Hex(data)
+	manifest := &ImageManifest{
+		Operands: []OperandImageRecord{{WorkflowID: "wf-1", Role: "A", Run1PreparedSHA256: hash, Run2PreparedSHA256: hash, Equal: true}},
+	}
+	result, err := StartupImageSweep(manifest, map[string][]byte{"wf-1|A": data}, map[string][]byte{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	bundle := result.Bundle()
+	if string(bundle.OperandImages["wf-1|A"]) != string(data) {
+		t.Fatalf("Bundle().OperandImages[wf-1|A] = %q, want %q", bundle.OperandImages["wf-1|A"], data)
+	}
+}
+
+// TestStartupSweepResult_Bundle_PanicsOnFailedSweep confirms Bundle()
+// refuses to hand out a bundle from a sweep that did not fully pass.
+func TestStartupSweepResult_Bundle_PanicsOnFailedSweep(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("expected Bundle() to panic on a failed sweep")
+		}
+	}()
+	failed := StartupSweepResult{AllValid: false}
+	_ = failed.Bundle()
+}

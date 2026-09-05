@@ -161,6 +161,20 @@ func VerifyComposite(manifest *ImageManifest, workflowID string, data []byte) er
 	return nil
 }
 
+// VerifiedArtifactBundle is the exact, byte-identical set of operand and
+// composite images that passed StartupImageSweep's hash verification --
+// named explicitly (task mandate: "StartupImageSweep -> VerifiedArtifactBundle
+// -> executors") so the "verified once, reused everywhere, never
+// re-resolved" contract is a real type in the API, not just a comment.
+// Executors are constructed to consume this bundle's maps directly;
+// VerifyOperandImage/VerifyComposite then re-hash these SAME bytes
+// immediately before each adapter call as defense against in-process
+// mutation between startup and call (TOCTOU protection, task §12).
+type VerifiedArtifactBundle struct {
+	OperandImages   map[string][]byte // keyed by workflowID+"|"+role
+	CompositeImages map[string][]byte // keyed by workflowID
+}
+
 // StartupSweepResult is the eager, complete, front-loaded outcome of
 // verifying every one of the 144 operand images and 60 Arm-A composites
 // before any model-identity preflight or inference is attempted (task
@@ -177,6 +191,17 @@ type StartupSweepResult struct {
 	Failures             []string
 	OperandImages        map[string][]byte // keyed by workflowID+"|"+role
 	CompositeImages      map[string][]byte // keyed by workflowID
+}
+
+// Bundle extracts the VerifiedArtifactBundle a live caller should hand to
+// its executors -- the exact byte maps this sweep verified, nothing more.
+// Panics if called on a sweep that did not pass (AllValid=false); a caller
+// must check the error returned by StartupImageSweep before calling Bundle.
+func (r StartupSweepResult) Bundle() VerifiedArtifactBundle {
+	if !r.AllValid {
+		panic("tonalt1arms: StartupSweepResult.Bundle called on a sweep that did not pass (AllValid=false) -- check StartupImageSweep's error first")
+	}
+	return VerifiedArtifactBundle{OperandImages: r.OperandImages, CompositeImages: r.CompositeImages}
 }
 
 // StartupImageSweep materializes every operand presentation and Arm-A

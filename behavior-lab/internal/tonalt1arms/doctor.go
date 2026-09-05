@@ -3,6 +3,8 @@ package tonalt1arms
 import (
 	"context"
 	"fmt"
+	"reflect"
+	"strings"
 )
 
 // DoctorResult is one evidence-based readiness check's outcome.
@@ -155,6 +157,20 @@ func RunDoctor(ctx context.Context, cfg DoctorConfig) []DoctorResult {
 		return "PASS", "max(60,420)=420 verified; PrimarySemanticsVersion=" + PrimarySemanticsVersion
 	})
 
+	check("D07b", "RUNTIME_GOLD_LEAKAGE = 0 (Arm B/C/Blackboard/counterfactual have no gold-shaped field)", func() (string, string) {
+		types := []interface{}{ArmBExecutor{}, ArmCExecutor{}, ArmAExecutor{}, Blackboard{}}
+		for _, v := range types {
+			typ := reflect.TypeOf(v)
+			for i := 0; i < typ.NumField(); i++ {
+				name := typ.Field(i).Name
+				if strings.Contains(strings.ToLower(name), "gold") {
+					return "FAIL", fmt.Sprintf("%s has gold-shaped field %q", typ.Name(), name)
+				}
+			}
+		}
+		return "PASS", "no ArmA/ArmB/ArmC/Blackboard field references gold; ComputeGoldV2 takes observed values as arguments only"
+	})
+
 	check("D08", "Image manifest hash guard available", func() (string, string) {
 		if cfg.ImageManifest == nil {
 			return "NOT_AVAILABLE", "no ImageManifest supplied to DoctorConfig"
@@ -222,6 +238,40 @@ func RunDoctor(ctx context.Context, cfg DoctorConfig) []DoctorResult {
 		return "PASS", "PRIMARY_OBSERVATION_UNAVAILABLE + ModelCallCount=0 confirmed"
 	})
 
+	check("D10b", "Full 288-trial structural counterfactual sweep (144 POISON + 144 REMOVE), zero model calls", func() (string, string) {
+		if workflows == nil {
+			return "FAIL", "prerequisite workflow load failed"
+		}
+		poison, remove, calls := 0, 0, 0
+		for _, wf := range workflows {
+			roleMap := makeRoleMap(wf.Operands)
+			for _, op := range wf.Operands {
+				dag, err := BuildShapeDAG(wf.Shape)
+				if err != nil {
+					return "FAIL", err.Error()
+				}
+				bb := doctorCompletedBlackboard(dag, roleMap)
+				nodeID := "read_" + op.Role
+				pOutcome, _, err := RunPoisonOnBlackboard(bb, dag, nodeID, op.NumericValue+1)
+				if err != nil {
+					return "FAIL", err.Error()
+				}
+				poison++
+				calls += pOutcome.ModelCallCount
+				rOutcome, _, err := RunRemoveOnBlackboard(bb, dag, nodeID)
+				if err != nil {
+					return "FAIL", err.Error()
+				}
+				remove++
+				calls += rOutcome.ModelCallCount
+			}
+		}
+		if poison != 144 || remove != 144 || calls != 0 {
+			return "FAIL", fmt.Sprintf("poison=%d remove=%d calls=%d, want 144/144/0", poison, remove, calls)
+		}
+		return "PASS", "144 POISON + 144 REMOVE = 288 trials, 0 model calls"
+	})
+
 	check("D11", "Analyzer determinism", func() (string, string) {
 		result := fixtureRunResultForDoctor()
 		report1, err := Analyze(result, nil).MarshalDeterministicJSON()
@@ -269,6 +319,75 @@ type doctorFakeAdapter struct{}
 
 func (d *doctorFakeAdapter) Call(ctx context.Context, req ParrotRequest) (ParrotResponse, error) {
 	return ParrotResponse{RawOutput: "1", ParsedValue: 1, ParsedOK: true, TransportOK: true, SchemaOK: true, ContractOK: true}, nil
+}
+
+// doctorCompletedBlackboard hand-builds a completed Arm-C-shaped Blackboard
+// from observed operand values only (never a gold artifact), mirroring
+// buildCompletedV2Blackboard's test-only helper for use inside the doctor's
+// production check (D10b) -- which needs the same construction without a
+// *testing.T. It computes every node via v2semantics.go's op* functions,
+// exactly as ComputeGoldV2 does.
+func doctorCompletedBlackboard(dag ShapeDAG, operandValues map[string]float64) *Blackboard {
+	bb := NewBlackboard("doctor-cf-sweep")
+	values := make(map[string]float64)
+	for _, step := range dag.Steps {
+		switch step.Operation {
+		case "":
+			_ = bb.Record(NodeRecord{NodeID: step.LocalID, Capability: step.Capability, DependsOn: step.DependsOn, Status: NodeStatusDone})
+		case OpRead:
+			v := operandValues[step.OutputKey]
+			values[step.OutputKey] = v
+			_ = bb.Record(NodeRecord{NodeID: step.LocalID, Capability: step.Capability, Operation: step.Operation, DependsOn: step.DependsOn, Outputs: map[string]float64{step.OutputKey: v}, Status: NodeStatusDone})
+		case OpNormalize:
+			out := opNormalize(values[step.InputKeys[0]])
+			values[step.OutputKey] = out
+			_ = bb.Record(NodeRecord{NodeID: step.LocalID, Capability: step.Capability, Operation: step.Operation, DependsOn: step.DependsOn, Outputs: map[string]float64{step.OutputKey: out}, Status: NodeStatusDone})
+		case OpMax:
+			a, b := values[step.InputKeys[0]], values[step.InputKeys[1]]
+			out := opMax(a, b)
+			values[step.OutputKey] = out
+			_ = bb.Record(NodeRecord{NodeID: step.LocalID, Capability: step.Capability, Operation: step.Operation, DependsOn: step.DependsOn, Outputs: map[string]float64{step.OutputKey: out}, Status: NodeStatusDone})
+		case OpSubtract:
+			a, b := values[step.InputKeys[0]], values[step.InputKeys[1]]
+			out := opSubtract(a, b)
+			values[step.OutputKey] = out
+			_ = bb.Record(NodeRecord{NodeID: step.LocalID, Capability: step.Capability, Operation: step.Operation, DependsOn: step.DependsOn, Outputs: map[string]float64{step.OutputKey: out}, Status: NodeStatusDone})
+		case OpDivide:
+			a, b := values[step.InputKeys[0]], values[step.InputKeys[1]]
+			out, err := opDivide(a, b)
+			if err != nil {
+				out = 0
+			}
+			values[step.OutputKey] = out
+			_ = bb.Record(NodeRecord{NodeID: step.LocalID, Capability: step.Capability, Operation: step.Operation, DependsOn: step.DependsOn, Outputs: map[string]float64{step.OutputKey: out}, Status: NodeStatusDone})
+		case OpPercentDifference:
+			a, b := values[step.InputKeys[0]], values[step.InputKeys[1]]
+			out := opPercentDifference(a, b)
+			values[step.OutputKey] = out
+			_ = bb.Record(NodeRecord{NodeID: step.LocalID, Capability: step.Capability, Operation: step.Operation, DependsOn: step.DependsOn, Outputs: map[string]float64{step.OutputKey: out}, Status: NodeStatusDone})
+		case OpPercentToFraction:
+			out := opPercentToFraction(values[step.InputKeys[0]])
+			values[step.OutputKey] = out
+			_ = bb.Record(NodeRecord{NodeID: step.LocalID, Capability: step.Capability, Operation: step.Operation, DependsOn: step.DependsOn, Outputs: map[string]float64{step.OutputKey: out}, Status: NodeStatusDone})
+		case OpSubtractTolerance:
+			out := opSubtractTolerance(values[step.InputKeys[0]])
+			values[step.OutputKey] = out
+			_ = bb.Record(NodeRecord{NodeID: step.LocalID, Capability: step.Capability, Operation: step.Operation, DependsOn: step.DependsOn, Outputs: map[string]float64{step.OutputKey: out}, Status: NodeStatusDone})
+		case OpCompareZero:
+			verdict := opCompareZero(values[step.InputKeys[0]])
+			_ = bb.Record(NodeRecord{NodeID: step.LocalID, Capability: step.Capability, Operation: step.Operation, DependsOn: step.DependsOn, OutputVerdict: verdict, Status: NodeStatusDone})
+		case OpThresholdCheck:
+			_ = bb.Record(NodeRecord{NodeID: step.LocalID, Capability: step.Capability, Operation: step.Operation, DependsOn: step.DependsOn, Status: NodeStatusDone})
+		case OpVerify:
+			in := values[step.InputKeys[0]]
+			values[step.OutputKey] = in
+			_ = bb.Record(NodeRecord{NodeID: step.LocalID, Capability: step.Capability, Operation: step.Operation, DependsOn: step.DependsOn, Outputs: map[string]float64{step.OutputKey: in}, Status: NodeStatusDone})
+		}
+	}
+	if dag.HasVerify {
+		_ = bb.PromoteFinal(dag.TerminalNodeID)
+	}
+	return bb
 }
 
 func fixtureRunResultForDoctor() RunResult {
