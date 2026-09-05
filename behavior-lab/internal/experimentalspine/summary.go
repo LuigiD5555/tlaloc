@@ -31,6 +31,7 @@ type Summary struct {
 }
 
 type CostSummary struct {
+	PlannedModelCallSlots int   `json:"planned_model_call_slots,omitempty"`
 	CompletedTransports   int   `json:"completed_transports"`
 	HTTPRequestAttempts   int   `json:"http_request_attempts"`
 	ValidCompletions      int   `json:"valid_completions"`
