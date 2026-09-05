@@ -69,6 +69,11 @@ func WriteT1Bundle(outDir string, manifest RunManifest, result tonalt1arms.RunRe
 
 	summary := Summarize(manifest, episodes)
 	summary.Cost.PlannedModelCallSlots = result.Accounting.PlannedModelCallSlots
+	// In the T1 Episode adapter, ModelCalls has the historical meaning
+	// "completed transport calls". Only this source-specific adapter is
+	// allowed to project it into CompletedTransports; generic producers leave
+	// that field unknown/zero unless they observe the same boundary.
+	summary.Cost.CompletedTransports = summary.Cost.ModelCalls
 	if err := validateT1Projection(summary, result.Accounting); err != nil {
 		return BundlePaths{}, err
 	}
