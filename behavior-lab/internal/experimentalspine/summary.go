@@ -134,7 +134,7 @@ func Summarize(manifest RunManifest, episodes []episode.Episode) Summary {
 				capabilityCounts[step.SelectedCapability] = entry
 			}
 			entry.Steps++
-			if step.ContractStatus == "BLOCKED_BY_DEPENDENCY" {
+			if step.ContractStatus == "BLOCKED_BY_DEPENDENCY" || step.Status == "BLOCKED_BY_DEPENDENCY" {
 				entry.BlockedSteps++
 			} else if stepFailed(step) {
 				entry.FailedSteps++
@@ -254,6 +254,9 @@ func stepFailed(step episode.Step) bool {
 		return true
 	}
 	if step.ContractStatus != "" && step.ContractStatus != "OK" {
+		return true
+	}
+	if step.Status != "" && step.Status != "OK" {
 		return true
 	}
 	return false
