@@ -63,9 +63,10 @@ type EpisodeBreakdown struct {
 }
 
 type CapabilityBreakdown struct {
-	Capability  string `json:"capability"`
-	Steps       int    `json:"steps"`
-	FailedSteps int    `json:"failed_steps"`
+	Capability   string `json:"capability"`
+	Steps        int    `json:"steps"`
+	FailedSteps  int    `json:"failed_steps"`
+	BlockedSteps int    `json:"blocked_steps"`
 }
 
 // Summarize reduces Episodes only. It never calls a model and never uses an
@@ -125,7 +126,9 @@ func Summarize(manifest RunManifest, episodes []episode.Episode) Summary {
 				capabilityCounts[step.SelectedCapability] = entry
 			}
 			entry.Steps++
-			if stepFailed(step) {
+			if step.ContractStatus == "BLOCKED_BY_DEPENDENCY" {
+				entry.BlockedSteps++
+			} else if stepFailed(step) {
 				entry.FailedSteps++
 			}
 		}
@@ -142,6 +145,10 @@ func Summarize(manifest RunManifest, episodes []episode.Episode) Summary {
 	summary.ByCapability = sortedCapabilityBreakdowns(capabilityCounts)
 	summary.Latency = summarizeLatency(stepLatencies)
 
+	// Debug priority uses direct failures only. Dependency-blocked nodes are
+	// consequences and remain visible as BlockedSteps, but they must not win
+	// the "most failed capability" vote merely because one upstream failure
+	// fanned out through a DAG.
 	for _, item := range summary.ByCapability {
 		if item.FailedSteps == 0 {
 			continue
