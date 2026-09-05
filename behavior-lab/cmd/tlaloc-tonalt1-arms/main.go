@@ -2,7 +2,7 @@
 // entrypoint for the TONAL T1 experiment's real Arm A/B/C executor layer.
 // It wires: CLI -> artifact/hash preflight -> model identity preflight ->
 // executor dispatcher -> Arm A/B/C -> raw trace writer -> primary freeze ->
-// counterfactual subcommand/campaign.
+// Experimental Spine projection -> counterfactual subcommand/campaign.
 //
 // Subcommands:
 //
@@ -20,9 +20,16 @@
 //	tlaloc-tonalt1-arms run \
 //	  -root . -out tonalt1-arms-run1
 //	    Wires StartupImageSweep -> identity preflight -> CrossArmRunner ->
-//	    Freeze. Requires -i-understand-this-calls-lm-studio to proceed past
-//	    the identity preflight step; without it, exits after a successful
-//	    dry-run of every offline stage.
+//	    FreezePrimaryT1Run (raw freeze + Experimental Spine bundle). Requires
+//	    -i-understand-this-calls-lm-studio to proceed past identity preflight;
+//	    without it, exits after a successful dry-run of every offline stage.
+//
+//	tlaloc-tonalt1-arms experience \
+//	  -raw tonalt1-arms-run1
+//	    Zero-call backfill path for an already-frozen primary run. Reads
+//	    workflow_records.json, node_call_records.json and run_accounting.json,
+//	    then writes immutable experience/{manifest,episodes,summary}. An
+//	    enriched manifest can be supplied with -manifest.
 //
 //	tlaloc-tonalt1-arms counterfactual \
 //	  -root . -out tonalt1-arms-counterfactual1
@@ -40,7 +47,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 
+	"tlaloc.local/behaviorlab/internal/experimentalspine"
 	"tlaloc.local/behaviorlab/internal/tonalt1arms"
 )
 
@@ -56,6 +65,8 @@ func main() {
 		runPreflightCmd(os.Args[2:])
 	case "run":
 		runRunCmd(os.Args[2:])
+	case "experience":
+		runExperienceCmd(os.Args[2:])
 	case "counterfactual":
 		runCounterfactualCmd(os.Args[2:])
 	default:
@@ -65,7 +76,7 @@ func main() {
 }
 
 func usage() {
-	fmt.Fprintln(os.Stderr, "usage: tlaloc-tonalt1-arms <doctor|preflight|run|counterfactual> [flags]")
+	fmt.Fprintln(os.Stderr, "usage: tlaloc-tonalt1-arms <doctor|preflight|run|experience|counterfactual> [flags]")
 }
 
 func fail(err error) {
@@ -133,11 +144,59 @@ func runRunCmd(args []string) {
 	_ = fs.Parse(args)
 
 	if !*liveConfirm {
-		fmt.Println("DRY RUN: run would execute StartupImageSweep -> identity preflight -> CrossArmRunner -> Freeze.")
+		fmt.Println("DRY RUN: run would execute StartupImageSweep -> identity preflight -> CrossArmRunner -> FreezePrimaryT1Run(raw + experience).")
 		fmt.Println("Pass -i-understand-this-calls-lm-studio to proceed past identity preflight. This build/task never sets that flag.")
 		return
 	}
 	fail(fmt.Errorf("this task's hard stop prohibits live T1 inference -- refusing to proceed even with the confirmation flag set"))
+}
+
+// --- experience (zero model calls) ---
+
+func runExperienceCmd(args []string) {
+	fs := flag.NewFlagSet("experience", flag.ExitOnError)
+	rawDir := fs.String("raw", "tonalt1-arms-run", "directory containing frozen T1 raw records")
+	outDir := fs.String("out", "", "bundle parent directory; defaults to -raw")
+	manifestPath := fs.String("manifest", "", "optional enriched Experimental Spine manifest JSON")
+	observedAtText := fs.String("observed-at", "", "optional RFC3339 observation time; defaults to current UTC bundle-write time")
+	_ = fs.Parse(args)
+
+	result, err := experimentalspine.LoadFrozenT1Result(*rawDir)
+	if err != nil {
+		fail(err)
+	}
+
+	var manifest experimentalspine.RunManifest
+	if *manifestPath != "" {
+		manifest, err = experimentalspine.LoadManifest(*manifestPath)
+	} else {
+		manifest, err = experimentalspine.MinimalT1Manifest(result)
+	}
+	if err != nil {
+		fail(err)
+	}
+
+	observedAt := time.Now().UTC()
+	if *observedAtText != "" {
+		observedAt, err = time.Parse(time.RFC3339, *observedAtText)
+		if err != nil {
+			fail(fmt.Errorf("parse -observed-at: %w", err))
+		}
+	}
+
+	target := *outDir
+	if target == "" {
+		target = *rawDir
+	}
+	paths, err := experimentalspine.WriteT1Bundle(target, manifest, result, observedAt)
+	if err != nil {
+		fail(err)
+	}
+	body, err := json.MarshalIndent(paths, "", "  ")
+	if err != nil {
+		fail(err)
+	}
+	fmt.Println(string(body))
 }
 
 // --- counterfactual ---
