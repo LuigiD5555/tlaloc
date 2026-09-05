@@ -20,6 +20,7 @@ const (
 type RunManifest struct {
 	Schema           string    `json:"schema"`
 	RunID            string    `json:"run_id"`
+	ParentRunID      string    `json:"parent_run_id,omitempty"`
 	SourceExperiment string    `json:"source_experiment"`
 	Prototype        Prototype `json:"prototype"`
 	Repos            Repos     `json:"repos"`
@@ -36,6 +37,7 @@ type Prototype struct {
 	Version       string `json:"version,omitempty"`
 	ParentVersion string `json:"parent_version,omitempty"`
 	Hypothesis    string `json:"hypothesis,omitempty"`
+	ChangeSummary string `json:"change_summary,omitempty"`
 }
 
 type Repos struct {
@@ -56,6 +58,9 @@ func (m RunManifest) Validate() error {
 	}
 	if m.RunID == "" {
 		return errors.New("experimentalspine: manifest run_id is empty")
+	}
+	if m.ParentRunID != "" && m.ParentRunID == m.RunID {
+		return errors.New("experimentalspine: manifest parent_run_id must differ from run_id")
 	}
 	if m.SourceExperiment == "" {
 		return errors.New("experimentalspine: manifest source_experiment is empty")
