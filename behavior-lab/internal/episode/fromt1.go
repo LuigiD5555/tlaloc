@@ -17,6 +17,11 @@ const SourceT1 = "TONAL_T1"
 // "<workflow_id>/<arm>" -- T1 has no separate goal/controller concept, so
 // Goal and PrototypeVersion are left empty rather than invented.
 //
+// T1's raw records remain authoritative. This adapter is intentionally
+// loss-minimising: it preserves raw/parsed outputs, model and input identity,
+// and mirrors T1 RunAccounting semantics so later prototype iterations can
+// compare failures without reinterpreting what an HTTP/model call meant.
+//
 // nodeRecords may contain records for other workflows/arms; only the ones
 // matching wf.WorkflowID and wf.Arm are used, ordered by RequestIndex for a
 // deterministic step sequence.
@@ -32,45 +37,108 @@ func FromT1Workflow(wf tonalt1arms.WorkflowRecord, nodeRecords []tonalt1arms.Nod
 		return matched[i].RequestIndex < matched[j].RequestIndex
 	})
 
-	totalModelCalls := 0
-	var totalLatency int64
+	var cost Cost
+	failureRootCause := ""
+	blockedSeen := false
+
 	for _, rec := range matched {
 		modelCalls := 0
 		if rec.TransportStatus == "OK" {
+			// Backwards-compatible Episode counter: completed transports.
 			modelCalls = 1
 		}
-		totalModelCalls += modelCalls
-		totalLatency += rec.LatencyMS
+		cost.ModelCalls += modelCalls
+		cost.LatencyMS += rec.LatencyMS
+
+		// Mirror tonalt1arms.deriveAccounting exactly. In particular, a
+		// dependency-blocked node is not an HTTP request attempt even if a
+		// legacy/raw record also carries a FAILED transport status.
+		switch {
+		case rec.ContractStatus == "BLOCKED_BY_DEPENDENCY":
+			cost.BlockedByDependency++
+			blockedSeen = true
+		case rec.TransportStatus == "NOT_ATTEMPTED":
+			// Pre-call refusal: no HTTP attempt.
+		case rec.TransportStatus == "FAILED":
+			cost.HTTPRequestAttempts++
+			cost.TransportFailures++
+			if failureRootCause == "" {
+				failureRootCause = "TRANSPORT_FAILURE"
+			}
+		case rec.TransportStatus == "OK" && rec.SchemaStatus == "FAILED":
+			cost.HTTPRequestAttempts++
+			cost.SchemaFailures++
+			if failureRootCause == "" {
+				failureRootCause = "SCHEMA_FAILURE"
+			}
+		case rec.TransportStatus == "OK" && rec.ContractStatus != "OK":
+			cost.HTTPRequestAttempts++
+			cost.ModelContractFailures++
+			if failureRootCause == "" {
+				failureRootCause = "MODEL_CONTRACT_FAILURE"
+			}
+		case rec.TransportStatus == "OK" && rec.ContractStatus == "OK":
+			cost.HTTPRequestAttempts++
+			cost.ValidCompletions++
+		}
 
 		status := rec.ContractStatus
+		if status == "" {
+			status = rec.SchemaStatus
+		}
 		if status == "" {
 			status = rec.TransportStatus
 		}
 
 		steps = append(steps, Step{
+			RequestIndex:       rec.RequestIndex,
 			NodeID:             rec.NodeID,
 			SelectedCapability: rec.Capability,
 			SelectedOperation:  rec.Operation,
 			ExecutorID:         rec.ExecutorID,
+			Model:              rec.Model,
+			InputArtifact:      rec.InputArtifact,
+			InputHash:          rec.InputHash,
+			RawOutput:          rec.RawOutput,
+			ParsedOutput:       rec.ParsedOutput,
+			TransportStatus:    rec.TransportStatus,
+			SchemaStatus:       rec.SchemaStatus,
+			ContractStatus:     rec.ContractStatus,
 			Status:             status,
 			ModelCalls:         modelCalls,
 			LatencyMS:          rec.LatencyMS,
 		})
 	}
 
-	success := wf.SemanticCorrect
+	// Prefer an observable execution-layer root cause over a terminal score.
+	// A blocked dependency is usually a consequence, so it is used only when
+	// no direct transport/schema/contract failure explains the episode.
+	if failureRootCause == "" && !wf.SemanticCorrect {
+		failureRootCause = "SEMANTIC_INCORRECT"
+	}
+	if failureRootCause == "" && !wf.ExactCorrect {
+		failureRootCause = "EXACT_INCORRECT"
+	}
+	if failureRootCause == "" && blockedSeen {
+		failureRootCause = "DEPENDENCY_BLOCKED"
+	}
 
 	return Episode{
-		Schema:           Schema,
-		EpisodeID:        fmt.Sprintf("t1-%s-%s-%s", wf.RunID, wf.WorkflowID, wf.Arm),
-		SourceExperiment: SourceT1,
-		TaskID:           wf.WorkflowID + "/" + wf.Arm,
-		Steps:            steps,
-		Success:          success,
-		Cost: Cost{
-			ModelCalls: totalModelCalls,
-			LatencyMS:  totalLatency,
-		},
+		Schema:            Schema,
+		EpisodeID:         fmt.Sprintf("t1-%s-%s-%s", wf.RunID, wf.WorkflowID, wf.Arm),
+		SourceExperiment:  SourceT1,
+		RunID:             wf.RunID,
+		TaskID:            wf.WorkflowID + "/" + wf.Arm,
+		Arm:               wf.Arm,
+		Family:            wf.Family,
+		Steps:             steps,
+		Success:           wf.SemanticCorrect,
+		SemanticCorrect:   wf.SemanticCorrect,
+		ExactCorrect:      wf.ExactCorrect,
+		TerminalStatus:    wf.TerminalStatus,
+		ContractStatus:    wf.ContractStatus,
+		FailureRootCause:  failureRootCause,
+		Cost:              cost,
 	}
 }
 
