@@ -2,9 +2,9 @@
 
 ## Purpose
 
-Tlaloc is the subsystem that develops and qualifies reusable capabilities for Tonal.
+Tlaloc is the subsystem that develops and qualifies reusable machinery for Tonal.
 
-It is not Tonal's runtime and does not own workflow scheduling, Blackboard state, final workflow authority or system-level routing.
+It is not Tonal's runtime and does not own workflow scheduling, Blackboard state, final workflow authority, system-level routing or the external general-purpose model interface.
 
 ## Tlaloc owns
 
@@ -15,8 +15,8 @@ It is not Tonal's runtime and does not own workflow scheduling, Blackboard state
 - CapabilityProfile evidence;
 - competence-envelope characterization;
 - candidate comparison and ablation;
-- capability packaging/versioning;
-- promotion/deprecation of Tlaloc-managed capabilities;
+- reusable machinery packaging/versioning;
+- promotion/deprecation of Tlaloc-managed Tlaloques/Machines;
 - Episode analysis for future experience-to-structure compilation.
 
 ## Tlaloc does not own
@@ -28,7 +28,13 @@ It is not Tonal's runtime and does not own workflow scheduling, Blackboard state
 - Tonal final answer;
 - Origami semantics or visual profiles;
 - Shponglese physical codec;
-- Parrot as a privileged system component.
+- Parrot or the external model provider behind it.
+
+## Tlaloque boundary
+
+A Tlaloque is reusable machinery whose bounded behavior is produced or qualified through Tlaloc. A Tlaloque may internally use deterministic code, algorithms, tools or a specialized model; that does not make every external model a Tlaloque.
+
+Parrot is a separate Tonal component kind: `EXTERNAL_MODEL`.
 
 ## Output principle
 
@@ -43,43 +49,28 @@ tool wrapper
 Shponglese motif/program
 prompt/policy
 small specialized model
-probabilistic Tlaloque
-hybrid capability
+Tlaloque
+hybrid machinery
 ```
 
-Prompt-only portability remains a useful target when it is actually the best representation, but it is no longer the universal preferred endpoint.
+Prompt-only portability remains useful when it is actually the best representation, but it is no longer the universal endpoint.
 
 ## Evidence before promotion
 
-A candidate must not be promoted merely because it is repeated, compressed or produced by a stronger model.
-
-Promotion should consider, where applicable:
-
-- declared behavior/invariants;
-- held-out reliability;
-- root-cause failures;
-- deterministic verification;
-- competence envelope;
-- cost and latency;
-- complexity introduced;
-- reuse frequency;
-- ablation evidence;
-- provenance.
+A candidate must not be promoted merely because it is repeated, compressed or proposed by a stronger model. Promotion should consider declared behavior/invariants, held-out reliability, root-cause failures, deterministic verification, competence envelope, cost/latency, complexity, reuse, ablation evidence and provenance.
 
 ## Interaction with Episodes
 
 ```text
 Tonal execution
       ↓
-trace
-      ↓
-Episode
+verified Episode
       ↓
 Tlaloc analysis
       ↓
 recurring structure?
       ↓
-candidate capability
+candidate machinery
       ↓
 test + verify + ablate + holdout
       ↓
@@ -90,6 +81,13 @@ Episodes are evidence records. They do not grant automatic authority to reflecti
 
 ## Interaction with Parrot
 
-Parrot is a probabilistic Tlaloque that Tlaloc may characterize, package and qualify like other capabilities.
+Parrot is Tonal's external probabilistic cognition interface, not a Tlaloc artifact.
 
-Parrot receives no special promotion rights, routing authority or semantic authority.
+Tlaloc may:
+
+- measure Parrot-assisted behavior;
+- characterize where it succeeds/fails;
+- analyze Episodes containing Parrot calls;
+- propose bounded reusable machinery that replaces recurring Parrot work.
+
+Tlaloc may not claim ownership of, promote, or silently redefine the external model itself.
