@@ -1,139 +1,110 @@
-# Tlaloc current architecture
+# Tlaloc Architecture R2
 
-**TLALOC — Transformative Latent Adaptive Logic Orchestration Core** is a development kit for behavioral discovery, experimentation and distillation.
+Tlaloc is Tonal's capability foundry, Behavior Lab and reusable-machinery lifecycle subsystem.
 
 ## Canonical lifecycle
 
 ```text
-Intent
+Intent / recurring need
   -> BehaviorSpec + invariants
-  -> bounded Tlaloque swarm
-  -> execution / observations / traces
-  -> reference behavior evidence
-  -> distillation
-  -> PromptIR / prompt candidates
-  -> clean target-family execution
-  -> behavioral-fidelity evaluation
-  -> regression / candidate selection
-  -> portable prompt artifact
+  -> bounded candidate machinery
+  -> experiment / execution / observations
+  -> deterministic evaluation where possible
+  -> competence envelope + failure analysis
+  -> candidate representation
+  -> holdout / ablation / regression checks
+  -> promote or reject
+  -> publish to Tonal Capability Registry
 ```
 
-The swarm is a **reference laboratory** used to discover a procedure that works. It is not the default production architecture.
+The reference swarm remains a laboratory technique for discovering procedures. It is not the definition of a Tlaloque and is not Tonal's production runtime.
 
-## Prompt-first deployment
+## Tlaloque
 
-The portable deployment target is `L0_PROMPT_ONLY` whenever the required behavior can be preserved there.
+A Tlaloque is deliberately bounded reusable machinery produced or qualified through Tlaloc.
+
+It may perform one operation, inspect one piece of state, test one predicate, compare one item, open one evidence source, execute a bounded specialist or propose one repair. Complex behavior comes from composition, state, verification and reuse rather than treating each Tlaloque as a general autonomous intelligence.
+
+A Tlaloque may be deterministic, algorithmic, symbolic, tool-backed, specialized-model-backed or hybrid. The bounded mechanism—not the mere presence of a model—is what Tlaloc qualifies.
+
+## Parrot boundary
+
+Parrot is not a Tlaloque. It is Tonal's singular external probabilistic cognition interface.
+
+Tlaloc may characterize Parrot-assisted behavior and analyze verified Episodes containing Parrot calls, but it does not own, manufacture or promote the external model.
+
+A central R2 research loop is:
 
 ```text
-L0 PROMPT_ONLY
-L1 PROMPT_PLUS_DECLARATIVE_CONTEXT_OR_IR
-L2 PROMPT_PLUS_TOOLS
-L3 PROMPT_PLUS_RUNTIME
-L4 SPECIALIZED_MODEL_OR_TARGET_SPECIFIC_SYSTEM
+external cognition resolves novelty
+        ↓
+verified Episode
+        ↓
+repeated bounded pattern?
+        ↓
+Tlaloc candidate machinery
+        ↓
+qualification
+        ↓
+future execution needs less external cognition
 ```
 
-Tlaloc minimizes deployment requirements subject to behavioral fidelity.
+This loop is a research target, not yet an autonomous promotion claim.
 
-This means development may use a sandbox, tools, Go, many agents and large evaluators while an accepted L0 artifact must still work with only an LLM text interface.
+## Distillation target
+
+The target is:
+
+```text
+Behavior(candidate artifact) ~= required verified behavior
+```
+
+not textual reproduction of a trace.
+
+Architecture R2 broadens the possible output beyond prompt-first deployment. The smallest reliable reusable representation may be:
+
+```text
+deterministic operation
+Machine / state machine
+tool wrapper
+Shponglese motif/program
+prompt / policy
+small specialized model
+Tlaloque
+hybrid machinery
+```
+
+Existing prompt-first work remains valid as one deployment strategy and historical experiment line; it is not the universal architectural endpoint.
 
 ## Authority hierarchy
 
 1. `BehaviorSpec` + declared invariants define desired behavior.
-2. Swarm execution and tests demonstrate a reference procedure that can satisfy that behavior.
-3. Distillation extracts compact behavioral rules/instructions from successful traces.
-4. Prompt/PromptIR artifacts are deployment candidates, not truth merely because they were generated.
-5. Clean-target evaluation compares the candidate against the requested/reference behavior.
-6. A target project remains authoritative over its own releases and contracts.
+2. Experiments demonstrate a candidate procedure.
+3. Verification and evidence establish its competence envelope.
+4. Distillation/compilation proposes a reusable representation.
+5. Holdout, ablation, regression and cost evidence decide promotion.
+6. Tonal decides at runtime whether a published capability should be selected.
 
-## Tlaloque
-
-Tlaloque are deliberately small specialist workers under Tlaloc. They are useful because decomposition makes a complex requested behavior observable and testable as many simple actions.
-
-A Tlaloque can perform a bounded operation, inspect one piece of state, test one predicate, compare one item, open one evidence source or propose one repair. Complex behavior comes from their composition, not from treating each Tlaloque as a general autonomous intelligence.
-
-## Behavioral distillation
-
-The distillation target is:
-
-```text
-Behavior(candidate artifact) ~= Behavior(reference swarm)
-```
-
-not textual reproduction of the trace.
-
-A trace with dozens of agents and intermediate actions may compress to a much smaller prompt if the prompt captures the decision order, invariants, uncertainty behavior and verification rules that caused success.
-
-## General target boundary
-
-Tlaloc is not defined by Origami.
-
-Possible targets include:
-
-```text
-Origami
-calculator behavior
-document workflows
-classifiers
-other prompted applications
-other software/tool behavior
-```
-
-Target-specific adapters and experiments may be extensive, but they remain profiles on top of the general behavioral lifecycle.
-
-## Origami target profile
-
-For Origami, Tlaloc currently provides optional development machinery such as:
-
-- Canonical Document IR / OCR and exact-memory experiments;
-- Tlaloque proposal generation;
-- cross-model perception campaigns;
-- prompt/representation search;
-- color/numeric/interference/depth/temporal candidate experiments;
-- evidence-backed visual-profile tournaments.
-
-Origami owns Origami semantics, its Master Prompt releases, visual grammar and canonical profile promotion. Tlaloc supplies experimental candidates and evidence.
+Tlaloc does not self-promote individual workers into Tonal execution.
 
 ## Tonal boundary
 
-Tonal is not a required Tlaloc layer. Tonal may compose several independent development systems, for example Tlaloc plus Blueprint Framework, and pin exact revisions for reproducibility.
+Tonal owns goal intake, workflow/DAG authority, scheduling, Blackboard state, runtime selection, execution coordination, verification coordination, accounting and final workflow results.
 
-```text
-Tonal
-  -> Tlaloc
-  -> Blueprint Framework
-  -> other development tools
-  -> target revisions
-```
+Tlaloc publishes qualified machinery and evidence into a contract Tonal can consume. Tonal's generic Registry must also be able to contain non-Tlaloc components such as Parrot (`EXTERNAL_MODEL`) and ordinary tools/Machines.
 
-Tonal does not define Tlaloc's behavioral semantics and does not own releases of target projects.
+## Origami and Shponglese
 
-## Clean-target rule
+Tlaloc is not defined by Origami.
 
-An L0 prompt candidate may not depend on:
+- Shponglese owns semantic operational IR.
+- Origami owns representation/carrier/addressing/selective-unfolding mechanisms.
+- Tlaloc may develop/test machinery that interacts with either without owning their semantics.
 
-- Tlaloc internal state;
-- swarm traces;
-- a hidden sandbox;
-- undeclared tools;
-- evaluator ground truth;
-- private target answers.
+## Existing implementation
 
-Higher deployment levels may use additional dependencies only when those dependencies are explicitly declared.
+Existing receiver distillation, PromptIR/compiler, evaluators, learning memory, adaptive search, Tlaloque implementations and target adapters remain available for the claims they actually establish.
 
-## Existing richer runtimes
+Frozen T1/R1 code may retain historical `Parrot Tlaloque` terminology because the frozen public contract used it. Current R2 architecture and new interfaces use the corrected external-model boundary.
 
-Existing Hybrid, tool-loop, PDF-memory, Origami visual-search and other runtime components remain valuable **development/evaluation machinery** and explicit higher-level deployment options. They do not change the prompt-first baseline.
-
-## Operational agent guidance
-
-`CLAUDE.md` and `.claude/skills/` are checked-in instructions for coding agents working on this repository. They are development assets, not Tlaloc's portable behavioral output.
-
-## Current implementation
-
-`behavior-lab/internal/distill/promptfirst.go` implements deterministic selection of the least demanding behaviorally valid artifact. The existing receiver distillation, PromptIR/compiler, evaluator, Tlaloque and target adapters remain available and are now interpreted within this general hierarchy.
-
-See also:
-
-- `docs/PROMPT_FIRST_R0.md`
-- `behavior-lab/spec/PROMPT_FIRST_DISTILLATION_R0.json`
-- `docs/NOMENCLATURE.md`
+See also `CLAUDE.md`, `docs/ROLE_IN_TONAL.md`, `docs/NOMENCLATURE.md` and `docs/research/`.
