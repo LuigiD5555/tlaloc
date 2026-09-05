@@ -37,6 +37,21 @@ func TestStore_RoundTrip(t *testing.T) {
 	}
 }
 
+func TestStore_SanitizesPortableFilenameSeparators(t *testing.T) {
+	root := t.TempDir()
+	observedAt := time.Date(2026, 9, 4, 12, 0, 0, 0, time.UTC)
+	ep := Episode{Schema: Schema, EpisodeID: "run:2026/09\\task"}
+
+	path, err := Store(root, ep, observedAt)
+	if err != nil {
+		t.Fatalf("Store: %v", err)
+	}
+	wantPath := filepath.Join(root, "2026-09", "run-2026-09-task.json")
+	if path != wantPath {
+		t.Errorf("path = %q, want %q", path, wantPath)
+	}
+}
+
 func TestStore_RefusesToOverwrite(t *testing.T) {
 	root := t.TempDir()
 	observedAt := time.Date(2026, 9, 4, 12, 0, 0, 0, time.UTC)

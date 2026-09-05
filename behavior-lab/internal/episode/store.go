@@ -18,8 +18,11 @@ func Store(root string, ep Episode, observedAt time.Time) (string, error) {
 	if ep.EpisodeID == "" {
 		return "", errors.New("episode: Store: EpisodeID is empty")
 	}
-	if ep.Schema == "" {
-		return "", errors.New("episode: Store: Schema is empty")
+	if ep.Schema != Schema {
+		return "", fmt.Errorf("episode: Store: Schema = %q, want %q", ep.Schema, Schema)
+	}
+	if observedAt.IsZero() {
+		return "", errors.New("episode: Store: observedAt is zero")
 	}
 
 	monthDirectory := filepath.Join(root, observedAt.UTC().Format("2006-01"))
@@ -27,7 +30,7 @@ func Store(root string, ep Episode, observedAt time.Time) (string, error) {
 		return "", err
 	}
 
-	filename := strings.ReplaceAll(ep.EpisodeID, "/", "-") + ".json"
+	filename := strings.NewReplacer("/", "-", "\\", "-", ":", "-").Replace(ep.EpisodeID) + ".json"
 	episodePath := filepath.Join(monthDirectory, filename)
 
 	encoded, err := json.MarshalIndent(ep, "", "  ")

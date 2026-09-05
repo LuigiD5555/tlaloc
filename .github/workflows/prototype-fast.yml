@@ -1,0 +1,33 @@
+name: prototype-fast
+
+on:
+  pull_request:
+    paths:
+      - "behavior-lab/internal/episode/**"
+      - "behavior-lab/internal/experimentalspine/**"
+      - "behavior-lab/prototypelab/**"
+      - "behavior-lab/cmd/tlaloc-tonalt1-arms/**"
+      - ".github/workflows/prototype-fast.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  spine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff
+        with:
+          go-version: "1.23.12"
+          cache: false
+      - name: Test Experimental Spine packages
+        working-directory: behavior-lab
+        run: go test ./internal/episode ./internal/experimentalspine ./prototypelab
+      - name: Test zero-call T1 experience CLI path
+        working-directory: behavior-lab
+        run: go test ./cmd/tlaloc-tonalt1-arms -run 'TestCLI_(ExperienceBackfill|RunDryRun)'
+      - name: Vet touched packages
+        working-directory: behavior-lab
+        run: go vet ./internal/episode ./internal/experimentalspine ./prototypelab ./cmd/tlaloc-tonalt1-arms

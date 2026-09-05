@@ -2,9 +2,14 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
+
+	"tlaloc.local/behaviorlab/internal/tonalt1arms"
 )
 
 // TestCLI_PreflightDryRun_MakesNoNetworkCall builds and runs the real
@@ -35,6 +40,47 @@ func TestCLI_RunDryRun_MakesNoNetworkCall(t *testing.T) {
 	}
 	if !strings.Contains(out, "DRY RUN") {
 		t.Errorf("expected DRY RUN in output, got: %s", out)
+	}
+	if !strings.Contains(out, "raw + experience") {
+		t.Errorf("run dry-run did not include Experimental Spine persistence: %s", out)
+	}
+}
+
+// TestCLI_ExperienceBackfill_MakesNoNetworkCall proves an already-frozen T1
+// result can be projected into the common experience bundle without model
+// access. The fixture contains only local JSON files.
+func TestCLI_ExperienceBackfill_MakesNoNetworkCall(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping subprocess CLI test in -short mode")
+	}
+	rawDir := t.TempDir()
+	writeFixtureJSON(t, filepath.Join(rawDir, "workflow_records.json"), []tonalt1arms.WorkflowRecord{{
+		RunID: "run-cli", WorkflowID: "wf-001", Family: "SINGLE", Arm: "A",
+		SemanticCorrect: true, ExactCorrect: true, ContractStatus: "OK",
+	}})
+	writeFixtureJSON(t, filepath.Join(rawDir, "node_call_records.json"), []tonalt1arms.NodeCallRecord{{
+		RunID: "run-cli", WorkflowID: "wf-001", Arm: "A", NodeID: "n1",
+		Capability: "EXTRACT_NUMBER", Operation: "EXTRACT_NUMBER", Model: "lfm2-vl-1.6b", RequestIndex: 0,
+		TransportStatus: "OK", SchemaStatus: "OK", ContractStatus: "OK", LatencyMS: 9,
+	}})
+	writeFixtureJSON(t, filepath.Join(rawDir, "run_accounting.json"), tonalt1arms.RunAccounting{
+		PlannedModelCallSlots: 1,
+		HTTPRequestAttempts:   1,
+		ValidCompletions:      1,
+	})
+
+	out, err := runCLI(t, "experience", "-raw", rawDir, "-observed-at", "2026-09-04T20:00:00Z")
+	if err != nil {
+		t.Fatalf("experience backfill failed: %v\noutput: %s", err, out)
+	}
+	if !strings.Contains(out, "summary.json") {
+		t.Errorf("expected bundle paths in output, got: %s", out)
+	}
+	if _, err := os.Stat(filepath.Join(rawDir, "experience", "summary.json")); err != nil {
+		t.Errorf("summary.json not written: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(rawDir, "experience", "episodes", "2026-09", "t1-run-cli-wf-001-A.json")); err != nil {
+		t.Errorf("episode not written: %v", err)
 	}
 }
 
@@ -77,6 +123,17 @@ func TestCLI_NoArgs_ShowsUsageAndExitsNonZero(t *testing.T) {
 	_, err := runCLI(t)
 	if err == nil {
 		t.Fatal("expected non-zero exit with no arguments")
+	}
+}
+
+func writeFixtureJSON(t *testing.T, path string, value any) {
+	t.Helper()
+	body, err := json.MarshalIndent(value, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, body, 0o644); err != nil {
+		t.Fatal(err)
 	}
 }
 
