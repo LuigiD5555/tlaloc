@@ -1,715 +1,111 @@
 # Tlaloc 6.0.0-alpha.21
 
-**TLALOC — Transformative Latent Adaptive Logic Orchestration Core**
+**TLALOC — Transformative Latent Adaptive Logic Orchestration Core**  
+**Architecture R2 role: Tonal capability foundry + Behavior Lab**
 
-Tlaloc is a development kit for behavioral discovery, verification, distillation and evidence-driven experimentation.
+Tlaloc develops, tests, qualifies, packages and studies bounded reusable machinery for Tonal.
 
-Its general objective is:
+Its purpose is not to become the runtime that solves every task. Tonal owns runtime workflow execution, routing, scheduling, Blackboard state and final system results. Tlaloc owns machinery development and evidence.
 
-```text
-INTENT
-  -> BehaviorSpec + invariants
-  -> bounded Tlaloque workers
-  -> demonstrated reference behavior
-  -> distillation
-  -> portable candidate artifact
-  -> clean target-model trials
-  -> deterministic evaluation
-  -> evidence-backed recommendation
-```
-
-The Tlaloque swarm is a development/reference laboratory. It is not the default production runtime.
-
-## Prompt-first portability
-
-Tlaloc assumes a final target model may have only a text interface:
+## Core loop
 
 ```text
-no sandbox
-no Go
-no Python
-no tools
-no file access
-no Tlaloc runtime
+behavioral intent / recurring need
+        ↓
+BehaviorSpec + invariants
+        ↓
+bounded candidate machinery
+        ↓
+Behavior Lab experiment
+        ↓
+verification + competence envelope
+        ↓
+compare / ablate / holdout
+        ↓
+promote or reject
+        ↓
+Tonal Capability Registry
 ```
 
-Deployment levels are explicit:
+A **Tlaloque** is bounded, typed, measurable reusable machinery produced or qualified through Tlaloc. It may be deterministic, symbolic, tool-backed, specialized-model-backed or hybrid.
+
+## Parrot is not a Tlaloque
+
+Parrot is Tonal's singular external probabilistic cognition interface. It is not manufactured, owned or promoted by Tlaloc.
+
+Tlaloc may measure Parrot-assisted behavior and analyze Episodes that contain Parrot calls. When recurring successful behavior can be made bounded and reusable, Tlaloc may propose a Tlaloque or Machine that replaces that repeated external cognition.
 
 ```text
-L0  PROMPT_ONLY
-L1  PROMPT + DECLARATIVE CONTEXT / IR
-L2  PROMPT + TOOLS
-L3  PROMPT + RUNTIME
-L4  SPECIALIZED MODEL / TARGET-SPECIFIC SYSTEM
+Parrot-assisted success
+        ↓
+verified Episodes
+        ↓
+recurring bounded structure?
+        ↓
+candidate Tlaloque / Machine
+        ↓
+holdout + ablation + verification
+        ↓
+promote or reject
 ```
 
-The least demanding artifact that preserves the required behavior is preferred.
+## Distillation is broader than prompts
+
+Earlier Tlaloc work emphasized prompt-first portability. Architecture R2 retains prompt artifacts as one useful target but no longer treats them as the universal preferred endpoint.
+
+The preferred output is the **smallest reliable reusable representation justified by evidence**. Depending on the behavior, that may be:
 
 ```text
-Behavior(candidate) ~= Behavior(reference behavior)
+deterministic operation
+Machine / state machine
+tool wrapper
+Shponglese motif/program
+prompt / policy
+small specialized model
+Tlaloque
+hybrid machinery
 ```
 
-Tlaloc optimizes behavior, not textual imitation of a swarm trace.
+`BehaviorSpec + invariants` remain behavioral authority. Implementations, prompts, models and tools are operational artifacts.
 
-## What Tlaloque are for
+## Episodes and Cognitive JIT
 
-Tlaloque are deliberately bounded workers used to discover and test small steps such as:
+Tonal execution traces may be normalized into Episodes. Future Tlaloc research may use verified Episode corpora to discover recurring structure and propose cheaper reusable machinery. Recurrence is not promotion; model reflection is not truth; evidence gates remain authoritative.
 
-```text
-extract one claim
-check one condition
-compare one pair
-follow one relation
-verify one invariant
-mark UNKNOWN
-open one evidence address
-```
+See `docs/COGNITIVE_JIT.md` and `docs/research/`.
 
-Complex behavior is produced by composing those steps through state, ordering, branches, loops, evidence and verification. A successful execution can then be distilled into a smaller portable artifact.
+## Origami and Shponglese
 
-## Origami relationship
+- **Shponglese** is semantic operational IR for primitive and composed behavior.
+- **Origami** is an independently testable representation, carrier, addressing and virtual-memory substrate.
 
-Origami is an independent visual/computational protocol and one possible Tlaloc target. Tlaloc does not own Origami semantics or pixels.
+Tlaloc may experimentally develop or qualify machinery that interacts with either, but it does not own their representation semantics.
 
-For Origami, Tlaloc can experimentally develop and measure:
+## Behavior Lab
 
-```text
-Master Prompt behavior
-BOOT / ROSETTA navigation
-semantic codecs
-visual layouts
-redundancy
-channel roles
-temporal structures
-cross-model read/write behavior
-failure regressions
-candidate profile changes
-```
+Existing Behavior Lab machinery, learning memory, adaptive search, grounding/verifier work, real-model campaigns and closed-loop experiments remain valuable for the claims they actually establish.
 
-The authority boundary remains:
+Architecture R2 changes their place in the ecosystem: they are machinery-development and evidence systems, not proof that Tlaloc is the complete Tonal runtime.
 
-```text
-Tlaloc experiments + evidence
-        -> recommendation
-Origami validates and decides canonical protocol/profile changes
-Tonal may later pin a reproducible multi-repository composition
-```
+## T1 compatibility note
 
-## Origami-facing development tracks
+Frozen T1/R1 code historically published Parrot through `tlaloquekit` as a generative Tlaloque. Preserve that terminology where needed to reproduce the frozen contract. New R2 APIs and current architecture classify Parrot as external cognition instead.
 
-```text
-CANONICAL MEMORY
-source -> canonical state -> evidence / exact plane
+## Research direction
 
-PERCEPTION PROMOTION
-carrier -> transport variants -> real-model observations -> deterministic evaluation
+Near-term R2 work focuses on stabilizing capability/Episode contracts, supporting Tonal's generic registry, Primitive Swarm/MICRO-ISA experiments and later experience-to-structure/Cognitive JIT experiments.
 
-VISUAL EVOLUTION
-canonical profile -> isolated experimental mutations -> real evidence -> tournament
+## Verification
 
-NATIVE SEMANTIC REGRESSION
-real failed trial -> deterministic failure classification -> permanent regression gate
-
-PROTOCOL INTEROP
-semantic state -> E* -> Origami -> S* -> another model -> structural drift measurement
-
-TEMPORAL LEARNING
-Tlaloque trace -> automaton/temporal program -> PNG benchmark -> debug frontier -> memory
-
-ADAPTIVE SEARCH
-persistent real failures -> mutation priorities -> candidate queue -> real evidence
-
-CLOSED EXPERIMENTAL LOOP
-current experimental incumbent PNG -> clean trials -> diagnostics -> memory
-  -> adaptive candidate trials -> evidence-gated incumbent advance -> next active frontier
-
-AUTO CANDIDATE GENERATION
-current failure plan -> SuggestedMutations -> builder capability negotiation
-  -> deterministic one-mutation CandidateConfigs -> target-owned PNG builder
-  -> held-out candidate trials -> evidence
-
-REAL VLM CAMPAIGN
-real OpenAI-compatible VLM -> doctor -> canonical baseline -> smoke
-  -> repeated single-model evidence -> later cross-model confirmation
-```
-
-These tracks are development machinery. They do not make Tlaloc an Origami runtime dependency.
-
-## Native semantic failure rule
-
-A self-declared semantic codec is valid. An undeclared external decoder/file/binary dependency is not.
-
-```text
-DECLARED SEMANTIC DECODER SUCH AS S2 = VALID
-UNDECLARED EXTERNAL DECODER / FILE / BINARY DEPENDENCY = FAILURE
-SEMANTIC QUERY -> UNNECESSARY EXACT/BINARY ESCALATION = FAILURE
-```
-
-Tlaloc keeps `FALSE_EXACT=0` and `UNKNOWN > INVENTION` as core experimental discipline.
-
-## Origami Protocol interoperability — alpha.16+
-
-Tlaloc can deterministically evaluate:
-
-```text
-Semantic State
-  -> E2 ENCODE_SUPERINDEX
-  -> Origami
-  -> S2 READ_SUPERINDEX
-  -> Semantic State
-```
-
-and multi-hop communication:
-
-```text
-Model A -> Origami -> Model B -> Origami -> Model C
-```
-
-The evaluator measures codec discovery, semantic preservation, invented facts, hop-to-hop drift, read/write success, undeclared external dependencies and unnecessary exact escalation. Another LLM is not used as judge.
-
-Synthetic fixtures validate the evaluator only. Real interoperability remains an empirical question.
-
-## Temporal benchmark, debug trace, memory and adaptive search — alpha.17
-
-Alpha.17 introduced a persistent experimental feedback cycle:
-
-```text
-real PNG trial
-  -> layered Temporal Native Benchmark
-  -> failed question IDs
-  -> targeted diagnostic retry
-  -> observable failure frontier
-  -> Learning Memory
-  -> Adaptive Search plan
-  -> prioritized candidate queue
-  -> real candidate trials
-  -> outcome linked back to memory
-```
-
-### Layered benchmark
-
-The temporal benchmark separates:
-
-```text
-P  perception
-R  protocol / ROSETTA
-S  semantic recovery
-T  temporal reasoning
-X  exactness / honesty
-```
-
-This makes a failure location actionable instead of reducing everything to one score.
-
-### Debug Trace R0
-
-Diagnostic retries report only observable protocol checkpoints:
-
-```text
-NONE
- -> BOOT
- -> ROSETTA
- -> CODEC_DISCOVERY
- -> T2_NAVIGATION
- -> SEMANTIC_DECODE
- -> TEMPORAL_ROUTE
- -> TEMPORAL_STEP
- -> EXACT_BOUNDARY
- -> ANSWER
-```
-
-The trace includes status, last completed stage, selected codec, last/next instruction identifier, failure code, evidence references and confidence. It never requests private reasoning or chain-of-thought.
-
-Only failed questions are retried. Diagnostic trials are excluded from the primary Native/R4 score.
-
-### Learning Memory R0
-
-Real experimental evidence is stored as immutable content-addressed events under XDG state.
-
-```text
-OBSERVATION
-CHANGE_ATTEMPT
-OUTCOME_LINK
-```
-
-The memory preserves both successes and failures. Fixing a failure does not delete it; old evidence remains available for regression analysis.
-
-Synthetic evidence is marked separately and cannot silently become empirical promotion evidence.
-
-### Adaptive Search R0
-
-Persistent real failure patterns select where experiment budget should go next.
-
-Examples:
-
-```text
-T2_NOT_FOUND
- -> LAYOUT / PROMPT / REDUNDANCY / CHANNEL_ROLE
-
-TEMPORAL_RULE_AMBIGUOUS
- -> TEMPORAL_STRUCTURE / PROMPT / PRIMITIVE / CHANNEL_ROLE
-```
-
-Historical outcomes may adjust search priority only within a bounded range, and every supported mutation family retains a non-zero exploration floor.
-
-The critical boundary is:
-
-```text
-MEMORY PRIORITY != PROMOTION SCORE
-```
-
-Memory decides what to test first. Evidence decides what worked.
-
-## Closed Experimental Loop R0 — alpha.18 / alpha.19 / alpha.20
-
-Alpha.18 introduced the config-driven runner. Alpha.19 closed the inter-generation gap by making the best non-regressing improvement the **experimental incumbent** for the next generation. Alpha.20 removes the remaining requirement to hand-author a candidate bank when an explicit target-owned builder supports the requested mutation family.
-
-The current loop is:
-
-```text
-current experimental incumbent Origami PNG
-  -> clean Native / R4 trials
-  -> deterministic benchmark
-  -> retry only failed questions in diagnostic mode
-  -> persist real evidence
-  -> calculate the incumbent's active failure frontier
-  -> Adaptive Search produces SuggestedMutations
-  -> query target-owned builder capabilities
-  -> filter unsupported mutation families before model inference
-  -> derive deterministic one-mutation CandidateConfigs
-  -> delegate PNG build to the explicit target-owned builder
-  -> run selected candidates with the same models/questions
-  -> targeted diagnostic retries where needed
-  -> persist candidate evidence
-  -> link incumbent/candidate OUTCOME
-  -> require per-question non-regression + exactness discipline + minimum improvement
-  -> best passing candidate becomes next experimental incumbent
-  -> recalculate the newly exposed failure frontier
-  -> repeat
-```
-
-The incumbent is laboratory state only. It is not a canonical Origami profile and it never updates the Origami repository.
-
-### Automatic candidate generation — alpha.20
-
-Automatic candidate generation is opt-in:
-
-```json
-{
-  "auto_candidates": true,
-  "candidate_builder": ["origami-candidate-build"],
-  "auto_candidate_base_profile_id": "origami.temporal-carrier.r0.profile-1",
-  "auto_candidates_per_generation": 4
-}
-```
-
-Before spending model trials, Tlaloc asks the builder for its declared capabilities. A builder must support the configured parent profile and declare `exact_plane_mutation=false`. Unsupported mutation families are skipped; Tlaloc does not approximate target pixels itself.
-
-Every automatic candidate contains exactly one mutation so that before/after evidence can be attributed to a specific experimental change. Its ID is deterministic from:
-
-```text
-parent specimen ID
-+ parent PNG SHA-256
-+ canonical mutation
-```
-
-The alpha.20 synthetic end-to-end regression uses a fake OpenAI-compatible VLM and fake builder to prove orchestration only: failure detection, adaptive generation, builder invocation, candidate evaluation, memory linkage and experimental-incumbent advancement. It is **not** real-model evidence.
-
-See `docs/AUTO_CANDIDATE_GENERATION_R0.md` and `behavior-lab/spec/AUTO_CANDIDATE_GENERATION_R0.json`.
-
-### CLI
+For Behavior Lab changes:
 
 ```bash
-tlaloc-closed-loop example > closed-loop.json
-tlaloc-closed-loop validate -config closed-loop.json
-tlaloc-closed-loop run -config closed-loop.json
+cd behavior-lab
+go test ./...
+go vet ./...
+go test -race ./...
 ```
 
-`validate` checks the local configuration, Master Prompt, candidate-parent DAG and PNG inputs without running inference. In automatic mode it also negotiates the explicit builder capability contract.
+## Documentation authority
 
-`run` executes the configured experiment generations. When `auto_candidates=false`, the alpha.19 manual candidate path remains unchanged.
-
-## Real VLM Campaign R0 — alpha.21
-
-Alpha.21 packages the already verified alpha.20 closed loop for reproducible execution against a **real OpenAI-compatible multimodal model** without hand-authoring experiment JSON.
-
-The managed CLI is:
-
-```text
-tlaloc-real-vlm-campaign
-```
-
-It has four surfaces:
-
-```text
-doctor
-prepare
-run
-example
-```
-
-### Doctor
-
-The default endpoint is local OpenAI-compatible:
-
-```text
-http://127.0.0.1:1234/v1
-```
-
-When exactly one model is reported by `/v1/models`, Tlaloc selects it automatically. When multiple models are reported, a model ID must be selected explicitly.
-
-Doctor rejects `SYNTHETIC_*` and placeholder model IDs, validates the canonical `signal-chain-r0` benchmark ground truth, resolves `origami-temporal-carrier` and `origami-candidate-build`, hashes both binaries, negotiates builder capabilities, builds an actual 640x640 / 8192-byte PNG and sends Q0 + image through the real multimodal endpoint.
-
-```bash
-tlaloc-real-vlm-campaign doctor \
-  --program /path/to/origami/experiments/temporal-automaton-r0/signal-chain.json
-```
-
-The probe proves transport/vision acceptance only:
-
-```text
-VISION TRANSPORT PASS != SEMANTIC BENCHMARK PASS
-```
-
-### Smoke
-
-```bash
-tlaloc-real-vlm-campaign run \
-  --phase SMOKE \
-  --program /path/to/origami/experiments/temporal-automaton-r0/signal-chain.json \
-  --out runs/real-vlm/origami-temporal-r0
-```
-
-Defaults:
-
-```text
-1 real model
-1 clean trial/model
-1 candidate/generation
-1 generation
-NATIVE_PNG_ONLY
-isolated smoke learning memory
-```
-
-Smoke can reveal a genuine model failure and can exercise the real candidate loop, but it is explicitly not promotion evidence.
-
-### Repeated evidence
-
-```bash
-tlaloc-real-vlm-campaign run \
-  --phase EVIDENCE \
-  --program /path/to/origami/experiments/temporal-automaton-r0/signal-chain.json \
-  --out runs/real-vlm/origami-temporal-r0
-```
-
-EVIDENCE enforces at least 3 trials per model. Defaults are 2 candidates/generation and up to 3 generations. When `--master-prompt` is supplied, R4_ASSISTED is added alongside NATIVE_PNG_ONLY.
-
-R0 still records:
-
-```text
-promotion_eligible = false
-cross_model_evidence = false
-```
-
-Repeated trials from one model are real evidence, but they are not yet broad cross-model evidence. Cross-model confirmation is a later phase.
-
-### Provenance
-
-Each phase writes a manifest with:
-
-```text
-model ID + endpoint
-Tlaloc version
-expected Origami contract version
-program path + SHA-256
-baseline PNG path + SHA-256 + bytes
-origami-temporal-carrier path + SHA-256
-origami-candidate-build path + SHA-256
-builder capabilities
-closed-loop config path + SHA-256
-learning-memory root
-evidence policy
-promotion/cross-model flags
-```
-
-Smoke and evidence use separate output and memory roots.
-
-See `docs/REAL_VLM_CAMPAIGN_R0.md` and `behavior-lab/spec/REAL_VLM_CAMPAIGN_R0.json`.
-
-### Local LM Studio / compatible server
-
-The endpoint remains standard OpenAI-compatible. If more than one model is exposed:
-
-```bash
-tlaloc-real-vlm-campaign doctor \
-  --model MODEL_ID \
-  --program /path/to/signal-chain.json
-```
-
-Remote API keys are referenced by environment-variable name through `--api-key-env`; secrets are not written into the campaign config.
-
-### Clean conditions
-
-`NATIVE_PNG_ONLY` sends only:
-
-```text
-empty system prompt
-+ benchmark question
-+ PNG
-```
-
-It does not expose ground truth, memory, decoder internals, candidate metadata or prior failures.
-
-`R4_ASSISTED` sends the declared Master Prompt plus the same question and PNG.
-
-### Transport isolation
-
-A timeout, HTTP error or malformed compatible API response is an execution/transport error, not evidence that the model failed BOOT, ROSETTA, T2 or temporal reasoning.
-
-If no clean incumbent trial completes, the run stops with:
-
-```text
-INCUMBENT_EXECUTION_UNAVAILABLE
-```
-
-The incumbent is not advanced and transport failures are not inserted into semantic learning memory.
-
-A diagnostic retry is admitted into benchmark evidence only when the complete targeted retry succeeds at the transport layer.
-
-### Evidence-gated incumbent advancement
-
-A candidate can become the next experimental incumbent only when:
-
-```text
-candidate clean trial count >= incumbent clean trial count
-no benchmark question score decreases
-missing-question count does not increase
-invented exact claims do not increase
-selected outcome metric improves by >= min_incumbent_improvement
-```
-
-The default minimum improvement is `0.01`. If multiple candidates pass, the highest selected outcome metric wins; candidate ID is the deterministic tie-breaker.
-
-### Active failure frontier
-
-Old observations remain in persistent memory as regression history, but they no longer permanently vote as the current failure frontier. Each generation derives active failures from the **current incumbent run**. Historical `CHANGE_ATTEMPT` and `OUTCOME_LINK` events remain available only as bounded search signal.
-
-This allows the loop to move naturally:
-
-```text
-T2_NOT_FOUND
- -> layout candidate fixes T2
- -> layout candidate becomes experimental incumbent
- -> next run exposes TEMPORAL_RULE_AMBIGUOUS
- -> adaptive search moves to temporal grammar
-```
-
-### Candidate DAG and build hooks
-
-A candidate may optionally declare `parent_specimen_id`. A parent-bound candidate becomes eligible only when that parent is the current experimental incumbent. Candidates without a parent remain general alternatives.
-
-The parent graph is validated and rejects cycles or unknown parents.
-
-Tlaloc accepts:
-
-1. pre-rendered experimental Origami PNG candidates;
-2. an explicit per-candidate `build_command`; or
-3. alpha.20+ automatic CandidateConfig generation using an explicit target-owned builder.
-
-The builder hook receives:
-
-```text
-TLALOC_CANDIDATE_ID
-TLALOC_OUTPUT_PNG
-TLALOC_MUTATIONS_JSON
-TLALOC_PARENT_SPECIMEN_ID
-TLALOC_PARENT_PNG
-```
-
-Invoking a renderer does not make Tlaloc the canonical Origami pixel authority.
-
-A candidate tested in an older run is not permanently banned. Persistent history can alter its priority; duplicate execution is suppressed only inside the current closed-loop run.
-
-### Run output
-
-A Real VLM campaign writes phase-separated artifacts:
-
-```text
-<out>/
-  smoke/
-    baseline.png
-    manifest.json
-    closed-loop.json
-    learning-memory/
-    closed-loop/...
-  evidence/
-    baseline.png
-    manifest.json
-    closed-loop.json
-    learning-memory/
-    closed-loop/...
-```
-
-Campaign files preserve model responses verbatim. Result files contain deterministic scoring and diagnostic summaries. The top-level closed-loop report records the incumbent before/after each generation and why advancement did or did not occur.
-
-### Stopping
-
-A closed-loop run stops when:
-
-```text
-current incumbent execution is unavailable
-OR current incumbent has no active failed benchmark questions
-OR no supported eligible candidate remains for the current incumbent
-OR configured generation budget is exhausted
-```
-
-Stopping never means promotion.
-
-## Current managed CLIs
-
-```text
-tlaloc
-tlaloc-behavior-lab
-tlaloc-origami
-tlaloc-perception-campaign
-tlaloc-visual-search
-tlaloc-native-eval
-tlaloc-protocol-eval
-tlaloc-automaton-distill
-tlaloc-temporal-bench
-tlaloc-learning-memory
-tlaloc-adaptive-search
-tlaloc-closed-loop
-tlaloc-real-vlm-campaign
-tlaloc-uninstall
-```
-
-## Development complexity vs deployment complexity
-
-Tlaloc may use expensive development machinery:
-
-```text
-many Tlaloque
-multiple target models
-sandboxes
-Go utilities
-evaluators
-tools
-large experiment corpora
-adversarial trials
-```
-
-Those are development resources. They must not leak into a supposedly portable artifact unless the deployment level explicitly permits them.
-
-A clean L0 candidate cannot inherit private swarm traces, development sandbox state, evaluator ground truth, undeclared tools or Tlaloc internal memory.
-
-## Evidence and promotion boundaries
-
-```text
-SYNTHETIC FIXTURE != REAL MODEL EVIDENCE
-DIAGNOSTIC RETRY != SELF-BOOTSTRAP EVIDENCE
-TRANSPORT FAILURE != MODEL SEMANTIC FAILURE
-VISION TRANSPORT PASS != SEMANTIC PASS
-SMOKE != PROMOTION EVIDENCE
-SINGLE-MODEL REPEATED EVIDENCE != CROSS-MODEL EVIDENCE
-MEMORY != CANONICAL ORIGAMI TRUTH
-ADAPTIVE PRIORITY != PROMOTION SCORE
-AUTO CANDIDATE GENERATION != PIXEL AUTHORITY
-CANDIDATE BUILD SUCCESS != MODEL IMPROVEMENT
-EXPERIMENTAL INCUMBENT != CANONICAL ORIGAMI PROFILE
-TLALOC RECOMMENDATION != CANONICAL ORIGAMI PROFILE
-COMPLETED CLOSED LOOP != AUTOMATIC PROMOTION
-```
-
-Tlaloc recommends. Origami decides whether an Origami protocol/profile change becomes canonical.
-
-## Tonal relationship
-
-Tonal is optional and can pin exact revisions of Tlaloc, Origami and other development tools after a composition is worth reproducing. Tonal does not define Tlaloc behavior and does not promote Origami semantics.
-
-## Naming
-
-- **Tlaloc** = behavioral discovery/distillation/evaluation development kit.
-- **Tlaloque** = deliberately bounded workers used during development/reference execution.
-- **Origami** = independent visual/computational representation and communication protocol.
-- **Tonal** = optional reproducibility/composition layer.
-
-See `docs/NOMENCLATURE.md`.
-
-## Read first
-
-- `docs/PROMPT_FIRST_R0.md`
-- `docs/ARCHITECTURE.md`
-- `docs/NOMENCLATURE.md`
-- `docs/CAPABILITY_STATUS.md`
-- `docs/ORIGAMI_INTEGRATION_CONTRACT.md`
-- `docs/ORIGAMI_VISUAL_EVOLUTION_R0.md`
-- `docs/TEMPORAL_NATIVE_DEBUG_R0.md`
-- `docs/AUTO_CANDIDATE_GENERATION_R0.md`
-- `docs/REAL_VLM_CAMPAIGN_R0.md`
-- `behavior-lab/LEARNING_MEMORY_R0.md`
-- `behavior-lab/ADAPTIVE_SEARCH_R0.md`
-- `behavior-lab/CLOSED_EXPERIMENTAL_LOOP_R0.md`
-- `behavior-lab/PROTOCOL_INTEROP_LAB_R0.md`
-- `behavior-lab/AUTOMATON_DISTILLATION_R0.md`
-- `behavior-lab/TEMPORAL_NATIVE_BENCHMARK_R0.md`
-- `GATEKEEPER.md`
-
-## Install from source
-
-```bash
-git clone git@github.com:LuigiD5555/tlaloc.git
-cd tlaloc
-./install.sh
-```
-
-Tlaloc installs independently under:
-
-```text
-~/.local/share/tlaloc/versions/<version>
-```
-
-Learning memory lives under XDG state and is intentionally preserved across managed upgrade/uninstall.
-
-## Hard boundaries
-
-```text
-SWARM = REFERENCE LAB, NOT DEFAULT DEPLOYMENT
-PROMPT FIRST FOR PORTABILITY
-L0 PROMPT REQUIRES NO TOOLS / SANDBOX / TLALOC RUNTIME
-DEVELOPMENT DEPENDENCIES != DEPLOYMENT DEPENDENCIES
-BEHAVIORAL FIDELITY != TRACE TEXT SIMILARITY
-CLEAN TARGET EVALUATION REQUIRED
-FAILED REAL TRIAL -> REGRESSION
-DECLARED SEMANTIC CODEC = ALLOWED
-UNDECLARED EXTERNAL CODEC DEPENDENCY = FAILURE
-SEMANTIC NAVIGATION != UNNECESSARY EXACT/BINARY DECODE
-FALSE_EXACT = 0 WHERE EXACTNESS IS CLAIMED
-UNKNOWN > INVENTION
-SYNTHETIC EVIDENCE != EMPIRICAL PROMOTION EVIDENCE
-DIAGNOSTIC RETRY != PRIMARY SCORE
-TRANSPORT FAILURE != MODEL SEMANTIC FAILURE
-VISION TRANSPORT PASS != SEMANTIC PASS
-SMOKE MEMORY ISOLATED FROM EVIDENCE MEMORY
-SMOKE != PROMOTION EVIDENCE
-EVIDENCE REQUIRES >= 3 TRIALS PER MODEL
-SINGLE-MODEL REPEATED EVIDENCE != CROSS-MODEL EVIDENCE
-REAL VLM CAMPAIGN R0 PROMOTION_ELIGIBLE = FALSE
-MEMORY != CANONICAL ORIGAMI TRUTH
-MEMORY != AUTOMATIC PROMOTION
-MEMORY GUIDES EXPERIMENT BUDGET, NOT PROMOTION SCORE
-REAL MODEL FAILURES DRIVE ADAPTIVE FOCUS
-EXPLORATION FLOOR > 0
-AUTO CANDIDATE GENERATION IS OPT-IN
-TLALOC GENERATES MUTATION INTENT, NOT CANONICAL PIXELS
-UNSUPPORTED BUILDER CAPABILITY -> FILTER BEFORE INFERENCE
-ONE AUTOMATIC CANDIDATE = ONE MUTATION
-CANDIDATE BUILD SUCCESS != MODEL IMPROVEMENT
-EXPERIMENTAL INCUMBENT != CANONICAL ORIGAMI PROFILE
-TLALOC CANDIDATE != CANONICAL ORIGAMI PROFILE
-CLOSED LOOP != SELF-MODIFYING CANONICAL ORIGAMI
-ORIGAMI IS A TARGET, NOT TLALOC'S IDENTITY
-```
-
-## Version
-
-`6.0.0-alpha.21`
+Start with `CLAUDE.md`, this README, `docs/CURRENT_STATE.md`, `docs/ARCHITECTURE.md`, `docs/ROLE_IN_TONAL.md`, then the active experiment specification. Historical files under `docs/archive/` are not current authority.
